@@ -10,7 +10,8 @@ $(function() {
 		}
     });
         
-	function wireUpTable() {
+    // TODO:  Convert to common method for all term-based views....
+    function wireUpTable() {
 	    $("#content").jtable({
 		    title: 'Terms Registry',
             paging: true,
@@ -63,8 +64,7 @@ $(function() {
                     edit: false,
                     create: false,
                     display: function(record) {
-                        var $link = $('<a href="/_utils/document.html?tr/' + record.record.id + '">View/Edit</a>');
-
+                        var $link = $('<a href="/_utils/document.html?tr/' + record.record.id + '">View/Edit</a><br/> <a href="/tr/_design/trapp/_view/aliasesByParent?key=&quot;' + record.record.uniqueId + '&quot;">View Aliases</a>');
                         return $link;
                     }
                 }
@@ -72,16 +72,4 @@ $(function() {
 		});
         $("#content").jtable('load');
 	}
-
-	// TODO:  Wire up pagination
-
-	// TODO:  Wire up the list of aliases
-
-	// TODO:  Wire up the add button
-
-	// TODO:  Wire the delete button
-
-	// TODO:  Create a basic view for terms and aliases
-
-	// TODO:  Wire up jTable with actual data
  });

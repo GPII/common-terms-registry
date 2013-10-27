@@ -10,8 +10,8 @@ $(function() {
 		}
     });
         
-    // TODO:  Convert to common method for all alias-based views....
-    function wireUpTable() {
+    // TODO:  Convert to common method for all term-based views....
+	function wireUpTable() {
 	    $("#content").jtable({
 		    title: 'Terms Registry',
             paging: true,
@@ -21,7 +21,7 @@ $(function() {
                 type: 'GET'
             },
 			actions: { 
-                listAction: '/tr/_design/trapp/_list/jtable/aliases'
+                listAction: '/tr/_design/trapp/_list/jtable/temp-terms'
              },
 			fields: {
                 id:
@@ -33,34 +33,15 @@ $(function() {
                     title: 'Record Type',
                     list: false
                 },
-                userPreference: {
-                    title: 'User Preference',
+                uniqueId: {
+                    title: 'Unique ID'
                 },
-                aliasTranslationOf: {
-                    title: 'Alias Of',
-                    edit: false,
-                    create: false,
-                    display: function(record) {
-                        var $link = $('<span>' + record.record.aliasTranslationOf + '<br/><a href="/tr/_design/trapp/_view/terms?key=&quot;' +  record.record.aliasTranslationOf + '&quot;">View Parent</a></span>');
-
-                        return $link;
-                    }                    
-                },  
                 localUniqueId: {
                     title: 'Local Unique ID',
                     list: false
                 },
                 defaultValue: {
                     title: 'Default Value',
-                    sorting: false
-                },
-                groups: {
-                    title: 'Groups',
-                    sorting: false
-                },
-                ids: {
-                    title: 'Ids',
-                    sorting: false
                 },
                 description: {
                     title: 'Description / Notes',
@@ -68,7 +49,7 @@ $(function() {
                     edit: false,
                     create: false,
                     display: function(record) {
-                        var rawHtml = '';
+                        var rawHtml = '<!-- ' + JSON.stringify(record.record) + '-->\n';
                         if (record.record.description != null && record.record.description != undefined) {
                             rawHtml += '<p class="description">' + record.record.description + '</p>';
                         }
@@ -80,12 +61,10 @@ $(function() {
                 },
                 action: {
                     title: 'Actions',
-                    width: '5%',
                     edit: false,
                     create: false,
                     display: function(record) {
-                        var $link = $('<a href="/_utils/document.html?tr/' + record.record.id + '">View/Edit</a>');
-
+                        var $link = $('<a href="/_utils/document.html?tr/' + record.record.id + '">View/Edit</a><br/> <a href="/tr/_design/trapp/_view/aliasesByParent?key=&quot;' + record.record.uniqueId + '&quot;">View Aliases</a>');
                         return $link;
                     }
                 }
@@ -93,4 +72,16 @@ $(function() {
 		});
         $("#content").jtable('load');
 	}
+
+	// TODO:  Wire up pagination
+
+	// TODO:  Wire up the list of aliases
+
+	// TODO:  Wire up the add button
+
+	// TODO:  Wire the delete button
+
+	// TODO:  Create a basic view for terms and aliases
+
+	// TODO:  Wire up jTable with actual data
  });

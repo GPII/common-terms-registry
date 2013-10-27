@@ -19,6 +19,7 @@ function(head, req) {
         for (var record = 0; record < (jtStartIndex + jtPageSize); record++) {
             row = getRow();
             if (record < jtStartIndex) continue;
+            if (record >= head.total_rows) break;
             
             jTableData.Records.push({
                 "key" :                 row.key,
