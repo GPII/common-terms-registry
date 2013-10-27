@@ -164,6 +164,8 @@ function importRow(entry) {
 	var namespace = namespaces[namespaceNumber];
 	var aliasEntry = {};
 
+	aliasEntry.aliasTranslationOf = gpii.uniqueId;
+
 	// The userPreference field is required and used as the unique identifier for the alias.
 	aliasEntry.userPreference = entry[namespace+':userPreference'];
 
