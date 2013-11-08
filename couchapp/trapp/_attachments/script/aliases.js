@@ -29,55 +29,33 @@ $(function() {
                     key: true,
                     list: false
 				},
-                recordType: {
+                type: {
                     title: 'Record Type',
                     list: false
                 },
-                userPreference: {
-                    title: 'User Preference',
+                termLabel: {
+                    title: 'Label',
                 },
-                aliasTranslationOf: {
-                    title: 'Alias Of',
-                    edit: false,
-                    create: false,
-                    display: function(record) {
-                        var $link = $('<span>' + record.record.aliasTranslationOf + '<br/><a href="/tr/_design/trapp/_view/terms?key=&quot;' +  record.record.aliasTranslationOf + '&quot;">View Parent</a></span>');
-
-                        return $link;
-                    }                    
-                },  
                 localUniqueId: {
                     title: 'Local Unique ID',
                     list: false
                 },
-                defaultValue: {
-                    title: 'Default Value',
-                    sorting: false
-                },
-                groups: {
-                    title: 'Groups',
-                    sorting: false
-                },
-                ids: {
-                    title: 'Ids',
-                    sorting: false
-                },
-                description: {
-                    title: 'Description / Notes',
+                notes: {
+                    title: 'Notes',
                     sorting: false,
+                    edit: false,
+                    create: false
+                },
+                aliasOf: {
+                    title: 'Alias Of',
                     edit: false,
                     create: false,
                     display: function(record) {
-                        var rawHtml = '';
-                        if (record.record.description != null && record.record.description != undefined) {
-                            rawHtml += '<p class="description">' + record.record.description + '</p>';
-                        }
-                        if (record.record.notes != null && record.record.notes != undefined) {
-                            rawHtml += '<p class="notes">' + record.record.notes + '</p>';
-                        }
-                        return $(rawHtml);
-                    }
-                },
+                        var $link = $('<span>' + record.record.aliasOf + '<br/><a href="/tr/_design/trapp/_view/terms?key=&quot;' +  record.record.aliasOf + '&quot;">View Parent</a></span>');
+
+                        return $link;
+                    }                    
+                },  
                 action: {
                     title: 'Actions',
                     width: '5%',

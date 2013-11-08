@@ -29,7 +29,7 @@ $(function() {
                     key: true,
                     list: false
 				},
-                recordType: {
+                type: {
                     title: 'Record Type',
                     list: false
                 },
@@ -41,21 +41,25 @@ $(function() {
                     list: false
                 },
                 defaultValue: {
-                    title: 'Default Value',
+                    title: 'Suggested Default Value',
                 },
-                description: {
-                    title: 'Description / Notes',
+                definition: {
+                    title: 'Definition / Notes',
                     sorting: false,
                     edit: false,
                     create: false,
                     display: function(record) {
                         var rawHtml = '<!-- ' + JSON.stringify(record.record) + '-->\n';
-                        if (record.record.description != null && record.record.description != undefined) {
-                            rawHtml += '<p class="description">' + record.record.description + '</p>';
+                        if (record.record.definition != null && record.record.definition != undefined) {
+                            rawHtml += '<p class="definition">' + record.record.definition + '</p>';
                         }
                         if (record.record.notes != null && record.record.notes != undefined) {
                             rawHtml += '<p class="notes">' + record.record.notes + '</p>';
                         }
+                        if (record.record.uses != null && record.record.uses != undefined) {
+                            rawHtml += '<p class="notes">USES: <br/>' + record.record.uses + '</p>';
+                        }
+
                         return $(rawHtml);
                     }
                 },
@@ -64,7 +68,7 @@ $(function() {
                     edit: false,
                     create: false,
                     display: function(record) {
-                        var $link = $('<a href="/_utils/document.html?tr/' + record.record.id + '">View/Edit</a><br/> <a href="/tr/_design/trapp/_view/aliasesByParent?key=&quot;' + record.record.uniqueId + '&quot;">View Aliases</a>');
+                        var $link = $('<a href="/_utils/document.html?tr/' + record.record.id + '">View/Edit</a><br/>');
                         return $link;
                     }
                 }

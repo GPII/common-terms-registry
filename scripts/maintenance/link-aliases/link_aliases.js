@@ -69,7 +69,6 @@ function finishedInitialScan() {
 	console.info("Saving record " + key + "...");
 	var termRow = termsByTermId[key];
 	termRow.aliases = aliasesByTermId[key];
-	console.info(JSON.stringify(termRow));
 	
 	db.save(key,termRow.rev, termRow, saveTerm);
     }
@@ -81,12 +80,12 @@ function saveTerm(err,res) {
 	return;
     } 
 
-    console.log("Updated aliases...");
+    console.log("Updated terms with alias data...");
 }
 
 function scanTerm(termRow) {
     termsByTermId[termRow.id] = termRow;
-    db.view('trapp/aliasesByParent', { key: termRow.uniqueId}, function(err,res) {
+    db.view('trapp/aliases', function(err,res) {
 	    if (err) {
 		console.error("ERROR: " + err.error + ":\n" + err.reason);
 		return;
@@ -96,9 +95,9 @@ function scanTerm(termRow) {
 
 	    var aliases = [];
 	    res.forEach(function(aliasRow) { 
-		    if (aliasesByTermId[termRow.id] == undefined) aliasesByTermId[termRow.id] = [];
+		    if (aliasesByTermId[aliasRow.aliasOf] == undefined) aliasesByTermId[aliasRow.aliasOf] = [];
 
-		    aliasesByTermId[termRow.id].push(aliasRow.id);
+		    aliasesByTermId[aliasRow.aliasOf].push(aliasRow.id);
 		    aliasRowsLeft--;
 		    if (aliasRowsLeft <= 0) {
 			return;

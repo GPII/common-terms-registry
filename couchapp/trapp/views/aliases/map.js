@@ -1,16 +1,13 @@
 function(doc) {
-    if (doc && doc.recordType && doc.recordType == 'alias') {
+    if (doc && (doc.type.toLowerCase() == 'alias' || doc.type.toLowerCase == 'aliastransformation')) {
       emit(doc.localUniqueId, {
-	    "id" : doc._id,
- 		"recordType":	      doc.recordType,
-		"userPreference":     doc.userPreference,
+		"aliasOf":            doc.aliasOf,
+	    "id" :                doc._id,
 		"localUniqueId":      doc.localUniqueId,
-		"aliasTranslationOf": doc.aliasTranslationOf,
-		"defaultValue":       doc.defaultValue,
-		"description":	      doc.description,
-		"groups":             doc.group,
-		"ids" :               doc.id,
-		"notes":	      doc.notes
+		"notes":	          doc.notes,
+		"termLabel":          doc.termLabel,
+ 		"type":               doc.type,
+		"uniqueId":           doc.uniqueId
       });
   }
 };

@@ -1,13 +1,15 @@
 function(doc) {
-    if (doc && doc.recordType && doc.recordType == 'term' && (doc.status == undefined || doc.status != 'to-review')) {
+    if (doc && doc.type && doc.type.toLowerCase() == 'general') {
       emit(doc.uniqueId, {
-	    "id" : doc._id,
- 		"recordType":	doc.recordType,
-		"uniqueId":	doc.uniqueId,
-		"localUniqueId":	doc.localUniqueId,
-		"defaultValue": doc.defaultValue,
-		"description":	doc.description,
-		"notes":	doc.notes,
+	    "id" :                 doc._id,
+		"defaultValue":        doc.defaultValue,
+		"definition":	       doc.definition,
+		"localUniqueId":       doc.localUniqueId,
+		"notes":	           doc.notes,
+ 		"type":                doc.type,
+		"uniqueId":	           doc.uniqueId,
+		"uses":	               doc.uses,
+		"valueSpace":          doc.valueSpace
       });
   }
 };

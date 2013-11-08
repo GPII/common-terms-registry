@@ -22,18 +22,18 @@ function(head, req) {
             if (record >= head.total_rows) break;
             
             jTableData.Records.push({
-                "key" :                 row.key,
                 "id" :                  row.id,
-                "recordType":           row.value.recordType,
+                "key" :                 row.key,
                 "uniqueId":	            row.value.uniqueId,
                 "localUniqueId":        row.value.localUniqueId,
+                "termLabel":            row.value.termLabel,
+                "type":                 row.value.type,
+                "uses":	                row.value.uses,
                 "defaultValue":         row.value.defaultValue,
-                "description":          row.value.description,
+                "definition":           row.value.definition,
                 "notes":                row.value.notes,
-                "userPreference":       row.value.userPreference,
-                "aliasTranslationOf":   row.value.aliasTranslationOf,
-                "groups":               row.value.groups,
-                "ids" :                 row.value.ids
+                "valueSpace":           row.value.valueSpace,
+                "aliasOf":              row.value.aliasOf
             });
         }
 
