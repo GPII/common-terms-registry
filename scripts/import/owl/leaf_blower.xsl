@@ -3,15 +3,7 @@
 
 A very dirty and likely brittle script to extract common terms from the OWL files found in the Semantic Analysis Tool. 
 
-You can use this tool to generate JSON output from an OWL file using a command like:
-
-xsltproc leaf_blower.xsl FILENAME > OUTPUT.json
-
-That output can be imported into a couchdb database using a command like:
-
-curl -H "Content-Type: application/json" -d @/tmp/sat.json -u admin -X POST http://localhost:5984/tr/_bulk_docs
-
-This is only appropriate for an initial import, and not for synchronising later on.
+for more information, please review the README.md file in this directory.
 
 -->
 
