@@ -7,243 +7,340 @@ http://bit.ly/17LIFMB
 That file contains records in which the GPII/Cloud4All registry terms are the first set of columns,
 and additional namespaces appear on the same rows.
 
+Before importing, the data needs to be updated to replace the column headings with the contenst of 
+the header.txt file included in this directry.
+
  */
+
+/* jshint -W117 */
+var Q = require('q');
 
 var csvjs = require('./node_modules/csv-json');  // convenience library to handle the CSV import
 
 var argv = require('optimist')
-    .usage('Usage: node import.js --url http://couch-db-host:port/db/ --username username --password password --file /path/to/file.csv')
-    .demand(['url','username','password','file'])
+    .usage('Usage: node import.js --url http://couch-db-host:port/db/ --username username --password password --file /path/to/file.csv --commit')
+    .demand(['url', 'username', 'password', 'file'])
+    .describe('url','The URL for your couchdb instance, including database')
+    .describe('username','A user who has read and write access to your couch db instance.')
+    .describe('password',"The user's password.")
+    .describe('file','A CSV file that includes all fields defined in the header.txt file included with the distribution.')
+    .describe('commit','By default, no changes will be made.  You must pass this argument to write changes.')
     .argv;
 
 var url = require('url');
 var urlOptions = url.parse(argv.url);
 
-var http = require('http');
-if (urlOptions.protocol == 'https:') http = require('https');
+var cradle = require('cradle');
+var connection = new (cradle.Connection)(url, urlOptions.port, { auth: { username: argv.username, password: argv.password }, cache: true});
 
-http.globalAgent.maxSockets = 20;
+var dbName = urlOptions.pathname.replace(/\//g, '');
 
-var options = { 
-    hostname: urlOptions.hostname, 
-    port: urlOptions.port, 
-    path: urlOptions.path, 
-    auth: argv.username + ':' + argv.password,
-    method: 'POST', 
-    headers: { 'Content-Type': 'application/json'},
-    agent: false
-};
+var db = connection.database(dbName);
 
-var namespaces = ['android',
-                  'dTV',
-                  'easy1',
-                  'gnome',
-                  'gnomeMagnifier',
-                  'iso24751',
-                  'iso24751W',
-                  'mobileAccessCf',
-                  'nokiaS40',
-                  'nokiaS60',
-                  'nvda',
-                  'saToGo',
-                  'smartHouse',
-                  'socialNetworkingApp',
-                  'surface',
-                  'win7Narrator',
-                  'windowsMagnifier',
-                  'windowsPhoneInteractionVariable'
-                 ];
+var globals = require('./globals.json');
 
-var gpiiFields = ['defaultValue',
-                  'description',
-                  'isCertified',
-                  'localUniqueId',
-                  'notes',
-                  'status',
-                  'uniqueId',
-                  'valueSpace'
-                 ];
+var stats = { 'terms found' : 0, 'terms added' : 0, 'aliases added': 0, 'terms merged' : 0, 'aliases merged': 0, 'errors': 0};
 
-var namespaceSingleFields = ['defaultValue',
-                             'description',
-                             'userPreference',
-                             'valueSpace'
-                            ];
-
-var namespaceListFields = ['group',
-                           'id'
-                          ];
-
-
+var preview =  (argv.commit === undefined) ? true : false;
 
 console.log("Starting import from CSV..");
-csvjs.parseCsv(argv.file,{},analyzeAndContinue);
-console.log("Finished import from CSV..");
+csvjs.parseCsv(argv.file, {}, processCsvData);
 
-function analyzeAndContinue(error,json,stats) {
+function processCsvData(error, json, stats) {
+    console.info("Processing CSV JSON data...");
+    
+    // process each spreadsheet row, then display the stats
+    Q.when(importRows(error, json, stats), printStats, showError);
+}
+
+function printStats() {
+    if (preview) {
+        console.log("Running in preview mode, no actual changes have been made.  Run again with --commit to save changes.");
+    }
+    
+    console.log("\n\nStats:\n" + JSON.stringify(stats));
+}
+
+/* jshint -W098 */
+function importRows(error, json) {
+    var q = Q.defer(), rowNumber = 0;
     if (error) {
-        console.error("Error processing CSV file '" + argv.file + "':\n" + error);
-	return;
+        q.reject(new Error("Error processing CSV file '" + argv.file + "':\n" + error));
+    } else {
+        var rowPromises = Q.defer();
+        for (rowNumber in json) {
+            rowPromises.promise.then(importRow(json[rowNumber]));
+        }
+        
+        q.resolve(rowPromises);
     }
-
-    for (var recordNumber in json) {
-        setTimeout(importRow,50 * recordNumber, json[recordNumber]);
-    }
+    
+    return q.promise;
 }
 
 function importRow(entry) {
+    var deferred = Q.defer(), gpii = {};
+    
     // skip empty rows
-    if (entry == null || entry == undefined || entry.trim == {} || entry.trim == "") {
-        console.log("Skipping empty row...");
-        return;
-    }
-
-    // process the GPII record first
-
-    // TODO:  If we don't have GPII data, create the standard from another entry.
-    // For now, throw an error.
-
-    var gpii = {};
-    gpii.aliases = [];
-    gpii.recordType = 'term';
-
-    gpii.uniqueId = lowerCamelCase(entry['gpii:uniqueId']);
-    if (gpii.uniqueId == null || gpii.uniqueId == undefined) {
-        gpii.uniqueId = 'gpii:' + lowerCamelCase(entry['gpii:localUniqueId']);
-    }
-
-    if (gpii.uniqueId != null && gpii.uniqueId != undefined) {
-        gpii.termLabel = entry['gpii:localUniqueId'];
+    if (entry === null || entry === undefined || entry.toString().trim() === "") {
+        console.warn("Skipping empty row...");
+        stats.errors++;
+        //deferred.reject("Skipping empty row...");
+    } else {
+        var recordPromise = Q.defer().promise;
         
-        for (var fieldNumber in gpiiFields) {
-            var field = gpiiFields[fieldNumber];
-            var value = entry['gpii:'+field];
-            if (value != null || value != undefined) {
-            gpii[field]=value;
+        stats['terms found']++;
+        
+        // process the GPII record first
+        gpii.type = 'GENERAL';
+        
+        var uniqueIdMinusNamespace = lowerCamelCase(entry['gpii:uniqueId']);
+        if (uniqueIdMinusNamespace === null || uniqueIdMinusNamespace === undefined) {
+            uniqueIdMinusNamespace = lowerCamelCase(entry['gpii:localUniqueId']);
+        }
+
+        if (uniqueIdMinusNamespace !== null && uniqueIdMinusNamespace !== undefined) {
+            gpii.uniqueId = "gpii:" + uniqueIdMinusNamespace;
+            gpii.termLabel = entry['gpii:termLabel'];
+            
+            for (var fieldNumber in globals.gpiiFields) {
+                var field = globals.gpiiFields[fieldNumber];
+                var value = entry['gpii:'+field];
+                if (value !== null || value !== undefined) {
+                    gpii[field]=value;
+                }
             }
+        }
+        else {
+            console.log('No unique GPII ID specified in either the gpii:uniqueId or gpii:localUniqueId fields...');
+            console.log('Constructing placeholder record from record in first available namespace...');
+            
+            gpii.status = 'to-review';
+            
+            for (var namespaceNumber in globals.namespaces) {
+                var namespace = globals.namespaces[namespaceNumber];
+                var userPreference = entry[namespace+':userPreference'];
+                if (userPreference !== null && userPreference !== undefined) {
+                    gpii.uniqueId = "gpii:" + lowerCamelCase(userPreference);
+                    
+                    console.log("Setting provisional uniqueId to: " + gpii.uniqueId);
+                    
+                    var defaultValue = entry[namespace+':defaultValue'];
+                    if (defaultValue) {
+                        gpii.defaultValue = defaultValue;
+                    }
+                    
+                    var definition = entry[namespace+':definition'];
+                    if (definition){
+                        gpii.definition = definition;
+                    }
+                    
+                    break;
+                }
+            }
+        }
+        
+        if (gpii.uniqueId === null || gpii.uniqueId === undefined) {
+            var msg = "Unable to construct placeholder GPII record from another namespace.  Original record:\n" + JSON.stringify(entry) + "\nPartial record:" + JSON.stringify(gpii);
+            console.log(msg);
+            stats.errors++;
+            deferred.reject(new Error(msg));
+        }
+        else {
+            // If the record doesn't already exist, upload it now
+            recordPromise.then(recordExists(gpii));
+            
+            for (var namespaceNumber in globals.namespaces) {
+                var namespace = globals.namespaces[namespaceNumber];
+                var aliasEntry = {};
+                
+                aliasEntry.type = 'ALIAS';
+                
+                aliasEntry.aliasOf = gpii.uniqueId;
+                
+                // The userPreference field is required and used as the label for the alias.
+                aliasEntry.termLabel = entry[namespace+':userPreference'];
+                
+                if (aliasEntry.termLabel === null | aliasEntry.termLabel === undefined) {
+                    //console.info("No alias found for namespace " + namespace + " for row:\n" + JSON.stringify(entry)); 
+                    continue;
+                }
+                
+                aliasEntry.uniqueId = namespace + ":" + lowerCamelCase(aliasEntry.termLabel);
+                
+                var extraInformation = "";
+                
+                for (var fieldNumber in globals.namespaceExtraFields) {
+                    var field = globals.namespaceExtraFields[fieldNumber];
+                    var value = entry[namespace+':'+field];
+                    if (value !== null && value !== undefined) {
+                        extraInformation += field + ":" + value + "\n";
+                    }
+                }
+                
+                if (extraInformation.length > 0) {
+                    if (aliasEntry.notes === undefined) { aliasEntry.notes = ""; }
+                    aliasEntry.notes += "The original alias record contained the following additional information:\n\n" + extraInformation;
+                }
+                
+                // If the record doesn't exist, upload it
+                recordPromise.then(recordExists(aliasEntry));
+            }
+            
+            deferred.resolve(recordPromise);
+        }
+    }
+    
+    return deferred.promise;
+}
+
+/* jshint -W098 */
+function recordExists(entry) {
+    var deferred = Q.defer();
+    if (!entry || entry === undefined || entry.uniqueId === undefined) {
+        console.log("Skipping invalid entry:" + JSON.stringify(entry));
+    }
+    else {
+        console.log("Checking to see if entry '" + entry.uniqueId + "' exists...");
+
+        db.view('trapp/entries', { key: entry.uniqueId }, function (err, doc) {
+            if (err) {
+                console.error("Error retrieving record using cradle: " + JSON.stringify(err));
+                stats.errors++;
+            }
+            else {
+                if (doc.length === 0) {
+                    uploadEntry(entry);
+                }
+                if (doc.length === 1) {
+                    reconcileRecord(doc[0], entry);
+                }
+                else {
+                    console.error("More than one record exists for key '" + entry.uniqueId + "':\n" + JSON.stringify(doc));
+                    stats.errors++;
+                }
+            }
+        });
+
+    }
+    
+    return deferred.promise;
+}
+
+function reconcileRecord(originalRecord, importRecord) {
+    console.log("\nReconciling record '" + importRecord.uniqueId + "' with existing data...");
+    
+    var q = Q(), warnings = [];
+
+    // we know the uniqueID is the same, compare the rest of the fields and make a note of any differences...
+    for (var fieldNumber in globals.gpiiFields) {
+        var field = globals.gpiiFields[fieldNumber];
+        if (field === "notes") continue;
+        
+        var originalValue = originalRecord.value[field];
+        var importedValue = importRecord[field];
+        
+        if (originalValue != importedValue) {
+            warnings.push(field + ": " + importedValue);
+        }
+    }    
+
+    if (warnings.length > 0) {
+        var updatedRecord = JSON.parse(JSON.stringify(originalRecord));
+        if (updatedRecord.notes === undefined) { updatedRecord.notes = ""; }
+        updatedRecord.notes += "\n\nSome data from the original spreadsheet did not match the record imported from the Semantic Analysis Tool.  Here are the fields with alternate values:\n\n";
+        for (var warningNumber in warnings) {
+            var warning = warnings[warningNumber];
+            updatedRecord.notes += warning + "\n";
+        }
+        
+        if (preview) {
+            console.log("I should have updated the following record: " + JSON.stringify(updatedRecord));
+        }
+        else {
+            db.save(updatedRecord._id, updatedRecord._rev, updatedRecord, function (err, res) { 
+                if (err) {
+                    console.error("Error updating existing record:" + err.message);
+                    stats.errors++;
+                }
+    
+                console.log("save response: " + JSON.stringify(res));
+                
+                if (res.type == 'GENERAL') {
+                    stats['terms merged']++;
+                }   
+                else if (res.type == 'ALIAS') {
+                    stats['aliases merged']++;
+                }
+    
+            });
         }
     }
     else {
-        console.log('No unique GPII ID specified in either the gpii:uniqueId or gpii:localUniqueId fields...');
-        console.log('Constructing placeholder record from record in first available namespace...');
-        
-        gpii.status = 'to-review';
-    
-        for (var namespaceNumber in namespaces) {
-            var namespace = namespaces[namespaceNumber];
-            var userPreference = entry[namespace+':userPreference'];
-            if (userPreference != null && userPreference != undefined) {
-                gpii.uniqueId = "gpii:" + lowerCamelCase(userPreference);
-                
-                console.log("Setting provisional uniqueId to: " + gpii.uniqueId);
-                console.log("Setting provisional localUniqueId to: " + gpii.localUniqueId);
-        
-                var defaultValue = entry[namespace+':defaultValue'];
-                if (defaultValue) gpii.defaultValue = defaultValue;
-                var description = entry[namespace+':description'];
-                if (description) gpii.description = description;
-                
-                break;
-            }
-        }
-    }
-
-    if (gpii.uniqueId == null || gpii.uniqueId == undefined) {
-        console.error("Unable to construct placeholder GPII record from another namespace.  Skipping record:\n" + JSON.stringify(entry));
-        return;
-    }
-
-    for (var namespaceNumber in namespaces) {
-        var namespace = namespaces[namespaceNumber];
-        var aliasEntry = {};
-        
-        aliasEntry.recordType = 'alias';
-
-        aliasEntry.aliasTranslationOf = gpii.uniqueId;
-    
-        // The userPreference field is required and used as the unique identifier for the alias.
-        aliasEntry.termLabel = entry[namespace+':userPreference'];
-    
-
-        if (aliasEntry.termLabel == null | aliasEntry.termLabel == undefined) {
-            console.info("No alias found for namespace " + namespace + " for row:\n" + JSON.stringify(entry)); 
-            continue;
-	}
-        
-        aliasEntry.uniqueId = namespace + ":" + lowerCamelCase(aliasEntry.userPreference);
-        aliasEntry.localId = aliasEntry.uniqueId;
-                
-        for (var fieldNumber in namespaceSingleFields) {
-            var field = namespaceSingleFields[fieldNumber];
-            var value = entry[namespace+':'+field];
-            if (value != null && value != undefined) {
-                aliasEntry[field] = value;
-            }
-        }
-    
-        var headingAndTitleRegexp = /([0-9\.]+( [a-zA-Z]+)+)/g;
-        var headingOnlyRegexp = /([0-9\.]+)/g;
-    
-        for (var fieldNumber in namespaceListFields) {
-            var field = namespaceListFields[fieldNumber];
-            var value = entry[namespace+':'+field];
-            if (value == null || value == undefined) continue;
-    
-            // Auto-split lists of terms like '1.2.3.4 honey', with or without title text
-            var headingAndTitleMatches = value.match(headingAndTitleRegexp);
-            var headingMatches = value.match(headingOnlyRegexp);
-            if (headingAndTitleMatches) {
-                aliasEntry[field] = headingAndTitleMatches;
-            }
-            else if (headingMatches) {
-                aliasEntry[field] = headingMatches;
-            }
-            else {
-                aliasEntry[field] = [ value ];
-            }
-        }
-    
-        uploadEntry(aliasEntry);
+        console.log("No differences found, leaving existing record alone...");
     }
     
-    // Now that we have all aliases, we can upload the main record
-    uploadEntry(gpii);
+    return q.promise;
 }
+
 
 function uploadEntry(json) {
-    var request = http.request(options,confirmResult);
-    request.on('error',function(e) { console.log("Error uploading record:" + e.message);});
-    request.write(JSON.stringify(json) + '\n');
-    request.end();
-}
-
-function confirmResult(res) {
-    switch(res.statusCode) {
-    case 200:
-    case 201:
-        console.log('Record uploaded successfully...');
-
-        break;
-    default: 
-        console.error('Error code ' + res.statusCode + ' returned, record was not added...');
+    var deferred = Q.defer();
+    
+    if (preview) {
+        // Skip processing, we are in preview mode
+        console.log("I should have uploaded: " + JSON.stringify(json));
+        if (json.type == 'GENERAL') {
+            stats['terms added']++;
+        }
+        if (json.type == 'ALIAS') {
+            stats['aliases added']++;
+        }
+        
+        deferred.resolve("Finished processing");
     }
+    else {
+        console.log("Uploading record '" + json.uniqueId + "'...");
+        db.save(json, function (err, res) { 
+            if (err) {
+                console.error(err.message);
+                stats.errors++;
+            }
+
+            console.log("save response: " + JSON.stringify(res));
+            
+            if (res.type == 'GENERAL') {
+                stats['terms added']++;
+            }   
+            else if (res.type == 'ALIAS') {
+                stats['aliases added']++;
+            }
+
+        });
+    }
+    
+    return deferred.promise;
 }
 
 function lowerCamelCase(originalString) {
-    if (originalString == null || originalString == undefined) return originalString;
-
+    if (originalString === null || originalString === undefined) { return originalString; }
+    
     var newString = originalString;
 
     var leadingLetterRegex = /^[ \t]*([A-Za-z])/;
     if (newString.match(leadingLetterRegex)) {
-	newString = newString.replace(leadingLetterRegex, function(v) { return v.trim().toLowerCase() });
+        newString = newString.replace(leadingLetterRegex, function(v) { return v.trim().toLowerCase(); });
     }
-
-    var innerSpaceRegex = / +([a-z])/g;
-
+    
+    var innerSpaceRegex = /[ _]+([a-z])/g;
+    
     if (newString.match(innerSpaceRegex)) {
-	newString = newString.replace(innerSpaceRegex, function(v) { return v.trim().toUpperCase()});
+        newString = newString.replace(innerSpaceRegex, function(v) { return v.trim().toUpperCase();});
     }
-
+    
     return newString;
+}
+
+function showError(err) {
+    console.err(err);
 }
