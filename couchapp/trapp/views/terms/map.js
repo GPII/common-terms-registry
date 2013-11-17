@@ -6,6 +6,7 @@ function(doc) {
 		"definition":	       doc.definition,
 		"localUniqueId":       doc.localUniqueId,
 		"notes":	           doc.notes,
+		"termLabel":           doc.termLabel,
  		"type":                doc.type,
 		"uniqueId":	           doc.uniqueId,
 		"uses":	               doc.uses,
