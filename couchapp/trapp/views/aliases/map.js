@@ -1,6 +1,6 @@
 function(doc) {
     if (doc && (doc.type.toLowerCase() == 'alias' || doc.type.toLowerCase == 'aliastransformation')) {
-      emit(doc.localUniqueId, {
+      emit(doc.uniqueId, {
 		"aliasOf":            doc.aliasOf,
 	    "id" :                doc._id,
 		"localUniqueId":      doc.localUniqueId,
