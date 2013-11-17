@@ -5,104 +5,119 @@
 
 */
 
+/* jslint -W117 */
 var argv = require('optimist')
-    .usage('Usage: node link_aliases.js --url http://couch-db-host:port/db/ --username username --password password')
-    .demand(['url','username','password'])
+    .usage('Usage: node link_aliases.js --url http://couch-db-host:port/db/ --username username --password password --commit')
+    .demand(['url', 'username', 'password'])
+    .describe('url','The URL for your couchdb instance, including database')
+    .describe('username','A user who has read and write access to your couch db instance.')
+    .describe('password',"The user's password.")
+    .describe('commit','By default, no changes will be made.  You must pass this argument to write changes.')
     .argv;
 
 var url = require('url');
 var urlOptions = url.parse(argv.url);
 
-var http = require('http');
-if (urlOptions.protocol == 'https:') http = require('https');
-
-http.globalAgent.maxSockets = 20;
-
-var url = require('url');
-var urlOptions = url.parse(argv.url);
+var Q = require('q');
 
 var cradle = require('cradle');
-var connection = new(cradle.Connection)(url, urlOptions.port, { auth: { username: argv.username, password: argv.password }, cache: true});
+var connection = new (cradle.Connection)(url, urlOptions.port, { auth: { username: argv.username, password: argv.password }, cache: true});
 
-var dbName = urlOptions.pathname.replace(/\//g,'');
+var dbName = urlOptions.pathname.replace(/\//g, '');
 
 var db = connection.database(dbName);
 
+var preview =  (argv.commit === undefined) ? true : false;
+
 var aliasesByTermId = {};
-var termsByTermId = {};
 
-db.view('trapp/terms', scanTerms);
 
-var termRowsLeft = 0;
-var aliasRowsLeft = 0;
+scanAliases().then(processAliasSearchResults).then(finishedInitialScan).done(function() { console.log("Done:" + JSON.stringify(aliasesByTermId));});
 
-function scanTerms(err,res) {
-    if (err) {
-	console.error("ERROR: " + err.error + ":\n" + err.reason);
-	return;
-    }
+function scanAliases() {
+    console.log("Loading aliases from database...");
+    var deferred = Q.defer();
 
-    termRowsLeft = res.length;
-    res.forEach(function(row) { scanTerm(row); if (termRowsLeft-- <= 0) { return; } else console.log(termRowsLeft + " terms left...");});
-
-    setTimeout(waitToFinish,1000);
+    db.view('trapp/aliases', function(err,doc) { 
+        if (err) {
+            deferred.reject(new Error(err));
+        } else {
+            deferred.resolve(doc);
+        }        
+    });
+    
+    return deferred.promise;
 }
 
-function waitToFinish() {
-    if (termRowsLeft > 0 || aliasRowsLeft > 0) {
-	console.log("Waiting for all callbacks to finish (" + termRowsLeft + ":" + aliasRowsLeft + "), press Ctrl+C to exit...");
-	setTimeout(waitToFinish,1000);
-    }
-    else {
-	finishedInitialScan();
-    }
-}
-
-function finishedInitialScan() { 
-    console.log("Finished initial scan and building aliases..."); 
-
-    //console.log(JSON.stringify(aliasesByTermId));
-
+function finishedInitialScan() {
+    console.log("Finished initial scan and building aliases...");
+    
     console.log("Found " + Object.keys(aliasesByTermId).length + " terms with aliases...");
 
     for (var key in aliasesByTermId) {
-	console.info("Saving record " + key + "...");
-	var termRow = termsByTermId[key];
-	termRow.aliases = aliasesByTermId[key];
-	
-	db.save(key,termRow.rev, termRow, saveTerm);
+        console.info("Searching for record '" + key + "'...");
+        
+        // get the record from the database
+        db.view('trapp/entries', { key: key }, updateTerm);
+    }
+}
+function updateTerm(err, doc) {
+    console.log("Updating term record...");
+    if (err) {
+        console.error("Error retrieving record using cradle: " + JSON.stringify(err));
+        stats.errors++;
+    }
+    else {
+        if (doc.length === 0) {
+            console.error("Can't add aliases, no record was found...");
+        }
+        if (doc.length === 1) {
+            // update it with the list of aliases
+            var termRow = doc[0];
+            termRow.aliases = aliasesByTermId[termRow.key];
+            
+            if (preview) {
+                console.log("I should have saved the following record: " + JSON.stringify(termRow));
+            }
+            else {
+                db.save(termRow._id, termRow._rev, termRow, saveTerm);
+            }
+        }
+        else {
+            console.error("More than one record exists for key '" + doc[0].key + "':\n" + JSON.stringify(doc));
+        }
     }
 }
 
-function saveTerm(err,res) {
+function saveTerm(err, res) {
     if (err) {
-	console.error(error.error + " " + error.reason);
-	return;
+        console.error(error.error + " " + error.reason);
+        return;
     } 
 
-    console.log("Updated terms with alias data...");
+    console.log("Saved alias data to term...");
 }
 
-function scanTerm(termRow) {
-    termsByTermId[termRow.id] = termRow;
-    db.view('trapp/aliases', function(err,res) {
-	    if (err) {
-		console.error("ERROR: " + err.error + ":\n" + err.reason);
-		return;
-	    }
+function processAliasSearchResults(doc,err) {
+    var deferred = Q.defer();
 
-	    aliasRowsLeft += res.length;
+    console.log("Scanning aliases..."); 
+    if (err) {
+        console.error("ERROR: " + err.error + ":\n" + err.reason);
+        return;
+    }
 
-	    var aliases = [];
-	    res.forEach(function(aliasRow) { 
-		    if (aliasesByTermId[aliasRow.aliasOf] == undefined) aliasesByTermId[aliasRow.aliasOf] = [];
+    for (var rowNumber in doc) { 
+        var row = doc[rowNumber];
+        if (aliasesByTermId[row.value.aliasOf] === undefined) { aliasesByTermId[row.value.aliasOf] = []; }
+        aliasesByTermId[row.value.aliasOf].push(row.id);
+    }
 
-		    aliasesByTermId[aliasRow.aliasOf].push(aliasRow.id);
-		    aliasRowsLeft--;
-		    if (aliasRowsLeft <= 0) {
-			return;
-		    }
-		});
-	});
+    deferred.resolve(aliasesByTermId);
+    
+    return deferred.promise;
+}
 
+function showError(err) {
+    console.error(err);
 }
