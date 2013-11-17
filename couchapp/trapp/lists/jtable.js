@@ -33,7 +33,8 @@ function(head, req) {
                 "definition":           row.value.definition,
                 "notes":                row.value.notes,
                 "valueSpace":           row.value.valueSpace,
-                "aliasOf":              row.value.aliasOf
+                "aliasOf":              row.value.aliasOf,
+                "aliases":              row.value.aliases
             });
         }
 
