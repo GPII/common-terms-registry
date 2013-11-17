@@ -1,6 +1,8 @@
 function(doc) {
     if (doc) {
       emit(doc.uniqueId, {
+	    "_id" :                doc._id,
+	    "_rev" :               doc._rev,
 	    "id" :                 doc._id,
         "aliasOf":             doc.aliasOf,
 		"defaultValue":        doc.defaultValue,
