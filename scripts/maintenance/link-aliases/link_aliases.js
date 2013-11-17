@@ -2,6 +2,8 @@
 
   This script goes through the list of terms and associates them with their aliases to improve 
   performance in lookups.
+  
+  You must have imported the required data and set up all views before this script will work correctly.
 
 */
 
@@ -74,7 +76,7 @@ function updateTerm(err, doc) {
         if (doc.length === 1) {
             // update it with the list of aliases
             var termRow = doc[0];
-            termRow.aliases = aliasesByTermId[termRow.key];
+            termRow.value.aliases = aliasesByTermId[termRow.key];
             
             if (preview) {
                 console.log("I should have saved the following record: " + JSON.stringify(termRow));
@@ -94,8 +96,8 @@ function saveTerm(err, res) {
         console.error(error.error + " " + error.reason);
         return;
     } 
-
-    console.log("Saved alias data to term...");
+    
+    console.log("Saved alias data to term:" + JSON.stringify(res));
 }
 
 function processAliasSearchResults(doc,err) {
