@@ -229,6 +229,12 @@ function recordExists(entry) {
 
 function reconcileRecord(originalRecord, importRecord) {
     console.log("\nReconciling record '" + importRecord.uniqueId + "' with existing data...");
+
+//    console.log("Reconciling records does not currently work, skipping...");
+//    return;
+
+    // TODO figure out why sometimes the original record has no key and is missing half its fields.
+    
     
     var q = Q(), warnings = [];
 
