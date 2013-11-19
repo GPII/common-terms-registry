@@ -17,11 +17,22 @@ h1 {
   float:right;
 }
 
+.valueSpace {
+    
+}
+
+.defaultValue {
+    font-style: italic;
+}
+
 #profile {
-  border:4px solid #edd;
+  border:4px solid #dfd;
   background:#fee;
   padding:8px;
   margin-bottom:8px;
+  float:right;
+  clear:right;
+  width:15%;
 }
 
 #content {
