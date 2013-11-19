@@ -37,7 +37,7 @@ var dbName = urlOptions.pathname.replace(/\//g, '');
 
 var db = connection.database(dbName);
 
-var globals = require('./globals.json');
+var globals = require('../../includes/globals.json');
 
 var stats = { 'terms found' : 0, 'terms added' : 0, 'aliases added': 0, 'terms merged' : 0, 'aliases merged': 0, 'errors': 0};
 
