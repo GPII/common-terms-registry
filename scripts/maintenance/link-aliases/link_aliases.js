@@ -22,6 +22,8 @@ var urlOptions = url.parse(argv.url);
 
 var Q = require('q');
 
+var globals = require('../../includes/globals.json');
+
 var cradle = require('cradle');
 var connection = new (cradle.Connection)(url, urlOptions.port, { auth: { username: argv.username, password: argv.password }, cache: true});
 
@@ -75,14 +77,23 @@ function updateTerm(err, doc) {
         }
         if (doc.length === 1) {
             // update it with the list of aliases
+            // construct a new record
             var termRow = doc[0];
-            termRow.value.aliases = aliasesByTermId[termRow.key];
+            
+            var updatedRow = {};
+            updatedRow.key = termRow.key;
+            
+            for (var field in termRow.value) {
+                updatedRow[field]=termRow.value[field];
+            }
+            
+            updatedRow.aliases = aliasesByTermId[termRow.key];
             
             if (preview) {
-                console.log("I should have saved the following record: " + JSON.stringify(termRow));
+                console.log("I should have saved the following record: " + JSON.stringify(updatedRow));
             }
             else {
-                db.save(termRow._id, termRow._rev, termRow, saveTerm);
+                db.save(updatedRow._id, updatedRow._rev, updatedRow, saveTerm);
             }
         }
         else {
@@ -112,7 +123,7 @@ function processAliasSearchResults(doc,err) {
     for (var rowNumber in doc) { 
         var row = doc[rowNumber];
         if (aliasesByTermId[row.value.aliasOf] === undefined) { aliasesByTermId[row.value.aliasOf] = []; }
-        aliasesByTermId[row.value.aliasOf].push(row.id);
+        aliasesByTermId[row.value.aliasOf].push(row);
     }
 
     deferred.resolve(aliasesByTermId);
