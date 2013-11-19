@@ -115,8 +115,6 @@ function importRow(entry) {
             console.log('No unique GPII ID specified in either the gpii:uniqueId or gpii:localUniqueId fields...');
             console.log('Constructing placeholder record from record in first available namespace...');
             
-            gpii.status = 'to-review';
-            
             for (var namespaceNumber in globals.namespaces) {
                 var namespace = globals.namespaces[namespaceNumber];
                 var userPreference = entry[namespace+':userPreference'];
@@ -210,9 +208,10 @@ function recordExists(entry) {
             }
             else {
                 if (doc.length === 0) {
-                    uploadEntry(entry);
+                    // TODO:  This is currently creating bogus duplicate records
+//                    uploadEntry(entry);
                 }
-                if (doc.length === 1) {
+                else if (doc.length === 1) {
                     reconcileRecord(doc[0], entry);
                 }
                 else {
@@ -230,13 +229,9 @@ function recordExists(entry) {
 function reconcileRecord(originalRecord, importRecord) {
     console.log("\nReconciling record '" + importRecord.uniqueId + "' with existing data...");
 
-//    console.log("Reconciling records does not currently work, skipping...");
-//    return;
-
-    // TODO figure out why sometimes the original record has no key and is missing half its fields.
-    
-    
     var q = Q(), warnings = [];
+
+    var updatedRecord = JSON.parse(JSON.stringify(originalRecord));
 
     // we know the uniqueID is the same, compare the rest of the fields and make a note of any differences...
     for (var fieldNumber in globals.gpiiFields) {
@@ -247,14 +242,18 @@ function reconcileRecord(originalRecord, importRecord) {
         var importedValue = importRecord[field];
         
         if (originalValue != importedValue) {
-            warnings.push(field + ": " + importedValue);
+            if (originalValue === null || originalValue === undefined) {
+                updatedRecord[field] = importRecord[field];
+                warnings.push("Recovered value for field '" + field + "' from spreadsheet.");
+            }
+            else {
+                warnings.push("Found conflicting data for field '" + field + "' in spreadsheet: " + importedValue);
+            }
         }
     }    
 
     if (warnings.length > 0) {
-        var updatedRecord = JSON.parse(JSON.stringify(originalRecord));
         if (updatedRecord.notes === undefined) { updatedRecord.notes = ""; }
-        updatedRecord.notes += "\n\nSome data from the original spreadsheet did not match the record imported from the Semantic Analysis Tool.  Here are the fields with alternate values:\n\n";
         for (var warningNumber in warnings) {
             var warning = warnings[warningNumber];
             updatedRecord.notes += warning + "\n";
