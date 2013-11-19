@@ -63,35 +63,35 @@ $(function() {
                         return $(rawHtml);
                     }
                 },
-//                aliases: {
-//                    title: 'Aliases',
-//                    sorting: false,
-//                    edit: false,
-//                    create: false,
-//                    display: function(record) {
-//                        var html = "<pre>" + JSON.stringify(record) + "</pre>";
-//                        
-//                        if (record.record.aliases !== undefined && record.record.aliases.length >= 0) {
-//                            html += "<ul>\n";
-//                            
-//                            for (var rowNumber in record.record.aliases) {
-//                                html += "<li>" + record.record.aliases[rowNumber] + "</li>\n";
-//                            }
-//                            
-//                            html += "</ul>\n";
-//                        }
-//                        
-//                        // 
-//                        
-//                        return $(html);
-//                    }
-//                },
+                aliases: {
+                    title: 'Aliases',
+                    sorting: false,
+                    edit: false,
+                    create: false,
+                    display: function(record) {
+                        var html = "";
+                        
+                        if (record.record.aliases !== undefined && record.record.aliases.length >= 0) {
+                            html += "<ul>\n";
+                            
+                            for (var rowNumber in record.record.aliases) {
+                                html += '<li><a href="/_utils/document.html?tr/' + record.record.aliases[rowNumber].value._id + '">'    + record.record.aliases[rowNumber].value.uniqueId + "</a></li>\n";
+                            }
+                            
+                            html += "</ul>\n";
+                        }
+                        
+                        // 
+                        
+                        return $(html);
+                    }
+                },
                 action: {
                     title: 'Actions',
                     edit: false,
                     create: false,
                     display: function(record) {
-                        var $link = $('<a href="/_utils/document.html?tr/' + record.record.id + '">View/Edit</a><br/>');
+                        var $link = $('<a href="/_utils/document.html?tr/' + record.record._id + '">View/Edit</a><br/>');
                         return $link;
                     }
                 }

@@ -51,7 +51,7 @@ $(function() {
                     edit: false,
                     create: false,
                     display: function(record) {
-                        var $link = $('<span>' + record.record.aliasOf + '<br/><a href="/tr/_design/trapp/_view/terms?key=&quot;' +  record.record.aliasOf + '&quot;">View Parent</a></span>');
+                        var $link = $('<a href="/tr/_design/trapp/_view/terms?key=&quot;' +  record.record.aliasOf + '&quot;">record.record.aliasOf</a>');
 
                         return $link;
                     }                    
