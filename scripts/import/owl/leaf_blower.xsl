@@ -48,19 +48,19 @@ for more information, please review the README.md file in this directory.
 
     <xsl:text>      &quot;type&quot;: &quot;GENERAL&quot;,&#10;</xsl:text>
 
-    <xsl:if test="string-length(RegistryTerm_ValueSpace) &gt; 0">
+    <xsl:if test="string-length(RegistryTerm_hasValueSpace) &gt; 0">
       <xsl:text>      &quot;valueSpace&quot;: &quot;</xsl:text>
-      <xsl:value-of select="RegistryTerm_ValueSpace"/>
-      <xsl:text>&quot;&#10;</xsl:text>
-    </xsl:if>
-
-    <xsl:if test="string-length(RegistryTerm_ValueSpace) &gt; 0">
-      <xsl:text>      &quot;labelText&quot;: &quot;</xsl:text>
-      <xsl:value-of select="RegistryTerm_hasName"/>
+      <xsl:call-template name="escape-text"><xsl:with-param name="value" select="RegistryTerm_hasValueSpace"/></xsl:call-template>
       <xsl:text>&quot;,&#10;</xsl:text>
     </xsl:if>
 
-    <xsl:if test="string-length(RegistryTerm_ValueSpace) &gt; 0">
+    <xsl:if test="string-length(RegistryTerm_hasName) &gt; 0">
+      <xsl:text>      &quot;labelText&quot;: &quot;</xsl:text>
+      <xsl:call-template name="escape-text"><xsl:with-param name="value" select="RegistryTerm_hasName"/></xsl:call-template>
+      <xsl:text>&quot;,&#10;</xsl:text>
+    </xsl:if>
+
+    <xsl:if test="string-length(RegistryTerm_hasType) &gt; 0">
       <xsl:text>      &quot;hasType&quot;: &quot;</xsl:text>
       <xsl:call-template name="escape-text"><xsl:with-param name="value" select="RegistryTerm_hasType"/></xsl:call-template>
       <xsl:text>&quot;,&#10;</xsl:text>
