@@ -1,7 +1,7 @@
 $(function() {   
 	$("#account").couchLogin({
 		loggedIn : function(r) {
-		    $("#profile").couchProfile(r, {});
+//		    $("#profile").couchProfile(r, {});
             wireUpTable();
         },
         loggedOut : function() {
@@ -10,7 +10,6 @@ $(function() {
 		}
     });
         
-    // TODO:  Convert to common method for all term-based views....
     function wireUpTable() {
 	    $("#content").jtable({
 		    title: 'Terms Registry',
@@ -41,7 +40,19 @@ $(function() {
                     list: false
                 },
                 defaultValue: {
-                    title: 'Suggested Default Value',
+                    title: 'Values',
+                    display: function(record) {
+                        var rawHtml = "";
+                        if (record.record.valueSpace !== null && record.record.valueSpace !== undefined) {
+                            rawHtml += '<p class="valueSpace">' + record.record.valueSpace + '</p>';
+                        }
+
+                        if (record.record.defaultValue !== null && record.record.defaultValue !== undefined) {
+                            rawHtml += '<p class="defaultValue">Suggested Default: ' + record.record.defaultValue + '</p>';
+                        }
+                        return $(rawHtml);
+                    }
+
                 },
                 definition: {
                     title: 'Definition / Notes',
@@ -49,7 +60,7 @@ $(function() {
                     edit: false,
                     create: false,
                     display: function(record) {
-                        var rawHtml = '<!-- ' + JSON.stringify(record.record) + '-->\n';
+                        var rawHtml = '';
                         if (record.record.definition != null && record.record.definition != undefined) {
                             rawHtml += '<p class="definition">' + record.record.definition + '</p>';
                         }
