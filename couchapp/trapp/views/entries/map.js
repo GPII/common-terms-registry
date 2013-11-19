@@ -3,7 +3,7 @@ function(doc) {
       emit(doc.uniqueId, {
 	    "_id" :                doc._id,
 	    "_rev" :               doc._rev,
-	    "id" :                 doc._id,
+        "aliases" :            doc.aliases,
         "aliasOf":             doc.aliasOf,
 		"defaultValue":        doc.defaultValue,
 		"definition":	       doc.definition,

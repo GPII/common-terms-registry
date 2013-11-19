@@ -23,6 +23,8 @@ function(head, req) {
             
             jTableData.Records.push({
                 "id" :                  row.id,
+                "_id" :                 row.value._id,
+                "_rev" :                row.value._rev,
                 "key" :                 row.key,
                 "uniqueId":	            row.value.uniqueId,
                 "localUniqueId":        row.value.localUniqueId,

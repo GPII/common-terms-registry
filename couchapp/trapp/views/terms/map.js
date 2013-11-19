@@ -1,7 +1,8 @@
 function(doc) {
     if (doc && doc.type && doc.type.toLowerCase() == 'general') {
       emit(doc.uniqueId, {
-	    "id" :                 doc._id,
+	    "_id" :                doc._id,
+	    "_rev" :               doc._rev,
         "aliases":             doc.aliases,
 		"defaultValue":        doc.defaultValue,
 		"definition":	       doc.definition,
