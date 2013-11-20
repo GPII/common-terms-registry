@@ -1,4 +1,13 @@
 $(function() {   
+    var valueTemplate = '{{#valueSpace}}<p class="valueSpace">{{valueSpace}}</p>{{/valueSpace}}{{#defaultValue}}<p class="defaultValue">Suggested Default: {{defaultValue}}</p>{{/defaultValue}}';
+    
+    var aliasesTemplate = '<ul>{{#aliases}}<li><a href="/_utils/document.html?tr/{{_id}}">{{uniqueId}}</a></li>{{/aliases}}</ul>';
+
+    var definitionTemplate = '{{#definition}}<p class="definition">{{definition}}</p>{{/definition}}{{#notes}}<p class="notes">{{notes}}</p>{{/notes}}{{#uses}}<p class="notes">USES: <br/>{{uses}}</p>{{/uses}}';
+
+    var actionTemplate = '<a href="/_utils/document.html?tr/{{_id}}">View/Edit</a><br/>';
+        
+    /* jslint -W117 */
 	$("#account").couchLogin({
 		loggedIn : function(r) {
 //		    $("#profile").couchProfile(r, {});
@@ -42,15 +51,7 @@ $(function() {
                 defaultValue: {
                     title: 'Values',
                     display: function(record) {
-                        var rawHtml = "";
-                        if (record.record.valueSpace !== null && record.record.valueSpace !== undefined) {
-                            rawHtml += '<p class="valueSpace">' + record.record.valueSpace + '</p>';
-                        }
-
-                        if (record.record.defaultValue !== null && record.record.defaultValue !== undefined) {
-                            rawHtml += '<p class="defaultValue">Suggested Default: ' + record.record.defaultValue + '</p>';
-                        }
-                        return $(rawHtml);
+                        return $.mustache(valueTemplate,record.record);
                     }
 
                 },
@@ -60,18 +61,7 @@ $(function() {
                     edit: false,
                     create: false,
                     display: function(record) {
-                        var rawHtml = '';
-                        if (record.record.definition != null && record.record.definition != undefined) {
-                            rawHtml += '<p class="definition">' + record.record.definition + '</p>';
-                        }
-                        if (record.record.notes != null && record.record.notes != undefined) {
-                            rawHtml += '<p class="notes">' + record.record.notes + '</p>';
-                        }
-                        if (record.record.uses != null && record.record.uses != undefined) {
-                            rawHtml += '<p class="notes">USES: <br/>' + record.record.uses + '</p>';
-                        }
-
-                        return $(rawHtml);
+                        return $.mustache(definitionTemplate,record.record);
                     }
                 },
                 aliases: {
@@ -80,21 +70,7 @@ $(function() {
                     edit: false,
                     create: false,
                     display: function(record) {
-                        var html = "";
-                        
-                        if (record.record.aliases !== undefined && record.record.aliases.length >= 0) {
-                            html += "<ul>\n";
-                            
-                            for (var rowNumber in record.record.aliases) {
-                                html += '<li><a href="/_utils/document.html?tr/' + record.record.aliases[rowNumber].value._id + '">'    + record.record.aliases[rowNumber].value.uniqueId + "</a></li>\n";
-                            }
-                            
-                            html += "</ul>\n";
-                        }
-                        
-                        // 
-                        
-                        return $(html);
+                        return $.mustache(aliasesTemplate,record.record);
                     }
                 },
                 action: {
@@ -102,8 +78,7 @@ $(function() {
                     edit: false,
                     create: false,
                     display: function(record) {
-                        var $link = $('<a href="/_utils/document.html?tr/' + record.record._id + '">View/Edit</a><br/>');
-                        return $link;
+                        return $.mustache(actionTemplate,record.record);
                     }
                 }
 		    },
