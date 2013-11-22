@@ -35,19 +35,12 @@ for more information, please review the README.md file in this directory.
 
     <xsl:variable name="dequalifiedName" select="substring-after(@rdf:ID,'Reg_')"/>
     <xsl:text>    {&#10;</xsl:text>
-    <xsl:text>      &quot;satId&quot;: &quot;</xsl:text>
-    <xsl:value-of select="@rdf:ID"/>
-    <xsl:text>&quot;,&#10;</xsl:text>
-    <xsl:text>      &quot;source&quot;: &quot;gpii&quot;,&#10;</xsl:text>
+
+    <xsl:text>      &quot;type&quot;: &quot;GENERAL&quot;,&#10;</xsl:text>
+
     <xsl:text>      &quot;uniqueId&quot;: &quot;</xsl:text>
     <xsl:value-of select="concat(translate(substring($dequalifiedName,1,1),$upper,$lower),'',substring($dequalifiedName,2))"/>
     <xsl:text>&quot;,&#10;</xsl:text>
-
-    <xsl:text>      &quot;hasId&quot;: &quot;</xsl:text>
-    <xsl:value-of select="RegistryTerm_hasID"/>
-    <xsl:text>&quot;,&#10;</xsl:text>
-
-    <xsl:text>      &quot;type&quot;: &quot;GENERAL&quot;,&#10;</xsl:text>
 
     <xsl:if test="string-length(RegistryTerm_hasValueSpace) &gt; 0">
       <xsl:text>      &quot;valueSpace&quot;: &quot;</xsl:text>
@@ -56,19 +49,31 @@ for more information, please review the README.md file in this directory.
     </xsl:if>
 
     <xsl:if test="string-length(RegistryTerm_hasName) &gt; 0">
-      <xsl:text>      &quot;labelText&quot;: &quot;</xsl:text>
+      <xsl:text>      &quot;termLabel&quot;: &quot;</xsl:text>
       <xsl:call-template name="escape-text"><xsl:with-param name="value" select="RegistryTerm_hasName"/></xsl:call-template>
       <xsl:text>&quot;,&#10;</xsl:text>
     </xsl:if>
 
+    <xsl:text>      &quot;definition&quot;: &quot;</xsl:text>
+    <xsl:call-template name="escape-text"><xsl:with-param name="value" select="RegistryTerm_hasDescription"/></xsl:call-template>
+    <xsl:text>&quot;,&#10;</xsl:text>
+
+    <xsl:text>      &quot;source&quot;: &quot;gpii&quot;,&#10;</xsl:text>
+
+    <xsl:if test="string-length(RegistryTerm_hasID) &gt; 0">
+        <xsl:text>      &quot;hasId&quot;: &quot;</xsl:text>
+        <xsl:value-of select="RegistryTerm_hasID"/>
+        <xsl:text>&quot;,&#10;</xsl:text>
+    </xsl:if>
+    
     <xsl:if test="string-length(RegistryTerm_hasType) &gt; 0">
       <xsl:text>      &quot;hasType&quot;: &quot;</xsl:text>
       <xsl:call-template name="escape-text"><xsl:with-param name="value" select="RegistryTerm_hasType"/></xsl:call-template>
       <xsl:text>&quot;,&#10;</xsl:text>
     </xsl:if>
 
-    <xsl:text>      &quot;definition&quot;: &quot;</xsl:text>
-    <xsl:call-template name="escape-text"><xsl:with-param name="value" select="RegistryTerm_hasDescription"/></xsl:call-template>
+    <xsl:text>      &quot;satId&quot;: &quot;</xsl:text>
+    <xsl:value-of select="@rdf:ID"/>
     <xsl:text>&quot;&#10;</xsl:text>
 
     <xsl:text>    }</xsl:text>
@@ -90,17 +95,11 @@ for more information, please review the README.md file in this directory.
 
     <xsl:text>&#10;</xsl:text>
 
-    <xsl:text>      &quot;satId&quot;: &quot;</xsl:text>
-    <xsl:value-of select="@rdf:ID"/>
-    <xsl:text>&quot;,&#10;</xsl:text>
+    <xsl:text>      &quot;type&quot;: &quot;ALIAS&quot;,&#10;</xsl:text>
 
     <xsl:text>      &quot;uniqueId&quot;: &quot;</xsl:text>
     <xsl:variable name="rawId" select="substring-after(substring-after(@rdf:ID,$namespace),'_')"/>
     <xsl:value-of select="$rawId"/>
-    <xsl:text>&quot;,&#10;</xsl:text>
-    
-    <xsl:text>      &quot;source&quot;: &quot;</xsl:text>
-    <xsl:value-of select="$lcNamespace"/>
     <xsl:text>&quot;,&#10;</xsl:text>
     
     <xsl:text>      &quot;aliasOf&quot;: &quot;</xsl:text>
@@ -113,7 +112,14 @@ for more information, please review the README.md file in this directory.
       <xsl:call-template name="escape-text"><xsl:with-param name="value" select="TermUsedByRegistry_UserPreference"/></xsl:call-template>
       <xsl:text>&quot;,&#10;</xsl:text>
     </xsl:if>
-    <xsl:text>      &quot;type&quot;: &quot;ALIAS&quot;&#10;</xsl:text>
+
+    <xsl:text>      &quot;source&quot;: &quot;</xsl:text>
+    <xsl:value-of select="$lcNamespace"/>
+    <xsl:text>&quot;,&#10;</xsl:text>
+    
+    <xsl:text>      &quot;satId&quot;: &quot;</xsl:text>
+    <xsl:value-of select="@rdf:ID"/>
+    <xsl:text>&quot;&#10;</xsl:text>
   </xsl:template>
 
   <xsl:template match="*">
