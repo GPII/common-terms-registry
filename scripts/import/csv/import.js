@@ -197,28 +197,62 @@ function recordExists(entry) {
         console.log("Skipping invalid entry:" + JSON.stringify(entry));
     }
     else {
-        console.log("Checking to see if entry '" + entry.uniqueId + "' exists...");
+        if(newRecords[entry.uniqueId] !== undefined) {
+            console.log("Entry '" + entry.uniqueId + "' already exists in the cache.  I don't need to check the database.");
+        }
+        else {
+            console.log("Checking to see if entry '" + entry.uniqueId + "' exists in the database...");
 
-        db.view('trapp/entries', { key: entry.uniqueId }, function (err, doc) {
-            if (err) {
-                console.error("Error retrieving record using cradle: " + JSON.stringify(err));
-                stats.errors++;
-            }
-            else {
-                if (doc.length === 0) {
-                    // TODO:  This is currently creating bogus duplicate records
-//                    uploadEntry(entry);
-                }
-                else if (doc.length === 1) {
-                    reconcileRecord(doc[0], entry);
+            db.view('trapp/entries', { key: entry.uniqueId }, function (err, doc) {
+                if (err) {
+                    console.error("Error retrieving record using cradle: " + JSON.stringify(err));
                 }
                 else {
-                    console.error("More than one record exists for key '" + entry.uniqueId + "':\n" + JSON.stringify(doc));
-                    stats.errors++;
+                    if (doc.length === 0) {
+                        newRecords[entry.uniqueId] = entry;
+                    }
+                    else if (doc.length === 1) {
+                        reconcileRecord(doc[0], entry);
+                    }
+                    else {
+                        if (entry.type === 'GENERAL') {
+                            console.error("More than one record already exists for term '" + entry.uniqueId + "'.");
+                            
+                            var termFound = false;
+                            for (var a=0; a < doc.length; a++) {
+                                if (doc[a].value._source !== undefined && doc[a].value._source == "gpii") {
+                                    console.log("Found matching term.");
+                                    reconcileRecord(doc[a],entry);
+                                    termFound = true;
+                                }
+                            }
+                            
+                            if (!termFound) {
+                                console.log("No comparable term record already exists, need to create a new record instead...");
+    //                            uploadEntry(entry);
+                            }
+    
+                        }
+                        else if (entry.type == 'ALIAS') {
+                            console.log("More than one record exists with the same unique ID, checking the source instead...");
+                            var aliasFound = false;
+                            for (var a=0; a < doc.length; a++) {
+                                if (entry.aliasOf === doc[a].value.aliasOf && entry.source !== undefined && doc[a].value._source !== undefined && entry.source == doc[a].value._source) {
+                                    console.log("Found matching record for source '" + entry.source + "'.");
+                                    aliasFound = true;
+                                    reconcileRecord(doc[a],entry);
+                                }
+                            }
+                            
+                            if (!aliasFound) {
+                                console.log("These are not aliases of the same parent record, need to create a new record instead...");
+    //                            uploadEntry(entry);
+                            }
+                        }
+                    }
                 }
-            }
-        });
-
+            });
+        }
     }
     
     return deferred.promise;
