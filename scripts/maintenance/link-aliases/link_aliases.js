@@ -87,7 +87,7 @@ function updateTerm(err, doc) {
                 updatedRow[field]=termRow.value[field];
             }
             
-            updatedRow.aliases = aliasesByTermId[termRow.key];
+            updatedRow._aliases = aliasesByTermId[termRow.key];
             
             if (preview) {
                 console.log("I should have saved the following record: " + JSON.stringify(updatedRow));
