@@ -66,3 +66,7 @@ form {
 ul {
   list-style: none;
 }
+
+tr.jtable-data-row {
+    vertical-align: top;
+}
