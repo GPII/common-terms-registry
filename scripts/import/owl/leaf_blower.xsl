@@ -38,7 +38,8 @@ for more information, please review the README.md file in this directory.
     <xsl:text>      &quot;satId&quot;: &quot;</xsl:text>
     <xsl:value-of select="@rdf:ID"/>
     <xsl:text>&quot;,&#10;</xsl:text>
-    <xsl:text>      &quot;uniqueId&quot;: &quot;gpii:</xsl:text>
+    <xsl:text>      &quot;source&quot;: &quot;gpii&quot;,&#10;</xsl:text>
+    <xsl:text>      &quot;uniqueId&quot;: &quot;</xsl:text>
     <xsl:value-of select="concat(translate(substring($dequalifiedName,1,1),$upper,$lower),'',substring($dequalifiedName,2))"/>
     <xsl:text>&quot;,&#10;</xsl:text>
 
@@ -89,24 +90,24 @@ for more information, please review the README.md file in this directory.
 
     <xsl:text>&#10;</xsl:text>
 
-    <xsl:text>      &quot;uniqueId&quot;: &quot;</xsl:text>
-    <xsl:value-of select="$lcNamespace"/>
-    <xsl:text>:</xsl:text>
-    <xsl:variable name="rawId" select="substring-after(substring-after(@rdf:ID,$namespace),'_')"/>
-    <xsl:choose>
-      <xsl:when test="string-length($rawId) &gt; 1">
-	<xsl:value-of select="concat(translate(substring($rawId,1,1),$upper,$lower),'',substring($rawId,2))"/>
-      </xsl:when>
-      <xsl:otherwise>
-	<xsl:text>@@NO ID</xsl:text>
-      </xsl:otherwise>
-    </xsl:choose>
-
+    <xsl:text>      &quot;satId&quot;: &quot;</xsl:text>
+    <xsl:value-of select="@rdf:ID"/>
     <xsl:text>&quot;,&#10;</xsl:text>
-    <xsl:text>      &quot;aliasOf&quot;: &quot;gpii:</xsl:text>
+
+    <xsl:text>      &quot;uniqueId&quot;: &quot;</xsl:text>
+    <xsl:variable name="rawId" select="substring-after(substring-after(@rdf:ID,$namespace),'_')"/>
+    <xsl:value-of select="$rawId"/>
+    <xsl:text>&quot;,&#10;</xsl:text>
+    
+    <xsl:text>      &quot;source&quot;: &quot;</xsl:text>
+    <xsl:value-of select="$lcNamespace"/>
+    <xsl:text>&quot;,&#10;</xsl:text>
+    
+    <xsl:text>      &quot;aliasOf&quot;: &quot;</xsl:text>
     <xsl:variable name="parentIdMinusNamespace" select="substring-after(../../@rdf:ID,'Reg_')"/>
     <xsl:value-of select="concat(translate(substring($parentIdMinusNamespace,1,1),$upper,$lower),'',substring($parentIdMinusNamespace,2))"/>
     <xsl:text>&quot;,&#10;</xsl:text>
+
     <xsl:if test="string-length(TermUsedByRegistry_UserPreference) &gt; 0">
       <xsl:text>      &quot;termLabel&quot;: &quot;</xsl:text>
       <xsl:call-template name="escape-text"><xsl:with-param name="value" select="TermUsedByRegistry_UserPreference"/></xsl:call-template>
