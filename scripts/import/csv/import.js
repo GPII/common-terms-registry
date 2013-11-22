@@ -110,14 +110,14 @@ function importRow(entry) {
             }
         }
         else {
-            console.log('No unique GPII ID specified in either the gpii:uniqueId or gpii:localUniqueId fields...');
+            console.log('No unique GPII ID specified in either the gpii:uniqueId or gpii:localId fields...');
             console.log('Constructing placeholder record from record in first available namespace...');
             
             for (var namespaceNumber in globals.namespaces) {
                 var namespace = globals.namespaces[namespaceNumber];
                 var userPreference = entry[namespace+':userPreference'];
                 if (userPreference !== null && userPreference !== undefined) {
-                    gpii.uniqueId = "gpii:" + lowerCamelCase(userPreference);
+                    gpii.uniqueId = lowerCamelCase(userPreference);
                     
                     console.log("Setting provisional uniqueId to: " + gpii.uniqueId);
                     
