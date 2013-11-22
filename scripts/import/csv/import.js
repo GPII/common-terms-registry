@@ -332,6 +332,9 @@ function lowerCamelCase(originalString) {
     
     var newString = originalString;
 
+    newString = newString.replace(/^[ \(\)\-\_]+/,'');
+    newString = newString.replace(/[ \(\)\-\_]+$/,'');
+    
     var leadingLetterRegex = /^[ \t]*([A-Za-z])/;
     if (newString.match(leadingLetterRegex)) {
         newString = newString.replace(leadingLetterRegex, function(v) { return v.trim().toLowerCase(); });
