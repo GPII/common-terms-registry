@@ -1,12 +1,7 @@
 $(function() {   
-    var valueTemplate = '{{#valueSpace}}<p class="valueSpace">{{valueSpace}}</p>{{/valueSpace}}{{#defaultValue}}<p class="defaultValue">Suggested Default: {{defaultValue}}</p>{{/defaultValue}}';
+    // load all Mustache templates
+    $.get('templates/terms.mustache', function(templates) { $(templates).each(function() { $('body').append(this); }); });
     
-    var aliasesTemplate = '<ul>{{#aliases}}<li><a href="/_utils/document.html?tr/{{_id}}">{{uniqueId}}</a></li>{{/aliases}}</ul>';
-
-    var definitionTemplate = '{{#definition}}<p class="definition">{{definition}}</p>{{/definition}}{{#notes}}<p class="notes">{{notes}}</p>{{/notes}}{{#uses}}<p class="notes">USES: <br/>{{uses}}</p>{{/uses}}';
-
-    var actionTemplate = '<a href="/_utils/document.html?tr/{{_id}}">View/Edit</a><br/>';
-        
     /* jslint -W117 */
 	$("#account").couchLogin({
 		loggedIn : function(r) {
@@ -50,19 +45,14 @@ $(function() {
                 },
                 defaultValue: {
                     title: 'Values',
-                    display: function(record) {
-                        return $.mustache(valueTemplate,record.record);
-                    }
-
+                    display: function(record) { return $.mustache($("#value").html(),record.record);}
                 },
                 definition: {
                     title: 'Definition / Notes',
                     sorting: false,
                     edit: false,
                     create: false,
-                    display: function(record) {
-                        return $.mustache(definitionTemplate,record.record);
-                    }
+                    display: function(record) { return $.mustache($("#definition").html(),record.record);}
                 },
                 aliases: {
                     title: 'Aliases',
@@ -70,16 +60,14 @@ $(function() {
                     edit: false,
                     create: false,
                     display: function(record) {
-                        return $.mustache(aliasesTemplate,record.record);
+                        return $.mustache($("#aliases").html(),record.record) + (record.record.aliases !== undefined ? $.mustache($("#compare-link").html(),record.record._id) : '') + $.mustache($("#compare").html(),record.record);
                     }
                 },
                 action: {
                     title: 'Actions',
                     edit: false,
                     create: false,
-                    display: function(record) {
-                        return $.mustache(actionTemplate,record.record);
-                    }
+                    display: function(record) { return $.mustache($("#action").html(),record.record); }
                 }
 		    },
 		});

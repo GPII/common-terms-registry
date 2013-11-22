@@ -1,0 +1,43 @@
+<script id="aliases" type="text/html">
+    <ul>
+        {{#aliases}}
+            <li><a href="/_utils/document.html?tr/{{_id}}">{{uniqueId}}</a></li>
+        {{/aliases}}
+    </ul>
+</script>
+
+<script id="compare" type="text/html">
+    <div id="compare-{{_id}}" class="compare">
+        <a class="dialogCloser" href="#" onClick="javascript:$('#compare-{{_id}}').hide()">X</a>
+        {{#aliases}}
+            <div class="compareEntry">
+                {{#uniqueId}}<p>Unique ID: {{uniqueId}}</p>{{/uniqueId}}
+                {{#termLabel}}<p>Label: {{termLabel}}</p>{{/termLabel}}
+                {{#notes}}<p>Notes: {{notes}}</p>{{/notes}}
+            </div>
+        {{/aliases}}
+    </div>
+</script>
+
+<script id="compare-link" type="text/html">
+    <p><a href="#" onClick="javascript:$('#compare-{{toString}}').toggle();return false;">Compare</a>
+</script>
+
+<script id="definition" type="text/html">
+    {{#definition}}<p class="definition">{{definition}}</p>{{/definition}}
+    {{#notes}}<p class="notes">{{notes}}</p>{{/notes}}
+    {{#uses}}<p class="notes">USES: <br/>{{uses}}</p>{{/uses}}
+</script>
+
+<script id="value" type="text/html">
+    {{#valueSpace}}
+        <p class="valueSpace">{{valueSpace}}</p>
+    {{/valueSpace}}
+    {{#defaultValue}}
+        <p class="defaultValue">Suggested Default: {{defaultValue}}</p>
+    {{/defaultValue}}
+</script>
+
+<script id="action" type="text/html">
+    <a href="/_utils/document.html?tr/{{_id}}">View/Edit</a><br/>
+</script>
