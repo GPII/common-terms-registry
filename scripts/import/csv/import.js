@@ -39,9 +39,9 @@ var db = connection.database(dbName);
 
 var globals = require('../../includes/globals.json');
 
-var stats = { 'terms found' : 0, 'terms added' : 0, 'aliases added': 0, 'terms merged' : 0, 'aliases merged': 0, 'errors': 0};
-
 var preview =  (argv.commit === undefined) ? true : false;
+
+var newRecords = {};
 
 console.log("Starting import from CSV..");
 csvjs.parseCsv(argv.file, {}, processCsvData);
