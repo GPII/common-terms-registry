@@ -39,7 +39,7 @@ $(function() {
                 uniqueId: {
                     title: 'Unique ID'
                 },
-                localUniqueId: {
+                localId: {
                     title: 'Local Unique ID',
                     list: false
                 },

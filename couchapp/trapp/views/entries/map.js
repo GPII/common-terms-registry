@@ -1,19 +1,22 @@
 function(doc) {
     if (doc) {
       emit(doc.uniqueId, {
-	    "_id" :                doc._id,
-	    "_rev" :               doc._rev,
-        "aliases" :            doc.aliases,
-        "aliasOf":             doc.aliasOf,
-		"defaultValue":        doc.defaultValue,
-		"definition":	       doc.definition,
-		"localUniqueId":       doc.localUniqueId,
-		"notes":	           doc.notes,
-		"termLabel":           doc.termLabel,
- 		"type":                doc.type,
-		"uniqueId":	           doc.uniqueId,
-		"uses":	               doc.uses,
-		"valueSpace":          doc.valueSpace
+ 		"type":                 doc.type,
+		"uniqueId":	            doc.uniqueId,
+		"localId":              doc.localId,
+		"valueSpace":           doc.valueSpace,
+		"defaultValue":         doc.defaultValue,
+        "aliasOf":              doc.aliasOf,
+		"termLabel":            doc.termLabel,
+		"definition":	        doc.definition,
+		"notes":	            doc.notes,
+		"uses":	                doc.uses,
+		"status":	            doc.status,
+        // non-canonical fields are prefixed with an underscore
+        "_id" :                 doc._id,
+	    "_rev" :                doc._rev,
+        "_aliases" :            doc.aliases,
+        "_source":              doc.source
       });
   }
 };

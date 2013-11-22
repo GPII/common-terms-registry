@@ -22,21 +22,21 @@ function(head, req) {
             if (record >= head.total_rows) break;
             
             jTableData.Records.push({
-                "id" :                  row.id,
-                "_id" :                 row.value._id,
-                "_rev" :                row.value._rev,
-                "key" :                 row.key,
-                "uniqueId":	            row.value.uniqueId,
-                "localUniqueId":        row.value.localUniqueId,
-                "termLabel":            row.value.termLabel,
-                "type":                 row.value.type,
-                "uses":	                row.value.uses,
-                "defaultValue":         row.value.defaultValue,
-                "definition":           row.value.definition,
-                "notes":                row.value.notes,
-                "valueSpace":           row.value.valueSpace,
-                "aliasOf":              row.value.aliasOf,
-                "aliases":              row.value.aliases
+                "type":         row.value.type,
+                "uniqueId":     row.value.uniqueId,
+                "localId":      row.value.localId,
+                "valueSpace":   row.value.valueSpace,
+                "defaultValue": row.value.defaultValue,
+                "aliasOf":      row.value.aliasOf,
+                "termLabel":    row.value.termLabel,
+                "definition":   row.value.definition,
+                "notes":        row.value.notes,
+                "uses":         row.value.uses,
+                // non-canonical fields are prefixed with an underscore
+                "_id" :         row.value._id,
+                "_rev" :        row.value._rev,
+                "_aliases":     row.value._aliases,
+                "_source":      row.value._source
             });
         }
 

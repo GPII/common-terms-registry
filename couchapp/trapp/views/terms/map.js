@@ -1,18 +1,21 @@
 function(doc) {
     if (doc && doc.type && doc.type.toLowerCase() == 'general') {
       emit(doc.uniqueId, {
-	    "_id" :                doc._id,
+ 		"type":                 doc.type,
+		"uniqueId":	            doc.uniqueId,
+		"localId":              doc.localId,
+		"valueSpace":           doc.valueSpace,
+		"defaultValue":         doc.defaultValue,
+		"termLabel":            doc.termLabel,
+		"definition":	        doc.definition,
+		"notes":	            doc.notes,
+		"uses":	                doc.uses,
+		"status":	            doc.status,
+        // non-canonical fields are prefixed with an underscore
+        "_id" :                doc._id,
 	    "_rev" :               doc._rev,
-        "aliases":             doc.aliases,
-		"defaultValue":        doc.defaultValue,
-		"definition":	       doc.definition,
-		"localUniqueId":       doc.localUniqueId,
-		"notes":	           doc.notes,
-		"termLabel":           doc.termLabel,
- 		"type":                doc.type,
-		"uniqueId":	           doc.uniqueId,
-		"uses":	               doc.uses,
-		"valueSpace":          doc.valueSpace
+        "_aliases":             doc.aliases,
+        "_source":              doc.source
       });
   }
 };
