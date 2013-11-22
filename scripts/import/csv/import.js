@@ -240,7 +240,10 @@ function reconcileRecord(originalRecord, importRecord) {
         var importedValue = importRecord[field];
         
         if (originalValue != importedValue) {
-            if (originalValue === null || originalValue === undefined) {
+            if (importedValue === null || importedValue === undefined) {
+//                warnings.push("Spreadsheet missing data for field '" + field + "'.  Retained SAT data.");
+            }
+            else if (originalValue === null || originalValue === undefined) {
                 updatedRecord[field] = importRecord[field];
                 warnings.push("Recovered value for field '" + field + "' from spreadsheet.");
             }
