@@ -21,6 +21,33 @@ h1 {
     
 }
 
+.dialogCloser {
+    float:right;
+    margin-top:1em;
+}
+
+.compare {
+    display:none;
+    position:absolute;
+    height:100%;
+    width:100%;
+    left: 0;
+    z-index: 999;
+    float: left;
+    padding:5%;
+    background-color: white;
+    border:1px solid #6666666;
+}
+
+.compareEntry {
+    float:left;
+    width:25%;
+    border: 1px solid #666666;
+    margin:1em;
+    padding:2em;
+    background-color: #cccc99;
+}
+
 .defaultValue {
     font-style: italic;
 }
