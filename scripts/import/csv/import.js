@@ -326,5 +326,5 @@ function lowerCamelCase(originalString) {
 }
 
 function showError(err) {
-    console.err(err);
+    console.err("ERROR importing from CSV:" + err);
 }
