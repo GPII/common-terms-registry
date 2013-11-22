@@ -84,19 +84,17 @@ function importRow(entry) {
     // skip empty rows
     if (entry === null || entry === undefined || entry.toString().trim() === "") {
         console.warn("Skipping empty row...");
-        stats.errors++;
         //deferred.reject("Skipping empty row...");
     } else {
         var recordPromise = Q.defer().promise;
         
-        stats['terms found']++;
-        
         // process the GPII record first
         gpii.type = 'GENERAL';
-        
+        gpii.source = "gpii";
+
         var uniqueIdMinusNamespace = lowerCamelCase(entry['gpii:uniqueId']);
         if (uniqueIdMinusNamespace === null || uniqueIdMinusNamespace === undefined) {
-            uniqueIdMinusNamespace = lowerCamelCase(entry['gpii:localUniqueId']);
+            uniqueIdMinusNamespace = lowerCamelCase(entry['gpii:localId']);
         }
 
         if (uniqueIdMinusNamespace !== null && uniqueIdMinusNamespace !== undefined) {
@@ -141,7 +139,6 @@ function importRow(entry) {
         if (gpii.uniqueId === null || gpii.uniqueId === undefined) {
             var msg = "Unable to construct placeholder GPII record from another namespace.  Original record:\n" + JSON.stringify(entry) + "\nPartial record:" + JSON.stringify(gpii);
             console.log(msg);
-            stats.errors++;
             deferred.reject(new Error(msg));
         }
         else {
@@ -164,7 +161,8 @@ function importRow(entry) {
                     continue;
                 }
                 
-                aliasEntry.uniqueId = namespace + ":" + lowerCamelCase(aliasEntry.termLabel);
+                aliasEntry.source   = namespace;
+                aliasEntry.uniqueId = aliasEntry.termLabel;
                 
                 var extraInformation = "";
                 
@@ -266,18 +264,9 @@ function reconcileRecord(originalRecord, importRecord) {
             db.save(updatedRecord._id, updatedRecord._rev, updatedRecord, function (err, res) { 
                 if (err) {
                     console.error("Error updating existing record:" + err.message);
-                    stats.errors++;
                 }
     
                 console.log("save response: " + JSON.stringify(res));
-                
-                if (res.type == 'GENERAL') {
-                    stats['terms merged']++;
-                }   
-                else if (res.type == 'ALIAS') {
-                    stats['aliases merged']++;
-                }
-    
             });
         }
     }
@@ -295,13 +284,6 @@ function uploadEntry(json) {
     if (preview) {
         // Skip processing, we are in preview mode
         console.log("I should have uploaded: " + JSON.stringify(json));
-        if (json.type == 'GENERAL') {
-            stats['terms added']++;
-        }
-        if (json.type == 'ALIAS') {
-            stats['aliases added']++;
-        }
-        
         deferred.resolve("Finished processing");
     }
     else {
@@ -309,18 +291,9 @@ function uploadEntry(json) {
         db.save(json, function (err, res) { 
             if (err) {
                 console.error(err.message);
-                stats.errors++;
             }
 
             console.log("save response: " + JSON.stringify(res));
-            
-            if (res.type == 'GENERAL') {
-                stats['terms added']++;
-            }   
-            else if (res.type == 'ALIAS') {
-                stats['aliases added']++;
-            }
-
         });
     }
     
