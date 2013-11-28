@@ -16,26 +16,17 @@ the header.txt file included in this directry.
 var Q = require('q');
 
 var argv = require('optimist')
-    .usage('Usage: node import.js --url http://couch-db-host:port/db/ --username username --password password --file /path/to/file.csv --commit')
-    .demand(['url', 'username', 'password', 'file'])
+    .usage('Usage: node import.js --url http://[username:password@]couch-db-host:port/db/ --file /path/to/file.csv --commit')
+    .demand(['url', 'file'])
     .describe('url','The URL for your couchdb instance, including database')
-    .describe('username','A user who has read and write access to your couch db instance.')
-    .describe('password',"The user's password.")
     .describe('file','A CSV file that includes all fields defined in the header.txt file included with the distribution.')
     .describe('commit','By default, no changes will be made.  You must pass this argument to write changes.')
     .argv;
 
-var url = require('url');
-var urlOptions = url.parse(argv.url);
-
-var cradle = require('cradle');
-var connection = new (cradle.Connection)(url, urlOptions.port, { auth: { username: argv.username, password: argv.password }, cache: true});
-
 var csv = require('csv');
 
-var dbName = urlOptions.pathname.replace(/\//g, '');
-
-var db = connection.database(dbName);
+var CouchDB = require( 'promised-couch' ).CouchDB
+var db = CouchDB( { base: argv.url } )
 
 var globals = require('../../includes/globals.json');
 var headers = require('./headers.json');
@@ -44,9 +35,11 @@ var preview =  (argv.commit === undefined) ? true : false;
 
 var rawCsvRecords    = [];
 var convertedRecords = {};
-var recordsToUpload  = {};
+var dbRecords        = {};
+var recordsToUpdate  = {}
+var newRecords       = {};
 
-readCsvRecords().then(convertRecords).then(checkRecords).then(uploadRecords);
+readCsvRecords().then(convertRecords).then(cacheDbRecords).then(mergeRecords).then(uploadRecords).fail(showError);
 
 function readCsvRecords() {
     console.log("Reading CSV records...");
@@ -191,31 +184,52 @@ function convertRecords() {
     return q.promise;
 }
 
-function checkRecords() {
-    console.log("Checking " + Object.keys(convertedRecords).length + " converted records against existing data...");
-    var q = Q.defer();
-    
-    var checkPromise = Q.defer();
-    for (var a = 0; a < Object.keys(convertedRecords).length; a++) {
-            db.view('trapp/entries', { key: entry.uniqueId }, function (err, doc) {
-    }
-    // Check to see if the record exists, if not, add it to the cache
-    
-    q.resolve(checkPromise);
-
-    return q.promise;
+function cacheDbRecords() {
+    return db.get('_design/trapp/_view/entries').then(cacheSearchResults);
 }
 
-
-function uploadRecords() {
-    console.log("Uploading " + Object.keys(recordsToUpload).length + " new records...");
+function cacheSearchResults(content) {
+    console.log("Caching search results...");
     var q = Q.defer();
-    
+
+    if (content !== undefined && content.rows.length > 0) {
+        for (var position in content.rows) {
+            var record = content.rows[position].value;
+            var key  = record.source + ":" + record.uniqueId;
+
+            dbRecords[key] = record;
+        }
+
+        console.log("Cached " + Object.keys(dbRecords).length + "/" + content.rows.length + " records...");
+    }
+
     q.resolve();
     return q.promise;
 }
 
-function mergeRecords(originalRecord, newRecord) {
+function mergeRecords() {
+    console.log("Checking " + Object.keys(convertedRecords).length + " converted records against " + Object.keys(dbRecords).length + " database records...");
+
+    var keys = Object.keys(convertedRecords);
+
+    for (var position in keys) {
+        var key = keys[position];
+        var csvRecord = convertedRecords[key];
+        var dbRecord  = dbRecords[key];
+
+        if (dbRecord === undefined) {
+            newRecords[key] = csvRecord;
+        }
+        else {
+            recordsToUpdate[key] = mergeRecord(dbRecord,csvRecord);
+        }
+    }
+
+    console.log("Finished check.  " + Object.keys(newRecords).length + " records to create, and " + Object.keys(recordsToUpdate) + " merged records to update...");
+}
+
+function mergeRecord(originalRecord, newRecord) {
+
     if (newRecord === undefined) {
         console.log("Can't merge an existing record with an empty record.");
         return originalRecord;
@@ -233,14 +247,14 @@ function mergeRecords(originalRecord, newRecord) {
         if (field === "notes") continue;
         
         var originalValue = originalRecord[field];
-        var importedValue = importRecord[field];
+        var importedValue = newRecord[field];
         
         if (originalValue != importedValue) {
             if (importedValue === null || importedValue === undefined) {
 //                warnings.push("New record missing data for field '" + field + "'.  Retained original data.");
             }
             else if (originalValue === null || originalValue === undefined) {
-                combinedRecord[field] = importRecord[field];
+                combinedRecord[field] = newRecord[field];
                 warnings.push("Recovered value for field '" + field + "' from spreadsheet.");
             }
             else {
@@ -260,76 +274,39 @@ function mergeRecords(originalRecord, newRecord) {
     return combinedRecord;
 }
 
-///* jshint -W098 */
-//function recordExists(entry) {
-//    var deferred = Q.defer();
-//    if (!entry || entry === undefined || entry.uniqueId === undefined) {
-//        console.log("Skipping invalid entry:" + JSON.stringify(entry));
-//    }
-//    else {
-//        if(newRecords[entry.uniqueId] !== undefined) {
-//            console.log("Entry '" + entry.uniqueId + "' already exists in the cache.  I don't need to check the database.");
-//        }
-//        else {
-//            console.log("Checking to see if entry '" + entry.uniqueId + "' exists in the database...");
-//
-//            db.view('trapp/entries', { key: entry.uniqueId }, function (err, doc) {
-//                if (err) {
-//                    console.error("Error retrieving record using cradle: " + JSON.stringify(err));
-//                }
-//                else {
-//                    if (doc.length === 0) {
-//                        newRecords[entry.uniqueId] = entry;
-//                    }
-//                    else if (doc.length === 1) {
-//                        reconcileRecord(doc[0], entry);
-//                    }
-//                    else {
-//                        if (entry.type === 'GENERAL') {
-//                            console.error("More than one record already exists for term '" + entry.uniqueId + "'.");
-//                            
-//                            var termFound = false;
-//                            for (var a=0; a < doc.length; a++) {
-//                                if (doc[a].value.source !== undefined && doc[a].value.source == "gpii") {
-//                                    console.log("Found matching term.");
-//                                    reconcileRecord(doc[a],entry);
-//                                    termFound = true;
-//                                }
-//                            }
-//                            
-//                            if (!termFound) {
-//                                console.log("No comparable term record already exists, need to create a new record instead...");
-//    //                            uploadEntry(entry);
-//                            }
-//    
-//                        }
-//                        else if (entry.type == 'ALIAS') {
-//                            console.log("More than one record exists with the same unique ID, checking the source instead...");
-//                            var aliasFound = false;
-//                            for (var a=0; a < doc.length; a++) {
-//                                if (entry.aliasOf === doc[a].value.aliasOf && entry.source !== undefined && doc[a].value.source !== undefined && entry.source == doc[a].value.source) {
-//                                    console.log("Found matching record for source '" + entry.source + "'.");
-//                                    aliasFound = true;
-//                                    reconcileRecord(doc[a],entry);
-//                                }
-//                            }
-//                            
-//                            if (!aliasFound) {
-//                                console.log("These are not aliases of the same parent record, need to create a new record instead...");
-//    //                            uploadEntry(entry);
-//                            }
-//                        }
-//                    }
-//                }
-//            });
-//        }
-//    }
-//    
-//    return deferred.promise;
-//}
-//
+function uploadRecords() {
+    var q = Q.defer();
 
-function convertCouchRecord(record) { 
+    var newRecordKeys = Object.keys(newRecords);
+    console.log("Uploading " + newRecordKeys.length + " new records...");
+    for (var position in newRecordKeys) {
+        var newRecord = newRecords[newRecordKeys[position]];
+
+        if (preview) {
+            console.log("preview mode, should have created this record: " + JSON.stringify(newRecord));
+        }
+        else {
+            q.promise.then(db.put(newRecord));
+        }
+    }
+
+    var updatedRecordKeys = Object.keys(recordsToUpdate);
+    console.log("Saving " + updatedRecordKeys.length + " updated records...");
+    for (var position in updatedRecordKeys) {
+        var updatedRecord = recordsToUpdate[updatedRecordKeys[position]];
+
+        if (preview) {
+            console.log("preview mode, should have updated this record: " + JSON.stringify(updatedRecord));
+        }
+        else {
+            q.promise.then(db.put(updatedRecord));
+        }
+    }
+
+    return q.promise;
+}
+
+function convertCouchRecord(record) {
     var standardRecord = {};
 
     for (var fieldNumber in globals.gpiiFields) {
@@ -343,27 +320,9 @@ function convertCouchRecord(record) {
     return standardRecord;
 }
 
-//function uploadEntry(json) {
-//    var deferred = Q.defer();
-//    
-//    if (preview) {
-//        // Skip processing, we are in preview mode
-//        console.log("I should have uploaded: " + JSON.stringify(json));
-//        deferred.resolve("Finished processing");
-//    }
-//    else {
-//        console.log("Uploading record '" + json.uniqueId + "'...");
-//        db.save(json, function (err, res) { 
-//            if (err) {
-//                console.error(err.message);
-//            }
-//
-//            console.log("save response: " + JSON.stringify(res));
-//        });
-//    }
-//    
-//    return deferred.promise;
-//}
+function showError(error) {
+    console.error(error);
+}
 
 function lowerCamelCase(originalString) {
     if (originalString === null || originalString === undefined) { return originalString; }
