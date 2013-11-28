@@ -66,17 +66,10 @@ $(function() {
                         container.append(aliasContainer);
 
                         if (record.record.aliases !== undefined && record.record.aliases.length > 0) {
-                            var compareContainer = $($.mustache($("#compare").html(),record.record));
-                            container.append(compareContainer);
-
                             for (var position in record.record.aliases) {
                                 aliasRecord = record.record.aliases[position];
                                 aliasContainer.append($.mustache($("#alias-list-entry").html(),aliasRecord.value));
-
-                                compareContainer.append($.mustache($("#compare-item").html(),aliasRecord.value));
                             }
-
-                            container.append($.mustache($("#compare-link").html(),record.record));
                         }
 
                         return container;
