@@ -60,7 +60,26 @@ $(function() {
                     edit: false,
                     create: false,
                     display: function(record) {
-                        return $.mustache($("#aliases").html(),record.record) + (record.record.aliases !== undefined ? $.mustache($("#compare-link").html(),record.record._id) : '') + $.mustache($("#compare").html(),record.record);
+                        // Because of limitations of list handling in mustache, we have to create the container and process rows individually
+                        var container = $("<div></div>");
+                        var aliasContainer = $($.mustache($("#aliases").html(),record.record));
+                        container.append(aliasContainer);
+
+                        if (record.record.aliases !== undefined && record.record.aliases.length > 0) {
+                            var compareContainer = $($.mustache($("#compare").html(),record.record));
+                            container.append(compareContainer);
+
+                            for (var position in record.record.aliases) {
+                                aliasRecord = record.record.aliases[position];
+                                aliasContainer.append($.mustache($("#alias-list-entry").html(),aliasRecord.value));
+
+                                compareContainer.append($.mustache($("#compare-item").html(),aliasRecord.value));
+                            }
+
+                            container.append($.mustache($("#compare-link").html(),record.record));
+                        }
+
+                        return container;
                     }
                 },
                 action: {

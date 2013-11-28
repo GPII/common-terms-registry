@@ -1,26 +1,26 @@
 <script id="aliases" type="text/html">
-    <ul>
-        {{#_aliases}}
-            <li><a href="/_utils/document.html?tr/{{_id}}">{{uniqueId}}</a></li>
-        {{/_aliases}}
-    </ul>
+    <ul class="aliases"></ul>
+</script>
+<script id="alias-list-entry" type="text/html">
+<li><a href="/_utils/document.html?tr/{{_id}}">{{uniqueId}} ({{source}})</a></li>
 </script>
 
 <script id="compare" type="text/html">
     <div id="compare-{{_id}}" class="compare">
         <a class="dialogCloser" href="#" onClick="javascript:$('#compare-{{_id}}').hide()">X</a>
-        {{#_aliases}}
-            <div class="compareEntry">
-                {{#uniqueId}}<p>Unique ID: {{uniqueId}}</p>{{/uniqueId}}
-                {{#termLabel}}<p>Label: {{termLabel}}</p>{{/termLabel}}
-                {{#notes}}<p>Notes: {{notes}}</p>{{/notes}}
-            </div>
-        {{/_aliases}}
+    </div>
+</script>
+
+<script id="compare-item" type="text/html">
+    <div class="compareEntry">
+        {{#uniqueId}}<p>Unique ID: {{uniqueId}}</p>{{/uniqueId}}
+        {{#termLabel}}<p>Label: {{termLabel}}</p>{{/termLabel}}
+        {{#notes}}<p>Notes: {{notes}}</p>{{/notes}}
     </div>
 </script>
 
 <script id="compare-link" type="text/html">
-    <p><a href="#" onClick="javascript:$('#compare-{{toString}}').toggle();return false;">Compare</a>
+    <p><a href="#" onClick="javascript:$('#compare-{{_id}}').toggle();return false;">Compare</a>
 </script>
 
 <script id="definition" type="text/html">
