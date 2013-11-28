@@ -280,10 +280,11 @@ function uploadRecords() {
     var newRecordKeys = Object.keys(newRecords);
     console.log("Uploading " + newRecordKeys.length + " new records...");
     for (var position in newRecordKeys) {
-        var newRecord = newRecords[newRecordKeys[position]];
+        var key = newRecordKeys[position];
+        var newRecord = newRecords[key];
 
         if (preview) {
-            console.log("preview mode, should have created this record: " + JSON.stringify(newRecord));
+            console.log("preview mode, should have created record for '" + key + "'...");
         }
         else {
             q.promise.then(db.put(newRecord));
@@ -293,10 +294,11 @@ function uploadRecords() {
     var updatedRecordKeys = Object.keys(recordsToUpdate);
     console.log("Saving " + updatedRecordKeys.length + " updated records...");
     for (var position in updatedRecordKeys) {
-        var updatedRecord = recordsToUpdate[updatedRecordKeys[position]];
+        var key = updatedRecordKeys[position];
+        var updatedRecord = recordsToUpdate[key];
 
         if (preview) {
-            console.log("preview mode, should have updated this record: " + JSON.stringify(updatedRecord));
+            console.log("preview mode, should have updated record for '" + key + "'...");
         }
         else {
             q.promise.then(db.put(updatedRecord));
