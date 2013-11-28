@@ -81,7 +81,7 @@ $(function() {
                     create: false,
                     display: function(record) { return $.mustache($("#action").html(),record.record); }
                 }
-		    },
+		    }
 		});
         $("#content").jtable('load');
 	}
