@@ -35,8 +35,8 @@ function(head, req) {
                 // non-canonical fields are prefixed with an underscore
                 "_id" :         row.value._id,
                 "_rev" :        row.value._rev,
-                "_aliases":     row.value._aliases,
-                "_source":      row.value._source
+                "aliases":     row.value.aliases,
+                "source":      row.value.source
             });
         }
 

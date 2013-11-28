@@ -14,8 +14,8 @@ function(doc) {
         // non-canonical fields are prefixed with an underscore
         "_id" :                doc._id,
 	    "_rev" :               doc._rev,
-        "_aliases":             doc.aliases,
-        "_source":              doc.source
+        "aliases":             doc.aliases,
+        "source":              doc.source
       });
   }
 };
