@@ -87,7 +87,7 @@ function updateTerm(err, doc) {
                 updatedRow[field]=termRow.value[field];
             }
             
-            updatedRow._aliases = aliasesByTermId[termRow.key];
+            updatedRow.aliases = aliasesByTermId[termRow.key];
             
             if (preview) {
                 console.log("I should have saved the following record: " + JSON.stringify(updatedRow));
@@ -104,7 +104,7 @@ function updateTerm(err, doc) {
 
 function saveTerm(err, res) {
     if (err) {
-        console.error(error.error + " " + error.reason);
+        console.error(err.error + " " + err.reason);
         return;
     } 
     
