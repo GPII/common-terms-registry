@@ -332,17 +332,17 @@ function lowerCamelCase(originalString) {
     var newString = originalString;
 
     newString = newString.replace(/^[ \(\)\-\_]+/,'');
-    newString = newString.replace(/[ \(\)\-\_]+$/,'');
+    newString = newString.replace(/[ \(\)\-\_]+$/g,'');
     
     var leadingLetterRegex = /^[ \t]*([A-Za-z])/;
     if (newString.match(leadingLetterRegex)) {
-        newString = newString.replace(leadingLetterRegex, function(v) { return v.trim().toLowerCase(); });
+        newString = newString.replace(leadingLetterRegex, function(match,contents) { return contents.trim().toLowerCase(); });
     }
     
-    var innerSpaceRegex = /[ _]+([a-z])/g;
+    var innerSpaceRegex = /[ \(\)\-\_]+([a-zA-Z0-9])/g;
     
     if (newString.match(innerSpaceRegex)) {
-        newString = newString.replace(innerSpaceRegex, function(v) { return v.trim().toUpperCase();});
+        newString = newString.replace(innerSpaceRegex, function(match,contents) { return contents.trim().toUpperCase();});
     }
     
     return newString;
