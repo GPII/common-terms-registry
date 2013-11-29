@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Common Terms Registry Prototype : Terms</title>
+
+
+    <!-- Disabled jQuery shipped with couch for now -->
+    <!--
+    <script src="/_utils/script/jquery.js"></script>
+    -->
+
+    <!-- Disabled until we can test compatibility with the version of jQuery included with Fluid.
+         This will wreak havoc on the login mechanism until we reenable and test it -->
+    <!--
+    <script src="/_utils/script/sha1.js"></script>
+    <script src="/_utils/script/json2.js"></script>
+    <script src="/_utils/script/jquery.couch.js"></script>
+    <script src="vendor/couchapp/jquery.couchLogin.js"></script>
+    <script src="vendor/couchapp/jquery.couchProfile.js"></script>
+    <script src="vendor/couchapp/md5.js"></script>
+    -->
+
+    <link rel="stylesheet" type="text/css" href="vendor/fluid/framework/fss/css/fss-reset-global.css" />
+    <link rel="stylesheet" type="text/css" href="vendor/fluid/framework/fss/css/fss-base-global.css" />
+    <link rel="stylesheet" type="text/css" href="vendor/fluid/framework/fss/css/fss-layout.css" />
+    <link rel="stylesheet" type="text/css" href="vendor/fluid/components/pager/css/Pager.css" media="all" />
+
+    <!-- replaced for compatibility with latest version of jQuery UI and jQuery -->
+    <!--
+    <link rel="stylesheet" type="text/css" href="vendor/fluid/lib/jquery/plugins/tooltip/css/jquery.tooltip.css" media="all" />
+    <link rel="stylesheet" type="text/css" href="vendor/fluid/lib/jquery/ui/css/jquery.ui.theme.css" />
+    -->
+
+    <!-- Updated dependencies for use with modern (1.9+) versions of jQuery -->
+    <!--
+    <link rel="stylesheet" type="text/css" href="vendor/jqueryui/themes/base/jquery.ui.tooltip.css" media="all" />
+    <link rel="stylesheet" type="text/css" href="vendor/jqueryui/themes/base/jquery.ui.theme.css" />
+
+    <script src="vendor/jqueryui/ui/jquery-ui.js" type="text/javascript"></script>
+    <script src="vendor/jqueryui/ui/jquery.ui.core.js" type="text/javascript"></script>
+    <script src="vendor/jqueryui/ui/jquery.ui.widget.js" type="text/javascript"></script>
+    <script src="vendor/jqueryui/ui/jquery.ui.position.js" type="text/javascript"></script>
+    -->
+
+    <!-- Fluid dependencies, require a much older (1.6) version of jQuery -->
+    <script type="text/javascript" src="vendor/fluid/lib/jquery/core/js/jquery.js"></script>
+    <script type="text/javascript" src="vendor/fluid/lib/json/js/json2.js"></script>
+    <script type="text/javascript" src="vendor/fluid/lib/jquery/ui/js/jquery.ui.core.js"></script>
+    <script type="text/javascript" src="vendor/fluid/lib/jquery/ui/js/jquery.ui.widget.js"></script>
+    <script type="text/javascript" src="vendor/fluid/lib/jquery/ui/js/jquery.ui.position.js"></script>
+
+    <script type="text/javascript" src="vendor/fluid/lib/jquery/plugins/bgiframe/js/jquery.bgiframe.js"></script>
+    <script type="text/javascript" src="vendor/fluid/lib/jquery/plugins/tooltip/js/jquery.ui.tooltip.js"></script>
+
+    <script type="text/javascript" src="vendor/fluid/framework/core/js/Fluid.js"></script>
+    <script type="text/javascript" src="vendor/fluid/framework/core/js/FluidDOMUtilities.js"></script>
+    <script type="text/javascript" src="vendor/fluid/framework/core/js/FluidDocument.js"></script>
+    <script type="text/javascript" src="vendor/fluid/framework/core/js/jquery.keyboard-a11y.js"></script>
+    <script type="text/javascript" src="vendor/fluid/framework/core/js/DataBinding.js"></script>
+    <script type="text/javascript" src="vendor/fluid/framework/core/js/FluidRequests.js"></script>
+    <script type="text/javascript" src="vendor/fluid/lib/fastXmlPull/js/fastXmlPull.js"></script>
+    <script type="text/javascript" src="vendor/fluid/framework/renderer/js/fluidParser.js"></script>
+    <script type="text/javascript" src="vendor/fluid/framework/renderer/js/fluidRenderer.js"></script>
+
+    <script type="text/javascript" src="vendor/fluid/components/tooltip/js/Tooltip.js"></script>
+    <script type="text/javascript" src="vendor/fluid/components/pager/js/Pager.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="style/pager.css" />
+
+    <!-- main javascript for this interface -->
+    <script src="script/pager.js"></script>
+  </head>
+  <body>
+    <div id="account"></div>
+
+    <h1>Common Terms Registry Prototype : Terms</h1>
+
+    <div class="demo-pager-container fl-pager">
+        <h1>School Roster</h1>
+        <div class="flc-pager-summary">Summary goes here</div>
+
+        <div class="flc-pager-top">
+            <ul class="demo-pager-bar fl-force-left fl-focus">
+                <li class="flc-pager-previous demo-pager-previous"><a href="#" title="Previous Page">&lt; Previous</a></li>
+                <li>
+                    <ul class="flc-pager-links demo-pager-links">
+                        <li class="flc-pager-pageLink demo-pager-pageLink-default"><a href="#">1</a></li>
+                        <li class="flc-pager-pageLink-skip demo-pager-pageLink-skip ">...</li>
+                        <li class="flc-pager-pageLink"><a href="#">2</a></li>
+                    </ul>
+                </li>
+                <li class="demo-pager-next flc-pager-next"><a href="#" title="Next Page">Next &gt;</a></li>
+            </ul>
+        </div>
+
+        <div class="demo-pager-page-size fl-force-right fl-focus">
+            <label for="demo-pager-selector-page-size-top">Items per page:</label>
+            <select id="demo-pager-selector-page-size-top" class="flc-pager-page-size">
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+            </select>
+        </div>
+
+        <div id="membership-table" class="fl-container-flex demo-pager-table-data fl-pager-data">
+            <table summary="Table of all students and teachers." xmlns:rsf="http://ponder.org.uk">
+                <thead>
+                <tr rsf:id="header:" class="fl-focus">
+                    <th class="flc-pager-sort-header demo-pager-head demo-pager-head-members"><a rsf:id="user-link" href="#">Members</a></th>
+                    <th class="flc-pager-sort-header demo-pager-head demo-pager-head-email"><a rsf:id="user-email" href="#">Email</a></th>
+                    <th class="flc-pager-sort-header demo-pager-head demo-pager-head-role"><a rsf:id="user-role" href="#">Role</a></th>
+                    <th><span rsf:id="user-comment" class="demo-pager-head-comments">Comments</span></th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr rsf:id="row:">
+                    <td><span rsf:id="user-link">Edee</span></td>
+                    <td><span rsf:id="user-email">edee@none.none</span></td>
+                    <td><span rsf:id="user-role">Instructor</span></td>
+                    <td><span rsf:id="user-comment">The best teacher.</span></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="flc-pager-bottom">
+            <ul class="demo-pager-bar fl-force-left fl-focus">
+                <li class="flc-pager-previous demo-pager-previous"><a href="#">&lt; Previous</a></li>
+                <li>
+                    <ul class="flc-pager-links demo-pager-links">
+                        <li class="flc-pager-pageLink demo-pager-pageLink-default"><a href="#">1</a></li>
+                        <li class="flc-pager-pageLink-skip demo-pager-pageLink-skip">...</li>
+                        <li class="flc-pager-pageLink"><a href="#">2</a></li>
+                    </ul>
+                </li>
+                <li class="flc-pager-next demo-pager-next"><a href="#">Next &gt;</a></li>
+            </ul>
+        </div>
+
+    </div>
+
+    <script type="text/javascript">
+        demo.initPager();
+    </script>
+  </body>
+</html>
