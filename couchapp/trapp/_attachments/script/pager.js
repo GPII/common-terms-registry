@@ -1,32 +1,32 @@
 
 // Declare dependencies
-/*global demo:true, fluid, jQuery*/
+/*global fPager:true, fluid, jQuery*/
 
 // JSLint options
 /*jslint white: true, funcinvoke: true, undef: true, newcap: true, nomen: true, regexp: true, bitwise: true, browser: true, forin: true, maxerr: 100, indent: 4 */
 
-var demo = demo || {};
+var fPager = fPager || {};
 
 (function ($, fluid) {
-//    $("#account").couchLogin({
-//        loggedIn : function(r) {
-////		    $("#profile").couchProfile(r, {});
-//            demo.initPager();
-//        },
-//        loggedOut : function() {
-//            $("#profile").html('<p>Please log in to see your profile.</p>');
-//            $("#content").html("You must log in to view the registry.");
-//        }
-//    });
+    $("#account").couchLogin({
+        loggedIn : function(r) {
+		    $("#profile").couchProfile(r, {});
+            fPager.initPager();
+        },
+        loggedOut : function() {
+            $("#profile").html('<p>Please log in to see your profile.</p>');
+            $("#content").html("You must log in to view the registry.");
+        }
+    });
 
 
     /**
-     * Main demo initialization
+     * Main fPager initialization
      */
-    demo.initPager = function () {
+    fPager.initPager = function () {
         var resources = {
             users: {
-                href: "script/pager.json",
+                href: "/tr/_design/trapp/_view/terms",
                 options: {
                     dataType: "json"
                 }
@@ -38,40 +38,54 @@ var demo = demo || {};
             var model = resourceSpecs.users.resourceText;
             var columnDefs = [
                 {
-                    key: "user-link",
-                    valuebinding: "*.userDisplayName",
+                    key: "entry-unique-id",
+                    valuebinding: "*.value.uniqueId",
                     sortable: true
                 },
                 {
-                    key: "user-email",
-                    valuebinding: "*.userEmail",
+                    key: "entry-term-label",
+                    valuebinding: "*.value.termLabel",
                     sortable: true
                 },
                 {
-                    key: "user-role",
-                    valuebinding: "*.memberRole",
-                    sortable: true
+                    key: "entry-value-space",
+                    valuebinding: "*.value.valueSpace",
+                    sortable: false
                 },
                 {
-                    key: "user-comment",
-                    valuebinding: "*.userComment",
+                    key: "entry-definition",
+                    valuebinding: "*.value.definition",
+                    sortable: false
+                },
+                {
+                    key: "entry-notes",
+                    valuebinding: "*.value.notes",
+                    sortable: false
+                },
+                {
+                    key: "entry-actions",
+                    valuebinding: "*.value._id",
+                    components: {
+                        target: "/_utils/document.html?tr/${*.value._id}",
+                        linktext: "View/Edit"
+                    },
                     sortable: false
                 }
             ];
 
-            demo.pager = fluid.pager(".demo-pager-container", {
+            fPager.pager = fluid.pager(".fpager-pager-container", {
                 dataModel: model,
                 model: {
-                    pageSize: 10
+                    pageSize: 25
                 },
-                dataOffset: "membership_collection",
+                dataOffset: "rows",
                 columnDefs: columnDefs,
-                annotateColumnRange: "user-link",
+                annotateColumnRange: "entry-unique-id",
                 bodyRenderer: {
                     type: "fluid.pager.selfRender",
                     options: {
                         selectors: {
-                            root: ".demo-pager-table-data"
+                            root: ".fpager-pager-table-data"
                         },
                         renderOptions: {debugMode: false}
                     }
