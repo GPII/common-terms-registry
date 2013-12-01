@@ -43,40 +43,41 @@
     <script src="script/pager.js"></script>
   </head>
   <body>
-    <div id="account">my account data should be here</div>
-    <div id="profile">my profile should be here</div>
-
     <h1>Common Terms Registry</h1>
 
-    <div class="fpager-pager-container fl-pager">
-        <div class="flc-pager-top">
-            <ul class="fpager-pager-bar fl-force-left fl-focus">
-                <li class="flc-pager-previous fpager-pager-previous"><a href="#" title="Previous Page">&lt; Previous</a></li>
-                <li>
-                    <ul class="flc-pager-links fpager-pager-links">
-                        <li class="flc-pager-pageLink fpager-pager-pageLink-default"><a href="#">1</a></li>
-                        <li class="flc-pager-pageLink-skip fpager-pager-pageLink-skip ">...</li>
-                        <li class="flc-pager-pageLink"><a href="#">2</a></li>
-                    </ul>
-                </li>
-                <li class="fpager-pager-next flc-pager-next"><a href="#" title="Next Page">Next &gt;</a></li>
-            </ul>
-        </div>
 
-        <div class="fpager-pager-page-size fl-force-right fl-focus">
-            <label for="fpager-pager-selector-page-size-top">Items per page:</label>
-            <select id="fpager-pager-selector-page-size-top" class="flc-pager-page-size">
-                <option value="25">25</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-                <option value="250">250</option>
-                <option value="500">500</option>
-            </select>
-        </div>
 
-        <div id="terms-table" class="fl-container-flex fpager-pager-table-data fl-pager-data">
-            <table summary="Common Terms Registry" xmlns:rsf="http://ponder.org.uk">
-                <thead>
+    <div id="no-content">You must log in to view the registry.</div>
+    <div id="content">
+        <div class="fpager-pager-container fl-pager">
+            <div class="flc-pager-top">
+                <ul class="fpager-pager-bar fl-force-left fl-focus">
+                    <li class="flc-pager-previous fpager-pager-previous"><a href="#" title="Previous Page">&lt; Previous</a></li>
+                    <li>
+                        <ul class="flc-pager-links fpager-pager-links">
+                            <li class="flc-pager-pageLink fpager-pager-pageLink-default"><a href="#">1</a></li>
+                            <li class="flc-pager-pageLink-skip fpager-pager-pageLink-skip ">...</li>
+                            <li class="flc-pager-pageLink"><a href="#">2</a></li>
+                        </ul>
+                    </li>
+                    <li class="fpager-pager-next flc-pager-next"><a href="#" title="Next Page">Next &gt;</a></li>
+                </ul>
+            </div>
+
+            <div class="fpager-pager-page-size fl-force-right fl-focus">
+                <label for="fpager-pager-selector-page-size-top">Items per page:</label>
+                <select id="fpager-pager-selector-page-size-top" class="flc-pager-page-size">
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="250">250</option>
+                    <option value="500">500</option>
+                </select>
+            </div>
+
+            <div id="terms-table" class="fl-container-flex fpager-pager-table-data fl-pager-data">
+                <table summary="Common Terms Registry" xmlns:rsf="http://ponder.org.uk">
+                    <thead>
                     <tr rsf:id="header:" class="fl-focus">
                         <th class="flc-pager-sort-header fpager-pager-head fpager-pager-head-members"><a rsf:id="entry-unique-id" href="#">Unique ID</a></th>
                         <th class="flc-pager-sort-header fpager-pager-head fpager-pager-head-members"><a rsf:id="entry-term-label" href="#">Term Label</a></th>
@@ -85,36 +86,36 @@
                         <th class="fpager-pager-head fpager-pager-head-members"><a rsf:id="entry-notes" href="#">Notes</a></th>
                         <th class="fpager-pager-head fpager-pager-head-members"><a rsf:id="entry-actions" href="#">Actions</a></th>
                     </tr>
-                </thead>
+                    </thead>
 
-                <tbody>
-                <tr rsf:id="row:">
-                    <td><span rsf:id="entry-unique-id"></span></td>
-                    <td><span rsf:id="entry-term-label"></span></td>
-                    <td><span rsf:id="entry-value-space"></span></td>
-                    <td><span rsf:id="entry-definition"></span></td>
-                    <td><span rsf:id="entry-notes"></span></td>
-                    <td><span rsf:id="entry-actions"></span></td>
-                </tr>
-                </tbody>
-            </table>
+                    <tbody>
+                    <tr rsf:id="row:">
+                        <td><span rsf:id="entry-unique-id"></span></td>
+                        <td><span rsf:id="entry-term-label"></span></td>
+                        <td><span rsf:id="entry-value-space"></span></td>
+                        <td><span rsf:id="entry-definition"></span></td>
+                        <td><span rsf:id="entry-notes"></span></td>
+                        <td><span rsf:id="entry-actions"></span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="flc-pager-bottom">
+                <ul class="fpager-pager-bar fl-force-left fl-focus">
+                    <li class="flc-pager-previous fpager-pager-previous"><a href="#">&lt; Previous</a></li>
+                    <li>
+                        <ul class="flc-pager-links fpager-pager-links">
+                            <li class="flc-pager-pageLink fpager-pager-pageLink-default"><a href="#">1</a></li>
+                            <li class="flc-pager-pageLink-skip fpager-pager-pageLink-skip">...</li>
+                            <li class="flc-pager-pageLink"><a href="#">2</a></li>
+                        </ul>
+                    </li>
+                    <li class="flc-pager-next fpager-pager-next"><a href="#">Next &gt;</a></li>
+                </ul>
+            </div>
+
         </div>
-
-        <div class="flc-pager-bottom">
-            <ul class="fpager-pager-bar fl-force-left fl-focus">
-                <li class="flc-pager-previous fpager-pager-previous"><a href="#">&lt; Previous</a></li>
-                <li>
-                    <ul class="flc-pager-links fpager-pager-links">
-                        <li class="flc-pager-pageLink fpager-pager-pageLink-default"><a href="#">1</a></li>
-                        <li class="flc-pager-pageLink-skip fpager-pager-pageLink-skip">...</li>
-                        <li class="flc-pager-pageLink"><a href="#">2</a></li>
-                    </ul>
-                </li>
-                <li class="flc-pager-next fpager-pager-next"><a href="#">Next &gt;</a></li>
-            </ul>
-        </div>
-
     </div>
-
   </body>
 </html>

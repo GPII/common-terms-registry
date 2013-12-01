@@ -8,21 +8,6 @@
 var fPager = fPager || {};
 
 (function ($, fluid) {
-    $("#account").couchLogin({
-        loggedIn : function(r) {
-		    $("#profile").couchProfile(r, {});
-            fPager.initPager();
-        },
-        loggedOut : function() {
-            $("#profile").html('<p>Please log in to see your profile.</p>');
-            $("#content").html("You must log in to view the registry.");
-        }
-    });
-
-
-    /**
-     * Main fPager initialization
-     */
     fPager.initPager = function () {
         var resources = {
             users: {
@@ -109,5 +94,23 @@ var fPager = fPager || {};
 
         fluid.fetchResources(resources, initPager);
 
+
+
     };
+
+    $(document).ready(function() {
+        $("#account").couchLogin({
+            loggedIn : function(r) {
+                $("#profile").couchProfile(r, {});
+                $("#content").show();
+                $("#no-content").hide();
+                fPager.initPager();
+            },
+            loggedOut : function() {
+                $("#profile").html('<p>Please log in to see your profile.</p>');
+                $("#content").hide();
+                $("#no-content").show();
+            }
+        });
+    });
 })(jQuery, fluid);
