@@ -1,0 +1,103 @@
+<html>
+<head>
+    <title>Edit Record</title>
+    <link rel="stylesheet" href="/tr/_design/trapp/style/main.css" type="text/css">
+    <script src="/_utils/script/jquery.js"></script>
+</head>
+<body>
+    <div id="messages"></div>
+    <form id="entry-edit">
+        <fieldset>
+            {{#_id}}<input type="hidden" name="_id" value="{{_id}}"/>{{/_id}}
+            {{#_rev}}<input type="hidden" name="_rev" value="{{_rev}}"/>{{/_rev}}
+            {{#source}}<input type="hidden" name="source" value="{{source}}"/>{{/source}}
+            {{#defaultValue}}<input type="hidden" name="defaultValue" value="{{defaultValue}}"/>{{/defaultValue}}
+
+            <table cellpadding="5" width="100%">
+                <tr><td width="20%"><label for="uniqueId">Unique ID (lowerCamelCase):</label></td><td width="80%"><input type="text" name="uniqueId" value="{{uniqueId}}"/></td></tr>
+                <tr><td width="20%"><label for="type">Type:</label></td><td width="80%"><input type="text" name="type" value="{{type}}"/></td></tr>
+                <tr><td width="20%"><label for="termLabel">Term Label:</label></td><td width="80%"><input type="text" name="termLabel" value="{{termLabel}}"/></td></tr>
+                <tr><td width="20%"><label for="valueSpace">Value Space:</label></td><td width="80%"><input type="text" name="valueSpace" value="{{valueSpace}}"/></td></tr>
+                <tr><td width="20%"><label for="definition">Definition:</label></td><td width="80%"><textarea name="definition" rows="5">{{definition}}</textarea></td></tr>
+                <tr><td width="20%"><label for="notes">Notes:</label></td><td width="80%"><textarea name="notes" rows="10">{{notes}}</textarea></td></tr>
+                <tr><td width="20%"><label for="uses">Uses:</label></td><td width="80%"><textarea name="uses" rows="5">{{uses}}</textarea></td></tr>
+
+                {{#aliasOf}}<tr><td><label for="aliasOf">Alias Of:</label></td><td><input type="text" name="aliasOf" value="{{aliasOf}}"/></td></tr>{{/aliasOf}}
+
+                {{#translationOf}}<tr><td><label for="translationOf">Translation Of:</label></td><td><input type="text" name="translationOf" value="{{translationOf}}"/></td></tr>{{/translationOf}}
+
+                {{#source}}<tr><td><label for="source">Source:</label></td><td>{{source}}</td></tr>{{/source}}
+
+                {{#defaultValue}}<tr><td><label for="defaultValue">Suggested Default Value:</label></td><td>{{defaultValue}}</td></tr>{{/defaultValue}}
+
+                {{#aliases.length}}
+                    yo.
+                {{/aliases.length}}
+
+                <tr>
+                    <td width="20%"><label for="aliases">Aliases:</label></td>
+                    <td width="80%">
+                        <ul class="aliases">
+                            {{#aliases}}
+                                <li><a target="_blank" href="/tr/_design/trapp/_show/edit/{{_id}}">{{uniqueId}} ({{source}})</a></li>
+                            {{/aliases}}
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+
+            <button id="ajax" onClick="doAjaxPost(); return false;">Save</button>
+        </fieldset>
+    </form>
+
+    <hr/>
+    <p>TODO: Convert type to drop down consisting of ALIAS ALIASTRANSFORMATION TRANSLATION GENERAL OPERATOR</p>
+    <p>TODO: Only display aliasOf for aliases</p>
+    <p>TODO: Only display translationOf for aliases</p>
+
+    <script type="text/javascript">
+        function doAjaxPost() {
+            var form = $("#entry-edit");
+            var data = form.serialize();
+            var messageContainer = $("#messages");
+            $.ajax({
+                url: "/tr/_design/trapp/_update/edit/",
+                type: "POST",
+                data: data,
+                success: function(results, status, jqXHR){
+                    $("span.error").remove();
+                    var rev = jqXHR.getResponseHeader("X-Couch-Update-NewRev");
+                    $("input[name='_rev']").val(rev);
+
+                    messageContainer.html("Record updated.");
+                    messageContainer.removeClass("error");
+                    messageContainer.addClass("success");
+                },
+                error: function(jqXHR, status, errorString) {
+                    $("span.error").remove();
+
+                    var errors = JSON.parse(jqXHR.responseText);
+                    // summarize the errors at the top of the form
+                    messageContainer.html(errors.reason.summary);
+                    messageContainer.removeClass("success");
+                    messageContainer.addClass("error");
+
+                    // Put error messages inline for each botched field
+                    for (var position in errors.reason.errors ) {
+                        var entry = errors.reason.errors[position];
+
+                        var key = Object.keys(entry)[0];
+                        var value = entry[key];
+
+                        var label = $("input[name='" + key + "']")
+                        if (label) {
+                            label.before('<span class="error">' + value + '</span>');
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+
