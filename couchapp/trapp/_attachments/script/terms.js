@@ -42,7 +42,7 @@ $(function() {
                     list: false
                 },
                 defaultValue: {
-                    title: 'Values',
+                    title: 'Value Space',
                     width: "20%",
                     display: function(record) { return $.mustache($("#value").html(),record.record);}
                 },
