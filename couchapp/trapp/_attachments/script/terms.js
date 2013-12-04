@@ -13,6 +13,8 @@ $(function() {
             paging: true,
             // By default jTable uses a POST for everything, which doesn't work when couchdb expects a GET (lists, views, shows)
             // TODO:  Figure out how to do this for just the listAction
+            pageSize: 50,
+            pageSizes: [50,100,250,500,1000,2500],
             ajaxSettings: {
                 type: 'GET'
             },
