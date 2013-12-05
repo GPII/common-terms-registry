@@ -99,12 +99,11 @@ $(function() {
             loggedIn : function(r) {
 		        $("#profile").couchProfile(r, {});
                 wireUpTable();
-                $("#content").show();
-                $("#no-content").hide();
             },
             loggedOut : function() {
+                $("#content").html('<div class="alert alert-danger">You must log in to view the registry.</div>');
+
                 $("#profile").html('<p>Please log in to see your profile.</p>');
-                $("#content").hide();
                 $("#no-content").show();
             }
         });
