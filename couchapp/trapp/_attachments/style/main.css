@@ -1,153 +1,17 @@
-/* add styles here */
-
-body {
-  font:1em Helvetica, sans-serif;
-  width: 99%;
-  margin:0px;
-  padding;0px;
+tr.jtable-data-row {
+    vertical-align: top;
 }
 
-#header {
-    padding-left: 5em;
-    padding-right: 2em;
-    overflow: hidden;
-    width:100%;
-    float:left;
-    background: #026B6e;
-    color: #ffffff;
+.navbar-invert {
+    color:white;
+    background-color: #4C4D4F;
 }
-#content, #no-content {
-    clear: both;
-    float:left;
-    padding:2em;
-    padding-left: 5em;
+
+.navbar-invert a {
+    color:white;
 }
 
 #account {
-    float:right;
-    margin-right: 8em;
-    margin-top: 1em;
-}
-
-#footer {
-    clear: both;
-    width:99%;
-    float:left;
-    background-color: #EAE3DB;
-    padding: 2em;
-    padding-left: 5em;
-}
-
-#footer .block {
-    float:left; margin-right: 2em;
-}
-
-#footer h2 {
-    border-bottom: none;
-    font-size: 122%;
-    margin-top: 0;
-}
-
-.clearfix:after, .clearfix .inner:after {
-    clear: both;
-    content: ".";
-    display: block;
-    font-size: 0;
-    height: 0;
-    line-height: 0;
-    overflow: auto;
-    visibility: hidden;
-}
-
-h1 {
-  margin-top:0;
-}
-
-.notes {
-    font-size: .85 em;
-    font-style: italic;
-}
-
-.valueSpace {
-    
-}
-
-.dialogCloser {
-    float:right;
-    margin-top:1em;
-}
-
-.defaultValue {
-    font-style: italic;
-}
-
-#profile {
-}
-
-form table tr {
-    vertical-align: top;
-}
-
-form {
-    background-color: #ffffff;
-    border: none;
-    padding:4px;
-    margin:6px;
-}
-
-fieldset {
-    background: none;
-    border: none;
-}
-
-#messages {
-    width: 95%;
-    padding: 2em;
-    display:none;
-}
-
-#messages.error {
-    background-color: #ffcccc;
-    border: 1px solid #ff9999;
-    display:block;
-}
-
-#messages.success {
-    background-color: #ccffcc;
-    border: 1px solid #99ff99;
-    display:block;
-}
-
-span.error {
-    font-weight: bold;
-    color: red;
-}
-
-fieldset label {
-    display: inline-block;
-}
-
-td input[type=text], td textarea {
-    width: 100%;
-}
-
-td span.error {
-    width 100%;
-}
-
-#items li {
-  border:4px solid #f5f5ff;
-  background:#fff;
-  padding:8px;
-  margin:4px 0;
-}
-
-ul.aliases {
-    list-style: none;
-    padding-left: 0px;
-    margin-left: 0px;
-}
-
-tr.jtable-data-row {
-    vertical-align: top;
+    padding-top: 15px;
+    padding-bottom: 15px;
 }
