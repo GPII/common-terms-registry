@@ -107,7 +107,23 @@ function updateTerm(err, doc) {
 
 function saveTerm(err, res) {
     if (err) {
-        console.error(err.error + " " + err.reason);
+        console.error("Error saving record: " + err.error);
+	if (err.reason !== undefined) {
+	    if (err.reason.summary !== undefined) {
+		console.error("Summary: " + err.reason.summary);
+	    }
+	    if (err.reason.errors !== undefined) {
+		for (var position in err.reason.errors) {
+		    var errorMap = err.reason.errors[position];
+		    var keys = Object.keys(errorMap);
+		    for (var keyPos in keys) {
+			var key = keys[position];
+			var value = errorMap[key];
+			console.error("  Error saving field '" + key + "':" + value);
+		    }
+		}
+	    }
+	}
         return;
     } 
     
@@ -135,5 +151,5 @@ function processAliasSearchResults(doc,err) {
 }
 
 function showError(err) {
-    console.error(err);
+    console.error("ERROR:" + err);
 }
