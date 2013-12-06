@@ -17,6 +17,7 @@ var argv = require('optimist')
     .describe('field','The field to update.')
     .describe('find','The regular expression to look for.')
     .describe('replace','The pattern to replace matches with.')
+    .describe('aliases','Update aliases instead of terms (the default).')
     .describe('commit','By default, no changes will be made.  You must pass this argument to write changes.')
     .argv;
 
@@ -34,8 +35,16 @@ var preview =  (argv.commit === undefined) ? true : false;
 var dbRecords       = {};
 var recordsToUpdate = {}
 
+var recordType = "GENERAL";
+var url = '_design/trapp/_view/terms';
+
+if (argv.aliases) {
+    recordType = "ALIASES";
+    url = '_design/trapp/_view/aliases';
+}
+
 // TODO:  We are only operating on terms for now.  Add filtering by type, etc. and allow all record types.
-db.get('_design/trapp/_view/terms').then(cacheSearchResults, showError).then(matchRecords, showError).then(uploadRecords, showError);
+db.get(url).then(cacheSearchResults, showError).then(matchRecords, showError).then(uploadRecords, showError);
 
 //cacheDbRecords().then(matchRecords).then(uploadRecords);
 
@@ -75,10 +84,11 @@ function matchRecords() {
             newRecord[field] = record[field].replace(find_regexp,replace_regexp);
 
             // TODO:  Currently we have some invalid data that cannot be safely updated.  For now we have to massage the records manually.
-            if (newRecord.definition === undefined) {
-                newRecord.definition = "Undefined...";
+            if (recordType === "GENERAL") {
+                if (newRecord.definition === undefined || newRecord.definition.trim().length == 0) {
+                    newRecord.definition = "Undefined...";
+                }
             }
-
             // save a replacement version of each matched record to recordsToUpdate[uniqueId]
             recordsToUpdate[key] = newRecord;
         }
@@ -103,7 +113,7 @@ function uploadRecords() {
             console.log("preview mode, should have changed value of '" +  field + "' from '" + dbRecord[field] + "' to '" + updatedRecord[field] + "' in record '" + key + "'...");
         }
         else {
-            // FIXME:  The put method provided by promised-couch doesn't have a fail method and as a result we can't trap the errors properly.
+            // FIXME:  The put method provided by promised-couch doesn't have a fail method and as a result we can't trap validation errors properly.
             db.put(updatedRecord);
         }
     }
