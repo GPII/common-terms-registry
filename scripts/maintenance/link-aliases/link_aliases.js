@@ -66,16 +66,16 @@ function finishedInitialScan() {
     }
 }
 function updateTerm(err, doc) {
-    console.log("Updating term record...");
+//    console.log("Updating term record...");
     if (err) {
         console.error("Error retrieving record using cradle: " + JSON.stringify(err));
         stats.errors++;
     }
     else {
-        if (doc.length === 0) {
+        if (doc === undefined || doc.length === 0) {
             console.error("Can't add aliases, no record was found...");
         }
-        if (doc.length === 1) {
+        else if (doc.length === 1) {
             // update it with the list of aliases
             // construct a new record
             var termRow = doc[0];
