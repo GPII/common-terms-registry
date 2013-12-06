@@ -86,6 +86,9 @@ function updateTerm(err, doc) {
             for (var field in termRow.value) {
                 updatedRow[field]=termRow.value[field];
             }
+
+	    // TODO:  There are currently incomplete records that lack required data and as a result cannot be updated.  Remove this once all records are sane.
+	    if (updatedRow['definition'] === undefined) { updatedRow['definition'] = "Undefined..."; }
             
             updatedRow.aliases = aliasesByTermId[termRow.key];
             
