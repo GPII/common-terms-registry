@@ -6,150 +6,251 @@
 
     <!-- twitter bootstrap styles and javascript -->
     <link rel="stylesheet" href="/tr/_design/trapp/vendor/twbs/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/tr/_design/trapp/vendor/twbs/css/bootstrap-theme.min.css">
     <script src="/tr/_design/trapp/vendor/twbs/js/bootstrap.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <div class="panel panel-default">
-        <div class="panel-heading"><h1 class="panel-title">Add/Edit Record</h1></div>
-        <div class="panel-body">
-            <div id="messages" class="alert col-md-offset-1 display:none"></div>
-            <form id="entry-edit" class="form-horizontal">
-                <fieldset>
-                    {{#_id}}<input type="hidden" name="_id" value="{{_id}}"/>{{/_id}}
-                    {{#_rev}}<input type="hidden" name="_rev" value="{{_rev}}"/>{{/_rev}}
-                    {{#source}}<input type="hidden" name="source" value="{{source}}"/>{{/source}}
-                    {{#defaultValue}}<input type="hidden" name="defaultValue" value="{{defaultValue}}"/>{{/defaultValue}}
+    <div class="container">
+        <div class="panel panel-default">
+            <div class="panel-heading"><div class="panel-title"><h1>Add/Edit Record</h1></div></div>
+            <div class="panel-body">
+                <div id="messages" class="alert col-md-offset-1 display:none"></div>
+                <form id="entry-edit" class="form-horizontal">
+                    <fieldset>
+                        {{#_id}}<input type="hidden" name="_id" value="{{_id}}"/>{{/_id}}
+                        {{#_rev}}<input type="hidden" name="_rev" value="{{_rev}}"/>{{/_rev}}
+                        {{#source}}<input type="hidden" name="source" value="{{source}}"/>{{/source}}
+                        {{#defaultValue}}<input type="hidden" name="defaultValue" value="{{defaultValue}}"/>{{/defaultValue}}
 
-                    <div class="form-group">
-                        <label class="col-md-1 control-label" for="uniqueId">Unique ID:</label>
-                        <div class="col-md-7" id="uniqueId-values">
-                            <input class="form-control input-md" type="text" name="uniqueId" value="{{uniqueId}}" required=""/>
-                            <span class="help-block">Enter a unique identifier for this record.  For terms, this must be a lowerCamelCase name with no spaces.</span>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="col-md-1 control-label" for="type" required="">Type:</label>
-                        <div class="col-md-7" id="type-values">
-                            <input class="form-control input-md" type="text" name="type" value="{{type}}"/>
-                            <span class="help-block">The type of record (GENERAL, ALIAS, OPERATOR, TRANSLATION, TRANSFORM).</span>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="col-md-1 control-label" for="termLabel" required="">Term Label:</label>
-                        <div class="col-md-7" id="termLabel-values">
-                            <input class="form-control input-md" type="text" name="termLabel" value="{{termLabel}}"/>
-                            <span class="help-block">The human-readable label for this term.</span>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="col-md-1 control-label" for="status" required="">Status:</label>
-                        <div class="col-md-7" id="status-values">
-                            <input class="form-control input-md" type="text" name="status" value="{{status}}"/>
-                            <span class="help-block">The status of this record. Should be "unreviewed" for new records, "active" for live records, and "deleted" for inactive records.</span>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="col-md-1 control-label" for="valueSpace">Value Space:</label>
-                        <div class="col-md-7" id="valueSpace-values">
-                            <input class="form-control input-md" type="text" name="valueSpace" value="{{valueSpace}}"/>
-                            <span class="help-block">The range of acceptable values for this term.  May be a list of values separated by commas, or notation describing the range of acceptable values.</span>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="col-md-1 control-label" for="definition">Definition:</label>
-                        <div class="col-md-7" id="definition-values">
-                            <textarea class="form-control" name="definition" rows="5">{{definition}}</textarea>
-                            <span class="help-block">The definition of this term.  Not allowed for aliases or transformations.</span>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="col-md-1 control-label" for="notes">Notes:</label>
-                        <div class="col-md-7" id="notes-values">
-                            <textarea class="form-control" name="notes" rows="5">{{notes}}</textarea>
-                            <span class="help-block">Any additional notes about this record.</span>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="col-md-1 control-label" for="uses">Uses:</label>
-                        <div class="col-md-7" id="uses-values">
-                            <textarea class="form-control" name="uses" rows="5">{{uses}}</textarea>
-                            <span class="help-block">Sources that use this term.</span>
-                        </div>
-                    </div>
-
-                    {{#aliasOf}}
                         <div class="form-group">
-                            <label class="col-md-1 control-label" for="aliasOf">Alias Of:</label>
-                            <div class="col-md-7" id="aliasOf-values">
-                                <input class="form-control input-md" type="text" name="aliasOf" value="{{aliasOf}}"/>
-                                <span class="help-block">For an alias or transform, the uniqueId of the parent record.</span>
+                            <label class="col-md-2 control-label" for="uniqueId">Unique ID:</label>
+                            <div class="col-md-7" id="uniqueId-values">
+                                <input class="form-control input-md" type="text" name="uniqueId" value="{{uniqueId}}" required=""/>
+                                <span class="help-block">Enter a unique identifier for this record.  For terms, this must be a lowerCamelCase name with no spaces.</span>
                             </div>
                         </div>
-                    {{/aliasOf}}
 
-                    {{#translationOf}}
                         <div class="form-group">
-                            <label class="col-md-1 control-label" for="translationOf">Translation Of:</label>
-                            <div class="col-md-7" id="translationOf-values">
-                                <input class="form-control input-md" type="text" name="translationOf" value="{{translationOf}}"/>
-                                <span class="help-block">For a translation, the uniqueId of the parent record.</span>
+                            <label class="col-md-2 control-label" for="type" required="">Type:</label>
+                            <div class="col-md-7" id="type-values">
+                                <input class="form-control input-md" type="text" name="type" value="{{type}}"/>
+                                <span class="help-block">The type of record (GENERAL, ALIAS, OPERATOR, TRANSLATION, TRANSFORM).</span>
                             </div>
                         </div>
-                    {{/translationOf}}
 
-                    {{#source}}
                         <div class="form-group">
-                            <label class="col-md-1 control-label" for="source">Source:</label>
-                            <div class="col-md-7" id="source-values">{{source}}</div>
+                            <label class="col-md-2 control-label" for="termLabel" required="">Term Label:</label>
+                            <div class="col-md-7" id="termLabel-values">
+                                <input class="form-control input-md" type="text" name="termLabel" value="{{termLabel}}"/>
+                                <span class="help-block">The human-readable label for this term.</span>
+                            </div>
                         </div>
-                    {{/source}}
 
-                    {{#defaultValue}}
                         <div class="form-group">
-                            <label class="col-md-1 control-label" for="defaultValue">Suggested Default Value:</label>
-                            <div class="col-md-7" id="defaultValue-values">{{defaultValue}}</div>
+                            <label class="col-md-2 control-label" for="status" required="">Status:</label>
+                            <div class="col-md-7" id="status-values">
+                                <input class="form-control input-md" type="text" name="status" value="{{status}}"/>
+                                <span class="help-block">The status of this record. Should be "unreviewed" for new records, "active" for live records, and "deleted" for inactive records.</span>
+                            </div>
                         </div>
-                    {{/defaultValue}}
 
-                    {{#aliases.length}}
-                        YO.
-                    {{/aliases.length}}
-
-                    <div class="form-group">
-                        <label class="col-md-1 control-label" for="aliases">Aliases:</label>
-                        <div class="col-md-7" id="aliases-values">
-                            {{#aliases}}
-                             <a class="btn btn-lg" target="_blank" href="/tr/_design/trapp/_show/edit/{{id}}">{{uniqueId}} ({{source}})</a></span>
-                            {{/aliases}}
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="valueSpace">Value Space:</label>
+                            <div class="col-md-7" id="valueSpace-values">
+                                <input class="form-control input-md" type="text" name="valueSpace" value="{{valueSpace}}"/>
+                                <span class="help-block">The range of acceptable values for this term.  May be a list of values separated by commas, or notation describing the range of acceptable values.</span>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="form-group">
-                        <div class="col-md-offset-8 col-md-2">
-                            <button class="btn btn-primary" id="ajax" onClick="doAjaxPost(); return false;">Save</button>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="definition">Definition:</label>
+                            <div class="col-md-7" id="definition-values">
+                                <textarea class="form-control" name="definition" rows="5">{{definition}}</textarea>
+                                <span class="help-block">The definition of this term.  Not allowed for aliases or transformations.</span>
+                            </div>
                         </div>
-                    </div>
-                </fieldset>
-            </form>
+
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="notes">Notes:</label>
+                            <div class="col-md-7" id="notes-values">
+                                <textarea class="form-control" name="notes" rows="5">{{notes}}</textarea>
+                                <span class="help-block">Any additional notes about this record.</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="uses">Uses:</label>
+                            <div class="col-md-7" id="uses-values">
+                                <textarea class="form-control" name="uses" rows="5">{{uses}}</textarea>
+                                <span class="help-block">Sources that use this term.</span>
+                            </div>
+                        </div>
+
+                        {{#aliasOf}}
+                            <div class="form-group">
+                                <label class="col-md-2 control-label" for="aliasOf">Alias Of:</label>
+                                <div class="col-md-7" id="aliasOf-values">
+                                    <input class="form-control input-md" type="text" name="aliasOf" value="{{aliasOf}}"/>
+                                    <span class="help-block">For an alias or transform, the uniqueId of the parent record.</span>
+                                </div>
+                            </div>
+                        {{/aliasOf}}
+
+                        {{#translationOf}}
+                            <div class="form-group">
+                                <label class="col-md-2 control-label" for="translationOf">Translation Of:</label>
+                                <div class="col-md-7" id="translationOf-values">
+                                    <input class="form-control input-md" type="text" name="translationOf" value="{{translationOf}}"/>
+                                    <span class="help-block">For a translation, the uniqueId of the parent record.</span>
+                                </div>
+                            </div>
+                        {{/translationOf}}
+
+                        {{#source}}
+                            <div class="form-group">
+                                <label class="col-md-2 control-label" for="source">Source:</label>
+                                <div class="col-md-7" id="source-values">{{source}}</div>
+                            </div>
+                        {{/source}}
+
+                        {{#defaultValue}}
+                            <div class="form-group">
+                                <label class="col-md-2 control-label" for="defaultValue">Suggested Default Value:</label>
+                                <div class="col-md-7" id="defaultValue-values">{{defaultValue}}</div>
+                            </div>
+                        {{/defaultValue}}
+
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="aliases">Aliases:</label>
+                            <div class="col-md-7" id="aliases-values">
+                                {{#aliases}}
+                                    <a class="btn btn-lg" target="_blank" href="/tr/_design/trapp/_show/edit/{{id}}">{{uniqueId}} ({{source}})</a></span>
+                                {{/aliases}}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-offset-10 col-md-2">
+                                <button class="btn btn-primary" id="ajax" onClick="doAjaxPost(); return false;">Save</button>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
         </div>
     </div>
 
-    <p>TODO: Convert type to drop down consisting of ALIAS ALIASTRANSFORMATION TRANSLATION GENERAL OPERATOR</p>
-    <p>TODO: Icons, etc. for trashing records.</p>
-    <p>TODO: Only display aliasOf for aliases</p>
-    <p>TODO: Only display translationOf for aliases</p>
+    <div class="container">
+        <h3 id="history-title">History <span class="badge">0</span></h3>
 
+        <div id="history" style="display:none"></div>
+    </div>
+
+    <hr/>
+
+    <!--
+
+    TODO: Convert type to drop down consisting of ALIAS ALIASTRANSFORMATION TRANSLATION GENERAL OPERATOR
+    TODO: Convert type to drop down consisting of ALIAS ALIASTRANSFORMATION TRANSLATION GENERAL OPERATOR
+    TODO: Icons, etc. for trashing records.
+    TODO: Only display aliasOf for aliases
+    TODO: Only display translationOf for aliases
+
+    -->
 
     <script type="text/javascript">
+        function loadHistory(id) {
+            // Get this first: /somedatabase/some_doc_id?revs_info=true HTTP/1.0
+            $.ajax({
+                context: { "id" : id },
+                url: "/tr/" + id + "?revs_info=true",
+                success: function(results,status,jqXHR) {
+                    var resultsObject = JSON.parse(results);
+                    // if there are results, iterate through them
+                    if (resultsObject['_revs_info'] !== undefined) {
+                        for (var position in resultsObject['_revs_info']) {
+                            var rev = resultsObject['_revs_info'][position];
+                            // The record format is like: {"rev":"6-0e55e750eac3bbb9377c45cbee45998c","status":"available"}
+                            // Make an ajax call to get the individual record.
+                            if (rev['status'] === "available") {
+                                // GET /somedatabase/some_doc_id?rev=946B7D1C HTTP/1.0
+                                $.ajax({
+                                   context: { "id" : this.id },
+                                   url: "/tr/" + this.id + "?rev=" + rev['rev'],
+                                   success: function(childResults,childStatus,childJqXHR) {
+                                       var fields = ['uniqueId','termLabel','definition','type','status','notes','uses','aliasOf','translationOf'];
+                                       var revisionObject = JSON.parse(childResults);
+                                       var recordDifferent = false;
+
+                                       var form = $("#entry-edit");
+                                       var revisionHtml = $('<div class="col-md-6"><div class="panel panel-default"><div></div>');
+                                       revisionHtml.find(".panel").append('<div class="panel-heading">rev: ' + revisionObject._rev + '</div>');
+                                       revisionHtml.find(".panel").append('<div class="panel-body"></div>');
+
+                                       for (var position in fields) {
+                                           var field = fields[position];
+                                           var formField = $("#entry-edit input[name='" + field + "'],textarea[name='" + field + "']");
+                                           var formValue = formField.val();
+                                           var revisionValue = revisionObject[field];
+
+                                           if (revisionValue !== undefined && revisionValue !== "") {
+                                                if (formValue !== revisionValue) {
+                                                    revisionHtml.find(".panel-body").append('<p>' + field + " was set to '" + revisionValue + "'</p>")
+                                                    recordDifferent = true;
+                                                }
+                                           }
+                                           else {
+                                               if (formValue !== undefined && formValue !== "") {
+                                                   revisionHtml.find(".panel-body").append('<p>' + field + " was not previously set.</p>")
+                                                   recordDifferent = true;
+                                               }
+                                           }
+                                       }
+
+                                        if (recordDifferent) {
+                                            revisionHtml.find(".panel").addClass("different-revision");
+                                            revisionHtml.find(".panel").addClass("panel-warning");
+                                        }
+                                        else {
+                                            revisionHtml.find(".panel-body").append('<p>No key differences</p>');
+                                        }
+
+                                       revisionHtml.find(".panel-body").append('<p class="pull-right"><a class="glyphicon glyphicon-edit" target="_blank" href="/tr/' + this.id + '?rev=' + revisionObject["_rev"]+ '"></a></p>');
+
+                                       $("#history").append(revisionHtml);
+                                       countRevisions();
+                                  },
+                                   error: function(childJqXHR, childStatus, childErrorString) {
+                                       $("#history").append("<p>" + childErrorString + "</p>")
+                                   }
+                                });
+                            }
+                        }
+                    }
+                },
+                error: function(jqXHR, status, errorString) {
+                    $("#history").html("Error:" + errorString);
+                }
+            });
+        }
+
+        function countRevisions() {
+            var revisionCount = 0;
+            var differenceCount = 0;
+
+            var revisionElements = $("#history .panel");
+            if (revisionElements !== undefined) {
+                revisionCount = revisionElements.length;
+            }
+
+            var differenceElements = $(".different-revision");
+            if (differenceElements !== undefined) {
+                differenceCount = differenceElements.length;
+            }
+
+            $("#history-title .badge").html(revisionCount + " revs, " + differenceCount + " diffs");
+        }
+
         function doAjaxPost() {
             var form = $("#entry-edit");
             var data = form.serialize();
@@ -193,6 +294,11 @@
                 }
             });
         }
+
+        $(function() {
+            loadHistory("{{_id}}");
+            $("#history-title").bind('click',function() { $("#history").toggle() });
+        });
     </script>
 </body>
 </html>
