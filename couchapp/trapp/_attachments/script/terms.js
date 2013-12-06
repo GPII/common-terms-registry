@@ -9,19 +9,25 @@ $(function() {
 
     function wireUpTable() {
 	    $("#content").jtable({
-		    title: 'Terms Registry',
             paging: true,
-            // By default jTable uses a POST for everything, which doesn't work when couchdb expects a GET (lists, views, shows)
-            // TODO:  Figure out how to do this for just the listAction
             pageSize: 50,
             pageSizes: [50,100,250,500,1000,2500],
+            columnSelectable: false,
+            // By default jTable uses a POST for everything, which doesn't work when couchdb expects a GET (lists, views, shows)
+            // TODO:  Figure out how to do this for just the listAction
             ajaxSettings: {
                 type: 'GET'
             },
-			actions: { 
+            actions: {
                 listAction: '/tr/_design/trapp/_list/jtable/terms'
              },
 			fields: {
+                action: {
+                    width: "5%",
+                    edit: false,
+                    create: false,
+                    display: function(record) { return $.mustache($("#action").html(),record.record); }
+                },
                 id:
                 {
                     key: true,
@@ -51,7 +57,6 @@ $(function() {
                 definition: {
                     title: 'Definition / Notes',
                     width: "20%",
-                    sorting: false,
                     edit: false,
                     create: false,
                     display: function(record) { return $.mustache($("#definition").html(),record.record);}
@@ -59,7 +64,6 @@ $(function() {
                 aliases: {
                     title: 'Aliases',
                     width: "20%",
-                    sorting: false,
                     edit: false,
                     create: false,
                     display: function(record) {
@@ -77,13 +81,6 @@ $(function() {
 
                         return container;
                     }
-                },
-                action: {
-                    title: 'Actions',
-                    width: "10%",
-                    edit: false,
-                    create: false,
-                    display: function(record) { return $.mustache($("#action").html(),record.record); }
                 }
 		    }
 		});
