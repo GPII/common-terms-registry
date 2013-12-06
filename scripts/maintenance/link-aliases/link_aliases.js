@@ -100,7 +100,7 @@ function updateTerm(err, doc) {
             }
         }
         else {
-            console.error("More than one record exists for key '" + doc[0].key + "':\n" + JSON.stringify(doc));
+            console.error("More than one record exists for key '" + doc[0].key + "'...");
         }
     }
 }
@@ -110,7 +110,7 @@ function saveTerm(err, res) {
         console.error("Error saving record: " + err.error);
 	if (err.reason !== undefined) {
 	    if (err.reason.summary !== undefined) {
-		console.error("Summary: " + err.reason.summary);
+		console.error("  Summary: " + err.reason.summary);
 	    }
 	    if (err.reason.errors !== undefined) {
 		for (var position in err.reason.errors) {
@@ -119,7 +119,7 @@ function saveTerm(err, res) {
 		    for (var keyPos in keys) {
 			var key = keys[position];
 			var value = errorMap[key];
-			console.error("  Error saving field '" + key + "':" + value);
+			console.error("    Error saving field '" + key + "':" + value);
 		    }
 		}
 	    }
@@ -127,7 +127,7 @@ function saveTerm(err, res) {
         return;
     } 
     
-    console.log("Saved alias data to term:" + JSON.stringify(res));
+    //console.log("Saved alias data to term:" + JSON.stringify(res));
 }
 
 function processAliasSearchResults(doc,err) {
