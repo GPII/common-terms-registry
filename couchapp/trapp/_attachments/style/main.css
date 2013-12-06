@@ -21,3 +21,7 @@ tr.jtable-data-row {
     padding-top: 15px;
     padding-bottom: 15px;
 }
+
+.glyphicon {
+    font-size: 1.5em;
+}
