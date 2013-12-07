@@ -12,6 +12,8 @@ $(function() {
             paging: true,
             pageSize: 50,
             pageSizes: [50,100,250,500,1000,2500],
+            sorting: true,
+            defaultSorting: "uniqueId ASC",
             columnSelectable: false,
             // By default jTable uses a POST for everything, which doesn't work when couchdb expects a GET (lists, views, shows)
             // TODO:  Figure out how to do this for just the listAction
@@ -26,6 +28,7 @@ $(function() {
                     width: "5%",
                     edit: false,
                     create: false,
+                    sorting: false,
                     display: function(record) { return $.mustache($("#action").html(),record.record); }
                 },
                 id:
@@ -51,11 +54,13 @@ $(function() {
                 },
                 defaultValue: {
                     title: 'Value Space',
+                    sorting: false,
                     width: "20%",
                     display: function(record) { return $.mustache($("#value").html(),record.record);}
                 },
                 definition: {
                     title: 'Definition / Notes',
+                    sorting: false,
                     width: "20%",
                     edit: false,
                     create: false,
@@ -63,6 +68,7 @@ $(function() {
                 },
                 aliases: {
                     title: 'Aliases',
+                    sorting: true,
                     width: "20%",
                     edit: false,
                     create: false,
