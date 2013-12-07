@@ -76,12 +76,13 @@ function matchRecords() {
     for (var position in keys) { 
         var key = keys[position];
         var record = dbRecords[key];
+        var recordValue = record[field] ? record[field] : "";
 
-        if (record[field] !== undefined && record[field].match(find_regexp)) {
+        if (recordValue.match(find_regexp)) {
             // clone the original record
             var newRecord = JSON.parse(JSON.stringify(record));
 
-            newRecord[field] = record[field].replace(find_regexp,replace_regexp);
+            newRecord[field] = recordValue.replace(find_regexp,replace_regexp);
 
             // TODO:  Currently we have some invalid data that cannot be safely updated.  For now we have to massage the records manually.
             if (recordType === "GENERAL") {
@@ -114,7 +115,40 @@ function uploadRecords() {
         }
         else {
             // FIXME:  The put method provided by promised-couch doesn't have a fail method and as a result we can't trap validation errors properly.
-            db.put(updatedRecord);
+//            db.put(updatedRecord, showError);
+
+            // As a workaround, just put the update with a traditional callback.  Not very promise-y, but functional.
+            var url = require('url');
+            var urlOptions = url.parse(argv.url);
+
+            var http = require('http');
+            http.globalAgent.maxSockets = 2000;
+
+            var reqOptions = {
+                hostname: urlOptions.hostname,
+                port:     urlOptions.port,
+                path:     urlOptions.path + "/" + updatedRecord._id,
+                auth:     urlOptions.auth,
+                method:   'PUT',
+                headers: { 'Content-Type': 'application/json'},
+                agent: false
+            };
+
+            var req = http.request(reqOptions, function(res) {
+//                console.log('STATUS: ' + res.statusCode);
+//                console.log('HEADERS: ' + JSON.stringify(res.headers));
+//                res.setEncoding('utf8');
+//                res.on('data', function (chunk) {
+//                    console.log('BODY: ' + chunk);
+//                });
+            });
+
+            req.on('error', function(e) {
+                console.log('problem with request: ' + e.message);
+            });
+
+            req.write(JSON.stringify(updatedRecord) + "\n");
+            req.end();
         }
     }
 
