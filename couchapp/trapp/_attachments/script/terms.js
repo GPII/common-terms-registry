@@ -90,8 +90,23 @@ $(function() {
                 }
 		    }
 		});
-        $("#content").jtable('load');
+        loadTableWithFilters();
 	}
+
+    function loadTableWithFilters(status) {
+        if (status === undefined) { status = "active"; }
+        $("#content").jtable('load',{"displayStatus": status});
+    }
+
+    function activateFilter(id,status) {
+        var toggle = $(id);
+        if (toggle.hasClass("disabled")) {
+            $(".filter-toggle").addClass("disabled");
+            $(id).removeClass("disabled");
+
+            loadTableWithFilters(status);
+        }
+    }
 
     function loadFooterAndHeader() {
         $("#footer").html($("#footer-template").html());
@@ -101,11 +116,18 @@ $(function() {
         $("#account").couchLogin({
             loggedIn : function(r) {
 		        $("#profile").couchProfile(r, {});
+                $("#login-message").remove();
+                $("#controls").show();
+                $("#control-toggle,#control-panel-toggle").click(function() { $("#control-panel").toggle(); return false;});
+                $("#unreviewed-record-toggle").click(function() { activateFilter("#unreviewed-record-toggle","unreviewed"); return false;});
+                $("#live-record-toggle").click(function() { activateFilter("#live-record-toggle","active"); return false;});
+                $("#deleted-record-toggle").click(function() { activateFilter("#deleted-record-toggle","deleted"); return false;});
+
                 wireUpTable();
             },
             loggedOut : function() {
-                $("#content").html('<div class="alert alert-danger">You must log in to view the registry.</div>');
-
+                $("#content").html('<div id="login-message" class="alert alert-danger">You must log in to view the registry.</div>');
+                $("#controls").hide();
                 $("#profile").html('<p>Please log in to see your profile.</p>');
             }
         });

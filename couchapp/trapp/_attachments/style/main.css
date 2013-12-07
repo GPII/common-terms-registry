@@ -22,6 +22,21 @@ tr.jtable-data-row {
     padding-bottom: 15px;
 }
 
+.navbar .glyphicon {
+    padding-top: 13px;
+}
 .glyphicon {
     font-size: 1.5em;
+}
+
+a.glyphicon {
+    color: inherit;
+}
+
+.filter-toggle.disabled {
+    color: #cccccc;
+}
+
+#controls {
+    margin-bottom: 1em;
 }

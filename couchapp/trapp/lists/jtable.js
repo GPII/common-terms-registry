@@ -27,25 +27,33 @@ function(head, req) {
             jtPageSize = parseInt(req.query.jtPageSize);
         }
 
+        var displayStatus = "active";
+        if (req.query.displayStatus !== undefined) {
+            displayStatus = req.query.displayStatus;
+        }
+
         var allRecords = [];
         while (row = getRow()) {
-            allRecords.push({
-                "type":         row.value.type,
-                "uniqueId":     row.value.uniqueId,
-                "localId":      row.value.localId,
-                "valueSpace":   row.value.valueSpace,
-                "defaultValue": row.value.defaultValue,
-                "aliasOf":      row.value.aliasOf,
-                "termLabel":    row.value.termLabel,
-                "definition":   row.value.definition,
-                "notes":        row.value.notes,
-                "uses":         row.value.uses,
-                // non-canonical fields are prefixed with an underscore
-                "_id" :         row.value._id,
-                "_rev" :        row.value._rev,
-                "aliases":     row.value.aliases,
-                "source":      row.value.source
-            });
+            if (row.value.status !== undefined) { status = row.value.status; }
+            if (status === displayStatus) {
+                allRecords.push({
+                    "type":         row.value.type,
+                    "uniqueId":     row.value.uniqueId,
+                    "localId":      row.value.localId,
+                    "valueSpace":   row.value.valueSpace,
+                    "defaultValue": row.value.defaultValue,
+                    "aliasOf":      row.value.aliasOf,
+                    "termLabel":    row.value.termLabel,
+                    "definition":   row.value.definition,
+                    "notes":        row.value.notes,
+                    "uses":         row.value.uses,
+                    // non-canonical fields are prefixed with an underscore
+                    "_id" :         row.value._id,
+                    "_rev" :        row.value._rev,
+                    "aliases":     row.value.aliases,
+                    "source":      row.value.source
+                });
+            }
         }
 
         // Sort the list of results if the jtSorting option is anything but "uniqueID ASC" (the default).
@@ -69,33 +77,7 @@ function(head, req) {
         }
 
         jTableData.Records = allRecords.slice(jtStartIndex,jtStartIndex+jtPageSize);
-
-
-//        for (var record = 0; record < (jtStartIndex + jtPageSize); record++) {
-//            row = getRow();
-//            if (record < jtStartIndex) continue;
-//            if (record >= head.total_rows) break;
-//
-//            jTableData.Records.push({
-//                "type":         row.value.type,
-//                "uniqueId":     row.value.uniqueId,
-//                "localId":      row.value.localId,
-//                "valueSpace":   row.value.valueSpace,
-//                "defaultValue": row.value.defaultValue,
-//                "aliasOf":      row.value.aliasOf,
-//                "termLabel":    row.value.termLabel,
-//                "definition":   row.value.definition,
-//                "notes":        row.value.notes,
-//                "uses":         row.value.uses,
-//                // non-canonical fields are prefixed with an underscore
-//                "_id" :         row.value._id,
-//                "_rev" :        row.value._rev,
-//                "aliases":     row.value.aliases,
-//                "source":      row.value.source
-//            });
-//        }
-
-        jTableData.TotalRecordCount = head.total_rows; 
+        jTableData.TotalRecordCount = allRecords.length;
 
         // make sure to stringify the results :)
         send(JSON.stringify(jTableData));        

@@ -22,7 +22,7 @@
 </script>
 
 <script id="action" type="text/html">
-    <a title="View/Edit Record" class="glyphicon glyphicon-edit" target="_blank" href="/tr/_design/trapp/_show/edit/{{_id}}"></a>
+    <a title="View/Edit Record" class="glyphicon glyphicon-pencil" target="_blank" href="/tr/_design/trapp/_show/edit/{{_id}}"></a>
     <a title="Delete Record" class="glyphicon glyphicon-trash" target="#"></a>
 </script>
 
@@ -32,18 +32,20 @@
         <div class="navbar-header col-md-3">
             <a class="navbar-brand" href="#">Common Terms Registry</a>
         </div>
-        <div>
-        <div class="collapse navbar-collapse col-md-5">
+        <div class="collapse navbar-collapse col-md-6">
             <ul class="nav navbar-nav">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="about.html">About</a></li>
                 <li><a href="http://raisingthefloor.org/" target="_blank">Raising the Floor Home</a></li>
             </ul>
         </div>
-        <div class="navbar-right col-md-2">
-            <div id="account">
-                Basic panel example
+        <div class="navbar-right col-md-1">
+            <div class="nav navbar-nav">
+                <a id="control-toggle" class="glyphicon glyphicon-cog" href="#" title="Open Settings Panel"></a>
             </div>
+        </div>
+        <div class="navbar-right col-md-2">
+            <div id="account"></div>
         </div>
     </div>
 </script>
