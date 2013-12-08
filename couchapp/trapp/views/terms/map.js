@@ -1,5 +1,5 @@
 function(doc) {
-    if (doc && doc.type && doc.type.toLowerCase() == 'general') {
+    if (doc && doc.type && doc.type.toLowerCase() == 'general' && doc.status !== "deleted") {
       emit(doc.uniqueId, {
  		"type":                 doc.type,
 		"uniqueId":	            doc.uniqueId,
