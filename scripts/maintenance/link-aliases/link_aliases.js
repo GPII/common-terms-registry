@@ -36,7 +36,7 @@ var preview =  (argv.commit === undefined) ? true : false;
 var aliasesByTermId = {};
 
 
-scanAliases().then(processAliasSearchResults).then(finishedInitialScan).done(function() { console.log("Done:" + JSON.stringify(aliasesByTermId));});
+scanAliases().then(processAliasSearchResults).then(finishedInitialScan).done(function() { console.log("Done...");});
 
 function scanAliases() {
     console.log("Loading aliases from database...");
@@ -62,7 +62,7 @@ function finishedInitialScan() {
         console.info("Searching for record '" + key + "'...");
         
         // get the record from the database
-        db.view('trapp/entries', { key: key }, updateTerm);
+        db.view('trapp/terms', { key: key }, updateTerm);
     }
 }
 function updateTerm(err, doc) {
@@ -109,8 +109,11 @@ function saveTerm(err, res) {
     if (err) {
         console.error("Error saving record: " + err.error);
 	if (err.reason !== undefined) {
+        if (err.reason.current !== undefined) {
+            console.error("  Record: '" + err.reason.current.uniqueId + "'...");
+        }
 	    if (err.reason.summary !== undefined) {
-		console.error("  Summary: " + err.reason.summary);
+    		console.error("  Summary: " + err.reason.summary);
 	    }
 	    if (err.reason.errors !== undefined) {
 		for (var position in err.reason.errors) {
