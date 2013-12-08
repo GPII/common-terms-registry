@@ -9,13 +9,6 @@ $(function() {
             sorting: false,
             display: function(record) { return $.mustache($("#edit").html(),record.record); }
         },
-        delete: {
-            width: "5%",
-            edit: false,
-            create: false,
-            sorting: false,
-            display: function(record) { return $.mustache($("#delete").html(),record.record); }
-        },
         id:
         {
             key: true,
@@ -72,6 +65,13 @@ $(function() {
 
                 return container;
             }
+        },
+        delete: {
+            width: "5%",
+            edit: false,
+            create: false,
+            sorting: false,
+            display: function(record) { return $.mustache($("#delete").html(),record.record); }
         }
     }
 
@@ -100,27 +100,69 @@ $(function() {
                 type: 'GET'
             },
             actions: {
-                listAction: '/tr/_design/trapp/_list/jtable/terms'
+                listAction: '/tr/_design/trapp/_list/jtable/entries'
              },
 			fields: fieldSchemes[scheme]
 		});
         loadTableWithFilters(status);
 	}
 
-    function loadTableWithFilters(status) {
+    function loadTableWithFilters(status, type) {
         if (status === undefined) { status = "active"; }
-        $("#content").jtable('load',{"displayStatus": status});
+        if (type === undefined) { type = "GENERAL"; }
+
+        $("#content").jtable('load',{"displayStatus": status, "displayType" : type});
     }
 
-    function activateFilter(id,status) {
+    function activateStatusFilter(id,status) {
         var toggle = $(id);
         if (toggle.hasClass("disabled")) {
             $(".filter-toggle").addClass("disabled");
             $(id).removeClass("disabled");
 
-            loadTableWithFilters(status);
+            // get the active type from the selected type icon
+            var type = "GENERAL";
+            var selectedTypeIcon = $(".type-toggle:not(.disabled)");
+            if (selectedTypeIcon) {
+                var elementId = selectedTypeIcon.attr("id");
+                if (elementId == 'alias-type-toggle') {
+                    type = "ALIAS";
+                }
+                else if (elementId === 'translation-type-toggle') {
+                    type = "TRANSLATION";
+                }
+                else if (elementId === 'operator-type-toggle') {
+                    type = "OPERATOR";
+                }
+            }
+
+            loadTableWithFilters(status,type);
         }
     }
+
+    function activateTypeFilter(id,type) {
+        var toggle = $(id);
+        if (toggle.hasClass("disabled")) {
+            $(".type-toggle").addClass("disabled");
+            $(id).removeClass("disabled");
+
+            // get the active status from the selected status icon
+            var status = "active";
+            var selectedStatusIcon = $(".filter-toggle:not(.disabled)");
+            if (selectedStatusIcon) {
+                var elementId = selectedStatusIcon.attr("id");
+                if (elementId == 'unreviewed-record-toggle') {
+                    status = "unreviewed";
+                }
+                else if (elementId === 'deleted-record-toggle') {
+                    status = "deleted";
+                }
+            }
+
+            loadTableWithFilters(status,type);
+        }
+    }
+
 
     function loadFooterAndHeader() {
         $("#footer").html($("#footer-template").html());
@@ -133,9 +175,15 @@ $(function() {
                 $("#login-message").remove();
                 $("#controls").show();
                 $("#control-toggle,#control-panel-toggle").click(function() { $("#control-panel").toggle(); return false;});
-                $("#unreviewed-record-toggle").click(function() { activateFilter("#unreviewed-record-toggle","unreviewed"); return false;});
-                $("#live-record-toggle").click(function() { activateFilter("#live-record-toggle","active"); return false;});
-                $("#deleted-record-toggle").click(function() { activateFilter("#deleted-record-toggle","deleted"); return false;});
+
+                $("#general-type-toggle").click(function() { activateTypeFilter("#general-type-toggle","GENERAL"); return false;});
+                $("#alias-type-toggle").click(function() { activateTypeFilter("#alias-type-toggle","ALIAS"); return false;});
+                $("#translation-type-toggle").click(function() { activateTypeFilter("#translation-type-toggle","TRANSLATION"); return false;});
+                $("#operator-type-toggle").click(function() { activateTypeFilter("#operator-type-toggle","OPERATOR"); return false;});
+
+                $("#unreviewed-record-toggle").click(function() { activateStatusFilter("#unreviewed-record-toggle","unreviewed"); return false;});
+                $("#live-record-toggle").click(function() { activateStatusFilter("#live-record-toggle","active"); return false;});
+                $("#deleted-record-toggle").click(function() { activateStatusFilter("#deleted-record-toggle","deleted"); return false;});
 
                 wireUpTable();
             },

@@ -32,26 +32,40 @@ function(head, req) {
             displayStatus = req.query.displayStatus;
         }
 
+        var displayType = "GENERAL";
+        if (req.query.displayType !== undefined) {
+            displayType = req.query.displayType;
+        }
+
         var allRecords = [];
         while (row = getRow()) {
+            // This should only be necessary until all records have a status
+            var status = "active";
             if (row.value.status !== undefined) { status = row.value.status; }
-            if (status === displayStatus) {
+
+            // This should only be necessary until all records have a record type
+            var type = "GENERAL";
+            if (row.value.type !== undefined) { type = row.value.type; }
+
+            if (status === displayStatus && type === displayType) {
                 allRecords.push({
-                    "type":         row.value.type,
-                    "uniqueId":     row.value.uniqueId,
-                    "localId":      row.value.localId,
-                    "valueSpace":   row.value.valueSpace,
-                    "defaultValue": row.value.defaultValue,
-                    "aliasOf":      row.value.aliasOf,
-                    "termLabel":    row.value.termLabel,
-                    "definition":   row.value.definition,
-                    "notes":        row.value.notes,
-                    "uses":         row.value.uses,
-                    // non-canonical fields are prefixed with an underscore
-                    "_id" :         row.value._id,
-                    "_rev" :        row.value._rev,
-                    "aliases":     row.value.aliases,
-                    "source":      row.value.source
+                    "type":          row.value.type,
+                    "uniqueId":      row.value.uniqueId,
+                    "localId":       row.value.localId,
+                    "valueSpace":    row.value.valueSpace,
+                    "defaultValue":  row.value.defaultValue,
+                    "aliasOf":       row.value.aliasOf,
+                    "translationOf": row.value.aliasOf,
+                    "termLabel":     row.value.termLabel,
+                    "definition":    row.value.definition,
+                    "notes":         row.value.notes,
+                    "uses":          row.value.uses,
+
+                    // non-canonical fields
+                    "_id" :          row.value._id,
+                    "_rev" :         row.value._rev,
+                    "aliases":       row.value.aliases,
+                    "source":        row.value.source
                 });
             }
         }

@@ -33,8 +33,13 @@ a.glyphicon {
     color: inherit;
 }
 
-.filter-toggle.disabled {
+.filter-toggle.disabled, .type-toggle.disabled {
     color: #cccccc;
+}
+
+.center {
+    text-align: center;
+    align-content: center;
 }
 
 #controls {
