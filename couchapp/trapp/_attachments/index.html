@@ -49,21 +49,21 @@
                 Aliases
             </div>
             <div class="col-md-1 center">
-                <h4><a id="translation-type-toggle" href="#" class="type-toggle glyphicon glyphicon-leaf disabled" title="View Translations"></a></h4>
+                <h4><a id="translation-type-toggle" href="#" class="type-toggle glyphicon glyphicon-globe disabled" title="View Translations"></a></h4>
                 Translations
             </div>
             <div class="col-md-1 center">
-                <h4><a id="operator-type-toggle" href="#" class="type-toggle glyphicon glyphicon-plus disabled" title="View Operators"></a></h4>
+                <h4><a id="operator-type-toggle" href="#" class="type-toggle glyphicon glyphicon-tower disabled" title="View Operators"></a></h4>
                 Operators
             </div>
 
             <div class="col-md-1 col-md-offset-4 center">
-                <h4><a id="live-record-toggle" href="#" class="filter-toggle glyphicon glyphicon-ok-sign" title="View Live Records"></a></h4>
-                Live
+                <h4><a id="live-record-toggle" href="#" class="filter-toggle glyphicon glyphicon-ok-sign" title="View Active Records"></a></h4>
+                Active
             </div>
             <div class="col-md-1 center">
                 <h4><a id="unreviewed-record-toggle" href="#" class="filter-toggle glyphicon glyphicon-question-sign disabled" title="View Unreviewed Records"></a></h4>
-                New
+                Unreviewed
             </div>
             <div class="col-md-1 center">
                 <h4><a id="deleted-record-toggle" href="#" class="filter-toggle glyphicon glyphicon-trash disabled" title="View Deleted Records"></a></h4>
@@ -76,6 +76,12 @@
     </div>
 
     <div id="content" class="container"></div>
+
+    <div id="add-panel" class="container" style="display: none">
+        <div id="add-button" class="pull-right col-md-3">
+            <h4><a id="create-record-link" href="/tr/_design/trapp/_show/edit/" target="_blank" class="glyphicon glyphicon-plus" title="Add Record">Add Record</a></h4>
+        </div>
+    </div>
 
     <div id="footer" class="container"></div>
   </body>

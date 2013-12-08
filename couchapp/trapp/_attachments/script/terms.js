@@ -185,11 +185,14 @@ $(function() {
                 $("#live-record-toggle").click(function() { activateStatusFilter("#live-record-toggle","active"); return false;});
                 $("#deleted-record-toggle").click(function() { activateStatusFilter("#deleted-record-toggle","deleted"); return false;});
 
+                $("#add-panel").show();
+
                 wireUpTable();
             },
             loggedOut : function() {
                 $("#content").html('<div id="login-message" class="alert alert-danger">You must log in to view the registry.</div>');
                 $("#controls").hide();
+                $("#add-panel").hide();
                 $("#profile").html('<p>Please log in to see your profile.</p>');
             }
         });

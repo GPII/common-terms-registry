@@ -12,7 +12,7 @@
 <body>
     <div class="container">
         <div class="panel panel-default">
-            <div class="panel-heading"><div class="panel-title"><h1>Add/Edit Record</h1></div></div>
+            <div class="panel-heading"><div class="panel-title"><h1>{{^_id}}Add {{/_id}}{{#_id}}Edit {{/_id}} Record</h1></div></div>
             <div class="panel-body">
                 <div id="messages" class="alert col-md-offset-1 display:none"></div>
                 <form id="entry-edit" class="form-horizontal">
@@ -131,7 +131,7 @@
 
                         <div class="form-group">
                             <div class="col-md-offset-10 col-md-2">
-                                <button class="btn btn-primary" id="ajax" onClick="doAjaxPost();return false;">Save</button>
+                                <button class="btn btn-primary" id="ajax" onClick="doAjaxPost('{{_id}}'); return false;">Save</button>
                             </div>
                         </div>
                     </fieldset>
@@ -140,13 +140,13 @@
         </div>
     </div>
 
-    <div class="container">
-        <h3 id="history-title">History <span class="badge">0</span></h3>
+    {{#_id}}
+        <div class="container">
+            <h3 id="history-title">History <span class="badge">0</span></h3>
 
-        <div id="history" style="display:none"></div>
-    </div>
-
-    <hr/>
+            <div id="history" style="display:none"></div>
+        </div>
+    {{/_id}}
 
     <!--
 
@@ -251,13 +251,44 @@
             $("#history-title .badge").html(revisionCount + " revs, " + differenceCount + " diffs");
         }
 
-        function doAjaxPost() {
+        function formToJson(form)   {
+            var json = {};
+            var formArray = form.serializeArray();
+
+            for (var position in formArray) {
+                var record = formArray[position];
+                if (json[record.name] !== undefined) {
+                    // evolve strings into arrays on demand
+                    if (!json[record.name].push) {
+                        json[record.name] = [json[record.name]];
+                    }
+                }
+                else {
+                    json[record.name] = record.value || '';
+                }
+            }
+
+            return json;
+        }
+
+        function doAjaxPost(id) {
             var form = $("#entry-edit");
-            var data = form.serialize();
+            var data = JSON.stringify(formToJson(form));
+            var url = "/tr/";
+            var headers = {};
+            if (id) {
+                url = "/tr/_design/trapp/_update/edit/";
+                data = form.serialize();
+            }
+            else {
+                headers['Content-Type'] = 'application/json';
+            }
+
             var messageContainer = $("#messages");
             $.ajax({
-                url: "/tr/_design/trapp/_update/edit/",
+                url: url,
                 type: "POST",
+                headers: headers,
                 data: data,
                 success: function(results, status, jqXHR){
                     var rev = jqXHR.getResponseHeader("X-Couch-Update-NewRev");
@@ -298,8 +329,10 @@
         }
 
         $(function() {
-            loadHistory("{{_id}}");
-            $("#history-title").bind('click',function() { $("#history").toggle() });
+            {{#_id}}
+                loadHistory("{{_id}}");
+                $("#history-title").bind('click',function() { $("#history").toggle() });
+            {{/_id}}
         });
     </script>
 </body>

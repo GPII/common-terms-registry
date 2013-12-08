@@ -42,6 +42,23 @@ a.glyphicon {
     align-content: center;
 }
 
+.glyphicon-plus:before {
+    margin-right: .25em;
+}
+
+#add-panel {
+    padding-right: 0px;
+}
+
+#add-panel .panel {
+    background-color: #ccffcc;
+    margin-top: 1.5em;
+}
+
+#add-panel h2 {
+    vertical-align: middle;
+}
+
 #controls {
     margin-bottom: 1em;
 }
