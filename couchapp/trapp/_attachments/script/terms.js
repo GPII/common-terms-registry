@@ -1,4 +1,80 @@
-$(function() {   
+$(function() {
+    // field schemes so that we can display different fields for different record types and statuses
+    var fieldSchemes = {};
+    fieldSchemes['base'] = {
+        edit: {
+            width: "5%",
+            edit: false,
+            create: false,
+            sorting: false,
+            display: function(record) { return $.mustache($("#edit").html(),record.record); }
+        },
+        delete: {
+            width: "5%",
+            edit: false,
+            create: false,
+            sorting: false,
+            display: function(record) { return $.mustache($("#delete").html(),record.record); }
+        },
+        id:
+        {
+            key: true,
+            list: false
+        },
+        type: {
+            title: 'Record Type',
+            list: false
+        },
+        uniqueId: {
+            title: 'Unique ID',
+            width: "15%"
+        },
+        termLabel: {
+            title: 'Label',
+            width: "15%"
+        },
+        localId: {
+            title: 'Local Unique ID',
+            list: false
+        },
+        defaultValue: {
+            title: 'Value Space',
+            sorting: false,
+            width: "20%",
+            display: function(record) { return $.mustache($("#value").html(),record.record);}
+        },
+        definition: {
+            title: 'Definition / Notes',
+            sorting: false,
+            width: "20%",
+            edit: false,
+            create: false,
+            display: function(record) { return $.mustache($("#definition").html(),record.record);}
+        },
+        aliases: {
+            title: 'Aliases',
+            sorting: true,
+            width: "20%",
+            edit: false,
+            create: false,
+            display: function(record) {
+                // Because of limitations of list handling in mustache, we have to create the container and process rows individually
+                var container = $("<div></div>");
+                var aliasContainer = $($.mustache($("#aliases").html(),record.record));
+                container.append(aliasContainer);
+
+                if (record.record.aliases !== undefined && record.record.aliases.length > 0) {
+                    for (var position in record.record.aliases) {
+                        aliasRecord = record.record.aliases[position];
+                        aliasContainer.append($.mustache($("#alias-list-entry").html(),aliasRecord.value));
+                    }
+                }
+
+                return container;
+            }
+        }
+    }
+
     // load all Mustache templates
     $.get('templates/terms.mustache', function(templates) { $(templates).each(function() { $('body').append(this); }); }).then(loadFooterAndHeader);
 
@@ -7,7 +83,10 @@ $(function() {
         newProfile : '<form><p>Hello {{name}}, Please setup your user profile.</p><label for="nickname">Nickname <input type="text" name="nickname" value=""></label><label for="email">Email (<em>for <a href="http://gravatar.com">Gravatar</a></em>) <input type="text" name="email" value=""></label><label for="url">URL <input type="text" name="url" value=""></label><input type="submit" value="Go &rarr;"><input type="hidden" name="userCtxName" value="{{name}}" id="userCtxName"></form>'
     };
 
-    function wireUpTable() {
+    function wireUpTable(scheme, status) {
+        if (scheme === undefined) { scheme = 'base'; }
+        if (status == undefined) { status = 'active'; }
+
 	    $("#content").jtable({
             paging: true,
             pageSize: 50,
@@ -23,74 +102,9 @@ $(function() {
             actions: {
                 listAction: '/tr/_design/trapp/_list/jtable/terms'
              },
-			fields: {
-                action: {
-                    width: "5%",
-                    edit: false,
-                    create: false,
-                    sorting: false,
-                    display: function(record) { return $.mustache($("#action").html(),record.record); }
-                },
-                id:
-                {
-                    key: true,
-                    list: false
-				},
-                type: {
-                    title: 'Record Type',
-                    list: false
-                },
-                uniqueId: {
-                    title: 'Unique ID',
-                    width: "15%"
-                },
-                termLabel: {
-                    title: 'Label',
-                    width: "15%"
-                },
-                localId: {
-                    title: 'Local Unique ID',
-                    list: false
-                },
-                defaultValue: {
-                    title: 'Value Space',
-                    sorting: false,
-                    width: "20%",
-                    display: function(record) { return $.mustache($("#value").html(),record.record);}
-                },
-                definition: {
-                    title: 'Definition / Notes',
-                    sorting: false,
-                    width: "20%",
-                    edit: false,
-                    create: false,
-                    display: function(record) { return $.mustache($("#definition").html(),record.record);}
-                },
-                aliases: {
-                    title: 'Aliases',
-                    sorting: true,
-                    width: "20%",
-                    edit: false,
-                    create: false,
-                    display: function(record) {
-                        // Because of limitations of list handling in mustache, we have to create the container and process rows individually
-                        var container = $("<div></div>");
-                        var aliasContainer = $($.mustache($("#aliases").html(),record.record));
-                        container.append(aliasContainer);
-
-                        if (record.record.aliases !== undefined && record.record.aliases.length > 0) {
-                            for (var position in record.record.aliases) {
-                                aliasRecord = record.record.aliases[position];
-                                aliasContainer.append($.mustache($("#alias-list-entry").html(),aliasRecord.value));
-                            }
-                        }
-
-                        return container;
-                    }
-                }
-		    }
+			fields: fieldSchemes[scheme]
 		});
-        loadTableWithFilters();
+        loadTableWithFilters(status);
 	}
 
     function loadTableWithFilters(status) {
@@ -132,4 +146,24 @@ $(function() {
             }
         });
     }
+
  });
+
+function deleteRecord(id) {
+    var data = $("#delete-" + id + "-form").serialize();
+
+    // post results via AJAX
+    $.ajax({
+        url: "/tr/_design/trapp/_update/edit/",
+        type: "POST",
+        data: data,
+        context: id,
+        success: function(results, status, jqXHR){
+            // if we succeed, remove the row
+            $("#delete-" + this + "-form").closest("tr").remove();
+        },
+        error: function(jqXHR, status, errorString) {
+            window.alert("Error deleting record '" + this + "': " + errorString);
+        }
+    });
+}

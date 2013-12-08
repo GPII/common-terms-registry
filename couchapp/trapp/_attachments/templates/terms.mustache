@@ -21,11 +21,29 @@
     {{/defaultValue}}
 </script>
 
-<script id="action" type="text/html">
+<script id="edit" type="text/html">
     <a title="View/Edit Record" class="glyphicon glyphicon-pencil" target="_blank" href="/tr/_design/trapp/_show/edit/{{_id}}"></a>
-    <a title="Delete Record" class="glyphicon glyphicon-trash" target="#"></a>
 </script>
 
+<script id="delete" type="text/html">
+    <form id="delete-{{_id}}-form">
+        <input type="hidden" name="_id" value="{{_id}}"/>
+        <input type="hidden" name="_rev" value="{{_rev}}"/>
+        <input type="hidden" name="uniqueId" value="{{uniqueId}}"/>
+        <input type="hidden" name="type" value="{{type}}"/>
+        <input type="hidden" name="status" value="deleted"/>
+        {{#termLabel}}<input type="hidden" name="termLabel" value="{{termLabel}}"/>{{/termLabel}}
+        {{#valueSpace}}<input type="hidden" name="valueSpace" value="{{valueSpace}}"/>{{/valueSpace}}
+        {{#definition}}<input type="hidden" name="definition" value="{{definition}}"/>{{/definition}}
+        {{#notes}}<input type="hidden" name="notes" value="{{notes}}"/>{{/notes}}
+        {{#uses}}<input type="hidden" name="uses" value="{{uses}}"/>{{/uses}}
+        {{#source}}<input type="hidden" name="source" value="{{source}}"/>{{/source}}
+        {{#aliasOf}}<input type="hidden" name="aliasOf" value="{{aliasOf}}"/>{{/aliasOf}}
+        {{#translationOf}}<input type="hidden" name="translationOf" value="{{translationOf}}"/>{{/translationOf}}
+
+        <a title="Delete Record" href="javascript:if (confirm('Move record to trash?')) { deleteRecord('{{_id}}');}" class="glyphicon glyphicon-trash"></a>
+    </form>
+</script>
 
 <script id="header-template" type="text/html">
     <div class="navbar navbar-invert" role="navigation">
