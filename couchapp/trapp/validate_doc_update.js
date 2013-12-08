@@ -26,6 +26,10 @@ function(newDoc, oldDoc, userCtx) {
             }
         }
 
+        if (!newDoc.status) {
+            errors.push({"status" : "Status is required."});
+        }
+
         // The uniqueId can never be null
         if (!newDoc.uniqueId) {
             errors.push({"uniqueId" : "Unique ID is required."});
