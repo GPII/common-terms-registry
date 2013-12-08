@@ -109,7 +109,12 @@ function(newDoc, oldDoc, userCtx) {
 
         // If there are any validation errors, throw them all at once for validation
         if (errors.length > 0) {
-            throw({ "forbidden" : {"summary": "There were one or more errors with the data you submitted.  Please review.", "errors" : errors }});
+            throw({ "forbidden" : {
+                "summary":  "There were one or more errors with the data you submitted.  Please review.",
+                "errors" :  errors,
+                "current" : oldDoc,
+                "new" :     newDoc
+            }});
         }
     }
 }
