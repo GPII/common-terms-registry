@@ -37,9 +37,11 @@ a.glyphicon {
     color: #cccccc;
 }
 
-.center {
+.cpl-icon-container {
     text-align: center;
     align-content: center;
+    float:left;
+    width: 25%;
 }
 
 .glyphicon-plus:before {
@@ -47,16 +49,9 @@ a.glyphicon {
 }
 
 #add-panel {
-    padding-right: 0px;
-}
-
-#add-panel .panel {
     background-color: #ccffcc;
-    margin-top: 1.5em;
-}
-
-#add-panel h2 {
-    vertical-align: middle;
+    border: 1px solid #009900;
+    border-radius: 50px;
 }
 
 #controls {
