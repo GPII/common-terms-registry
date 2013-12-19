@@ -33,7 +33,7 @@ a.glyphicon {
     color: inherit;
 }
 
-.filter-toggle.disabled, .type-toggle.disabled {
+.filter-toggle.disabled, .type-toggle.disabled, .comments-toggle.disabled {
     color: #cccccc;
 }
 

@@ -15,7 +15,10 @@
     <script src="vendor/couchapp/jquery.couchProfile.js"></script>
     <script src="vendor/couchapp/md5.js"></script>
     <script src="vendor/couchapp/jquery.mustache.js"></script>
-    
+
+    <!-- Include jQuery Cookie plugin, required to save control panel settings -->
+    <script src="vendor/jquery-cookie/jquery.cookie.js"></script>
+
     <!-- Include jQuery UI, which is required by jTable-->
     <script src="vendor/jqueryui/ui/jquery-ui.js" type="text/javascript"></script>
     
@@ -57,7 +60,12 @@
                 Operators
             </div>
 
-            <div class="col-md-1 col-md-offset-3 center">
+            <div class="col-md-1 col-md-offset-1 center">
+                <h4><a id="comments-toggle" href="#" class="comments-toggle glyphicon glyphicon-warning-sign disabled" title="Display Records with Unreviewed Comments"></a></h4>
+                Comments
+            </div>
+
+            <div class="col-md-1 col-md-offset-1 center">
                 <h4><a id="live-record-toggle" href="#" class="filter-toggle glyphicon glyphicon-check" title="View Active Records"></a></h4>
                 Active
             </div>

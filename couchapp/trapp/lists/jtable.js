@@ -37,6 +37,11 @@ function(head, req) {
             displayType = req.query.displayType;
         }
 
+        var onlyUnreviewed = false;
+        if (req.query.onlyUnreviewed !== undefined) {
+            onlyUnreviewed =  req.query.onlyUnreviewed === "true";
+        }
+
         var allRecords = [];
         while (row = getRow()) {
             // This should only be necessary until all records have a status
@@ -47,7 +52,7 @@ function(head, req) {
             var type = "GENERAL";
             if (row.value.type !== undefined) { type = row.value.type; }
 
-            if (status === displayStatus && type === displayType) {
+            if (status === displayStatus && type === displayType && (!onlyUnreviewed || row.value.unreviewedComments !== undefined)) {
                 allRecords.push({
                     "type":                 row.value.type,
                     "uniqueId":             row.value.uniqueId,

@@ -1,4 +1,13 @@
 $(function() {
+    var COOKIE_ID = "ctrCplSettings";
+
+    var controlPanelSettings = {
+        "type": "GENERAL",
+        "status": "active",
+        "onlyUnreviewed": false
+    };
+    loadControlPanelSettings();
+
     // field schemes so that we can display different fields for different record types and statuses
     var fieldSchemes = {};
     fieldSchemes['base'] = {
@@ -78,6 +87,7 @@ $(function() {
     // load all Mustache templates
     $.get('templates/terms.mustache', function(templates) { $(templates).each(function() { $('body').append(this); }); }).then(loadFooterAndHeader);
 
+    // TODO:  Convert to template
     $.couchProfile.templates = {
         profileReady : '<div class="avatar">{{#gravatar_url}}<img src="{{gravatar_url}}"/>{{/gravatar_url}}<div class="name">{{nickname}}</div></div><div style="clear:left;"></div>',
         newProfile : '<form><p>Hello {{name}}, Please setup your user profile.</p><label for="nickname">Nickname <input type="text" name="nickname" value=""></label><label for="email">Email (<em>for <a href="http://gravatar.com">Gravatar</a></em>) <input type="text" name="email" value=""></label><label for="url">URL <input type="text" name="url" value=""></label><input type="submit" value="Go &rarr;"><input type="hidden" name="userCtxName" value="{{name}}" id="userCtxName"></form>'
@@ -104,15 +114,72 @@ $(function() {
              },
 			fields: fieldSchemes[scheme]
 		});
-        loadTableWithFilters(status);
+
+        loadTable();
 	}
 
-    function loadTableWithFilters(status, type) {
-        if (status === undefined) { status = "active"; }
-        if (type === undefined) { type = "GENERAL"; }
-
-        $("#content").jtable('load',{"displayStatus": status, "displayType" : type});
+    function loadTable() {
+        $("#content").jtable('load',{"displayStatus": controlPanelSettings.status, "displayType" : controlPanelSettings.type, "onlyUnreviewed": controlPanelSettings.onlyUnreviewed});
     }
+
+    function saveControlPanelSettings() {
+        $.cookie(COOKIE_ID,JSON.stringify(controlPanelSettings));
+    }
+
+    function loadControlPanelSettings() {
+        // Check to see if the cookie exists
+        var cookie = $.cookie(COOKIE_ID);
+        if (cookie !== undefined) {
+           var cookieJson = JSON.parse(cookie);
+
+           // TODO:  This whole thing is very brittle, depending on constant combination of markup, selectors, etc.  Convert to Backbone.js or something else sane.
+           if (cookieJson.status !== undefined) {
+               controlPanelSettings.status = cookieJson.status;
+               $(".filter-toggle").addClass("disabled");
+               if (cookieJson.status === "active") {
+                   $("#live-record-toggle").removeClass("disabled");
+               }
+               else if (cookieJson.status === "unreviewed") {
+                   $("#unreviewed-record-toggle").removeClass("disabled");
+               }
+               else if (cookieJson.status === "candidate") {
+                   $("#candidate-record-toggle").removeClass("disabled");
+               }
+               else if (cookieJson.status === "deleted") {
+                   $("#deleted-record-toggle ").removeClass("disabled");
+               }
+           }
+
+           if (cookieJson.type !== undefined) {
+               controlPanelSettings.type = cookieJson.type;
+               $(".type-toggle").addClass("disabled");
+
+               if (cookieJson.type === "GENERAL") {
+                   $("#general-type-toggle").removeClass("disabled");
+               }
+               else if (cookieJson.type === "ALIAS") {
+                   $("#alias-type-toggle").removeClass("disabled");
+               }
+               else if (cookieJson.type === "TRANSLATION") {
+                   $("#translation-type-toggle").removeClass("disabled");
+               }
+               else if (cookieJson.type === "OPERATOR") {
+                   $("#operator-type-toggle").removeClass("disabled");
+               }
+           }
+
+           if (cookieJson.onlyUnreviewed !== undefined) {
+               controlPanelSettings.onlyUnreviewed = cookieJson.onlyUnreviewed;
+               if (cookieJson.onlyUnreviewed === false) {
+                   $("#comments-toggle").addClass("disabled");
+               }
+               else {
+                   $("#comments-toggle").removeClass("disabled");
+               }
+           }
+        }
+    }
+
 
     function activateStatusFilter(id,status) {
         var toggle = $(id);
@@ -120,23 +187,10 @@ $(function() {
             $(".filter-toggle").addClass("disabled");
             $(id).removeClass("disabled");
 
-            // get the active type from the selected type icon
-            var type = "GENERAL";
-            var selectedTypeIcon = $(".type-toggle:not(.disabled)");
-            if (selectedTypeIcon) {
-                var elementId = selectedTypeIcon.attr("id");
-                if (elementId == 'alias-type-toggle') {
-                    type = "ALIAS";
-                }
-                else if (elementId === 'translation-type-toggle') {
-                    type = "TRANSLATION";
-                }
-                else if (elementId === 'operator-type-toggle') {
-                    type = "OPERATOR";
-                }
-            }
+            controlPanelSettings.status = status;
+            saveControlPanelSettings();
 
-            loadTableWithFilters(status,type);
+            loadTable();
         }
     }
 
@@ -146,24 +200,31 @@ $(function() {
             $(".type-toggle").addClass("disabled");
             $(id).removeClass("disabled");
 
-            // get the active status from the selected status icon
-            var status = "active";
-            var selectedStatusIcon = $(".filter-toggle:not(.disabled)");
-            if (selectedStatusIcon) {
-                var elementId = selectedStatusIcon.attr("id");
-                if (elementId == 'unreviewed-record-toggle') {
-                    status = "unreviewed";
-                }
-                else if (elementId === 'deleted-record-toggle') {
-                    status = "deleted";
-                }
-            }
+            controlPanelSettings.type = type;
+            saveControlPanelSettings();
 
-            loadTableWithFilters(status,type);
+            loadTable();
         }
     }
 
+    function activateCommentFilter(id) {
+        var toggle = $(id);
 
+        var onlyUnreviewed = false;
+        if (toggle.hasClass("disabled")) {
+            toggle.removeClass("disabled");
+            onlyUnreviewed = true;
+        }
+        else {
+            toggle.addClass("disabled")
+        }
+
+        controlPanelSettings.onlyUnreviewed = onlyUnreviewed;
+        saveControlPanelSettings();
+
+        loadTable();
+    }
+    
     function loadFooterAndHeader() {
         $("#footer").html($("#footer-template").html());
 //    $("#footer").html($.mustache($("#footer-template").html()));
@@ -180,6 +241,8 @@ $(function() {
                 $("#alias-type-toggle").click(function() { activateTypeFilter("#alias-type-toggle","ALIAS"); return false;});
                 $("#translation-type-toggle").click(function() { activateTypeFilter("#translation-type-toggle","TRANSLATION"); return false;});
                 $("#operator-type-toggle").click(function() { activateTypeFilter("#operator-type-toggle","OPERATOR"); return false;});
+
+                $("#comments-toggle").click(function() { activateCommentFilter("#comments-toggle"); return false;});
 
                 $("#unreviewed-record-toggle").click(function() { activateStatusFilter("#unreviewed-record-toggle","unreviewed"); return false;});
                 $("#candidate-record-toggle").click(function() { activateStatusFilter("#candidate-record-toggle","candidate"); return false;});
