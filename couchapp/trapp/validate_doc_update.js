@@ -1,7 +1,7 @@
 function(newDoc, oldDoc, userCtx) {
     // The user has to be logged in to perform updates
-    if (!userCtx) {
-        throw({"unauthorized" : "You must be logged in to add or edit records."});
+    if (!userCtx || userCtx.name == null) {
+        throw({"unauthorized" : {"summary": "You must be logged in to add or edit records."}});
     }
     else {
         // If the user is logged in, we report remaining errors all at once
@@ -23,7 +23,7 @@ function(newDoc, oldDoc, userCtx) {
         }
         else {
             if (ValidTypes.indexOf(newDoc.type) == -1) {
-                errors.push({"type" : "Record type '" + newDoc.type + "' (was '" + oldDoc.type + "') is not valid."});
+                errors.push({"type" : "Record type '" + newDoc.type + " is not valid."});
             }
         }
 

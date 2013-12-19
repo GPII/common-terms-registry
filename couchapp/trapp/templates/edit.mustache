@@ -2,7 +2,13 @@
 <head>
     <title>Add/Edit Record</title>
 
+    <script src="/_utils/script/sha1.js"></script>
+    <script src="/_utils/script/json2.js"></script>
     <script src="/_utils/script/jquery.js"></script>
+    <script src="/_utils/script/jquery.couch.js"></script>
+
+    <script src="../../vendor/couchapp/jquery.couchLogin.js"></script>
+    <script src="../../vendor/couchapp/jquery.couchProfile.js"></script>
 
     <!-- twitter bootstrap styles and javascript -->
     <link rel="stylesheet" href="/tr/_design/trapp/vendor/twbs/css/bootstrap.min.css">
@@ -12,10 +18,14 @@
 <body>
     <div class="container">
         <div class="panel panel-default">
-            <div class="panel-heading"><div class="panel-title"><h1>{{^_id}}Add {{/_id}}{{#_id}}Edit {{/_id}} Record</h1></div></div>
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <h1>{{^_id}}Add {{/_id}}{{#_id}}Edit {{/_id}} Record</h1>
+                </div>
+            </div>
             <div class="panel-body">
                 <div id="messages" class="alert col-md-offset-1 display:none"></div>
-                <form id="entry-edit" class="form-horizontal">
+                <form id="entry-edit" class="form-horizontal" style="display:none">
                     <fieldset>
                         {{#_id}}<input type="hidden" name="_id" value="{{_id}}"/>{{/_id}}
                         {{#_rev}}<input type="hidden" name="_rev" value="{{_rev}}"/>{{/_rev}}
@@ -86,25 +96,21 @@
                             </div>
                         </div>
 
-                        {{#aliasOf}}
-                            <div class="form-group">
-                                <label class="col-md-2 control-label" for="aliasOf">Alias Of:</label>
-                                <div class="col-md-7" id="aliasOf-values">
-                                    <input class="form-control input-md" type="text" name="aliasOf" value="{{aliasOf}}"/>
-                                    <span class="help-block">For an alias or transform, the uniqueId of the parent record.</span>
-                                </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="aliasOf">Alias Of:</label>
+                            <div class="col-md-7" id="aliasOf-values">
+                                <input class="form-control input-md" type="text" name="aliasOf" value="{{aliasOf}}"/>
+                                <span class="help-block">For an alias or transform, the uniqueId of the parent record.</span>
                             </div>
-                        {{/aliasOf}}
+                        </div>
 
-                        {{#translationOf}}
-                            <div class="form-group">
-                                <label class="col-md-2 control-label" for="translationOf">Translation Of:</label>
-                                <div class="col-md-7" id="translationOf-values">
-                                    <input class="form-control input-md" type="text" name="translationOf" value="{{translationOf}}"/>
-                                    <span class="help-block">For a translation, the uniqueId of the parent record.</span>
-                                </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="translationOf">Translation Of:</label>
+                            <div class="col-md-7" id="translationOf-values">
+                                <input class="form-control input-md" type="text" name="translationOf" value="{{translationOf}}"/>
+                                <span class="help-block">For a translation, the uniqueId of the parent record.</span>
                             </div>
-                        {{/translationOf}}
+                        </div>
 
                         {{#source}}
                             <div class="form-group">
@@ -152,6 +158,9 @@
                         </div>
                     </fieldset>
                 </form>
+            </div>
+            <div class="panel-footer">
+                <div id="account" class="panel-title pull-right"></div>
             </div>
         </div>
     </div>
@@ -346,6 +355,16 @@
         }
 
         $(function() {
+            $("#account").couchLogin({
+                loggedIn : function() {
+                    $("#entry-edit").show();
+                    $("#messages").html("").removeClass("alert-danger").hide();
+                },
+                loggedOut : function() {
+                    $("#entry-edit").hide();
+                    $("#messages").html("You must be logged in to use this feature.").addClass("alert-danger").show();
+                }
+            });
             {{#_id}}
                 loadHistory("{{_id}}");
                 $("#history-title").bind('click',function() { $("#history").toggle() });
