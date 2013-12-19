@@ -302,6 +302,7 @@
                     window.scrollTo($("#messages").position().left,$("#messages").position().top);
                 },
                 error: function(jqXHR, status, errorString) {
+                    $("form .alert").remove();
                     $("span.error").remove();
 
                     var errors = JSON.parse(jqXHR.responseText);
