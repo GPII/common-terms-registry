@@ -12,11 +12,13 @@ function(doc) {
 		"notes":	            doc.notes,
 		"uses":	                doc.uses,
 		"status":	            doc.status,
-        // non-canonical fields are prefixed with an underscore
+        // non-canonical fields
         "_id" :                 doc._id,
 	    "_rev" :                doc._rev,
-        "aliases" :            doc.aliases,
-        "source":              doc.source
+        "aliases" :             doc.aliases,
+        "source":               doc.source,
+        "unreviewedComments":   doc.unreviewedComments,
+        "reviewedComments":     doc.reviewedComments
       });
   }
 };

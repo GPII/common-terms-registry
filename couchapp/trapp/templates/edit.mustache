@@ -121,6 +121,22 @@
                         {{/defaultValue}}
 
                         <div class="form-group">
+                            <label class="col-md-2 control-label" for="reviewedComments">Reviewed Comments:</label>
+                            <div class="col-md-7" id="reviewedComments-values">
+                                <textarea class="form-control" name="reviewedComments" rows="5">{{reviewedComments}}</textarea>
+                                <span class="help-block">Comments that have already been reviewed and addressed.</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="unreviewedComments">Unreviewed Comments:</label>
+                            <div class="col-md-7" id="unreviewedComments-values">
+                                <textarea class="form-control" name="unreviewedComments" rows="5">{{unreviewedComments}}</textarea>
+                                <span class="help-block">Comments that are waiting to be reviewed.</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <label class="col-md-2 control-label" for="aliases">Aliases:</label>
                             <div class="col-md-7" id="aliases-values">
                                 {{#aliases}}

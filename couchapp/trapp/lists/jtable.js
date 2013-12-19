@@ -49,23 +49,24 @@ function(head, req) {
 
             if (status === displayStatus && type === displayType) {
                 allRecords.push({
-                    "type":          row.value.type,
-                    "uniqueId":      row.value.uniqueId,
-                    "localId":       row.value.localId,
-                    "valueSpace":    row.value.valueSpace,
-                    "defaultValue":  row.value.defaultValue,
-                    "aliasOf":       row.value.aliasOf,
-                    "translationOf": row.value.aliasOf,
-                    "termLabel":     row.value.termLabel,
-                    "definition":    row.value.definition,
-                    "notes":         row.value.notes,
-                    "uses":          row.value.uses,
+                    "type":                 row.value.type,
+                    "uniqueId":             row.value.uniqueId,
+                    "localId":              row.value.localId,
+                    "valueSpace":           row.value.valueSpace,
+                    "defaultValue":         row.value.defaultValue,
+                    "aliasOf":              row.value.aliasOf,
+                    "translationOf":        row.value.aliasOf,
+                    "termLabel":            row.value.termLabel,
+                    "definition":           row.value.definition,
+                    "notes":                row.value.notes,
+                    "uses":                 row.value.uses,
+                    "unreviewedComments":   row.value.unreviewedComments,
 
                     // non-canonical fields
-                    "_id" :          row.value._id,
-                    "_rev" :         row.value._rev,
-                    "aliases":       row.value.aliases,
-                    "source":        row.value.source
+                    "_id" :                 row.value._id,
+                    "_rev" :                row.value._rev,
+                    "aliases":              row.value.aliases,
+                    "source":               row.value.source
                 });
             }
         }
