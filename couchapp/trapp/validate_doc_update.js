@@ -8,6 +8,7 @@ function(newDoc, oldDoc, userCtx) {
         var errors = [];
 
         var ValidTypes = ["ALIAS", "ALIASTRANSFORMATION","TRANSLATION","GENERAL","OPERATOR"];
+        var ValidStatus = ["active","unreviewed","candidate","deleted"];
 
         /* The record type can never be null, and must be one of the following:
          ALIAS
@@ -28,6 +29,11 @@ function(newDoc, oldDoc, userCtx) {
 
         if (!newDoc.status) {
             errors.push({"status" : "Status is required."});
+        }
+        else {
+            if (ValidStatus.indexOf(newDoc.status) == -1) {
+                errors.push({"status" : "Status '" + newDoc.status + "' is not valid."});
+            }
         }
 
         // The uniqueId can never be null
