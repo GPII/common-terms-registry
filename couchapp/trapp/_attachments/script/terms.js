@@ -174,7 +174,7 @@ $(function() {
 		        $("#profile").couchProfile(r, {});
                 $("#login-message").remove();
                 $("#controls").show();
-                $("#control-toggle,#control-panel-toggle").click(function() { $("#control-panel").toggle(); return false;});
+                $("#control-toggle,#control-panel-toggle").click(function() { $("#controls").slideToggle(75); return false;});
 
                 $("#general-type-toggle").click(function() { activateTypeFilter("#general-type-toggle","GENERAL"); return false;});
                 $("#alias-type-toggle").click(function() { activateTypeFilter("#alias-type-toggle","ALIAS"); return false;});
