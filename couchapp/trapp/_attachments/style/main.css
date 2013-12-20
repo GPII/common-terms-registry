@@ -2,6 +2,10 @@ tr.jtable-data-row {
     vertical-align: top;
 }
 
+div.jtable-main-container>div.jtable-bottom-panel {
+    color: #000;
+}
+
 .navbar-invert {
     color:white;
     background-color: #4C4D4F;
