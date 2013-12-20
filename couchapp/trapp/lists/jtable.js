@@ -77,13 +77,13 @@ function(head, req) {
                     for (var position in row.value.aliases) {
                         var alias = row.value.aliases[position];
 
-                        if (typeof alias.value.uniqueId == "string" && alias.value.uniqueId.toLowerCase().indexOf(queryString.toLowerCase()) > 0) {
+                        if (typeof alias.value.uniqueId == "string" && alias.value.uniqueId.toLowerCase().indexOf(queryString.toLowerCase()) >= 0) {
                             matches = true;
                         }
-                        if (typeof alias.value.definition == "string" && alias.value.definition.toLowerCase().indexOf(queryString.toLowerCase()) > 0) {
+                        if (typeof alias.value.definition == "string" && alias.value.definition.toLowerCase().indexOf(queryString.toLowerCase()) >= 0) {
                             matches = true;
                         }
-                        if (typeof alias.value.notes == "string" && alias.value.notes.toLowerCase().indexOf(queryString.toLowerCase()) > 0) {
+                        if (typeof alias.value.notes == "string" && alias.value.notes.toLowerCase().indexOf(queryString.toLowerCase()) >= 0) {
                             matches = true;
                         }
                     }

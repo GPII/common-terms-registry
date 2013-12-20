@@ -142,9 +142,16 @@ $(function() {
 	}
 
     function loadTable() {
+        var tableOptions = {"displayStatus": controlPanelSettings.status, "displayType" : controlPanelSettings.type, "onlyUnreviewed": controlPanelSettings.onlyUnreviewed};
+        var queryString = $("#queryString").val();
+
+        if (queryString !== undefined && queryString.trim().length > 0) {
+            tableOptions.q = queryString;
+        }
+
         $("#content").jtable(
             'load',
-            {"displayStatus": controlPanelSettings.status, "displayType" : controlPanelSettings.type, "onlyUnreviewed": controlPanelSettings.onlyUnreviewed},
+            tableOptions,
             function() {
                 $("a.glyphicon-file").tooltip();
                 $("th.jtable-column-header-sortable").on('click',function() {
@@ -284,6 +291,8 @@ $(function() {
                 $("#candidate-record-toggle").click(function() { activateStatusFilter("#candidate-record-toggle","candidate"); return false;});
                 $("#live-record-toggle").click(function() { activateStatusFilter("#live-record-toggle","active"); return false;});
                 $("#deleted-record-toggle").click(function() { activateStatusFilter("#deleted-record-toggle","deleted"); return false;});
+
+                $("#queryString").on('change',function() { loadTable(); });
 
                 $("#add-panel").show();
 
