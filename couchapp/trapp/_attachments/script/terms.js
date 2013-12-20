@@ -39,24 +39,48 @@ $(function() {
             title: 'Local Unique ID',
             list: false
         },
-        defaultValue: {
+        valueSpace: {
             title: 'Value Space',
-            sorting: false,
+            sorting: true,
             width: "20%",
             display: function(record) { return $.mustache($("#value").html(),record.record);}
         },
         definition: {
-            title: 'Definition / Notes',
-            sorting: false,
-            width: "20%",
+            title: 'Definition',
+            sorting: true,
+            width: "15%",
             edit: false,
             create: false,
             display: function(record) { return $.mustache($("#definition").html(),record.record);}
         },
+        notes: {
+            title: 'Notes',
+            sorting: true,
+            width: "3%",
+            edit: false,
+            create: false,
+            display: function(record) { return $.mustache($("#notes").html(),record.record);}
+        },
+        uses: {
+            title: 'Uses',
+            sorting: true,
+            width: "3%",
+            edit: false,
+            create: false,
+            display: function(record) { return $.mustache($("#uses").html(),record.record);}
+        },
+        unreviewedComments: {
+            title: 'Comments',
+            sorting: true,
+            width: "3%",
+            edit: false,
+            create: false,
+            display: function(record) { return $.mustache($("#unreviewedComments").html(),record.record);}
+        },
         aliases: {
             title: 'Aliases',
             sorting: true,
-            width: "20%",
+            width: "15%",
             edit: false,
             create: false,
             display: function(record) {
@@ -119,7 +143,18 @@ $(function() {
 	}
 
     function loadTable() {
-        $("#content").jtable('load',{"displayStatus": controlPanelSettings.status, "displayType" : controlPanelSettings.type, "onlyUnreviewed": controlPanelSettings.onlyUnreviewed});
+        $("#content").jtable(
+            'load',
+            {"displayStatus": controlPanelSettings.status, "displayType" : controlPanelSettings.type, "onlyUnreviewed": controlPanelSettings.onlyUnreviewed},
+            function() {
+                $("a.glyphicon-file").tooltip();
+                $("th.jtable-column-header-sortable").on('click',function() {
+                    // Tooltips are cleared on page sort.  This fixes that.
+                    // TODO: Find a way to bind to the sorting event so that we can do this more cleanly, or replace jTable with something friendlier.
+                    setTimeout(function(){$("a.glyphicon-file").tooltip();},500);
+                })
+            }
+        );
     }
 
     function saveControlPanelSettings() {
@@ -227,8 +262,7 @@ $(function() {
     
     function loadFooterAndHeader() {
         $("#footer").html($("#footer-template").html());
-//    $("#footer").html($.mustache($("#footer-template").html()));
-    $("#header").html($.mustache($("#header-template").html(),document));
+        $("#header").html($.mustache($("#header-template").html(),document));
 
         $("#account").couchLogin({
             loggedIn : function(r) {

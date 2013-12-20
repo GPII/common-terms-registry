@@ -8,9 +8,18 @@
 
 <script id="definition" type="text/html">
     {{#definition}}<p class="definition">{{definition}}</p>{{/definition}}
-    {{#notes}}<p class="notes">{{notes}}</p>{{/notes}}
-    {{#uses}}<p class="notes">USES: <br/>{{uses}}</p>{{/uses}}
-    {{#unreviewedComments}}<p class="notes">New Notes: <br/>{{unreviewedComments}}</p>{{/unreviewedComments}}
+</script>
+
+<script id="notes" type="text/html">
+        {{#notes}}<a class="glyphicon glyphicon-file" title="{{notes}}"></a>{{/notes}}
+</script>
+
+<script id="uses" type="text/html">
+        {{#uses}}<a class="glyphicon glyphicon-file" title="{{uses}}"></a>{{/uses}}
+</script>
+
+<script id="unreviewedComments" type="text/html">
+        {{#unreviewedComments}}<a class="glyphicon glyphicon-file" title="{{unreviewedComments}}"></a>{{/unreviewedComments}}
 </script>
 
 <script id="value" type="text/html">
