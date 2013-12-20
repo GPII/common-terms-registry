@@ -6,7 +6,6 @@ $(function() {
         "status": "active",
         "onlyUnreviewed": false
     };
-    loadControlPanelSettings();
 
     // field schemes so that we can display different fields for different record types and statuses
     var fieldSchemes = {};
@@ -267,6 +266,8 @@ $(function() {
 
         $("#account").couchLogin({
             loggedIn : function(r) {
+                loadControlPanelSettings();
+
 		        $("#profile").couchProfile(r, {});
                 $("#login-message").remove();
                 $("#controls").show();
