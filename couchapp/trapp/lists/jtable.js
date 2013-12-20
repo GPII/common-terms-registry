@@ -42,6 +42,11 @@ function(head, req) {
             onlyUnreviewed =  req.query.onlyUnreviewed === "true";
         }
 
+        var queryString = undefined;
+        if (req.query.q !== undefined) {
+            queryString =  req.query.q;
+        }
+
         var allRecords = [];
         while (row = getRow()) {
             // This should only be necessary until all records have a status
@@ -52,27 +57,62 @@ function(head, req) {
             var type = "GENERAL";
             if (row.value.type !== undefined) { type = row.value.type; }
 
-            if (status === displayStatus && type === displayType && (!onlyUnreviewed || row.value.unreviewedComments !== undefined)) {
-                allRecords.push({
-                    "type":                 row.value.type,
-                    "uniqueId":             row.value.uniqueId,
-                    "localId":              row.value.localId,
-                    "valueSpace":           row.value.valueSpace,
-                    "defaultValue":         row.value.defaultValue,
-                    "aliasOf":              row.value.aliasOf,
-                    "translationOf":        row.value.aliasOf,
-                    "termLabel":            row.value.termLabel,
-                    "definition":           row.value.definition,
-                    "notes":                row.value.notes,
-                    "uses":                 row.value.uses,
-                    "unreviewedComments":   row.value.unreviewedComments,
+            var matches = false;
+            if (queryString == undefined) {
+                matches = true;
+            }
+            else {
+                // TODO:  This is horrible.  We should be using couchdb-lucene or something performant
+                if (typeof row.value.uniqueId == "string" && row.value.uniqueId.toLowerCase().indexOf(queryString.toLowerCase()) > 0) {
+                    matches = true;
+                }
+                if (typeof row.value.definition == "string" && row.value.definition.toLowerCase().indexOf(queryString.toLowerCase()) > 0) {
+                    matches = true;
+                }
+                if (typeof row.value.notes == "string" && row.value.notes.toLowerCase().indexOf(queryString.toLowerCase()) > 0) {
+                    matches = true;
+                }
 
-                    // non-canonical fields
-                    "_id" :                 row.value._id,
-                    "_rev" :                row.value._rev,
-                    "aliases":              row.value.aliases,
-                    "source":               row.value.source
-                });
+                if (row.value.aliases && row.value.aliases.length > 0) {
+                    for (var position in row.value.aliases) {
+                        var alias = row.value.aliases[position];
+
+                        if (typeof alias.value.uniqueId == "string" && alias.value.uniqueId.toLowerCase().indexOf(queryString.toLowerCase()) > 0) {
+                            matches = true;
+                        }
+                        if (typeof alias.value.definition == "string" && alias.value.definition.toLowerCase().indexOf(queryString.toLowerCase()) > 0) {
+                            matches = true;
+                        }
+                        if (typeof alias.value.notes == "string" && alias.value.notes.toLowerCase().indexOf(queryString.toLowerCase()) > 0) {
+                            matches = true;
+                        }
+                    }
+                }
+            }
+
+            if (status === displayStatus && type === displayType && (!onlyUnreviewed || row.value.unreviewedComments !== undefined)) {
+                if (matches) {
+                    allRecords.push({
+                        "type":                 row.value.type,
+                        "uniqueId":             row.value.uniqueId,
+                        "localId":              row.value.localId,
+                        "valueSpace":           row.value.valueSpace,
+                        "defaultValue":         row.value.defaultValue,
+                        "aliasOf":              row.value.aliasOf,
+                        "translationOf":        row.value.aliasOf,
+                        "termLabel":            row.value.termLabel,
+                        "definition":           row.value.definition,
+                        "notes":                row.value.notes,
+                        "uses":                 row.value.uses,
+                        "unreviewedComments":   row.value.unreviewedComments,
+
+                        // non-canonical fields
+                        "_id" :                 row.value._id,
+                        "_rev" :                row.value._rev,
+                        "aliases":              row.value.aliases,
+                        "source":               row.value.source
+                    });
+                }
             }
         }
 
