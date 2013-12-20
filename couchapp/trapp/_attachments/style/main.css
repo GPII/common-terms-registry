@@ -21,6 +21,14 @@ div.jtable-main-container>div.jtable-bottom-panel {
     margin-top: 1em;
 }
 
+.cpl-icon {
+    text-align: center;
+}
+
+.cpl-icon h4 {
+    margin-top: 0px;
+}
+
 #account {
     padding-top: 15px;
     padding-bottom: 15px;
@@ -39,23 +47,6 @@ a.glyphicon {
 
 .filter-toggle.disabled, .type-toggle.disabled, .comments-toggle.disabled {
     color: #cccccc;
-}
-
-.cpl-icon-container {
-    text-align: center;
-    align-content: center;
-    float:left;
-    width: 25%;
-}
-
-.glyphicon-plus:before {
-    margin-right: .25em;
-}
-
-#add-panel {
-    background-color: #ccffcc;
-    border: 1px solid #009900;
-    border-radius: 50px;
 }
 
 #controls {

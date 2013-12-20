@@ -261,8 +261,9 @@ $(function() {
     }
     
     function loadFooterAndHeader() {
-        $("#footer").html($("#footer-template").html());
         $("#header").html($.mustache($("#header-template").html(),document));
+        $("#controls").html($.mustache($("#controls-template").html(),document));
+        $("#footer").html($("#footer-template").html());
 
         $("#account").couchLogin({
             loggedIn : function(r) {

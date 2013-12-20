@@ -115,14 +115,20 @@
                         {{#source}}
                             <div class="form-group">
                                 <label class="col-md-2 control-label" for="source">Source:</label>
-                                <div class="col-md-7" id="source-values">{{source}}</div>
+                                <div class="col-md-7" id="source-values">
+                                    <span class="help-block">The original source of this record (read-only field provided for the initial review).</span>
+                                    {{source}}
+                                </div>
                             </div>
                         {{/source}}
 
                         {{#defaultValue}}
                             <div class="form-group">
                                 <label class="col-md-2 control-label" for="defaultValue">Suggested Default Value:</label>
-                                <div class="col-md-7" id="defaultValue-values">{{defaultValue}}</div>
+                                <div class="col-md-7" id="defaultValue-values">
+                                    {{defaultValue}}
+                                    <span class="help-block">The suggested default value included with the original source data (read-only field provided for the initial review).</span>
+                                </div>
                             </div>
                         {{/defaultValue}}
 
