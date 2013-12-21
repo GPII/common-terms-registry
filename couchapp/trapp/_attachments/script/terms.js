@@ -292,7 +292,7 @@ $(function() {
                 $("#live-record-toggle").click(function() { activateStatusFilter("#live-record-toggle","active"); return false;});
                 $("#deleted-record-toggle").click(function() { activateStatusFilter("#deleted-record-toggle","deleted"); return false;});
 
-                $("#queryString").on('change',function() { loadTable(); });
+                $("#queryString").on('change',function() { loadTable(); $("#queryString").preventDefault();});
 
                 $("#add-panel").show();
 

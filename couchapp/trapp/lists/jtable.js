@@ -63,13 +63,13 @@ function(head, req) {
             }
             else {
                 // TODO:  This is horrible.  We should be using couchdb-lucene or something performant
-                if (typeof row.value.uniqueId == "string" && row.value.uniqueId.toLowerCase().indexOf(queryString.toLowerCase()) > 0) {
+                if (typeof row.value.uniqueId == "string" && row.value.uniqueId.toLowerCase().indexOf(queryString.toLowerCase()) >= 0) {
                     matches = true;
                 }
-                if (typeof row.value.definition == "string" && row.value.definition.toLowerCase().indexOf(queryString.toLowerCase()) > 0) {
+                if (typeof row.value.definition == "string" && row.value.definition.toLowerCase().indexOf(queryString.toLowerCase()) >= 0) {
                     matches = true;
                 }
-                if (typeof row.value.notes == "string" && row.value.notes.toLowerCase().indexOf(queryString.toLowerCase()) > 0) {
+                if (typeof row.value.notes == "string" && row.value.notes.toLowerCase().indexOf(queryString.toLowerCase()) >= 0) {
                     matches = true;
                 }
 
@@ -90,7 +90,7 @@ function(head, req) {
                 }
             }
 
-            if (status === displayStatus && type === displayType && (!onlyUnreviewed || row.value.unreviewedComments !== undefined)) {
+            if (status === displayStatus && type === displayType && (!onlyUnreviewed || (row.value.unreviewedComments !== undefined && row.value.unreviewedComments.length > 0))) {
                 if (matches) {
                     allRecords.push({
                         "type":                 row.value.type,
