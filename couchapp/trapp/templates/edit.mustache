@@ -339,21 +339,29 @@
                     var errors = JSON.parse(jqXHR.responseText);
                     // summarize the errors at the top of the form
                     messageContainer.show();
-                    messageContainer.html(errors.reason.summary);
                     messageContainer.removeClass("alert-success");
                     messageContainer.addClass("alert-danger");
                     window.scrollTo($("#messages").position().left,$("#messages").position().top);
 
-                    // Put error messages inline for each botched field
-                    for (var position in errors.reason.errors ) {
-                        var entry = errors.reason.errors[position];
+                    // Server error messages are strings
+                    if (typeof errors.reason == "string") {
+                        messageContainer.html(errors.reason);
+                    }
+                    // Field validation errors are an array
+                    else {
+                        messageContainer.html(errors.reason.summary);
 
-                        var key = Object.keys(entry)[0];
-                        var value = entry[key];
+                        // Put error messages inline for each botched field
+                        for (var position in errors.reason.errors ) {
+                            var entry = errors.reason.errors[position];
 
-                        var label = $("#" + key + "-values");
-                        if (label) {
-                            label.after('<div class="alert alert-danger col-md-3">' + value + '</div>');
+                            var key = Object.keys(entry)[0];
+                            var value = entry[key];
+
+                            var label = $("#" + key + "-values");
+                            if (label) {
+                                label.after('<div class="alert alert-danger col-md-3">' + value + '</div>');
+                            }
                         }
                     }
                 }
