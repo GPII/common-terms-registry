@@ -23,6 +23,10 @@ div.jtable-main-container>div.jtable-bottom-panel {
 
 .cpl-icon {
     text-align: center;
+    font-size: .8em;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .cpl-icon h4 {
