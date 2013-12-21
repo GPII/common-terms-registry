@@ -27,6 +27,7 @@ div.jtable-main-container>div.jtable-bottom-panel {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+    margin-bottom:2em;
 }
 
 .cpl-icon h4 {
@@ -54,5 +55,5 @@ a.glyphicon {
 }
 
 #controls {
-    margin-bottom: 1em;
+    margin-bottom: 0px;
 }
