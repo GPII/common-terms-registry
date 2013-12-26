@@ -57,3 +57,10 @@ a.glyphicon {
 #controls {
     margin-bottom: 0px;
 }
+
+.tt-hint {
+    display:none;
+}
+.twitter-typeahead,.tt-dropdown-menu  {
+    width:100%;
+}
