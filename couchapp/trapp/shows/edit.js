@@ -1,7 +1,7 @@
 function(doc,req) {
-    var Mustache = require('vendor/couchapp/lib/mustache');
+    var handlebars = require('vendor/handlebars/lib/handlebars');
     var data = {};
     if (doc !== null && doc !== undefined) { data = doc; }
 
-    return Mustache.to_html(this.templates.edit, data);
+    return handlebars.compile(this.templates.edit)(data);
 }
