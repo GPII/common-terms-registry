@@ -1,5 +1,8 @@
 $(function() {
-    var COOKIE_ID = "ctrCplSettings";
+    // load all templates
+    $.get('templates/terms.html', function(templates) { $(templates).each(function() { $('body').append(this); }); }).then(loadFooterAndHeader);
+
+    var COOKIE_ID = "ctlPnlSettings";
 
     var controlPanelSettings = {
         "type": "GENERAL",
@@ -15,7 +18,7 @@ $(function() {
             edit: false,
             create: false,
             sorting: false,
-            display: function(record) { return $.mustache($("#edit").html(),record.record); }
+            display: function(record) { return Handlebars.compile($("#edit").html())(record.record); }
         },
         id:
         {
@@ -42,7 +45,7 @@ $(function() {
             title: 'Value Space',
             sorting: true,
             width: "20%",
-            display: function(record) { return $.mustache($("#value").html(),record.record);}
+            display: function(record) { return Handlebars.compile($("#value").html())(record.record);}
         },
         definition: {
             title: 'Definition',
@@ -50,7 +53,7 @@ $(function() {
             width: "15%",
             edit: false,
             create: false,
-            display: function(record) { return $.mustache($("#definition").html(),record.record);}
+            display: function(record) { return Handlebars.compile($("#definition").html())(record.record);}
         },
         notes: {
             title: 'Notes',
@@ -58,7 +61,7 @@ $(function() {
             width: "3%",
             edit: false,
             create: false,
-            display: function(record) { return $.mustache($("#notes").html(),record.record);}
+            display: function(record) { return Handlebars.compile($("#notes").html())(record.record);}
         },
         uses: {
             title: 'Uses',
@@ -66,7 +69,7 @@ $(function() {
             width: "3%",
             edit: false,
             create: false,
-            display: function(record) { return $.mustache($("#uses").html(),record.record);}
+            display: function(record) { return Handlebars.compile($("#uses").html())(record.record);}
         },
         unreviewedComments: {
             title: 'Comments',
@@ -74,7 +77,7 @@ $(function() {
             width: "3%",
             edit: false,
             create: false,
-            display: function(record) { return $.mustache($("#unreviewedComments").html(),record.record);}
+            display: function(record) { return Handlebars.compile($("#unreviewedComments").html())(record.record);}
         },
         aliases: {
             title: 'Aliases',
@@ -82,33 +85,16 @@ $(function() {
             width: "15%",
             edit: false,
             create: false,
-            display: function(record) {
-                // Because of limitations of list handling in mustache, we have to create the container and process rows individually
-                var container = $("<div></div>");
-                var aliasContainer = $($.mustache($("#aliases").html(),record.record));
-                container.append(aliasContainer);
-
-                if (record.record.aliases !== undefined && record.record.aliases.length > 0) {
-                    for (var position in record.record.aliases) {
-                        aliasRecord = record.record.aliases[position];
-                        aliasContainer.append($.mustache($("#alias-list-entry").html(),aliasRecord.value));
-                    }
-                }
-
-                return container;
-            }
+            display: function(record) { return $(Handlebars.compile($("#aliases").html())(record.record)); }
         },
         delete: {
             width: "5%",
             edit: false,
             create: false,
             sorting: false,
-            display: function(record) { return $.mustache($("#delete").html(),record.record); }
+            display: function(record) { return Handlebars.compile($("#delete").html())(record.record); }
         }
     }
-
-    // load all Mustache templates
-    $.get('templates/terms.mustache', function(templates) { $(templates).each(function() { $('body').append(this); }); }).then(loadFooterAndHeader);
 
     // TODO:  Convert to template
     $.couchProfile.templates = {
@@ -128,7 +114,6 @@ $(function() {
             defaultSorting: "uniqueId ASC",
             columnSelectable: false,
             // By default jTable uses a POST for everything, which doesn't work when couchdb expects a GET (lists, views, shows)
-            // TODO:  Figure out how to do this for just the listAction
             ajaxSettings: {
                 type: 'GET'
             },
@@ -267,8 +252,8 @@ $(function() {
     }
     
     function loadFooterAndHeader() {
-        $("#header").html($.mustache($("#header-template").html(),document));
-        $("#controls").html($.mustache($("#controls-template").html(),document));
+        $("#header").html(Handlebars.compile($("#header-template").html())(document));
+        $("#controls").html(Handlebars.compile($("#controls-template").html())(document));
         $("#footer").html($("#footer-template").html());
 
         $("#account").couchLogin({
