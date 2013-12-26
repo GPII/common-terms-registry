@@ -9,7 +9,7 @@ function(doc) {
 		"termLabel":  doc.termLabel,
 		"uses":       doc.uses,
         "status":     doc.status,
-        // non-canonical fields are prefixed with an underscore
+        // non-canonical fields
         "_id" :       doc._id,
 	    "_rev" :      doc._rev,
         "source":    doc.source
