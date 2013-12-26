@@ -7,16 +7,8 @@ function(newDoc, oldDoc, userCtx) {
         // If the user is logged in, we report remaining errors all at once
         var errors = [];
 
-        var ValidTypes = ["ALIAS", "ALIASTRANSFORMATION","TRANSLATION","GENERAL","OPERATOR"];
+        var ValidTypes = ["ALIAS", "TRANSFORMATION","TRANSLATION","GENERAL","OPERATOR"];
         var ValidStatus = ["active","unreviewed","candidate","deleted"];
-
-        /* The record type can never be null, and must be one of the following:
-         ALIAS
-         ALIASTRANSFORMATION
-         TRANSLATION
-         GENERAL
-         OPERATOR
-         */
 
         if (!newDoc.type) {
             errors.push({"type" : "Record type is required."});
@@ -52,8 +44,8 @@ function(newDoc, oldDoc, userCtx) {
             errors.push({"definition" : "Terms must have a definition."});
         }
 
-        // if the record type is ALIAS or ALIASTRANSFORMATION, a definition is not allowed
-        if (newDoc.definition && newDoc.type && (newDoc.type == "ALIAS" || newDoc.type == "ALIASTRANSFORMATION") ) {
+        // if the record type is ALIAS or TRANSFORMATION, a definition is not allowed
+        if (newDoc.definition && newDoc.type && (newDoc.type == "ALIAS" || newDoc.type == "TRANSFORMATION") ) {
             errors.push({"definition" : "Aliases and transformations are not allowed to have a definition."});
         }
 
@@ -62,8 +54,8 @@ function(newDoc, oldDoc, userCtx) {
             errors.push({"defaultValue" : "Default values are only allowed for terms."});
         }
 
-        // if the record type is ALIAS or ALIASTRANSFORMATION, the aliasOf field must not be null and must be in lowerCamelCase
-        if (newDoc.type == "ALIAS" || newDoc.type == "ALIASTRANSFORMATION") {
+        // if the record type is ALIAS or TRANSFORMATION, the aliasOf field must not be null and must be in lowerCamelCase
+        if (newDoc.type == "ALIAS" || newDoc.type == "TRANSFORMATION") {
             if (!newDoc.aliasOf) {
                 errors.push({"aliasOf" : "The aliasOf field cannot be empty for an alias."});
             }
@@ -72,7 +64,7 @@ function(newDoc, oldDoc, userCtx) {
             }
         }
         else {
-            // if the record type is not an ALIAS or ALIASTRANSFORMATION, the aliasOf field is not allowed
+            // if the record type is not an ALIAS or TRANSFORMATION, the aliasOf field is not allowed
             if (newDoc.aliasOf) {
                 errors.push({"aliasOf" : "The aliasOf field is only allowed for aliases."});
             }
@@ -94,8 +86,8 @@ function(newDoc, oldDoc, userCtx) {
             }
         }
 
-        // if the record type is ALIAS or ALIASTRANSFORMATION, valueSpace is not allowed
-        if (newDoc.valueSpace && newDoc.type && ( newDoc.type == "ALIAS" || newDoc.type == "ALIASTRANSFORMATION" )) {
+        // if the record type is ALIAS or TRANSFORMATION, valueSpace is not allowed
+        if (newDoc.valueSpace && newDoc.type && ( newDoc.type == "ALIAS" || newDoc.type == "TRANSFORMATION" )) {
             errors.push({"valueSpace" : "The valueSpace field not allowed for aliases or transformations."});
         }
 

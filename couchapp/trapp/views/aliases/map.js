@@ -1,5 +1,5 @@
 function(doc) {
-    if (doc && (doc.type.toLowerCase() == 'alias' || doc.type.toLowerCase == 'aliastransformation') && doc.status !== "deleted") {
+    if (doc && (doc.type.toLowerCase() == 'alias' || doc.type.toLowerCase == 'transformation') && doc.status !== "deleted") {
       emit(doc.uniqueId, {
  		"type":       doc.type,
 		"uniqueId":   doc.uniqueId,
