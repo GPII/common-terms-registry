@@ -39,14 +39,16 @@
             </div>
         </div>
 
-        <div class="form-group">
-            <label class="col-md-2 control-label" for="termLabel" required="">Term Label:</label>
+        {{#unless isOperator}}
+            <div class="form-group">
+                <label class="col-md-2 control-label" for="termLabel" required="">Term Label:</label>
 
-            <div class="col-md-7" id="termLabel-values">
-                <input class="form-control input-md" type="text" name="termLabel" value="{{termLabel}}"/>
-                <span class="help-block">The human-readable label for this term.</span>
+                <div class="col-md-7" id="termLabel-values">
+                    <input class="form-control input-md" type="text" name="termLabel" value="{{termLabel}}"/>
+                    <span class="help-block">The human-readable label for this term.</span>
+                </div>
             </div>
-        </div>
+        {{/unless}}
 
         <div class="form-group">
             <label class="col-md-2 control-label" for="status" required="">Status:</label>
@@ -67,23 +69,30 @@
             </div>
         </div>
 
-        <div class="form-group">
-            <label class="col-md-2 control-label" for="valueSpace">Value Space:</label>
 
-            <div class="col-md-7" id="valueSpace-values">
-                <input class="form-control input-md" type="text" name="valueSpace" value="{{valueSpace}}"/>
-                <span class="help-block">The range of acceptable values for this term.  May be a list of values separated by commas, or notation describing the range of acceptable values.</span>
+        {{#unless isAlias}}
+            {{#unless isOperator}}
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="valueSpace">Value Space:</label>
+
+                    <div class="col-md-7" id="valueSpace-values">
+                        <input class="form-control input-md" type="text" name="valueSpace" value="{{valueSpace}}"/>
+                        <span class="help-block">The range of acceptable values for this term.  May be a list of values separated by commas, or notation describing the range of acceptable values.</span>
+                    </div>
+                </div>
+            {{/unless}}
+        {{/unless}}
+
+        {{#unless isAlias}}
+            <div class="form-group">
+                <label class="col-md-2 control-label" for="definition">Definition:</label>
+
+                <div class="col-md-7" id="definition-values">
+                    <textarea class="form-control" name="definition" rows="5">{{definition}}</textarea>
+                    <span class="help-block">The definition of this term.  Not allowed for aliases or transformations.</span>
+                </div>
             </div>
-        </div>
-
-        <div class="form-group">
-            <label class="col-md-2 control-label" for="definition">Definition:</label>
-
-            <div class="col-md-7" id="definition-values">
-                <textarea class="form-control" name="definition" rows="5">{{definition}}</textarea>
-                <span class="help-block">The definition of this term.  Not allowed for aliases or transformations.</span>
-            </div>
-        </div>
+        {{/unless}}
 
         <div class="form-group">
             <label class="col-md-2 control-label" for="notes">Notes:</label>
@@ -94,14 +103,16 @@
             </div>
         </div>
 
-        <div class="form-group">
-            <label class="col-md-2 control-label" for="uses">Uses:</label>
+        {{#unless isOperator}}
+            <div class="form-group">
+                <label class="col-md-2 control-label" for="uses">Uses:</label>
 
-            <div class="col-md-7" id="uses-values">
-                <textarea class="form-control" name="uses" rows="5">{{uses}}</textarea>
-                <span class="help-block">Sources that use this term.</span>
+                <div class="col-md-7" id="uses-values">
+                    <textarea class="form-control" name="uses" rows="5">{{uses}}</textarea>
+                    <span class="help-block">Sources that use this term.</span>
+                </div>
             </div>
-        </div>
+        {{/unless}}
 
         {{#if isAlias}}
         <div class="form-group">
