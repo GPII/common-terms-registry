@@ -94,12 +94,13 @@ function(head, req) {
                 if (matches) {
                     allRecords.push({
                         "type":                 row.value.type,
+                        "status":               row.value.status,
                         "uniqueId":             row.value.uniqueId,
                         "localId":              row.value.localId,
                         "valueSpace":           row.value.valueSpace,
                         "defaultValue":         row.value.defaultValue,
                         "aliasOf":              row.value.aliasOf,
-                        "translationOf":        row.value.aliasOf,
+                        "translationOf":        row.value.translationOf,
                         "termLabel":            row.value.termLabel,
                         "definition":           row.value.definition,
                         "notes":                row.value.notes,
