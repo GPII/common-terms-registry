@@ -242,6 +242,7 @@ function loadFooterAndHeader() {
             $("#profile").couchProfile(r, {});
             $("#login-message").remove();
             $("#controls").show();
+            $("#add-panel").show();
             $("#control-toggle").click(function() { $("#controls").slideToggle(75); $("#control-toggle").toggleClass("glyphicon-collapse-down glyphicon-collapse-up") ; return false;});
 
             $("#general-type-toggle").click(function() { activateTypeFilter("#general-type-toggle","GENERAL"); return false;});
