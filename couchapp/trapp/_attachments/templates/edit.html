@@ -193,16 +193,18 @@
         </div>
 
         {{#if isGeneral}}
-        <div class="form-group">
-            <label class="col-md-2 control-label" for="aliases">Aliases:</label>
+            {{#if aliases}}
+            <div class="form-group">
+                <label class="col-md-2 control-label" for="aliases">Aliases:</label>
 
-            <div class="col-md-7" id="aliases-values">
-                {{#aliases}}
-                <a class="btn btn-lg" target="_blank" href="/tr/_design/trapp/_show/edit/{{value/id}}">{{value/uniqueId}}
-                    ({{value/source}})</a></span>
-                {{/aliases}}
+                <div class="col-md-7" id="aliases-values">
+                    {{#aliases}}
+                    <a class="btn btn-lg" target="_blank" href="/tr/_design/trapp/_show/edit/{{value/id}}">{{value/uniqueId}}
+                        ({{value/source}})</a></span>
+                    {{/aliases}}
+                </div>
             </div>
-        </div>
+            {{/if}}
         {{/if}}
 
         {{#if _id}}
