@@ -1,34 +1,10 @@
-<html>
-<head>
-    <title>Add/Edit Record</title>
-
-    <script src="/_utils/script/sha1.js"></script>
-    <script src="/_utils/script/json2.js"></script>
-    <script src="/_utils/script/jquery.js"></script>
-    <script src="/_utils/script/jquery.couch.js"></script>
-
-    <script src="../../vendor/couchapp/jquery.couchLogin.js"></script>
-    <script src="../../vendor/couchapp/jquery.couchProfile.js"></script>
-
-    <!-- twitter bootstrap styles and javascript -->
-    <link rel="stylesheet" href="../../vendor/twbs/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../../vendor/typeahead/typeahead.js-bootstrap.css">
-    <link rel="stylesheet" href="../../style/main.css" type="text/css">
-
-    <script src="../../vendor/twbs/js/bootstrap.min.js"></script>
-    <script src="../../vendor/hogan/hogan.js"></script>
-    <!--<script src="../../vendor/handlebars/handlebars.js"></script>-->
-    <script src="../../vendor/typeahead/typeahead.min.js"></script>
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
 <div class="container">
 <div class="panel panel-default">
     <div class="panel-heading">
         <div class="panel-title">
             <h1>{{^_id}}Add {{/_id}}{{#_id}}Edit {{/_id}} Record</h1>
         </div>
+        <div id="account" style="display:none"></div>
     </div>
     <div class="panel-body">
         <div id="messages" class="alert col-md-offset-1 display:none"></div>
@@ -61,8 +37,7 @@
                             {{#each types}}
                             <div class="col-md-4 col-sm-12">
                                 <h4>
-                                    <input type="radio" name="type" value="{{value}}" {{#if
-                                    selected}}checked="true"{{/if}}>
+                                    <input type="radio" name="type" value="{{value}}" {{#if selected}}checked="true"{{/if}}>
                                     <span class="glyphicon {{iconClass}}" title="{{label}}"></span>
                                     {{label}}
                                 </h4>
@@ -90,8 +65,7 @@
                             {{#each statuses}}
                             <div class="col-md-4 col-sm-12">
                                 <h4>
-                                    <input type="radio" name="status" value="{{value}}" {{#if
-                                    selected}}checked="true"{{/if}}>
+                                    <input type="radio" name="status" value="{{value}}" {{#if selected}}checked="true"{{/if}}>
                                     <span class="glyphicon {{iconClass}}" title="{{label}}"></span>
                                     {{label}}
                                 </h4>
@@ -248,13 +222,6 @@
                 </div>
             </fieldset>
         </form>
-    </div>
-
-
-    <div class="panel-footer">
-        <div class="container">
-            <div id="account" class="panel-title col-md-3 col-md-offset-8"></div>
-        </div>
     </div>
 </div>
 </div>
@@ -510,6 +477,4 @@ $(function () {
     {{/_id}}
 });
 </script>
-</body>
-</html>
 

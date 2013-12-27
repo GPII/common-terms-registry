@@ -4,8 +4,6 @@
     <title>Common Terms Registry</title>
 
     <!-- Include one of jTable styles. -->
-    <link href="vendor/jtable/themes/metro/blue/jtable.min.css" rel="stylesheet" type="text/css" />
-
     <script src="/_utils/script/sha1.js"></script>
     <script src="/_utils/script/json2.js"></script>
     <script src="/_utils/script/jquery.js"></script>
@@ -22,9 +20,10 @@
       <!-- Include jQuery Cookie plugin, required to save control panel settings -->
     <script src="vendor/jquery-cookie/jquery.cookie.js"></script>
 
-    <!-- Include jQuery UI, which is required by jTable-->
+    <!-- Include jQuery UI, which is required by jTable and a few of our animations -->
     <script src="vendor/jqueryui/ui/jquery-ui.js" type="text/javascript"></script>
-    
+    <link rel="stylesheet" href="vendor/jqueryui/themes/base/jquery-ui.css">
+
     <!-- Include jTable script file. -->
     <script src="vendor/jtable/jquery.jtable.min.js" type="text/javascript"></script>
 
@@ -49,5 +48,7 @@
     <div id="content" class="container"></div>
 
     <div id="footer" class="container"></div>
+
+    <div id="dialog" style="display:none;"></div>
   </body>
 </html>

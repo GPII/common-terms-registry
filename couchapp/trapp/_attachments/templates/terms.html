@@ -31,7 +31,7 @@
 </script>
 
 <script id="edit" type="text/html">
-    <a title="View/Edit Record" class="glyphicon glyphicon-pencil" target="_blank" href="/tr/_design/trapp/_show/edit/{{_id}}"></a>
+    <a title="View/Edit Record" class="glyphicon glyphicon-pencil edit-icon" target="_blank" href="_show/edit/{{_id}}" onClick="return loadEditDialog('{{_id}}')"></a>
 </script>
 
 <script id="delete" type="text/html">
@@ -50,8 +50,14 @@
         {{#aliasOf}}<input type="hidden" name="aliasOf" value="{{aliasOf}}"/>{{/aliasOf}}
         {{#translationOf}}<input type="hidden" name="translationOf" value="{{translationOf}}"/>{{/translationOf}}
 
-        <a title="Delete Record" href="javascript:if (confirm('Move record to trash?')) { deleteRecord('{{_id}}');}" class="glyphicon glyphicon-trash"></a>
+        <a title="Delete Record" href="javascript:if (confirm('Move record to trash?')) { deleteRecord('{{_id}}');}" class="glyphicon glyphicon-trash delete-icon"></a>
     </form>
+</script>
+
+<script id="loading-template" type="text/html">
+    <div id="dialog-content" align="center">
+        <p>Loading...</p>
+    </div>
 </script>
 
 <script id="header-template" type="text/html">

@@ -1,298 +1,291 @@
-$(function() {
-    // load all templates
-    $.get('templates/terms.html', function(templates) { $(templates).each(function() { $('body').append(this); }); }).then(loadFooterAndHeader);
 
-    var COOKIE_ID = "ctlPnlSettings";
+// load all templates
+$.get('templates/terms.html', function(templates) { $(templates).each(function() { $('body').append(this); }); }).then(loadFooterAndHeader);
 
-    var controlPanelSettings = {
-        "type": "GENERAL",
-        "status": "active",
-        "onlyUnreviewed": false
-    };
+var COOKIE_ID = "ctlPnlSettings";
 
-    // field schemes so that we can display different fields for different record types and statuses
-    var fieldSchemes = {};
-    fieldSchemes['base'] = {
-        edit: {
-            width: "5%",
-            edit: false,
-            create: false,
-            sorting: false,
-            display: function(record) { return Handlebars.compile($("#edit").html())(record.record); }
+var controlPanelSettings = {
+    "type": "GENERAL",
+    "status": "active",
+    "onlyUnreviewed": false
+};
+
+// field schemes so that we can display different fields for different record types and statuses
+var fieldSchemes = {};
+fieldSchemes['base'] = {
+    edit: {
+        width: "5%",
+        edit: false,
+        create: false,
+        sorting: false,
+        display: function(record) { return Handlebars.compile($("#edit").html())(record.record); }
+    },
+    id:
+    {
+        key: true,
+        list: false
+    },
+    type: {
+        title: 'Record Type',
+        list: false
+    },
+    uniqueId: {
+        title: 'Unique ID',
+        width: "15%"
+    },
+    termLabel: {
+        title: 'Label',
+        width: "15%"
+    },
+    localId: {
+        title: 'Local Unique ID',
+        list: false
+    },
+    valueSpace: {
+        title: 'Value Space',
+        sorting: true,
+        width: "20%",
+        display: function(record) { return Handlebars.compile($("#value").html())(record.record);}
+    },
+    definition: {
+        title: 'Definition',
+        sorting: true,
+        width: "15%",
+        edit: false,
+        create: false,
+        display: function(record) { return Handlebars.compile($("#definition").html())(record.record);}
+    },
+    notes: {
+        title: 'Notes',
+        sorting: true,
+        width: "3%",
+        edit: false,
+        create: false,
+        display: function(record) { return Handlebars.compile($("#notes").html())(record.record);}
+    },
+    uses: {
+        title: 'Uses',
+        sorting: true,
+        width: "3%",
+        edit: false,
+        create: false,
+        display: function(record) { return Handlebars.compile($("#uses").html())(record.record);}
+    },
+    unreviewedComments: {
+        title: 'Comments',
+        sorting: true,
+        width: "3%",
+        edit: false,
+        create: false,
+        display: function(record) { return Handlebars.compile($("#unreviewedComments").html())(record.record);}
+    },
+    aliases: {
+        title: 'Aliases',
+        sorting: true,
+        width: "15%",
+        edit: false,
+        create: false,
+        display: function(record) { return $(Handlebars.compile($("#aliases").html())(record.record)); }
+    },
+    delete: {
+        width: "5%",
+        edit: false,
+        create: false,
+        sorting: false,
+        display: function(record) { return Handlebars.compile($("#delete").html())(record.record); }
+    }
+}
+
+// TODO:  Convert to template
+$.couchProfile.templates = {
+    profileReady : '<div class="avatar">{{#gravatar_url}}<img src="{{gravatar_url}}"/>{{/gravatar_url}}<div class="name">{{nickname}}</div></div><div style="clear:left;"></div>',
+    newProfile : '<form><p>Hello {{name}}, Please setup your user profile.</p><label for="nickname">Nickname <input type="text" name="nickname" value=""></label><label for="email">Email (<em>for <a href="http://gravatar.com">Gravatar</a></em>) <input type="text" name="email" value=""></label><label for="url">URL <input type="text" name="url" value=""></label><input type="submit" value="Go &rarr;"><input type="hidden" name="userCtxName" value="{{name}}" id="userCtxName"></form>'
+};
+
+function wireUpTable(scheme, status) {
+    if (scheme === undefined) { scheme = 'base'; }
+    if (status == undefined) { status = 'active'; }
+
+    $("#content").jtable({
+        paging: true,
+        pageSize: 50,
+        pageSizes: [50,100,250,500,1000,2500],
+        sorting: true,
+        defaultSorting: "uniqueId ASC",
+        columnSelectable: false,
+        // By default jTable uses a POST for everything, which doesn't work when couchdb expects a GET (lists, views, shows)
+        ajaxSettings: {
+            type: 'GET'
         },
-        id:
-        {
-            key: true,
-            list: false
-        },
-        type: {
-            title: 'Record Type',
-            list: false
-        },
-        uniqueId: {
-            title: 'Unique ID',
-            width: "15%"
-        },
-        termLabel: {
-            title: 'Label',
-            width: "15%"
-        },
-        localId: {
-            title: 'Local Unique ID',
-            list: false
-        },
-        valueSpace: {
-            title: 'Value Space',
-            sorting: true,
-            width: "20%",
-            display: function(record) { return Handlebars.compile($("#value").html())(record.record);}
-        },
-        definition: {
-            title: 'Definition',
-            sorting: true,
-            width: "15%",
-            edit: false,
-            create: false,
-            display: function(record) { return Handlebars.compile($("#definition").html())(record.record);}
-        },
-        notes: {
-            title: 'Notes',
-            sorting: true,
-            width: "3%",
-            edit: false,
-            create: false,
-            display: function(record) { return Handlebars.compile($("#notes").html())(record.record);}
-        },
-        uses: {
-            title: 'Uses',
-            sorting: true,
-            width: "3%",
-            edit: false,
-            create: false,
-            display: function(record) { return Handlebars.compile($("#uses").html())(record.record);}
-        },
-        unreviewedComments: {
-            title: 'Comments',
-            sorting: true,
-            width: "3%",
-            edit: false,
-            create: false,
-            display: function(record) { return Handlebars.compile($("#unreviewedComments").html())(record.record);}
-        },
-        aliases: {
-            title: 'Aliases',
-            sorting: true,
-            width: "15%",
-            edit: false,
-            create: false,
-            display: function(record) { return $(Handlebars.compile($("#aliases").html())(record.record)); }
-        },
-        delete: {
-            width: "5%",
-            edit: false,
-            create: false,
-            sorting: false,
-            display: function(record) { return Handlebars.compile($("#delete").html())(record.record); }
+        actions: {
+            listAction: '/tr/_design/trapp/_list/jtable/entries'
+         },
+        fields: fieldSchemes[scheme]
+    });
+
+    loadTable();
+}
+
+function loadTable() {
+    var tableOptions = {"displayStatus": controlPanelSettings.status, "displayType" : controlPanelSettings.type, "onlyUnreviewed": controlPanelSettings.onlyUnreviewed};
+    var queryString = $("#queryString").val();
+
+    if (queryString !== undefined && queryString.trim().length > 0) {
+        tableOptions.q = queryString;
+    }
+
+    $("#content").jtable(
+        'load',
+        tableOptions,
+        function() {
+            $("a.glyphicon-file").tooltip();
+            $("th.jtable-column-header-sortable").on('click',function() {
+                // Tooltips are cleared on page sort.  This fixes that.
+                // TODO: Find a way to bind to the sorting event so that we can do this more cleanly, or replace jTable with something friendlier.
+                setTimeout(function(){$("a.glyphicon-file").tooltip();},500);
+            })
         }
-    }
+    );
+}
 
-    // TODO:  Convert to template
-    $.couchProfile.templates = {
-        profileReady : '<div class="avatar">{{#gravatar_url}}<img src="{{gravatar_url}}"/>{{/gravatar_url}}<div class="name">{{nickname}}</div></div><div style="clear:left;"></div>',
-        newProfile : '<form><p>Hello {{name}}, Please setup your user profile.</p><label for="nickname">Nickname <input type="text" name="nickname" value=""></label><label for="email">Email (<em>for <a href="http://gravatar.com">Gravatar</a></em>) <input type="text" name="email" value=""></label><label for="url">URL <input type="text" name="url" value=""></label><input type="submit" value="Go &rarr;"><input type="hidden" name="userCtxName" value="{{name}}" id="userCtxName"></form>'
-    };
+function saveControlPanelSettings() {
+    $.cookie(COOKIE_ID,JSON.stringify(controlPanelSettings));
+}
 
-    function wireUpTable(scheme, status) {
-        if (scheme === undefined) { scheme = 'base'; }
-        if (status == undefined) { status = 'active'; }
+function loadControlPanelSettings() {
+    // Check to see if the cookie exists
+    var cookie = $.cookie(COOKIE_ID);
+    if (cookie !== undefined) {
+       var cookieJson = JSON.parse(cookie);
 
-	    $("#content").jtable({
-            paging: true,
-            pageSize: 50,
-            pageSizes: [50,100,250,500,1000,2500],
-            sorting: true,
-            defaultSorting: "uniqueId ASC",
-            columnSelectable: false,
-            // By default jTable uses a POST for everything, which doesn't work when couchdb expects a GET (lists, views, shows)
-            ajaxSettings: {
-                type: 'GET'
-            },
-            actions: {
-                listAction: '/tr/_design/trapp/_list/jtable/entries'
-             },
-			fields: fieldSchemes[scheme]
-		});
+       // TODO:  This whole thing is very brittle, depending on constant combination of markup, selectors, etc.  Convert to Backbone.js or something else sane.
+       if (cookieJson.status !== undefined) {
+           controlPanelSettings.status = cookieJson.status;
+           $(".filter-toggle").addClass("disabled");
+           $("#" + cookieJson.status.toLowerCase() + "-record-toggle").removeClass("disabled");
+       }
 
-        loadTable();
-	}
+       if (cookieJson.type !== undefined) {
+           controlPanelSettings.type = cookieJson.type;
+           $(".type-toggle").addClass("disabled");
 
-    function loadTable() {
-        var tableOptions = {"displayStatus": controlPanelSettings.status, "displayType" : controlPanelSettings.type, "onlyUnreviewed": controlPanelSettings.onlyUnreviewed};
-        var queryString = $("#queryString").val();
+           $("#" + cookieJson.type.toLowerCase() + "-type-toggle").removeClass("disabled");
+       }
 
-        if (queryString !== undefined && queryString.trim().length > 0) {
-            tableOptions.q = queryString;
-        }
-
-        $("#content").jtable(
-            'load',
-            tableOptions,
-            function() {
-                $("a.glyphicon-file").tooltip();
-                $("th.jtable-column-header-sortable").on('click',function() {
-                    // Tooltips are cleared on page sort.  This fixes that.
-                    // TODO: Find a way to bind to the sorting event so that we can do this more cleanly, or replace jTable with something friendlier.
-                    setTimeout(function(){$("a.glyphicon-file").tooltip();},500);
-                })
-            }
-        );
-    }
-
-    function saveControlPanelSettings() {
-        $.cookie(COOKIE_ID,JSON.stringify(controlPanelSettings));
-    }
-
-    function loadControlPanelSettings() {
-        // Check to see if the cookie exists
-        var cookie = $.cookie(COOKIE_ID);
-        if (cookie !== undefined) {
-           var cookieJson = JSON.parse(cookie);
-
-           // TODO:  This whole thing is very brittle, depending on constant combination of markup, selectors, etc.  Convert to Backbone.js or something else sane.
-           if (cookieJson.status !== undefined) {
-               controlPanelSettings.status = cookieJson.status;
-               $(".filter-toggle").addClass("disabled");
-               if (cookieJson.status === "active") {
-                   $("#live-record-toggle").removeClass("disabled");
-               }
-               else if (cookieJson.status === "unreviewed") {
-                   $("#unreviewed-record-toggle").removeClass("disabled");
-               }
-               else if (cookieJson.status === "candidate") {
-                   $("#candidate-record-toggle").removeClass("disabled");
-               }
-               else if (cookieJson.status === "deleted") {
-                   $("#deleted-record-toggle ").removeClass("disabled");
-               }
+       if (cookieJson.onlyUnreviewed !== undefined) {
+           controlPanelSettings.onlyUnreviewed = cookieJson.onlyUnreviewed;
+           if (cookieJson.onlyUnreviewed === false) {
+               $("#comments-toggle").addClass("disabled");
            }
-
-           if (cookieJson.type !== undefined) {
-               controlPanelSettings.type = cookieJson.type;
-               $(".type-toggle").addClass("disabled");
-
-               if (cookieJson.type === "GENERAL") {
-                   $("#general-type-toggle").removeClass("disabled");
-               }
-               else if (cookieJson.type === "ALIAS") {
-                   $("#alias-type-toggle").removeClass("disabled");
-               }
-               else if (cookieJson.type === "TRANSLATION") {
-                   $("#translation-type-toggle").removeClass("disabled");
-               }
-               else if (cookieJson.type === "OPERATOR") {
-                   $("#operator-type-toggle").removeClass("disabled");
-               }
+           else {
+               $("#comments-toggle").removeClass("disabled");
            }
-
-           if (cookieJson.onlyUnreviewed !== undefined) {
-               controlPanelSettings.onlyUnreviewed = cookieJson.onlyUnreviewed;
-               if (cookieJson.onlyUnreviewed === false) {
-                   $("#comments-toggle").addClass("disabled");
-               }
-               else {
-                   $("#comments-toggle").removeClass("disabled");
-               }
-           }
-        }
+       }
     }
+}
 
 
-    function activateStatusFilter(id,status) {
-        var toggle = $(id);
-        if (toggle.hasClass("disabled")) {
-            $(".filter-toggle").addClass("disabled");
-            $(id).removeClass("disabled");
+function activateStatusFilter(id,status) {
+    var toggle = $(id);
+    if (toggle.hasClass("disabled")) {
+        $(".filter-toggle").addClass("disabled");
+        $(id).removeClass("disabled");
 
-            controlPanelSettings.status = status;
-            saveControlPanelSettings();
-
-            loadTable();
-        }
-    }
-
-    function activateTypeFilter(id,type) {
-        var toggle = $(id);
-        if (toggle.hasClass("disabled")) {
-            $(".type-toggle").addClass("disabled");
-            $(id).removeClass("disabled");
-
-            controlPanelSettings.type = type;
-            saveControlPanelSettings();
-
-            loadTable();
-        }
-    }
-
-    function activateCommentFilter(id) {
-        var toggle = $(id);
-
-        var onlyUnreviewed = false;
-        if (toggle.hasClass("disabled")) {
-            toggle.removeClass("disabled");
-            onlyUnreviewed = true;
-        }
-        else {
-            toggle.addClass("disabled")
-        }
-
-        controlPanelSettings.onlyUnreviewed = onlyUnreviewed;
+        controlPanelSettings.status = status;
         saveControlPanelSettings();
 
         loadTable();
     }
-    
-    function loadFooterAndHeader() {
-        $("#header").html(Handlebars.compile($("#header-template").html())(document));
-        $("#controls").html(Handlebars.compile($("#controls-template").html())(document));
-        $("#footer").html($("#footer-template").html());
+}
 
-        $("#account").couchLogin({
-            loggedIn : function(r) {
-                loadControlPanelSettings();
+function activateTypeFilter(id,type) {
+    var toggle = $(id);
+    if (toggle.hasClass("disabled")) {
+        $(".type-toggle").addClass("disabled");
+        $(id).removeClass("disabled");
 
-		        $("#profile").couchProfile(r, {});
-                $("#login-message").remove();
-                $("#controls").show();
-                $("#control-toggle").click(function() { $("#controls").slideToggle(75); $("#control-toggle").toggleClass("glyphicon-collapse-down glyphicon-collapse-up") ; return false;});
+        controlPanelSettings.type = type;
+        saveControlPanelSettings();
 
-                $("#general-type-toggle").click(function() { activateTypeFilter("#general-type-toggle","GENERAL"); return false;});
-                $("#alias-type-toggle").click(function() { activateTypeFilter("#alias-type-toggle","ALIAS"); return false;});
-                $("#translation-type-toggle").click(function() { activateTypeFilter("#translation-type-toggle","TRANSLATION"); return false;});
-                $("#operator-type-toggle").click(function() { activateTypeFilter("#operator-type-toggle","OPERATOR"); return false;});
+        loadTable();
+    }
+}
 
-                $("#comments-toggle").click(function() { activateCommentFilter("#comments-toggle"); return false;});
+function activateCommentFilter(id) {
+    var toggle = $(id);
 
-                $("#unreviewed-record-toggle").click(function() { activateStatusFilter("#unreviewed-record-toggle","unreviewed"); return false;});
-                $("#candidate-record-toggle").click(function() { activateStatusFilter("#candidate-record-toggle","candidate"); return false;});
-                $("#live-record-toggle").click(function() { activateStatusFilter("#live-record-toggle","active"); return false;});
-                $("#deleted-record-toggle").click(function() { activateStatusFilter("#deleted-record-toggle","deleted"); return false;});
+    var onlyUnreviewed = false;
+    if (toggle.hasClass("disabled")) {
+        onlyUnreviewed = true;
+    }
+    toggle.toggleClass("disabled");
 
-                $("#queryString").on('change',function() { loadTable(); $("#queryString").preventDefault();});
+    controlPanelSettings.onlyUnreviewed = onlyUnreviewed;
+    saveControlPanelSettings();
 
-                $("#add-panel").show();
+    loadTable();
+}
 
-                wireUpTable();
-            },
-            loggedOut : function() {
-                $("#content").html('<div id="login-message" class="alert alert-danger">You must log in to view the registry.</div>');
-                $("#controls").hide();
-                $("#add-panel").hide();
-                $("#profile").html('<p>Please log in to see your profile.</p>');
-            }
+function loadFooterAndHeader() {
+    $("#header").html($("#header-template").html());
+    $("#controls").html($("#controls-template").html());
+    $("#footer").html($("#footer-template").html());
+
+    $("#account").couchLogin({
+        loggedIn : function(r) {
+            loadControlPanelSettings();
+
+            $("#profile").couchProfile(r, {});
+            $("#login-message").remove();
+            $("#controls").show();
+            $("#control-toggle").click(function() { $("#controls").slideToggle(75); $("#control-toggle").toggleClass("glyphicon-collapse-down glyphicon-collapse-up") ; return false;});
+
+            $("#general-type-toggle").click(function() { activateTypeFilter("#general-type-toggle","GENERAL"); return false;});
+            $("#alias-type-toggle").click(function() { activateTypeFilter("#alias-type-toggle","ALIAS"); return false;});
+            $("#translation-type-toggle").click(function() { activateTypeFilter("#translation-type-toggle","TRANSLATION"); return false;});
+            $("#operator-type-toggle").click(function() { activateTypeFilter("#operator-type-toggle","OPERATOR"); return false;});
+
+            $("#comments-toggle").click(function() { activateCommentFilter("#comments-toggle"); return false;});
+
+            $("#unreviewed-record-toggle").click(function() { activateStatusFilter("#unreviewed-record-toggle","unreviewed"); return false;});
+            $("#candidate-record-toggle").click(function() { activateStatusFilter("#candidate-record-toggle","candidate"); return false;});
+            $("#live-record-toggle").click(function() { activateStatusFilter("#live-record-toggle","active"); return false;});
+            $("#deleted-record-toggle").click(function() { activateStatusFilter("#deleted-record-toggle","deleted"); return false;});
+
+            $("#queryString").on('change',function() { loadTable(); $("#queryString").preventDefault();});
+
+            $("#add-panel").show();
+
+            wireUpTable();
+        },
+        loggedOut : function() {
+            $("#content").html('<div id="login-message" class="alert alert-danger">You must log in to view the registry.</div>');
+            $("#controls").hide();
+            $("#add-panel").hide();
+            $("#profile").html('<p>Please log in to see your profile.</p>');
+        }
+    });
+}
+function loadEditDialog(id) {
+    if (!this.event.metaKey && !this.event.altKey && !this.event.ctrlKey) {
+        $("#dialog").html($("#loading-template").html());
+
+
+        var iframe = $('<iframe src="_show/edit-dialog/' + id + '"></iframe>');
+        $("#dialog-content").html(iframe);
+
+        $("#dialog").dialog({
+            modal: true,
+            width: '90%',
+            height: $(window).height() * 0.9,
+            close: function() { loadTable();}
         });
+
+        return false;
     }
 
- });
+    return true;
+}
 
 function deleteRecord(id) {
     var data = $("#delete-" + id + "-form").serialize();
