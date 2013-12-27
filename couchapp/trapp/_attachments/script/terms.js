@@ -294,7 +294,7 @@ function loadEditDialog(id) {
     return true;
 }
 
-function deleteRecord(id) {
+function loadDeleteDialog(id) {
     $("#delete-" + id + "-form .dialog-content").html($("#delete-template").html());
     $("#delete-" + id + "-form").dialog({
         modal: true,

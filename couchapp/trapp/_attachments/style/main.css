@@ -72,3 +72,11 @@ a.glyphicon {
     padding:0px;
     margin:0px;
 }
+
+#status-field-set, #type-field-set {
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-bottom: .5em;
+}
