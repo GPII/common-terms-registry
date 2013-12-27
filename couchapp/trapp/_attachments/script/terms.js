@@ -145,7 +145,9 @@ function loadTable() {
             $("th.jtable-column-header-sortable").on('click',function() {
                 // Tooltips are cleared on page sort.  This fixes that.
                 // TODO: Find a way to bind to the sorting event so that we can do this more cleanly, or replace jTable with something friendlier.
-                setTimeout(function(){$("a.glyphicon-file").tooltip();},500);
+                setTimeout(function(){
+                    $("a.glyphicon-file").tooltip();
+                },1000);
             })
         }
     );
@@ -186,7 +188,6 @@ function loadControlPanelSettings() {
        }
     }
 }
-
 
 function activateStatusFilter(id,status) {
     var toggle = $(id);
@@ -255,9 +256,9 @@ function loadFooterAndHeader() {
             $("#live-record-toggle").click(function() { activateStatusFilter("#live-record-toggle","active"); return false;});
             $("#deleted-record-toggle").click(function() { activateStatusFilter("#deleted-record-toggle","deleted"); return false;});
 
-            $("#queryString").on('change',function() { loadTable(); $("#queryString").preventDefault();});
+            $("#queryString").on('change',function() { loadTable(); });
 
-            $("#add-panel").show();
+            $("#create-record-link").on('click',loadEditDialog);
 
             wireUpTable();
         },
@@ -269,9 +270,10 @@ function loadFooterAndHeader() {
         }
     });
 }
+
 function loadEditDialog(id) {
     // Only trap left clicks so that users can open multiple tabs easily.
-    if (!this.event.metaKey && !this.event.altKey && !this.event.ctrlKey) {
+    if (this !== undefined && this.event !== undefined && !this.event.metaKey && !this.event.altKey && !this.event.ctrlKey) {
         $("#dialog").html($("#loading-template").html());
 
 

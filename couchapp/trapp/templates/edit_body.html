@@ -2,7 +2,7 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <div class="panel-title">
-            <h1>{{^_id}}Add {{/_id}}{{#_id}}Edit {{/_id}} Record</h1>
+            <h1>{{#unless _id}}Add {{/unless}}{{#if _id}}Edit {{/if}} Record</h1>
         </div>
         <div id="account" style="display:none"></div>
     </div>
@@ -469,12 +469,12 @@ $(function () {
         }
     });
 
-    {{#_id}}
+    {{#if _id}}
     loadHistory("{{_id}}");
     $("#history-title").bind('click', function () {
         $("#history").toggle()
     });
-    {{/_id}}
+    {{/if}}
 });
 </script>
 
