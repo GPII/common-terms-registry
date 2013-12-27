@@ -35,28 +35,37 @@
 </script>
 
 <script id="delete" type="text/html">
+{{#unless isDeleted}}
     <form id="delete-{{_id}}-form">
         <input type="hidden" name="_id" value="{{_id}}"/>
         <input type="hidden" name="_rev" value="{{_rev}}"/>
         <input type="hidden" name="uniqueId" value="{{uniqueId}}"/>
         <input type="hidden" name="type" value="{{type}}"/>
         <input type="hidden" name="status" value="deleted"/>
-        {{#termLabel}}<input type="hidden" name="termLabel" value="{{termLabel}}"/>{{/termLabel}}
-        {{#valueSpace}}<input type="hidden" name="valueSpace" value="{{valueSpace}}"/>{{/valueSpace}}
-        {{#definition}}<input type="hidden" name="definition" value="{{definition}}"/>{{/definition}}
-        {{#notes}}<input type="hidden" name="notes" value="{{notes}}"/>{{/notes}}
-        {{#uses}}<input type="hidden" name="uses" value="{{uses}}"/>{{/uses}}
-        {{#source}}<input type="hidden" name="source" value="{{source}}"/>{{/source}}
-        {{#aliasOf}}<input type="hidden" name="aliasOf" value="{{aliasOf}}"/>{{/aliasOf}}
-        {{#translationOf}}<input type="hidden" name="translationOf" value="{{translationOf}}"/>{{/translationOf}}
+        {{#if termLabel}}<input type="hidden" name="termLabel" value="{{termLabel}}"/>{{/if}}
+        {{#if valueSpace}}<input type="hidden" name="valueSpace" value="{{valueSpace}}"/>{{/if}}
+        {{#if definition}}<input type="hidden" name="definition" value="{{definition}}"/>{{/if}}
+        {{#if notes}}<input type="hidden" name="notes" value="{{notes}}"/>{{/if}}
+        {{#if uses}}<input type="hidden" name="uses" value="{{uses}}"/>{{/if}}
+        {{#if source}}<input type="hidden" name="source" value="{{source}}"/>{{/if}}
+        {{#if aliasOf}}<input type="hidden" name="aliasOf" value="{{aliasOf}}"/>{{/if}}
+        {{#if translationOf}}<input type="hidden" name="translationOf" value="{{translationOf}}"/>{{/if}}
 
-        <a title="Delete Record" href="javascript:if (confirm('Move record to trash?')) { deleteRecord('{{_id}}');}" class="glyphicon glyphicon-trash delete-icon"></a>
+        <div class="dialog-content"></div>
     </form>
+    <a title="Delete Record" href="#" onClick="deleteRecord('{{_id}}');return false" class="glyphicon glyphicon-trash delete-icon"></a>
+{{/unless}}
 </script>
 
 <script id="loading-template" type="text/html">
     <div id="dialog-content" align="center">
         <p>Loading...</p>
+    </div>
+</script>
+
+<script id="delete-template" type="text/html">
+    <div id="dialog-content" align="center">
+        <p>Are you sure you want to move this record to the trash?  It can be recovered later by any administrator.</p>
     </div>
 </script>
 

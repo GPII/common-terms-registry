@@ -92,7 +92,10 @@ fieldSchemes['base'] = {
         edit: false,
         create: false,
         sorting: false,
-        display: function(record) { return Handlebars.compile($("#delete").html())(record.record); }
+        display: function(record) {
+            record.record.isDeleted = record.record.status && record.record.status === "deleted";
+            return Handlebars.compile($("#delete").html())(record.record);
+        }
     }
 }
 
@@ -267,6 +270,7 @@ function loadFooterAndHeader() {
     });
 }
 function loadEditDialog(id) {
+    // Only trap left clicks so that users can open multiple tabs easily.
     if (!this.event.metaKey && !this.event.altKey && !this.event.ctrlKey) {
         $("#dialog").html($("#loading-template").html());
 
@@ -288,20 +292,34 @@ function loadEditDialog(id) {
 }
 
 function deleteRecord(id) {
-    var data = $("#delete-" + id + "-form").serialize();
+    $("#delete-" + id + "-form .dialog-content").html($("#delete-template").html());
+    $("#delete-" + id + "-form").dialog({
+        modal: true,
+        width: '50%',
+        height: $(window).height() * 0.5,
+        buttons: [
+            { text: "Cancel", click: function() { $( this ).dialog( "close" ); }},
+            {   text: "Trash This Record",
+                click: function() {
+                    var data = $("#delete-" + id + "-form").serialize();
 
-    // post results via AJAX
-    $.ajax({
-        url: "/tr/_design/trapp/_update/edit/",
-        type: "POST",
-        data: data,
-        context: id,
-        success: function(results, status, jqXHR){
-            // if we succeed, remove the row
-            $("#delete-" + this + "-form").closest("tr").remove();
-        },
-        error: function(jqXHR, status, errorString) {
-            window.alert("Error deleting record '" + this + "': " + errorString);
-        }
+                    $.ajax({
+                        url: "/tr/_design/trapp/_update/edit/",
+                        type: "POST",
+                        data: data,
+                        context: id,
+                        success: function(results, status, jqXHR){
+                            $("#delete-" + id + "-form .dialog-content").html("Trashed record.  Any administrator can recover it from the trash.").addClass("alert alert-success");
+                            loadTable();
+                            $("#delete-" + id + "-form").dialog("close");
+                        },
+                        error: function(jqXHR, status, errorString) {
+                            // TODO:  Once we clean up records, it shouldn't come up, but we may need to unpack the errors in the response better.
+                            $("#delete-" + id + "-form .dialog-content").html("Error moving record '" + this + "' to the trash: " + errorString).addClass("alert alert-danger");
+                        }
+                    });
+                }
+            }
+        ]
     });
 }
