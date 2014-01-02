@@ -1,19 +1,14 @@
 // Copied from couch built-in validation before updating for account verification, etc. --ABA
 function(newDoc, oldDoc, userCtx, secObj) {
     if (newDoc._deleted === true) {
-        // allow deletes by admins and matching users
-        // without checking the other fields
-        if ((userCtx.roles.indexOf('_admin') !== -1) ||
-            (userCtx.name == oldDoc.name)) {
-            return;
-        } else {
-            throw({forbidden: 'Only admins may delete other user docs.'});
+        if (userCtx.roles.indexOf('_admin') !== -1) {
+            throw({forbidden: 'Only admins may delete users.'});
         }
     }
 
     if ((oldDoc && oldDoc.type !== 'user') || newDoc.type !== 'user') {
         throw({forbidden : 'doc.type must be user'});
-    } // we only allow user docs for now
+    }
 
     if (!newDoc.name) {
         throw({forbidden: 'doc.name is required'});
@@ -22,8 +17,7 @@ function(newDoc, oldDoc, userCtx, secObj) {
     if (!newDoc.roles) {
         throw({forbidden: 'doc.roles must exist'});
     }
-
-    if (!isArray(newDoc.roles)) {
+    else if (!isArray(newDoc.roles)) {
         throw({forbidden: 'doc.roles must be an array'});
     }
 
@@ -39,7 +33,7 @@ function(newDoc, oldDoc, userCtx, secObj) {
         });
     }
 
-    if (oldDoc) { // validate all updates
+    if (oldDoc) { // validate updates by all users
         if (oldDoc.name !== newDoc.name) {
             throw({forbidden: 'Usernames can not be changed.'});
         }
@@ -79,8 +73,9 @@ function(newDoc, oldDoc, userCtx, secObj) {
         return false; // default to no admin
     }
 
+    // validate non-admin updates
     if (!is_server_or_database_admin(userCtx, secObj)) {
-        if (oldDoc) { // validate non-admin updates
+        if (oldDoc) {
             if (userCtx.name !== newDoc.name) {
                 throw({
                     forbidden: 'You may only update your own user document.'
@@ -119,7 +114,7 @@ function(newDoc, oldDoc, userCtx, secObj) {
         throw({forbidden: 'Username may not start with underscore.'});
     }
 
-    var badUserNameChars = [':'];
+    var badUserNameChars = [': '];
 
     for (var i = 0; i < badUserNameChars.length; i++) {
         if (newDoc.name.indexOf(badUserNameChars[i]) >= 0) {
