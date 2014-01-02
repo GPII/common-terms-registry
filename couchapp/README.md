@@ -1,11 +1,7 @@
 The contents of this directory are meant to be pushed to a couchdb instance and hosted from there.
 
-To push this content to a couchdb instance, use a command like:
+The "trapp" directory contains the main application, which should be uploaded to the main database.
 
-   couchapp push trapp http://username:password@localhost:5984/tr
+The "_auth" directory contains the validation rules and other code for account creation, editing, et cetera.  This should be uploaded to the built-in "_users" database.
 
-For more options and information, check the couchapp command-line documentation:
-
-http://couchapp.org/page/couchapp-usage
-
-In most cases, you will need to obtain or create a data set before this couchapp will be useful.  See the parent directory for instructions.
+Consult the README.md files in each of these directories for more information.
