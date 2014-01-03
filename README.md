@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 The terms registry is intended to help people describing needs and solutions translate between the range of terms used to describe both.  
 
 The registry consists of canonical entries and aliases from other namespaces.
@@ -16,9 +15,3 @@ Once you have those, you will need to get the full data set.  You can either do 
 
 Once you have data, you would deploy the contents of the couchapp directory to set up the administrative interface.  See the "couchapp" folder
 for instructions. 
-=======
-common-terms-registry
-=====================
-
-The registry of common needs and preferences terms.
->>>>>>> 590ad98d620f1420ad03437f7f3f0f7ffd8b9bd7
