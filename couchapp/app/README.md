@@ -16,6 +16,5 @@ Although there are synchronization options built into couchdb, the least dangero
 3. Bulk upload the data using a command like:
         curl -d @data.json -X POST http://username:password@localhost:5984/tr/_bulk_docs -H "Content-Type: application/json"
 
-For most features to work, you will also need to push the replacement user management code from the "_users" subdirectory located in the parent directory.
-
+In order to be able to log in, you will also need to configure and start the "lockit" user management server in the "lockit" directory under the root of the source tree.
 
