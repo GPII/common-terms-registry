@@ -10,8 +10,8 @@ To set up a development instance of the registry, you will need:
 
 Once you have those, you will need to get the full data set.  You can either do this by:
 
-# Replicating from another instance:  http://wiki.apache.org/couchdb/Replication
-# Building the data set from the source materials using the contents of the scripts folder (see that folder for instructions).
+1. Replicating from another instance:  http://wiki.apache.org/couchdb/Replication
+2. Building the data set from the source materials using the contents of the scripts folder (see that folder for instructions).
 
 Once you have data, you would deploy the contents of the couchapp directory to set up the administrative interface.  See the "couchapp" folder
 for instructions. 
