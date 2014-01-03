@@ -10,7 +10,7 @@ following:
 On the client side, these can be access via the properties of the
 design document for the couchapp.   Here is an example of code that does this:
 
-`$.couch.db('tr').openDoc('_design/trapp',{success: function(data, textStatus, jqXHR) {
+`$.couch.db('tr').openDoc('_design/app',{success: function(data, textStatus, jqXHR) {
     $(data.shared).each(function (position,entry) {
         $(Object.keys(entry)).each(function(position,key) {
             $.globalEval(entry[key]);

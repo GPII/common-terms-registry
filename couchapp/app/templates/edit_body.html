@@ -138,7 +138,7 @@
 
         // (Re)wire the suggestion block if we're working with the right kind of record
         if (data.type == "ALIAS" || data.type == "TRANSLATION" || data.type == "TRANSFORMATION" ) {
-            $.get('/tr/_design/trapp/_view/terms', {},
+            $.get('/tr/_design/app/_view/terms', {},
                     function (data, textStatus, jqXHR) {
                         var suggestionData = [];
                         var json = JSON.parse(data);
@@ -230,7 +230,7 @@
         var url = "/tr/";
         var headers = {};
         if (id) {
-            url = "/tr/_design/trapp/_update/edit/";
+            url = "/tr/_design/app/_update/edit/";
             data = formToSerialized(form);
         }
         else {
@@ -298,7 +298,7 @@
             $('body').append(this);
         });
     }).then(function() {
-        $.couch.db('tr').openDoc('_design/trapp',{success: function(data, textStatus, jqXHR) {
+        $.couch.db('tr').openDoc('_design/app',{success: function(data, textStatus, jqXHR) {
             $(data.templates).each(function (position,entry) {
                 $(Object.keys(entry)).each(function(position,key) {
                     var script = $("<script>");

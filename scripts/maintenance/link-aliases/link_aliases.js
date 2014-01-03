@@ -42,7 +42,7 @@ function scanAliases() {
     console.log("Loading aliases from database...");
     var deferred = Q.defer();
 
-    db.view('trapp/aliases', function(err,doc) { 
+    db.view('app/aliases', function(err,doc) {
         if (err) {
             deferred.reject(new Error(err));
         } else {
@@ -62,7 +62,7 @@ function finishedInitialScan() {
         console.info("Searching for record '" + key + "'...");
         
         // get the record from the database
-        db.view('trapp/terms', { key: key }, updateTerm);
+        db.view('app/terms', { key: key }, updateTerm);
     }
 }
 function updateTerm(err, doc) {

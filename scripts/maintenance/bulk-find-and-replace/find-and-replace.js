@@ -36,11 +36,11 @@ var dbRecords       = {};
 var recordsToUpdate = {}
 
 var recordType = "GENERAL";
-var url = '_design/trapp/_view/terms';
+var url = '_design/app/_view/terms';
 
 if (argv.aliases) {
     recordType = "ALIASES";
-    url = '_design/trapp/_view/aliases';
+    url = '_design/app/_view/aliases';
 }
 
 // TODO:  We are only operating on terms for now.  Add filtering by type, etc. and allow all record types.

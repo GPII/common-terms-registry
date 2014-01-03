@@ -11,7 +11,7 @@ var fPager = fPager || {};
     fPager.initPager = function () {
         var resources = {
             users: {
-                href: "/tr/_design/trapp/_view/terms",
+                href: "/tr/_design/app/_view/terms",
                 options: {
                     dataType: "json"
                 }

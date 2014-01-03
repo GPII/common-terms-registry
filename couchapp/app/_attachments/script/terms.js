@@ -121,7 +121,7 @@ function wireUpTable(scheme, status) {
             type: 'GET'
         },
         actions: {
-            listAction: '/tr/_design/trapp/_list/jtable/entries'
+            listAction: '/tr/_design/app/_list/jtable/entries'
          },
         fields: fieldSchemes[scheme]
     });
@@ -307,7 +307,7 @@ function loadDeleteDialog(id) {
                     var data = $("#delete-" + id + "-form").serialize();
 
                     $.ajax({
-                        url: "/tr/_design/trapp/_update/edit/",
+                        url: "/tr/_design/app/_update/edit/",
                         type: "POST",
                         data: data,
                         context: id,

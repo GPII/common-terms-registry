@@ -2,7 +2,7 @@
 {{#if aliases}}
     <ul class="aliases">
     {{#each aliases}}
-        <li><a target="_blank" href="/tr/_design/trapp/_show/edit/{{_id}}">{{value/uniqueId}} ({{value/source}})</a></li>
+        <li><a target="_blank" href="/tr/_design/app/_show/edit/{{_id}}">{{value/uniqueId}} ({{value/source}})</a></li>
     {{/each}}
     </ul>
 {{/if}}
@@ -171,7 +171,7 @@
 
         <div id="add-panel" class="col-md-1 col-xs-3 cpl-icon">
             <div id="add-button" class="cpl-icon">
-                <h4><a id="create-record-link" onClick="return loadEditDialog()" href="/tr/_design/trapp/_show/edit/" target="_blank" class="glyphicon glyphicon-plus" title="Add Record"></a></h4>
+                <h4><a id="create-record-link" onClick="return loadEditDialog()" href="/tr/_design/app/_show/edit/" target="_blank" class="glyphicon glyphicon-plus" title="Add Record"></a></h4>
                 Add
             </div>
         </div>

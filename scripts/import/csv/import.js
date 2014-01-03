@@ -185,7 +185,7 @@ function convertRecords() {
 }
 
 function cacheDbRecords() {
-    return db.get('_design/trapp/_view/entries').then(cacheSearchResults);
+    return db.get('_design/app/_view/entries').then(cacheSearchResults);
 }
 
 function cacheSearchResults(content) {
