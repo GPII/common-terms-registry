@@ -35,7 +35,7 @@
         };
         initWidget();
         function doLogin(name, pass) {
-            $.couch.login({name:name, password:pass, success:initWidget});
+            $.couch.login({name:name, password:pass, success:initWidget, error: opts.error});
         };
         elem.delegate("a[href=#signup]", "click", function() {
             elem.html(templates.signupForm);
@@ -67,9 +67,9 @@
     }
     var templates = {
         adminParty : '<p><strong>Admin party, everyone is admin!</strong> Fix this in <a href="/_utils/index.html">Futon</a> before proceeding.</p>',
-        loggedOut : '<a href="#signup">Signup</a> or <a href="#login">Login</a>',
-        loginForm : '<form class="login"><label for="name">Name</label> <input type="text" name="name" value="" autocapitalize="off" autocorrect="off"><label for="password">Password</label> <input type="password" name="password" value=""><input type="submit" value="Login"><a href="#signup">or Signup</a></form>',
-        signupForm : '<form class="signup"><label for="name">Name</label> <input type="text" name="name" value="" autocapitalize="off" autocorrect="off"><label for="password">Password</label> <input type="password" name="password" value=""><input type="submit" value="Signup"><a href="#login">or Login</a></form>'
+        loggedOut : '<a href="/_l/signup">Sign up</a> or <a href="#login">Login</a>',
+        loginForm : '<form class="login"><label for="name">Name</label> <input type="text" name="name" value="" autocapitalize="off" autocorrect="off"><label for="password">Password</label> <input type="password" name="password" value=""><input type="submit" value="Login"><a href="/_l/signup">or Signup</a></form>',
+        signupForm : 'Please <a href="/_l/signup">sign up</a> for an account.'
     };
     function loggedIn(r) {
         var auth_db = encodeURIComponent(r.info.authentication_db)
