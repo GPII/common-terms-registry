@@ -1,6 +1,6 @@
 exports.appname = 'The Common Terms Registry';
-exports.url = 'http://localhost:3000';
-// port is needed for tests - providing the full url is usually enough
+exports.url = 'http://localhost:5984/_l';
+
 exports.port = 3000;
 
 // email settings
@@ -10,6 +10,7 @@ exports.emailSettings = {
     port: 25
 };
 
+exports.emailFrom = 'no-reply@raisingthefloor.org';
 exports.emailTemplate = 'blank';
 
 // signup settings
