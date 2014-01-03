@@ -85,10 +85,35 @@
         </div>
         <div class="pull-right col-md-1 col-md-offset-0 col-xs-1 col-xs-offset-3">
             <div class="nav navbar-nav pull-right">
-                <a id="control-toggle" class="glyphicon glyphicon-collapse-up" href="#" title="Open Settings Panel"></a>
+                <a id="control-toggle" class="glyphicon glyphicon-collapse-up" href="#" title="Open Settings Panel" style="display:none"></a>
             </div>
         </div>
     </div>
+</script>
+
+<script id="login-message-template" type="text/html">
+    <div id="login-message" class="alert alert-danger">
+        <p>You must log in to view the registry.  Not already a member?  <a href="/_l/signup">Sign up for an account now.</a></p>
+    </div>
+</script>
+
+<script id="login-error-template" type="text/html">
+    <div id="login-message" class="alert alert-danger">
+        <p>The username or password you entered was not correct.<p>
+        <p>Forgot your password?  <a href="/_l/forgot-password">Reset your password now.</a></p>
+        <p>Don't have an account?  <a href="/_l/signup">Create an account now.</a></p>
+    </div>
+</script>
+
+<script id="verification-message-template" type="text/html">
+    <div class="alert alert-danger">
+        <p>
+            You will need to verify the email address associated with your account before continuing.  Please check your mail or <a href="/_l/signup/resend-verification">resend the verification email to your email address</a>.
+        </p>
+    </div>
+</script>
+
+<script id="login-profile-template" type="text/html">
 </script>
 
 <script id="footer-template" type="text/html">

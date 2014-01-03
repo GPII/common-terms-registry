@@ -237,37 +237,56 @@ function loadFooterAndHeader() {
 
     $("#account").couchLogin({
         loggedIn : function(r) {
-            loadControlPanelSettings();
+            var db = $.couch.db("_users");
+            var userDocId = "org.couchdb.user:" + r.userCtx.name;
+            db.openDoc(userDocId, {
+                success : function(userDoc) {
+                    if (userDoc.emailVerified) {
+                        loadControlPanelSettings();
 
-            $("#profile").couchProfile(r, {});
-            $("#login-message").remove();
-            $("#controls").show();
-            $("#add-panel").show();
-            $("#control-toggle").click(function() { $("#controls").slideToggle(75); $("#control-toggle").toggleClass("glyphicon-collapse-down glyphicon-collapse-up") ; return false;});
+                        $("#profile").couchProfile(r, {});
+                        $("#login-message").remove();
+                        $("#controls").show();
+                        $("#control-toggle").show();
+                        $("#add-panel").show();
+                        $("#control-toggle").click(function() { $("#controls").slideToggle(75); $("#control-toggle").toggleClass("glyphicon-collapse-down glyphicon-collapse-up") ; return false;});
 
-            $("#general-type-toggle").click(function() { activateTypeFilter("#general-type-toggle","GENERAL"); return false;});
-            $("#alias-type-toggle").click(function() { activateTypeFilter("#alias-type-toggle","ALIAS"); return false;});
-            $("#translation-type-toggle").click(function() { activateTypeFilter("#translation-type-toggle","TRANSLATION"); return false;});
-            $("#operator-type-toggle").click(function() { activateTypeFilter("#operator-type-toggle","OPERATOR"); return false;});
+                        $("#general-type-toggle").click(function() { activateTypeFilter("#general-type-toggle","GENERAL"); return false;});
+                        $("#alias-type-toggle").click(function() { activateTypeFilter("#alias-type-toggle","ALIAS"); return false;});
+                        $("#translation-type-toggle").click(function() { activateTypeFilter("#translation-type-toggle","TRANSLATION"); return false;});
+                        $("#operator-type-toggle").click(function() { activateTypeFilter("#operator-type-toggle","OPERATOR"); return false;});
 
-            $("#comments-toggle").click(function() { activateCommentFilter("#comments-toggle"); return false;});
+                        $("#comments-toggle").click(function() { activateCommentFilter("#comments-toggle"); return false;});
 
-            $("#unreviewed-record-toggle").click(function() { activateStatusFilter("#unreviewed-record-toggle","unreviewed"); return false;});
-            $("#candidate-record-toggle").click(function() { activateStatusFilter("#candidate-record-toggle","candidate"); return false;});
-            $("#live-record-toggle").click(function() { activateStatusFilter("#live-record-toggle","active"); return false;});
-            $("#deleted-record-toggle").click(function() { activateStatusFilter("#deleted-record-toggle","deleted"); return false;});
+                        $("#unreviewed-record-toggle").click(function() { activateStatusFilter("#unreviewed-record-toggle","unreviewed"); return false;});
+                        $("#candidate-record-toggle").click(function() { activateStatusFilter("#candidate-record-toggle","candidate"); return false;});
+                        $("#live-record-toggle").click(function() { activateStatusFilter("#live-record-toggle","active"); return false;});
+                        $("#deleted-record-toggle").click(function() { activateStatusFilter("#deleted-record-toggle","deleted"); return false;});
 
-            $("#queryString").on('change',function() { loadTable(); });
+                        $("#queryString").on('change',function() { loadTable(); });
 
-            $("#create-record-link").on('click',loadEditDialog);
+                        $("#create-record-link").on('click',loadEditDialog);
 
-            wireUpTable();
+                        wireUpTable();
+                    }
+                    else {
+                        $("#content").html($("#verification-message-template").html());
+                        $("#controls").hide();
+                        $("#control-toggle").hide();
+                        $("#add-panel").hide();
+                        $("#profile").html('');
+                    }
+                }
+            });
         },
         loggedOut : function() {
-            $("#content").html('<div id="login-message" class="alert alert-danger">You must log in to view the registry.</div>');
+            $("#content").html($("#login-message-template").html());
             $("#controls").hide();
             $("#add-panel").hide();
-            $("#profile").html('<p>Please log in to see your profile.</p>');
+            $("#profile").html('');
+        },
+        error: function() {
+            $("#content").html($("#login-error-template").html());
         }
     });
 }
