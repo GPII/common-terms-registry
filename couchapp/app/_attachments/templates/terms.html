@@ -117,7 +117,7 @@
 </script>
 
 <script id="footer-template" type="text/html">
-    <div class="pull-left">
+    <div class="col-md-4">
         <p><a href="http://www.facebook.com/pages/Raising-the-Floor/126327625358?ref=ts"><img alt="Follow RtF on Facebook" src="images/facebook.png"></a> <a href="http://twitter.com/RaisingTheFloor"><img alt="Follow RtF on Twitter" src="images/twitter.png"></a> <a href="http://www.linkedin.com/groups?home=&amp;gid=2080517&amp;trk=anet_ug_hm"><img alt="Follow RtF on LinkedIn" src="images/linkedin.png"></a></p>
         <p>
             <a href="http://raisingthefloor.org/" target="_blank">Raising the Floor - International</a><br>
@@ -126,9 +126,25 @@
         <p><a href="mailto:info@RaisingTheFloor.org">info@RaisingTheFloor.org</a></p>
     </div>
 
-    <div class="pull-right">
+    <div class="col-md-4 text-center">
+        <div class="btn btn-info" id="feedbackButton">
+            <div class="glyphicon glyphicon-fire">&nbsp;Feedback?</div>
+        </div>
+    </div>
+
+    <div class="col-md-4 text-right">
         <div id="profile"></div>
     </div>
+
+    <script type="text/javascript" src="http://issues.gpii.net/s/en_US-du4qx3-418945332/850/3/1.2.9/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=98b75dcd"></script>
+    <script type="text/javascript">
+        window.ATL_JQ_PAGE_PROPS =  { "triggerFunction": function(showCollectorDialog) {
+            jQuery("#feedbackButton").click(function(e) {
+                e.preventDefault();
+                showCollectorDialog();
+            });
+    }};
+    </script>
 </script>
 
 <script id="controls-template" type="text/html">
