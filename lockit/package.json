@@ -8,6 +8,7 @@
   "dependencies": {
     "express": "3.4.7",
     "jade": "*",
-    "lockit": "git://github.com/the-t-in-rtf/lockit.git#ef6650fa8f5f14401129eb36999b7fc2f2213001"
+    "lockit": "git://github.com/the-t-in-rtf/lockit.git#985e89587e704fae1b0fda54a33bee13fcf003bc",
+    "lockit-template-blank": "~0.0.1"
   }
 }

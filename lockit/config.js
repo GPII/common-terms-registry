@@ -11,7 +11,7 @@ exports.emailSettings = {
 };
 
 exports.emailFrom = 'no-reply@raisingthefloor.org';
-exports.emailTemplate = 'blank';
+exports.emailTemplate = 'lockit-template-blank';
 
 // signup settings
 exports.signupRoute = '/signup';
