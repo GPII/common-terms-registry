@@ -292,25 +292,20 @@ function loadFooterAndHeader() {
 }
 
 function loadEditDialog(id) {
-    // Only trap left clicks so that users can open multiple tabs easily.
-    if (this !== undefined && this.event !== undefined && !this.event.metaKey && !this.event.altKey && !this.event.ctrlKey) {
-        $("#dialog").html($("#loading-template").html());
+    $("#dialog").html($("#loading-template").html());
 
 
-        var iframe = $('<iframe src="_show/edit-dialog/' + id + '"></iframe>');
-        $("#dialog-content").html(iframe);
+    var iframe = $('<iframe src="_show/edit-dialog/' + id + '"></iframe>');
+    $("#dialog-content").html(iframe);
 
-        $("#dialog").dialog({
-            modal: true,
-            width: '90%',
-            height: $(window).height() * 0.9,
-            close: function() { loadTable();}
-        });
+    $("#dialog").dialog({
+        modal: true,
+        width: '90%',
+        height: $(window).height() * 0.9,
+        close: function() { loadTable();}
+    });
 
-        return false;
-    }
-
-    return true;
+    return false;
 }
 
 function loadDeleteDialog(id) {
