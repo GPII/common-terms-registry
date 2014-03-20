@@ -9,6 +9,8 @@ var http = require('http');
 var path = require('path');
 var exphbs  = require('express3-handlebars');
 
+var templateDir = path.join(__dirname, 'templates');
+
 var app = express();
 
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
@@ -34,7 +36,26 @@ app.get('/', routes.index);
 app.get('/api', routes.api);
 app.get('/apidocs', routes.apidocs);
 
-// TODO:  Move the user management infrastructure (or its replacement) to this express instance
+// New user management API
+var couchUser = require('express-user-couchdb');
+app.configure(function() {
+    app.use(couchUser({
+        users: 'http://admin:admin@localhost:5984/_users',
+        // Mail settings, for full options, check out https://github.com/andris9/Nodemailer/blob/master/lib/engines/smtp.js
+        email:  {
+            from: 'no-reply@raisingthefloor.org',
+            service: 'SMTP',
+            SMTP: {
+                host: 'localhost',
+                port: 25
+            },
+            templateDir: templateDir
+        },
+        app: {
+            name: "Common Terms Registry"
+        }
+    }));
+});
 
 // TODO:  Create a new manufacturer interface on this express instance
 
