@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Common Terms Registry</title>
+
+    <!-- Include one of jTable styles. -->
+    <script src="/_utils/script/sha1.js"></script>
+    <script src="/_utils/script/json2.js"></script>
+    <script src="/_utils/script/jquery.js"></script>
+    <script src="/_utils/script/jquery.couch.js"></script>
+    
+    <script src="vendor/couchapp/jquery.couchLogin.js"></script>
+    <script src="vendor/couchapp/jquery.couchProfile.js"></script>
+    <script src="vendor/couchapp/md5.js"></script>
+    <!-- TODO:  We can't remove this until we have our own login form, etc. -->
+    <script src="vendor/couchapp/jquery.mustache.js"></script>
+
+    <script src="vendor/handlebars/handlebars.js"></script>
+
+      <!-- Include jQuery Cookie plugin, required to save control panel settings -->
+    <script src="vendor/jquery-cookie/jquery.cookie.js"></script>
+
+    <!-- Include jQuery UI, which is required by jTable and a few of our animations -->
+    <script src="vendor/jqueryui/ui/jquery-ui.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="vendor/jqueryui/themes/base/jquery-ui.css">
+
+    <!-- Include jTable script file. -->
+    <script src="vendor/jtable/jquery.jtable.min.js" type="text/javascript"></script>
+
+    <!-- choose "light gray" theme instead of default -->
+    <link href="vendor/jtable/themes/lightcolor/gray/jtable.css" rel="stylesheet" type="text/css" />
+
+    <!-- twitter bootstrap styles and javascript -->
+    <link rel="stylesheet" href="vendor/twbs/css/bootstrap.min.css">
+    <script src="vendor/twbs/js/bootstrap.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="style/main.css" type="text/css">
+
+    <!-- main javascript for this interface -->
+    <script src="script/terms.js"></script>
+  </head>
+  <body>
+    <div id="header" class="container"></div>
+
+    <div id="controls" class="container"></div>
+
+    <div id="content" class="container"></div>
+
+    <div id="footer" class="container"></div>
+
+    <div id="dialog" style="display:none;"></div>
+  </body>
+</html>

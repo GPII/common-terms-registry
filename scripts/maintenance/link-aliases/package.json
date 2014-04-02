@@ -1,0 +1,19 @@
+{
+  "name": "link-aliases",
+  "version": "0.1.0",
+  "description": "Utility script to regenerate the links between terms and their aliases.",
+  "bugs": "http://issues.gpii.net/browse/CTR",
+  "main": "link_aliases.js",
+  "dependencies": {
+    "optimist": "~0.6.0",
+    "cradle": "~0.6.6",
+    "q": "~0.9.7",
+    "url": "~0.7.9"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "tony@raisingthefloor.org",
+  "license": "BSD-3-Clause"
+}
