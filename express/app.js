@@ -19,6 +19,9 @@ app.set('view engine', 'handlebars');
 // all environments
 app.set('port', process.env.PORT || 4895);
 app.set('views', path.join(__dirname, 'views'));
+// Required for session storage
+app.use(express.cookieParser());
+app.use(express.session({ secret: 'Printer, printer take a hint-ter.'}));
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.json());
@@ -27,16 +30,19 @@ app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
+
 // development only
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-app.get('/', routes.index);
-app.get('/api', routes.api);
-app.get('/apidocs', routes.apidocs);
+// Most static content including root page
+app.use(express.static(__dirname + '/public'));
 
-// New user management API
+// REST APIs
+app.get('/api', routes.api);
+
+// /api/user/* is provided by the express-user-couchdb package
 var couchUser = require('express-user-couchdb');
 app.configure(function() {
     app.use(couchUser({
@@ -53,11 +59,15 @@ app.configure(function() {
         },
         app: {
             name: "Common Terms Registry"
-        }
+        },
+	    verify: true,
+        adminRoles: [ "admin"]
     }));
 });
 
-// TODO:  Create a new manufacturer interface on this express instance
+// API Documentation
+// TODO:  Drop this in favor of the static content if this isn't dynamic.
+app.get('/apidocs', routes.apidocs);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
