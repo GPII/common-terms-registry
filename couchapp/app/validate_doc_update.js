@@ -10,6 +10,20 @@ function(newDoc, oldDoc, userCtx) {
         var ValidTypes = ["ALIAS", "TRANSFORMATION","TRANSLATION","GENERAL","OPERATOR"];
         var ValidStatus = ["active","unreviewed","candidate","deleted"];
 
+        // Set the date of the last update to a user-specified date and time or to today's date and time if no value is specified.
+        if (newDoc.updated) {
+            var newDate = new Date(newDoc.updated);
+            if (newDate.getTime() > 0 ) {
+            }
+            // The user didn't pass a usable date.  Throw an error.
+            else {
+                errors.push({"updated" : "Date of last update '" + newDoc.updated + " is not valid."});
+            }
+        }
+        else {
+            errors.push({"updated" : "You must provide date at which this record was last updated."});
+        }
+
         if (!newDoc.type) {
             errors.push({"type" : "Record type is required."});
         }
