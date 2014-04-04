@@ -27,9 +27,11 @@ var db = CouchDB( { base: argv.url } )
 
 var field          = argv.field;
 var find_regexp    = new RegExp(argv.find);
-var replace_regexp = argv.replace !== undefined ? argv.replace : "";
+var replace_regexp = argv.replace !== undefined ? argv.replace : "^$";
 
 var globals = require('../../includes/globals.json');
+
+var request = require('request');
 
 var preview =  (argv.commit === undefined) ? true : false;
 
@@ -58,7 +60,7 @@ function cacheSearchResults(content) {
             var record = content.rows[position].value;
             var key  = record.source + ":" + record.uniqueId;
 
-            dbRecords[key] = record;
+            if (!dbRecords[key]) dbRecords[key] = record;
         }
 
         console.log("Cached " + Object.keys(dbRecords).length + "/" + content.rows.length + " records...");
@@ -74,7 +76,7 @@ function matchRecords() {
 
     // iterate through the cached db records in dbRecords
     var keys = Object.keys(dbRecords);
-    for (var position in keys) { 
+    for (var position in keys) {
         var key = keys[position];
         var record = dbRecords[key];
         var recordValue = record[field] ? record[field] : "";
@@ -85,14 +87,8 @@ function matchRecords() {
 
             newRecord[field] = recordValue.replace(find_regexp,replace_regexp);
 
-            // TODO:  Currently we have some invalid data that cannot be safely updated.  For now we have to massage the records manually.
-            if (recordType === "GENERAL") {
-                if (newRecord.definition === undefined || newRecord.definition.trim().length == 0) {
-                    newRecord.definition = "Undefined...";
-                }
-            }
             // save a replacement version of each matched record to recordsToUpdate[uniqueId]
-            recordsToUpdate[key] = newRecord;
+            if (!recordsToUpdate[key]) recordsToUpdate[key] = newRecord;
         }
     }
 
@@ -105,8 +101,9 @@ function uploadRecords() {
     var q = Q.defer();
 
     var updatedRecordKeys = Object.keys(recordsToUpdate);
+
     console.log("Saving " + updatedRecordKeys.length + " updated records...");
-    for (var position in updatedRecordKeys) {
+    for (var position=0; position < updatedRecordKeys.length; position++) {
         var key = updatedRecordKeys[position];
         var dbRecord = dbRecords[key];
         var updatedRecord = recordsToUpdate[key];
@@ -122,34 +119,27 @@ function uploadRecords() {
             var url = require('url');
             var urlOptions = url.parse(argv.url);
 
-            var http = require('http');
-            http.globalAgent.maxSockets = 3000;
-
-            var reqOptions = {
-                hostname: urlOptions.hostname,
-                port:     urlOptions.port,
-                path:     urlOptions.path + "/" + updatedRecord._id,
-                auth:     urlOptions.auth,
+            console.log("position: " + position);
+            console.log("_id:" + updatedRecord._id);
+            debugger;
+            request({
+                url: argv.url + "/" + updatedRecord._id,
                 method:   'PUT',
                 headers: { 'Content-Type': 'application/json'},
+                body: JSON.stringify(updatedRecord) + "\n",
                 agent: false
-            };
-
-            var req = http.request(reqOptions, function(res) {
-//                console.log('STATUS: ' + res.statusCode);
-//                console.log('HEADERS: ' + JSON.stringify(res.headers));
-//                res.setEncoding('utf8');
-//                res.on('data', function (chunk) {
-//                    console.log('BODY: ' + chunk);
-//                });
+            }, function(e,r,b) {
+                if (e) {
+                    console.log('problem with request: ' + e.message);
+                    process.exit();
+                }
+                if (!r.statusCode || (r.statusCode != 200 && r.statusCode != 201)) {
+                    console.log('error returned by couch: (' + r.statusCode + ') ' + r.body)
+                    console.log('Trying to save record:');
+                    console.log(JSON.stringify(updatedRecord, null, "  "));
+                    process.exit();
+                }
             });
-
-            req.on('error', function(e) {
-                console.log('problem with request: ' + e.message);
-            });
-
-            req.write(JSON.stringify(updatedRecord) + "\n");
-            req.end();
         }
     }
 
