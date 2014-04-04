@@ -10,13 +10,14 @@ You must have already imported all data (see the "import" directory for details)
 var Q = require('q');
 Q.longStackSupport = true;
 
-var argv = require('optimist')
+var argv = require('yargs')
     .usage('Usage: node find-and-replace.js --url http://[username:password@]couch-db-host:port/db/ --field FIELDNAME --find REGEXP --replace REGEXP --commit')
-    .demand(['url', 'field', 'find'])
+    .demand(['url', 'field'])
+    .check(function(argv){ if (!argv.find && !argv.replace) { throw("You must specify either something to find or something to replace it with."); } })
     .describe('url','The URL for your couchdb instance, including database')
     .describe('field','The field to update.')
-    .describe('find','The regular expression to look for.')
-    .describe('replace','The pattern to replace matches with.')
+    .describe('find','The regular expression to look for.  If this is not specified, we will look for records where the value is undefined.')
+    .describe('replace','The pattern to replace matches with.  If this is not specified, matching records will have their value for FIELD cleared.')
     .describe('aliases','Update aliases instead of terms (the default).')
     .describe('commit','By default, no changes will be made.  You must pass this argument to write changes.')
     .argv;
@@ -122,7 +123,7 @@ function uploadRecords() {
             var urlOptions = url.parse(argv.url);
 
             var http = require('http');
-            http.globalAgent.maxSockets = 2000;
+            http.globalAgent.maxSockets = 3000;
 
             var reqOptions = {
                 hostname: urlOptions.hostname,

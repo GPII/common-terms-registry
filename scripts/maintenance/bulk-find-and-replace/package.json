@@ -5,9 +5,9 @@
   "bugs": "http://issues.gpii.net/browse/CTR",
   "main": "find-and-replace.js",
   "dependencies": {
-    "optimist": "~0.6.0",
     "promised-couch": "~0.1.2",
-    "q": "~0.9.7"
+    "q": "~0.9.7",
+    "yargs": "~1.2.1"
   },
   "devDependencies": {},
   "scripts": {
