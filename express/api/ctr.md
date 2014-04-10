@@ -160,7 +160,7 @@ Returns a single record identified by its uniqueId.
 + Response 200 (application/json)
 
     + Body
-    
+
         ```
         {
             "ok": true,
@@ -189,6 +189,7 @@ The full list of records.  Returns all record types by default.
 
 + Response 200 (application/json)
     + Body
+
         ```
         {
             "ok": true,
@@ -221,6 +222,7 @@ The list of standard terms. Equivalent to using /api/records with the query para
 
 + Response 200 (application/json)
     + Body
+
         ```
         { json: "goes here" }
         ```
@@ -235,6 +237,7 @@ The list of aliases. Equivalent to using /api/records with the query parameter `
 
 + Response 200 (application/json)
     + Body
+
         ```
         {
             "ok": true,
@@ -292,6 +295,7 @@ Performs a full text search of all data, returns matching terms.  Only standard 
 
 + Response 200 (application/json)
     + Body
+
         ```
         {
             "ok": true,
@@ -335,6 +339,7 @@ Suggest the correct common term to use.  Performs a search as in /api/search, bu
 
 + Response 200 (application/json)
     + Body
+
         ```
         {
             "ok": true,
