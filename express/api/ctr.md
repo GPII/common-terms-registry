@@ -12,6 +12,7 @@ This section describes the data objects which are accepted by and returned by th
 All records in the Common Terms Registry have the following common fields:
 
 |Field|Description|
+| --- | --- |
 |Type|The type of record, i.e. term, alias, translation, transformation, operator.|
 |Permanency|An indication of how likely a field is to change over time.|
 |NameSpace|The namespace to use in combination with the UniqueID to construct a URI that refers to the record.|
