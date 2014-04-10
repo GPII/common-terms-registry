@@ -25,6 +25,7 @@ All records in the Common Terms Registry have the following common fields:
 A term is a single canonical way of describing a need or solution. For example, users who require high-contrast schemes may be concerned about the ability to set a high-contrast background and foreground color. Each of these would be a common term, identified by a persistent ID such as backgroundColor or foregroundColor.  In addition to the common fields described above, term records have the following fields:
 
 |Field|Description|
+| --- | --- |
 |ValueSpace|A description of the values allowed for this term.|
 |TermLabel|A short label for this term as it would appear in a menu or listing.|
 |Definition|A description of the term.|
@@ -35,6 +36,7 @@ A term is a single canonical way of describing a need or solution. For example, 
 An alias is another name for a standard term, with no other differences. When describing system settings and other user preferences, the difference may be simply a matter of formatting. For example, one program might have a registry entry or setting for max.volume and another might have a registry entry or setting called max_volume. Other examples may simply be a matter of alternate wording. For example, one developer may use “loudness” instead of “volume” when describing their settings. In addition to the common fields described above, alias records have the following fields:
 
 |Field|Description|
+| --- | --- |
 |AliasOf|The unique identifier of the parent record this record is an alias of.|
 |TermLabel|A short label for this term as it would appear in a menu or listing.|
 |Uses|A description of other systems that use this term and how they use it.|
@@ -43,6 +45,7 @@ An alias is another name for a standard term, with no other differences. When de
 A translation is representation of a term in another language with no other differences. For example, in US English, the preference for a particular background color might be presented as “backgroundColor”. In Commonwealth countries, that might be presented as “backgroundColour”. In addition to the common fields described above, translation records have the following fields:
 
 |Field|Description|
+| --- | --- |
 |TranslationOf|The unique identifier of the parent record this record is a translation of.|
 |ValueSpace|A translation of the terms used in the parent record’s value space.|
 |TermLabel|A translation of the short label for the parent record as it would appear in a menu or listing.|
@@ -55,6 +58,7 @@ Translations and aliases present a term using different words or formatting, wit
 For these cases, the Common Terms Registry provides a transformation. A transformation provides a bidirectional lossless algorithm for converting from one way of describing preferences and needs to another. To continue the previous example, the common term describing volume preferences might be expressed using a decibel scale. For an implementation that uses 0-10 to indicate volume, the transformation record would provide an algorithm for converting from decibel to 0-10 values and from 0-10 values to decibel values. In addition to the common fields described above, transformation records have the following fields:
 
 |Field|Description|
+| --- | --- |
 |ValueSpace|A bidirectional lossless algorithm for converting to and from the values used by the common term.|
 |TermLabel|A translation of the short label for the parent record as it would appear in a menu or listing.|
 |Uses|A description of other systems that use this term and how they use it.|
@@ -67,6 +71,7 @@ Operators are terms that can be used to clearly identify what settings should be
 In addition to the common fields described above, operator records have only one additional field.
 
 |Field|Description|
+| --- | --- |
 |Definition|A clear definition of the operator.|
 
 ## Relationships
@@ -76,6 +81,7 @@ Terms and Operators are unique records that do not refer to another record impli
 Updates to existing records are moderated in the Common Terms Registry.  To manage multiple proposed updates to the same set of records, we use a change set that consists of only the differences between the proposed new record and the existing record.  A change set contains the following information.
 
 |Field|Description|
+| --- | --- |
 |ChangeId|A completely unique identifier for this change set.|
 |UniqueId|The unique identifier of the record to be updated.|
 |Changes|The JSON data that represents the proposed changes.  Fields to be deleted are included and set to `null`.|
