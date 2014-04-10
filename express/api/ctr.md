@@ -158,6 +158,7 @@ Reviewers can confirm that a record should be flagged as deleted by sending the 
 Returns a single record identified by its uniqueId.
 
 + Response 200 (application/json)
+
     + Body
         ```
         {
@@ -218,9 +219,10 @@ The list of standard terms. Equivalent to using /api/records with the query para
     + limit (optional, string) ... The number of records to return.  Used for pagination.
 
 + Response 200 (application/json)
-    ```
-    { json: "goes here" }
-    ```
+    + Body
+        ```
+        { json: "goes here" }
+        ```
 
 ## GET /api/aliases/{?lastUpdated,recordType,offset,limit}
 The list of aliases. Equivalent to using /api/records with the query parameter `recordType=alias`.  Supports the same query parameters as /api/records except for `recordType`.
@@ -232,8 +234,8 @@ The list of aliases. Equivalent to using /api/records with the query parameter `
 
 + Response 200 (application/json)
     + Body
-       ```
-       {
+        ```
+        {
             "ok": true,
             "total_rows": 1,
             "startpos": 0,
