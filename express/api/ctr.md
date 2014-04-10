@@ -95,61 +95,61 @@ Updates to existing records are moderated in the Common Terms Registry.  To mana
 
 ## PUT /api/record
 Creates a new unreviewed record.  If an author is supplied, gives them credit, otherwise the current user is listed as the author.  Until a new record is approved by reviewers, only the author and reviewers can see the proposed record.
-+ Request (application/json}
 
-    {
++ Request (application/json}
+    `{
        "type": "GENERAL",
        "uniqueId": "newRecord",
        "termLabel": "New Record",
        "definition": "This is a new record.",
        "notes": "This record was created as an example."
-     }
+     }`
 
 + Response 200 (application/json)
     + Body
-
-        {
+        `{
             "ok":true,
             "message":"New record submitted."
-        }
+        }`
 
 ## POST /api/record
 Creates a new change set by comparing the record submitted to an existing record.  If an author is supplied, gives them credit, otherwise the current user is listed as the author.  Until a change set is approved by reviewers, only the author and reviewers can see the proposed changes.
-+ Request (application/json}
 
-    {
++ Request (application/json}
+    `{
        "uniqueId": "existingRecord",
        "definition": "This existing record needs to be updated.",
        "notes": null
-     }
+     }`
+
 + Response 200 (application/json)
     + Body
-
-        {
+        `{
             "ok":true,
             "message":"Your proposed changes have been submitted.",
             "changeId": "0069b020043147f58eeda6d72c9845f4"
-        }
+        }`
 
 ## DELETE /api/record/{uniqueId}{?confirm}
 Proposes that a record be flagged as trashed.  If an author is supplied, gives them credit, otherwise the current user is listed as the author.  Until a change set is approved by reviewers, only the author and reviewers can see the proposed changes, and the record will remain visible to end users.
 Reviewers can confirm that a record should be flagged as deleted by sending the "confirm" parameter.
+
 + Parameters
     + uniqueId (required, string) ... The unique identifier of a single record.
     + confirm (required, string) ... Used to confirm that a proposed deletion should be executed.  Only available to reviewers.
-+ Response 200 (application/json)
 
-    {
++ Response 200 (application/json)
+    `{
         "ok": true,
         "message": "Record flagged for deletion."
-    }
+    }`
 
 ## GET /api/record/{uniqueId}
 Returns a single record identified by its uniqueId.
+
 + Response 200 (application/json)
     + Body
-
-        {
+        `{
             "ok": true,
             "record": {
                 "type": "ALIAS",
@@ -162,19 +162,20 @@ Returns a single record identified by its uniqueId.
                 "lastUpdated": "Wed Apr 09 2014 13:30:00 GMT+0200 (CEST)"
             },
             "retrievedAt": "Thu Apr 10 2014 13:38:59 GMT+0200 (CEST)"
-        }
+        }`
 
 ## GET /api/records/{?lastUpdated,recordType,offset,limit}
 The full list of records.  Returns all record types by default.
+
 + Parameters
     + lastUpdated (optional, string) ... Timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SSZ` Only records updated at or after this time are returned.
     + recordType (optional, string) ... The type of records to return.  Supported values are ("term","alias","transform","translation", and "operator").
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
     + limit (optional, string) ... The number of records to return.  Used for pagination.
+
 + Response 200 (application/json)
     + Body
-
-        {
+        `{
             "ok": true,
             "total_rows": 1,
             "startpos": 0,
@@ -192,27 +193,30 @@ The full list of records.  Returns all record types by default.
                     }
             ],
             "retrievedAt": "Thu Apr 10 2014 13:38:59 GMT+0200 (CEST)"
-        }
+        }`
 
 ## GET /api/terms/{?lastUpdated,recordType,offset,limit}
 The list of standard terms. Equivalent to using /api/records with the query parameter `recordType=term`.  Supports the same query parameters as /api/records except for `recordType`.
+
 + Parameters
     + lastUpdated (optional, string) ... Timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SSZ` Only records updated at or after this time are returned.
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
     + limit (optional, string) ... The number of records to return.  Used for pagination.
+
 + Response 200 (application/json)
-{ json: "goes here" }
+    `{ json: "goes here" }`
 
 ## GET /api/aliases/{?lastUpdated,recordType,offset,limit}
 The list of aliases. Equivalent to using /api/records with the query parameter `recordType=alias`.  Supports the same query parameters as /api/records except for `recordType`.
+
 + Parameters
     + lastUpdated (optional, string) ... Timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SSZ` Only records updated at or after this time are returned.
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
     + limit (optional, string) ... The number of records to return.  Used for pagination.
+
 + Response 200 (application/json)
     + Body
-
-        {
+       ` {
             "ok": true,
             "total_rows": 1,
             "startpos": 0,
@@ -230,10 +234,11 @@ The list of aliases. Equivalent to using /api/records with the query parameter `
                     }
             ],
             "retrievedAt": "Thu Apr 10 2014 13:38:59 GMT+0200 (CEST)"
-        }
+        }`
 
 ## GET /api/transforms/{?lastUpdated,recordType,offset,limit}
 The list of transforms. Equivalent to using /api/records with the query parameter `recordType=transform`.  Supports the same query parameters as /api/records except for `recordType`.
+
 + Parameters
     + lastUpdated (optional, string) ... Timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SSZ` Only records updated at or after this time are returned.
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
@@ -241,6 +246,7 @@ The list of transforms. Equivalent to using /api/records with the query paramete
 
 ## GET /api/translations/{?lastUpdated,recordType,offset,limit}
 The list of translations. Equivalent to using /api/records with the query parameter `recordType=translation`.  Supports the same query parameters as /api/records except for `recordType`.
+
 + Parameters
     + lastUpdated (optional, string) ... Timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SSZ` Only records updated at or after this time are returned.
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
@@ -248,6 +254,7 @@ The list of translations. Equivalent to using /api/records with the query parame
 
 ## GET /api/operators/{?lastUpdated,recordType,offset,limit}
 The list of operators.  Equivalent to using /api/records with the query parameter `recordType=operator`.  Supports the same query parameters as /api/records except for `recordType`.
+
 + Parameters
     + lastUpdated (optional, string) ... Timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SSZ` Only records updated at or after this time are returned.
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
@@ -255,15 +262,16 @@ The list of operators.  Equivalent to using /api/records with the query paramete
 
 ## GET /api/search/{?q,sort,offset,limit}
 Performs a full text search of all data, returns matching terms.  Only standard terms are returned.  All other associated record types are combined with the standard term into a single record.
+
 + Parameters
     + q (required, string) ... The query string to match.  Can either consist of a word or phrase as plain text, or can use [lucene's query syntax][1] to construct more complex searches.
     + sort (optional,string) ... The sort order to use when displaying records.  Conforms to [lucene's query syntax][1].
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
     + limit (optional, string) ... The number of records to return.  Used for pagination.
+
 + Response 200 (application/json)
     + Body
-
-        {
+        `{
             "ok": true,
             "total_rows": 1,
             "startpos": 0,
@@ -293,17 +301,18 @@ Performs a full text search of all data, returns matching terms.  Only standard 
                 }
             ],
             "retrievedAt": "Thu Apr 10 2014 13:38:59 GMT+0200 (CEST)"
-        }
+        }`
 
 ## GET /api/suggest/{?q,sort}
 Suggest the correct common term to use.  Performs a search as in /api/search, but only returns 5 results and does not support paging.  Equivalent to `/api/suggest?q=search&results=5`.
+
 + Parameters
     + q (required, string) ... The query string to match.  Can either consist of a word or phrase as plain text, or can use [lucene's query syntax][1] to construct more complex searches.
     + sort (optional,string) ... The sort order to use when displaying records.  Conforms to [lucene's query syntax][1].
+
 + Response 200 (application/json)
     + Body
-
-        {
+        `{
             "ok": true,
             "total_rows": 1,
             "startpos": 0,
@@ -333,6 +342,6 @@ Suggest the correct common term to use.  Performs a search as in /api/search, bu
                 }
             ],
             "retrievedAt": "Thu Apr 10 2014 13:38:59 GMT+0200 (CEST)"
-        }
+        }`
 
 [1] https://github.com/rnewson/couchdb-lucene   "Lucene-couchdb documentation"
