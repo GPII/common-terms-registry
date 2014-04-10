@@ -97,6 +97,7 @@ Updates to existing records are moderated in the Common Terms Registry.  To mana
 Creates a new unreviewed record.  If an author is supplied, gives them credit, otherwise the current user is listed as the author.  Until a new record is approved by reviewers, only the author and reviewers can see the proposed record.
 
 + Request (application/json}
+
     ```
     {
        "type": "GENERAL",
@@ -109,6 +110,7 @@ Creates a new unreviewed record.  If an author is supplied, gives them credit, o
 
 + Response 200 (application/json)
     + Body
+
         ```
         {
             "ok":true,
@@ -120,6 +122,7 @@ Creates a new unreviewed record.  If an author is supplied, gives them credit, o
 Creates a new change set by comparing the record submitted to an existing record.  If an author is supplied, gives them credit, otherwise the current user is listed as the author.  Until a change set is approved by reviewers, only the author and reviewers can see the proposed changes.
 
 + Request (application/json}
+
     ```
     {
        "uniqueId": "existingRecord",
@@ -130,6 +133,7 @@ Creates a new change set by comparing the record submitted to an existing record
 
 + Response 200 (application/json)
     + Body
+
         ```
         {
             "ok":true,
@@ -147,6 +151,7 @@ Reviewers can confirm that a record should be flagged as deleted by sending the 
     + confirm (required, string) ... Used to confirm that a proposed deletion should be executed.  Only available to reviewers.
 
 + Response 200 (application/json)
+
     ```
     {
         "ok": true,
