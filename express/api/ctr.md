@@ -160,6 +160,7 @@ Returns a single record identified by its uniqueId.
 + Response 200 (application/json)
 
     + Body
+    
         ```
         {
             "ok": true,
