@@ -97,13 +97,15 @@ Updates to existing records are moderated in the Common Terms Registry.  To mana
 Creates a new unreviewed record.  If an author is supplied, gives them credit, otherwise the current user is listed as the author.  Until a new record is approved by reviewers, only the author and reviewers can see the proposed record.
 
 + Request (application/json}
-    `{
+    ```
+    {
        "type": "GENERAL",
        "uniqueId": "newRecord",
        "termLabel": "New Record",
        "definition": "This is a new record.",
        "notes": "This record was created as an example."
-     }`
+     }
+     ```
 
 + Response 200 (application/json)
     + Body
