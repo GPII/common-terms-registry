@@ -175,7 +175,7 @@ The full list of records.  Returns all record types by default.
 
 + Response 200 (application/json)
     + Body
-        `{
+        ```{
             "ok": true,
             "total_rows": 1,
             "startpos": 0,
@@ -193,7 +193,7 @@ The full list of records.  Returns all record types by default.
                     }
             ],
             "retrievedAt": "Thu Apr 10 2014 13:38:59 GMT+0200 (CEST)"
-        }`
+        }```
 
 ## GET /api/terms/{?lastUpdated,recordType,offset,limit}
 The list of standard terms. Equivalent to using /api/records with the query parameter `recordType=term`.  Supports the same query parameters as /api/records except for `recordType`.
@@ -204,7 +204,7 @@ The list of standard terms. Equivalent to using /api/records with the query para
     + limit (optional, string) ... The number of records to return.  Used for pagination.
 
 + Response 200 (application/json)
-    `{ json: "goes here" }`
+    ```{ json: "goes here" }```
 
 ## GET /api/aliases/{?lastUpdated,recordType,offset,limit}
 The list of aliases. Equivalent to using /api/records with the query parameter `recordType=alias`.  Supports the same query parameters as /api/records except for `recordType`.
@@ -216,7 +216,7 @@ The list of aliases. Equivalent to using /api/records with the query parameter `
 
 + Response 200 (application/json)
     + Body
-       ` {
+       ``` {
             "ok": true,
             "total_rows": 1,
             "startpos": 0,
@@ -234,7 +234,7 @@ The list of aliases. Equivalent to using /api/records with the query parameter `
                     }
             ],
             "retrievedAt": "Thu Apr 10 2014 13:38:59 GMT+0200 (CEST)"
-        }`
+        }```
 
 ## GET /api/transforms/{?lastUpdated,recordType,offset,limit}
 The list of transforms. Equivalent to using /api/records with the query parameter `recordType=transform`.  Supports the same query parameters as /api/records except for `recordType`.
@@ -271,7 +271,7 @@ Performs a full text search of all data, returns matching terms.  Only standard 
 
 + Response 200 (application/json)
     + Body
-        `{
+        ```{
             "ok": true,
             "total_rows": 1,
             "startpos": 0,
@@ -301,7 +301,7 @@ Performs a full text search of all data, returns matching terms.  Only standard 
                 }
             ],
             "retrievedAt": "Thu Apr 10 2014 13:38:59 GMT+0200 (CEST)"
-        }`
+        }```
 
 ## GET /api/suggest/{?q,sort}
 Suggest the correct common term to use.  Performs a search as in /api/search, but only returns 5 results and does not support paging.  Equivalent to `/api/suggest?q=search&results=5`.
@@ -312,7 +312,7 @@ Suggest the correct common term to use.  Performs a search as in /api/search, bu
 
 + Response 200 (application/json)
     + Body
-        `{
+        ```{
             "ok": true,
             "total_rows": 1,
             "startpos": 0,
@@ -342,6 +342,6 @@ Suggest the correct common term to use.  Performs a search as in /api/search, bu
                 }
             ],
             "retrievedAt": "Thu Apr 10 2014 13:38:59 GMT+0200 (CEST)"
-        }`
+        }```
 
 [1] https://github.com/rnewson/couchdb-lucene   "Lucene-couchdb documentation"
