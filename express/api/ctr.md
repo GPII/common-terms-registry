@@ -96,6 +96,7 @@ Updates to existing records are moderated in the Common Terms Registry.  To mana
 ## PUT /api/record
 Creates a new unreviewed record.  If an author is supplied, gives them credit, otherwise the current user is listed as the author.  Until a new record is approved by reviewers, only the author and reviewers can see the proposed record.
 + Request (application/json}
+
     {
        "type": "GENERAL",
        "uniqueId": "newRecord",
@@ -103,16 +104,19 @@ Creates a new unreviewed record.  If an author is supplied, gives them credit, o
        "definition": "This is a new record.",
        "notes": "This record was created as an example."
      }
+
 + Response 200 (application/json)
     + Body
-    {
-        "ok":true,
-        "message":"New record submitted."
-    }
+
+        {
+            "ok":true,
+            "message":"New record submitted."
+        }
 
 ## POST /api/record
 Creates a new change set by comparing the record submitted to an existing record.  If an author is supplied, gives them credit, otherwise the current user is listed as the author.  Until a change set is approved by reviewers, only the author and reviewers can see the proposed changes.
 + Request (application/json}
+
     {
        "uniqueId": "existingRecord",
        "definition": "This existing record needs to be updated.",
@@ -120,6 +124,7 @@ Creates a new change set by comparing the record submitted to an existing record
      }
 + Response 200 (application/json)
     + Body
+
         {
             "ok":true,
             "message":"Your proposed changes have been submitted.",
@@ -133,6 +138,7 @@ Reviewers can confirm that a record should be flagged as deleted by sending the 
     + uniqueId (required, string) ... The unique identifier of a single record.
     + confirm (required, string) ... Used to confirm that a proposed deletion should be executed.  Only available to reviewers.
 + Response 200 (application/json)
+
     {
         "ok": true,
         "message": "Record flagged for deletion."
@@ -142,6 +148,7 @@ Reviewers can confirm that a record should be flagged as deleted by sending the 
 Returns a single record identified by its uniqueId.
 + Response 200 (application/json)
     + Body
+
         {
             "ok": true,
             "record": {
@@ -166,6 +173,7 @@ The full list of records.  Returns all record types by default.
     + limit (optional, string) ... The number of records to return.  Used for pagination.
 + Response 200 (application/json)
     + Body
+
         {
             "ok": true,
             "total_rows": 1,
@@ -203,6 +211,7 @@ The list of aliases. Equivalent to using /api/records with the query parameter `
     + limit (optional, string) ... The number of records to return.  Used for pagination.
 + Response 200 (application/json)
     + Body
+
         {
             "ok": true,
             "total_rows": 1,
@@ -253,6 +262,7 @@ Performs a full text search of all data, returns matching terms.  Only standard 
     + limit (optional, string) ... The number of records to return.  Used for pagination.
 + Response 200 (application/json)
     + Body
+
         {
             "ok": true,
             "total_rows": 1,
@@ -292,6 +302,7 @@ Suggest the correct common term to use.  Performs a search as in /api/search, bu
     + sort (optional,string) ... The sort order to use when displaying records.  Conforms to [lucene's query syntax][1].
 + Response 200 (application/json)
     + Body
+
         {
             "ok": true,
             "total_rows": 1,
