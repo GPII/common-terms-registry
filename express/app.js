@@ -66,7 +66,6 @@ app.configure(function() {
 });
 
 // API Documentation
-// TODO:  Drop this in favor of the static content if this isn't dynamic.
 app.get('/apidocs', routes.apidocs);
 
 http.createServer(app).listen(app.get('port'), function(){
