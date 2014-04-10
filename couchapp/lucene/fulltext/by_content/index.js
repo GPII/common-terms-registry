@@ -4,7 +4,7 @@ function(doc) {
 
         var defs = "";
 
-        var keys = Object.keys(doc);
+        var keys = ["uniqueId","status","notes","uses","definition","termLabel","type","source"];
         for (var i in keys) {
             var field = keys[i];
             if (doc[field]) {
