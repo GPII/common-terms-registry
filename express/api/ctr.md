@@ -379,4 +379,54 @@ Suggest the correct common term to use.  Performs a search as in /api/search, bu
         }
         ```
 
+## GET /api/changeset/{changeId}
+Returns a single change set identified by its changeId.
+
++ Response 200 (application/json)
+
+    + Body
+
+        ```
+        {
+            "ok": true,
+            "record": {
+                "type": "ALIAS",
+                "uniqueId": "org.gnome.settings-daemon.plugins.sound.active",
+                "aliasOf": "soundActive",
+                "notes": "The original alias record contained the following additional information:\r\n\r\ndefaultValue:TRUE\r\nuserPreference:org.gnome.settings-daemon.plugins.sound.active\r\nvalueSpace:Boolean\r\nid:662\r\n",
+                "termLabel": "org.gnome.settings-daemon.plugins.sound.active",
+                "status": "active",
+                "source": "gnome"
+                "lastUpdated": "Wed Apr 09 2014 13:30:00 GMT+0200 (CEST)"
+            },
+            "retrievedAt": "Thu Apr 10 2014 13:38:59 GMT+0200 (CEST)"
+        }
+        ```
+
+## GET /api/changeset/{changeId}/approve
+Approve a change set.  The associated parent record will be immediately updated.
+
++ Response 200 (application/json)
+
+    + Body
+        ```
+        {
+            "ok": true,
+            "message": "Changeset accepted."
+        }
+        ```
+
+## GET /api/changeset/{changeId}/reject
+Reject a change set.
+
++ Response 200 (application/json)
+
+    + Body
+        ```
+        {
+            "ok": true,
+            "message": "Changeset rejected."
+        }
+        ```
+
 [1] https://github.com/rnewson/couchdb-lucene   "Lucene-couchdb documentation"
