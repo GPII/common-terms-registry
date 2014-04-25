@@ -1,3 +1,4 @@
+// TODO: Remove legacy aliases field when we complete the migration to express
 function(doc) {
     if (doc && doc.type && doc.type.toLowerCase() == 'general' && doc.status !== "deleted") {
       emit(doc.uniqueId, {

@@ -1,3 +1,4 @@
+// TODO:  Remove legacy "aliases" field once we migrate to express
 function(doc) {
     if (doc) {
       emit(doc.uniqueId, {
