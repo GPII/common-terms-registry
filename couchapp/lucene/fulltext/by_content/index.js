@@ -4,7 +4,7 @@ function(doc) {
 
         var defs = "";
 
-        var keysToStore = ["uniqueId","aliasOf","translationOf"];
+        var keysToStore = ["uniqueId","aliasOf","translationOf","type"];
         for (var i in keysToStore) {
             var field = keysToStore[i];
             if (doc[field]) {
@@ -13,8 +13,7 @@ function(doc) {
             }
         }
 
-
-        var keysToIndex = ["status","notes","uses","definition","termLabel","type","source"];
+        var keysToIndex = ["status","notes","uses","definition","termLabel","source"];
         for (var i in keysToIndex) {
             var field = keysToIndex[i];
             if (doc[field]) {
