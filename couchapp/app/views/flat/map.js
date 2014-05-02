@@ -8,7 +8,7 @@ function(doc) {
         else if (doc.type === "ALIAS" || doc.type === "TRANSFORMATION") { key = doc.aliasOf; type = 1; }
         else if (doc.type === "TRANSLATION") { key = doc.translationOf; type = 1; }
 
-        emit([key,type], {
+        emit([key], {
             "type":                 doc.type,
             "uniqueId":	            doc.uniqueId,
             "localId":              doc.localId,
