@@ -15,7 +15,7 @@
     "body-parser": "~1.0.0",
     "method-override": "~1.0.0",
     "express3-handlebars": "0.5.0",
-    "express-user-couchdb": "git://github.com/the-t-in-rtf/express-couchUser.git#ecu-13",
+    "express-user-couchdb": "git://github.com/the-t-in-rtf/express-couchUser.git#ecu-19",
     "request": "~2.34.0",
     "protagonist": "~0.10.0"
   }
