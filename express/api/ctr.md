@@ -59,6 +59,7 @@ For these cases, the Common Terms Registry provides a transformation. A transfor
 
 |Field|Description|
 | --- | --- |
+|AliasOf|The unique identifier of the parent record this record is a transformation alias of.|
 |ValueSpace|A bidirectional lossless algorithm for converting to and from the values used by the common term.|
 |TermLabel|A translation of the short label for the parent record as it would appear in a menu or listing.|
 |Uses|A description of other systems that use this term and how they use it.|
