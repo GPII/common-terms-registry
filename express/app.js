@@ -69,9 +69,6 @@ app.use(express.static(__dirname + '/public'));
 var api = require('./api')(config);
 app.use('/api',api);
 
-// API Documentation
-//app.get('/apidocs', routes.apidocs);
-
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
