@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node app.js",
-    "test": "node tests/all-tests.js"  
+    "test": "node tests/all-tests.js"
   },
   "dependencies": {
     "cookie-parser": "~1.0.0",
@@ -17,10 +17,9 @@
     "express3-handlebars": "0.5.0",
     "infusion": "git://github.com/fluid-project/infusion.git#6c8ea3098c80bf4297ae773cda144c4e58939017",
     "morgan": "~1.0.0",
-    "protagonist": "~0.10.0",
     "request": "~2.34.0",
-    "static-favicon": "~1.0.0"
+    "static-favicon": "~1.0.0",
+    "marked": "~0.3.2"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }
