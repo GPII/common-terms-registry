@@ -5,9 +5,6 @@ module.exports = function(config) {
     var search = require('./search')(config);
     router.use('/search', search);
 
-    var improvedSearch = require('./improved-search')(config);
-    router.use('/improved-search', improvedSearch);
-
     var suggestConfig = JSON.parse(JSON.stringify(config));
     suggestConfig.lookup = true;
 
