@@ -3,20 +3,24 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "test": "node tests/all-tests.js"  
   },
   "dependencies": {
-    "express": "4.0.0",
-    "errorhandler": "~1.0.0",
-    "morgan": "~1.0.0",
-    "express-session": "~1.0.0",
-    "static-favicon": "~1.0.0",
     "cookie-parser": "~1.0.0",
     "body-parser": "~1.0.0",
     "method-override": "~1.0.0",
-    "express3-handlebars": "0.5.0",
+    "errorhandler": "~1.0.0",
+    "express": "4.0.0",
+    "express-session": "~1.0.0",
     "express-user-couchdb": "git://github.com/the-t-in-rtf/express-couchUser.git#ecu-19",
+    "express3-handlebars": "0.5.0",
+    "infusion": "git://github.com/fluid-project/infusion.git#6c8ea3098c80bf4297ae773cda144c4e58939017",
+    "morgan": "~1.0.0",
+    "protagonist": "~0.10.0",
     "request": "~2.34.0",
-    "protagonist": "~0.10.0"
+    "static-favicon": "~1.0.0"
+  },
+  "devDependencies": {
   }
 }
