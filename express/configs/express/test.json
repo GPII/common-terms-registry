@@ -1,5 +1,5 @@
 {
-    "port" : 4895,
+    "port" : 5972,
     "couch.url" : "http://admin:admin@localhost:5984/tr/",
     "users": "http://admin:admin@localhost:5984/_users",
     "lucene.url" : "http://localhost:5984/_fti/local/tr/_design/lucene/by_content",
@@ -14,7 +14,5 @@
     },
     "app": {
         "name": "Common Terms Registry (development)"
-    },
-    "verify": true,
-    "adminRoles": [ "admin"]
+    }
 }
