@@ -21,5 +21,8 @@
     "static-favicon": "~1.0.0",
     "marked": "~0.3.2"
   },
-  "devDependencies": {}
+  "devDependencies": {
+      "jqUnit": "git://github.com/fluid-project/node-jqUnit.git#e9bf72445bd343a4f3aabe3ba96a1087d3498612",
+      "kettle": "git://github.com/fluid-project/kettle.git#2cd608b95a7e908769c91f5120cfc50bfc19c4db"
+  }
 }
