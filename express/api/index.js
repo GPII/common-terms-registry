@@ -39,6 +39,7 @@ module.exports = function(config) {
         }
         fs.closeSync(mdFile);
 
+        // TODO: Bring in standard headers and footers
         res.send(marked(markdown));
     });
 
