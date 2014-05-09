@@ -1,0 +1,17 @@
+{
+    "typeName": "gpii.ctr.test",
+    "options": {
+        "gradeNames": [],
+        "components": {
+            "server": {
+                "type": "kettle.server",
+                "options": {
+                    "logging": false,
+                    "port": 5972
+                }
+            }
+        }
+    },
+    "includes": [
+    ]
+}
