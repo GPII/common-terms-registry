@@ -2,18 +2,23 @@
 
 var fluid = require("infusion"),
     path = require("path"),
-    configPath = path.resolve(__dirname, "../../../configs"),
+    configPath = path.resolve(__dirname, "../../../configs/gpii"),
     jqUnit = fluid.require("jqUnit"),
     gpii = fluid.registerNamespace("gpii"),
     kettle = fluid.require("kettle", require);
 
 var searchTests = fluid.registerNamespace("gpii.ctr.tests.api.search");
 
+// TODO:  Create my own setup broker that starts express, etc.
+var referee = fluid.registerNamespace("gpii.ctr.tests.referee");
+referee.init   = function() { console.log("init"); };
+referee.finish = function() { console.log("finish"); };
+
 // TODO:  Find out WTF they use in lieu of setup() up in this piece
 
 // TODO: set up a pouchdb instance and load sample data
 
-// TODO:  write a view that emulates the output returned by lucene
+// TODO:  write a pouchdb view that emulates the output returned by lucene
 
 // TODO: Spin up an express instance with the search and suggest modules configured and mounted
 
@@ -46,6 +51,12 @@ var testDefs = [{
         configPath: configPath
     },
     components: {
+        referee: {
+            type: "gpii.ctr.tests.referee",
+            options: {
+                port: 5972
+            }
+        },
         sanityRequest: {
             type: "kettle.tests.request.http",
             options: {
@@ -58,12 +69,13 @@ var testDefs = [{
             }
         }
     },
-    sequence: [ { func: "{sanityRequest}.send" },
+    sequence: [ { func: "{referee}.init"},
+                { func: "{sanityRequest}.send" },
                 {
                     event: "{sanityRequest}.events.onComplete",
                     listener: "gpii.ctr.tests.api.search.testSanity"
-                }
+                },
+                { func: "{referee}.finish" }
     ]
 }];
-
 module.exports = kettle.tests.bootstrap(testDefs);
