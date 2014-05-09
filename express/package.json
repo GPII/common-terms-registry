@@ -13,7 +13,7 @@
     "errorhandler": "~1.0.0",
     "express": "4.0.0",
     "express-session": "~1.0.0",
-    "express-user-couchdb": "git://github.com/the-t-in-rtf/express-couchUser.git#ecu-19",
+    "express-user-couchdb": "0.2.5",
     "express3-handlebars": "0.5.0",
     "infusion": "git://github.com/fluid-project/infusion.git#6c8ea3098c80bf4297ae773cda144c4e58939017",
     "morgan": "~1.0.0",
@@ -22,7 +22,7 @@
     "marked": "~0.3.2"
   },
   "devDependencies": {
-      "jqUnit": "git://github.com/fluid-project/node-jqUnit.git#e9bf72445bd343a4f3aabe3ba96a1087d3498612",
-      "kettle": "git://github.com/fluid-project/kettle.git#2cd608b95a7e908769c91f5120cfc50bfc19c4db"
+    "jqUnit": "git://github.com/fluid-project/node-jqUnit.git#e9bf72445bd343a4f3aabe3ba96a1087d3498612",
+    "kettle": "git://github.com/fluid-project/kettle.git#2cd608b95a7e908769c91f5120cfc50bfc19c4db"
   }
 }
