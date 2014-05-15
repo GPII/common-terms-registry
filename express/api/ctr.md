@@ -116,6 +116,13 @@ Creates a new record.  If an author is supplied, gives them credit, otherwise th
         {
             "ok":true,
             "message":"New record submitted."
+            "record": {
+               "type": "GENERAL",
+               "uniqueId": "newRecord",
+               "termLabel": "New Record",
+               "definition": "This is a new record.",
+               "notes": "This record was created as an example."
+            }
         }
         ```
 
@@ -138,9 +145,14 @@ Update an existing record.  If an author is supplied, gives them credit, otherwi
         ```
         {
             "ok":true,
+            "message":"Record updated."
             "record": {
                 "uniqueId": "existingRecord",
                 "definition": "This existing record needs to be updated.",
+               "type": "GENERAL",
+               "termLabel": "Existing Record",
+               "definition": "This is an existing record.",
+               "notes": "This record is another sample record."
             }
         }
         ```
