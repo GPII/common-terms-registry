@@ -95,7 +95,7 @@ Updates to existing records are moderated in the Common Terms Registry.  To mana
 # API REST endpoints
 
 ## POST /api/record
-Creates a new unreviewed record.  If an author is supplied, gives them credit, otherwise the current user is listed as the author.  Until a new record is approved by reviewers, only the author and reviewers can see the proposed record.
+Creates a new record.  If an author is supplied, gives them credit, otherwise the current user is listed as the author.
 
 + Request (application/json}
 
@@ -120,7 +120,7 @@ Creates a new unreviewed record.  If an author is supplied, gives them credit, o
         ```
 
 ## PUT /api/record
-Creates a new change set by comparing the record submitted to an existing record.  If an author is supplied, gives them credit, otherwise the current user is listed as the author.  Until a change set is approved by reviewers, only the author and reviewers can see the proposed changes.
+Update an existing record.  If an author is supplied, gives them credit, otherwise the current user is listed as the author.  Partial records are allowed, but at a minimum you must provide a uniqueId and at least one other field.  If a partial record is submitted, only the supplied fields will be updated.  To clear the value for a field, you must explicitly pass "null" as the value.  Returns the updated record.
 
 + Request (application/json}
 
@@ -138,25 +138,25 @@ Creates a new change set by comparing the record submitted to an existing record
         ```
         {
             "ok":true,
-            "message":"Your proposed changes have been submitted.",
-            "changeId": "0069b020043147f58eeda6d72c9845f4"
+            "record": {
+                "uniqueId": "existingRecord",
+                "definition": "This existing record needs to be updated.",
+            }
         }
         ```
 
 ## DELETE /api/record/{uniqueId}{?confirm}
-Proposes that a record be flagged as trashed.  If an author is supplied, gives them credit, otherwise the current user is listed as the author.  Until a change set is approved by reviewers, only the author and reviewers can see the proposed changes, and the record will remain visible to end users.
-Reviewers can confirm that a record should be flagged as deleted by sending the "confirm" parameter.
+Flags a record as deleted.  If an author is supplied, gives them credit, otherwise the current user is listed as the author.
 
 + Parameters
     + uniqueId (required, string) ... The unique identifier of a single record.
-    + confirm (required, string) ... Used to confirm that a proposed deletion should be executed.  Only available to reviewers.
 
 + Response 200 (application/json)
 
     ```
     {
         "ok": true,
-        "message": "Record flagged for deletion."
+        "message": "Record flagged as deleted."
     }
     ```
 
@@ -190,6 +190,7 @@ The full list of records.  Returns all record types by default.
 + Parameters
     + lastUpdated (optional, string) ... Timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SSZ` Only records updated at or after this time are returned.
     + recordType (optional, string) ... The type of records to return.  Supported values are ("term","alias","transform","translation", and "operator").
+    + status (optional, string) ... The record statuses to return (defaults to everything but 'deleted' records).  Can be repeated to include multiple statuses.
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
     + limit (optional, string) ... The number of records to return.  Used for pagination.
 
@@ -222,6 +223,7 @@ The full list of records.  Returns all record types by default.
 The list of standard terms. Equivalent to using /api/records with the query parameter `recordType=term`.  Supports the same query parameters as /api/records except for `recordType`.
 
 + Parameters
+    + status (optional, string) ... The record statuses to return (defaults to everything but 'deleted' records).  Can be repeated to include multiple statuses.
     + lastUpdated (optional, string) ... Timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SSZ` Only records updated at or after this time are returned.
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
     + limit (optional, string) ... The number of records to return.  Used for pagination.
@@ -237,6 +239,7 @@ The list of standard terms. Equivalent to using /api/records with the query para
 The list of aliases. Equivalent to using /api/records with the query parameter `recordType=alias`.  Supports the same query parameters as /api/records except for `recordType`.
 
 + Parameters
+    + status (optional, string) ... The record statuses to return (defaults to everything but 'deleted' records).  Can be repeated to include multiple statuses.
     + lastUpdated (optional, string) ... Timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SSZ` Only records updated at or after this time are returned.
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
     + limit (optional, string) ... The number of records to return.  Used for pagination.
@@ -270,6 +273,7 @@ The list of aliases. Equivalent to using /api/records with the query parameter `
 The list of transforms. Equivalent to using /api/records with the query parameter `recordType=transform`.  Supports the same query parameters as /api/records except for `recordType`.
 
 + Parameters
+    + status (optional, string) ... The record statuses to return (defaults to everything but 'deleted' records).  Can be repeated to include multiple statuses.
     + lastUpdated (optional, string) ... Timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SSZ` Only records updated at or after this time are returned.
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
     + limit (optional, string) ... The number of records to return.  Used for pagination.
@@ -278,6 +282,7 @@ The list of transforms. Equivalent to using /api/records with the query paramete
 The list of translations. Equivalent to using /api/records with the query parameter `recordType=translation`.  Supports the same query parameters as /api/records except for `recordType`.
 
 + Parameters
+    + status (optional, string) ... The record statuses to return (defaults to everything but 'deleted' records).  Can be repeated to include multiple statuses.
     + lastUpdated (optional, string) ... Timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SSZ` Only records updated at or after this time are returned.
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
     + limit (optional, string) ... The number of records to return.  Used for pagination.
@@ -286,6 +291,7 @@ The list of translations. Equivalent to using /api/records with the query parame
 The list of operators.  Equivalent to using /api/records with the query parameter `recordType=operator`.  Supports the same query parameters as /api/records except for `recordType`.
 
 + Parameters
+    + status (optional, string) ... The record statuses to return (defaults to everything but 'deleted' records).  Can be repeated to include multiple statuses.
     + lastUpdated (optional, string) ... Timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SSZ` Only records updated at or after this time are returned.
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
     + limit (optional, string) ... The number of records to return.  Used for pagination.
@@ -377,56 +383,6 @@ Suggest the correct common term to use.  Performs a search as in /api/search, bu
                 }
             ],
             "retrievedAt": "Thu Apr 10 2014 13:38:59 GMT+0200 (CEST)"
-        }
-        ```
-
-## GET /api/changeset/{changeId}
-Returns a single change set identified by its changeId.
-
-+ Response 200 (application/json)
-
-    + Body
-
-        ```
-        {
-            "ok": true,
-            "record": {
-                "type": "ALIAS",
-                "uniqueId": "org.gnome.settings-daemon.plugins.sound.active",
-                "aliasOf": "soundActive",
-                "notes": "The original alias record contained the following additional information:\r\n\r\ndefaultValue:TRUE\r\nuserPreference:org.gnome.settings-daemon.plugins.sound.active\r\nvalueSpace:Boolean\r\nid:662\r\n",
-                "termLabel": "org.gnome.settings-daemon.plugins.sound.active",
-                "status": "active",
-                "source": "gnome"
-                "lastUpdated": "Wed Apr 09 2014 13:30:00 GMT+0200 (CEST)"
-            },
-            "retrievedAt": "Thu Apr 10 2014 13:38:59 GMT+0200 (CEST)"
-        }
-        ```
-
-## GET /api/changeset/{changeId}/approve
-Approve a change set.  The associated parent record will be immediately updated.
-
-+ Response 200 (application/json)
-
-    + Body
-        ```
-        {
-            "ok": true,
-            "message": "Changeset accepted."
-        }
-        ```
-
-## GET /api/changeset/{changeId}/reject
-Reject a change set.
-
-+ Response 200 (application/json)
-
-    + Body
-        ```
-        {
-            "ok": true,
-            "message": "Changeset rejected."
         }
         ```
 
