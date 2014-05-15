@@ -5,9 +5,6 @@ module.exports = function(config) {
 
     var quick = config.lookup ? true : false;
     var search = fluid.registerNamespace(quick ? "gpii.ctr.api.suggest" : "gpii.ctr.api.search");
-    search.distinctUniqueIds = [];
-    search.termHash          = {};
-    search.results           = {};
 
     var request = require('request');
 
@@ -107,6 +104,11 @@ module.exports = function(config) {
 
     var express = require('express');
     return express.Router().get('/', function(req, res){
+        // per-request variables need to be defined here, otherwise (for example) the results of the previous search will be returned if the next search has no records
+        search.distinctUniqueIds = [];
+        search.termHash          = {};
+        search.results           = {};
+
         search.req = req;
         search.res = res;
 
@@ -150,10 +152,15 @@ module.exports = function(config) {
                 }
 
                 if (req.query[field] instanceof Array) {
-                    queryString += field + "=" + req.query[field].join('&' + field + '=');
+                    req.query[field].forEach(function(entry) {
+                        if (queryString.length > 0) {
+                            queryString += '&';
+                        }
+                        queryString += field + "=" + encodeURIComponent(entry);
+                    });
                 }
                 else {
-                    queryString += field + "=" + req.query[field];
+                    queryString += field + "=" + encodeURIComponent(req.query[field]);
                 }
             }
         });
