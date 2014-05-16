@@ -11,7 +11,36 @@ module.exports = function(config) {
     var suggest = require('./search')(suggestConfig);
     router.use('/suggest', suggest);
 
-    // TODO:  Add a redirect to the api docs if someone request the root of the API, or at least an informative note.
+    // Record lookup end points, one for all types, and one each per type
+    var records = require('./records')(config);
+    router.use('/records', records);
+
+    var termsConfig = JSON.parse(JSON.stringify(config));
+    termsConfig.recordType = "general";
+    var terms = require("./records")(termsConfig);
+    router.use('/terms', terms);
+
+    var aliasConfig = JSON.parse(JSON.stringify(config));
+    aliasConfig.recordType = "alias";
+    var aliases = require("./records")(aliasConfig);
+    router.use('/aliases', aliases);
+
+    var transformConfig = JSON.parse(JSON.stringify(config));
+    transformConfig.recordType = "transform";
+    var transforms = require("./records")(transformConfig);
+    router.use('/transforms', transforms);
+
+    var translationConfig = JSON.parse(JSON.stringify(config));
+    translationConfig.recordType = "translation";
+    var translations = require("./records")(translationConfig);
+    router.use('/translations', translations);
+
+    var operatorsConfig = JSON.parse(JSON.stringify(config));
+    operatorsConfig.recordType = "operator";
+    var operators = require("./records")(operatorsConfig);
+    router.use('/operators', operators);
+
+    // Display the API docs for everything else
     router.use("/",function(req, res) {
         var marked = require('marked');
 
