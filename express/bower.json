@@ -24,6 +24,7 @@
     "handlebars": "~1.3.0",
     "jquery.couch": "*",
     "couchdb-login-jquery": "*",
-    "jquery-Mustache": "~0.2.7"
+    "jquery-Mustache": "~0.2.7",
+    "github-markdown-css": "~0.1.0"
   }
 }
