@@ -233,7 +233,7 @@ The full list of records.  Returns all record types by default.
         ```
 
 ## GET /api/terms/{?lastUpdated,offset,limit}
-The list of standard terms. Equivalent to using /api/records with the query parameter `recordType=term`.  Supports the same query parameters as /api/records except for `recordType`.
+The list of standard terms. Equivalent to using /api/records with the query parameter `recordType=term`.  Supports the same query parameters as /api/records except for `recordType`.  Terms include all of their associated records, include aliases, transforms, and translations.
 
 + Parameters
     + status (optional, string) ... The record statuses to return (defaults to everything but 'deleted' records).  Can be repeated to include multiple statuses.
@@ -245,7 +245,35 @@ The list of standard terms. Equivalent to using /api/records with the query para
     + Body
 
         ```
-        { json: "goes here" }
+        {
+            "ok": true,
+            "total_rows": 1,
+            "startpos": 0,
+            "pagesize": 1,
+            "records": [
+                    {
+                        "type": "GENERAL",
+                        "uniqueId": "brailleGrade",
+                        "valueSpace": "uncontracted, contracted",
+                        "termLabel": "braille grade",
+                        "definition": "grade of Braille to use when using a Braille display",
+                        "status": "unreviewed",
+                        "source": "gpii",
+                        "aliases": [
+                                {
+                                    "type": "ALIAS",
+                                    "uniqueId": "Input Braille Grade, output Braille Grade",
+                                    "aliasOf": "brailleGrade",
+                                    "notes": "The original alias record contained the following additional information:\n\ndefinition:Allow to select braille grade for braille input, Allow to select braille grade for braille output on braille display\nuserPreference:Input Braille Grade, output Braille Grade\nvalueSpace:Multiple options based on the grade supported with MA\ngroup:Braille,Everywhere\nid:25, 32\n",
+                                    "termLabel": "Input Braille Grade, output Braille Grade",
+                                    "status": "unreviewed",
+                                    "source": "mobileAccessCf"
+                                }
+                        ]
+                    }
+            ],
+            "retrievedAt": "Thu Apr 10 2014 13:38:59 GMT+0200 (CEST)"
+        }
         ```
 
 ## GET /api/aliases/{?lastUpdated,offset,limit}
