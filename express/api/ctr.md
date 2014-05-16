@@ -103,7 +103,8 @@ Creates a new record.  If an author is supplied, gives them credit, otherwise th
        "uniqueId": "newRecord",
        "termLabel": "New Record",
        "definition": "This is a new record.",
-       "notes": "This record was created as an example."
+       "notes": "This record was created as an example.",
+        "lastUpdated": "Wed Apr 09 2014 13:30:00 GMT+0200 (CEST)"
      }
      ```
 
@@ -119,7 +120,8 @@ Creates a new record.  If an author is supplied, gives them credit, otherwise th
                "uniqueId": "newRecord",
                "termLabel": "New Record",
                "definition": "This is a new record.",
-               "notes": "This record was created as an example."
+               "notes": "This record was created as an example.",
+               "lastUpdated": "Wed Apr 09 2014 13:30:00 GMT+0200 (CEST)"
             }
         }
         ```
@@ -147,10 +149,11 @@ Update an existing record.  If an author is supplied, gives them credit, otherwi
             "record": {
                 "uniqueId": "existingRecord",
                 "definition": "This existing record needs to be updated.",
-               "type": "GENERAL",
-               "termLabel": "Existing Record",
-               "definition": "This is an existing record.",
-               "notes": "This record is another sample record."
+                "type": "GENERAL",
+                "termLabel": "Existing Record",
+                "definition": "This is an existing record.",
+                "notes": "This record is another sample record.",
+                "lastUpdated": "Wed Apr 09 2014 13:30:00 GMT+0200 (CEST)"
             }
         }
         ```
@@ -187,7 +190,7 @@ Returns a single record identified by its uniqueId.
                 "notes": "The original alias record contained the following additional information:\r\n\r\ndefaultValue:TRUE\r\nuserPreference:org.gnome.settings-daemon.plugins.sound.active\r\nvalueSpace:Boolean\r\nid:662\r\n",
                 "termLabel": "org.gnome.settings-daemon.plugins.sound.active",
                 "status": "active",
-                "source": "gnome"
+                "source": "gnome",
                 "lastUpdated": "Wed Apr 09 2014 13:30:00 GMT+0200 (CEST)"
             },
             "retrievedAt": "Thu Apr 10 2014 13:38:59 GMT+0200 (CEST)"
