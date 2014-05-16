@@ -1,5 +1,3 @@
-FORMAT: 1A
-
 # Common Terms Registry API
 The Common Terms Registry API is a tool to allow developers to find and reuse common terms that describe user needs and preferences, and to contribute new standard terms and aliases not already included in the Common Terms Registry.
 
