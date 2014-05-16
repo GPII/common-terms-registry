@@ -15,6 +15,7 @@ app.set('port', config.port || process.env.PORT || 4895);
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 
+var testUtils = require("../../tests/lib/testUtils");
 
 // Mount the module in "search" mode
 var search = require('../../search')(config);
@@ -38,7 +39,7 @@ jqUnit.asyncTest("Search with results", function() {
         request.get("http://localhost:" + app.get('port') + "/search?q=braille",function(error, response, body) {
             jqUnit.start();
 
-            isSaneResponse(error, response, body);
+            testUtils.isSaneResponse(jqUnit, error, response, body);
 
             jqUnit.assertEquals("The request should have been successful...", response.statusCode, 200);
 
@@ -48,7 +49,7 @@ jqUnit.asyncTest("Search with results", function() {
             jqUnit.assertNotNull("There should be actual record data returned...", jsonData.records);
             jqUnit.assertTrue("The record data should have at least one record...", Object.keys(jsonData.records).length > 0);
 
-            jqUnit.assertTrue("The first record should be sane.", isSaneRecord(jsonData.records[0]));
+            jqUnit.assertTrue("The first record should be sane.", testUtils.isSaneRecord(jsonData.records[0]));
         });
     }
 );
@@ -58,7 +59,7 @@ jqUnit.asyncTest("Search with no results", function() {
         request.get("http://localhost:" + app.get('port') + "/search?q=flibbertygibbit",function(error, response, body) {
             jqUnit.start();
 
-            isSaneResponse(error, response, body);
+            testUtils.isSaneResponse(jqUnit, error, response, body);
 
             jqUnit.assertEquals("The request should have been successful...", response.statusCode, 200);
 
@@ -76,7 +77,7 @@ jqUnit.asyncTest("Paging through search results", function() {
         request.get("http://localhost:" + app.get('port') + "/search?q=braille&offset=0&limit=2",function(error, response, body) {
 
             jqUnit.start();
-            isSaneResponse(error, response, body);
+            testUtils.isSaneResponse(jqUnit, error, response, body);
             jqUnit.assertTrue("The record data should have the same number of records as the limit...", Object.keys(JSON.parse(body).records).length === 2);
             jqUnit.stop();
 
@@ -84,7 +85,7 @@ jqUnit.asyncTest("Paging through search results", function() {
 
             request.get("http://localhost:" + app.get('port') + "/search?q=braille&offset=1&limit=1",function(error, response, body) {
                 jqUnit.start();
-                isSaneResponse(error, response, body);
+                testUtils.isSaneResponse(jqUnit, error, response, body);
                 jqUnit.assertTrue("The record data should have the same number of records as the limit...", Object.keys(JSON.parse(body).records).length === 1);
 
                 var secondRecord = JSON.parse(body).records[0];
@@ -99,14 +100,14 @@ jqUnit.asyncTest("Testing basic sorting", function() {
         request.get("http://localhost:" + app.get('port') + "/search?q=braille&sort=termLabel",function(error, response, body) {
 
             jqUnit.start();
-            isSaneResponse(error, response, body);
+            testUtils.isSaneResponse(jqUnit, error, response, body);
             jqUnit.stop();
 
             var firstRecord = JSON.parse(body).records[0];
 
             request.get("http://localhost:" + app.get('port') + "/search?q=braille&sort=%5CtermLabel",function(error, response, body) {
                 jqUnit.start();
-                isSaneResponse(error, response, body);
+                testUtils.isSaneResponse(jqUnit, error, response, body);
 
                 var secondRecord = JSON.parse(body).records[0];
                 jqUnit.assertDeepNeq("The first record when sorting A-Z should not be equal to the first record when sorting Z-A...", firstRecord, secondRecord);
@@ -120,7 +121,7 @@ jqUnit.asyncTest("Testing sorting by multiple fields", function() {
         request.get("http://localhost:" + app.get('port') + "/search?q=braille&sort=%5ctermLabel&sort=%5cuniqueId",function(error, response, body) {
 
             jqUnit.start();
-            isSaneResponse(error, response, body);
+            testUtils.isSaneResponse(jqUnit, error, response, body);
             var jsonBody = JSON.parse(body);
             jqUnit.assertNotNull("There should be sort parameters returned in the results...",jsonBody.sort);
 
@@ -134,13 +135,13 @@ jqUnit.asyncTest("Testing qualifying a search to a particular field", function()
         request.get("http://localhost:" + app.get('port') + "/search?q=highlight",function(error, response, body) {
 
             jqUnit.start();
-            isSaneResponse(error, response, body);
+            testUtils.isSaneResponse(jqUnit, error, response, body);
             jqUnit.stop();
 
             var unqualifiedTotalResults = Object.keys(JSON.parse(body).records).length;
             request.get("http://localhost:" + app.get('port') + "/search?q=termLabel:highlight",function(error, response, body) {
                 jqUnit.start();
-                isSaneResponse(error, response, body);
+                testUtils.isSaneResponse(jqUnit, error, response, body);
 
                 var records = JSON.parse(body).records;
                 var qualifiedTotalResults = Object.keys(records).length;
@@ -178,7 +179,7 @@ jqUnit.asyncTest("Search with no search data", function() {
             jqUnit.start();
             jqUnit.assertNotEquals("The request should not have been successful...", response.statusCode, 200);
 
-            isSaneResponse(error, response, body);
+            testUtils.isSaneResponse(jqUnit, error, response, body);
 
             var jsonData = JSON.parse(body);
 
@@ -196,14 +197,14 @@ jqUnit.asyncTest("Comparing auto-suggest and search results", function() {
         request.get("http://localhost:" + app.get('port') + "/search?q=color",function(error, response, body) {
 
             jqUnit.start();
-            isSaneResponse(error, response, body);
+            testUtils.isSaneResponse(jqUnit, error, response, body);
             jqUnit.stop();
 
             var searchRecord = JSON.parse(body).records[0];
 
             request.get("http://localhost:" + app.get('port') + "/suggest?q=color",function(error, response, body) {
                 jqUnit.start();
-                isSaneResponse(error, response, body);
+                testUtils.isSaneResponse(jqUnit, error, response, body);
 
                 var suggestRecord = JSON.parse(body).records[0];
                 jqUnit.assertDeepEq("The first result for a search and auto-suggest using the same term should be the same record.", searchRecord, suggestRecord);
@@ -218,7 +219,7 @@ jqUnit.asyncTest("Use auto-suggest with no query data", function() {
             jqUnit.start();
             jqUnit.assertNotEquals("The request should not have been successful...", response.statusCode, 200);
 
-            isSaneResponse(error, response, body);
+            testUtils.isSaneResponse(jqUnit, error, response, body);
 
             var jsonData = JSON.parse(body);
 
@@ -237,7 +238,7 @@ jqUnit.asyncTest("Pass illegal paging parameters to auto-suggest", function() {
         function checkIllegalParamResponse(error, response, body) {
             jqUnit.assertNotEquals("The request should not have been successful...", response.statusCode, 200);
 
-            isSaneResponse(error, response, body);
+            testUtils.isSaneResponse(jqUnit, error, response, body);
 
             var jsonData = JSON.parse(body);
 
@@ -257,28 +258,3 @@ jqUnit.onAllTestsDone.addListener(function() {
     // Shut down express (seems to happen implicitly, so commented out)
 //    http.server.close();
 });
-
-// Utility functions for common sanity checks
-
-function isSaneRecord(record) {
-    if (!record) { return false; }
-
-    var requiredFields = ["uniqueId","type","status"];
-    requiredFields.forEach(function(field) {
-        if (!record[field]) {
-            return false;
-        }
-    });
-
-    return true;
-}
-
-function isSaneResponse(error, response, body) {
-    jqUnit.assertNull("No errors should be returned...",error);
-    jqUnit.assertNotNull("A response should be returned...",response);
-    jqUnit.assertNotNull("The request should include a return code...", response.statusCode);
-    jqUnit.assertNotNull("A body should be returned...", body);
-
-    var jsonData = JSON.parse(body);
-    jqUnit.assertNotNull("The 'ok' variable should always be set...", jsonData.ok);
-}
