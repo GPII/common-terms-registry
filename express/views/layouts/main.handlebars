@@ -5,10 +5,16 @@
     {{>head}}
   </head>
   <body>
-    {{>header}}
+  <div id="header" class="container">
+      {{>header}}
+  </div>
 
-    {{{body}}}
+  <div id="content" class="container">
+      {{{body}}}
+  </div>
 
-    {{>footer}}
+  <div id="footer" class="container">
+      {{>footer}}
+  </div>
   </body>
 </html>
