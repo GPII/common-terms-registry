@@ -14,16 +14,6 @@ module.exports = function(config) {
     // TODO:  Add a redirect to the api docs if someone request the root of the API, or at least an informative note.
     router.use("/",function(req, res) {
         var marked = require('marked');
-        marked.setOptions({
-            renderer: new marked.Renderer(),
-            gfm: true,
-            tables: true,
-            breaks: true,
-            pedantic: false,
-            sanitize: true,
-            smartLists: true,
-            smartypants: false
-        });
 
         var markdown = "";
         var fs = require('fs');
@@ -39,10 +29,9 @@ module.exports = function(config) {
         }
         fs.closeSync(mdFile);
 
-        // TODO: Bring in standard headers and footers
-        res.send(marked(markdown));
+        res.render('api', { "title": "API Documentation", "code": marked(markdown)});
     });
 
     return router;
-}
+};
 
