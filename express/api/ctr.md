@@ -200,8 +200,13 @@ The full list of records.  Returns all record types by default.
         {
             "ok": true,
             "total_rows": 1,
-            "startpos": 0,
-            "pagesize": 1,
+            "offset": 0,
+            "limit": 100,
+            "filters": {
+                "updated": "2014-04-01T00:00:00.000Z",
+                "statuses": [ "unreviewed" ],
+                "recordTypes": [ "alias" ]
+            }
             "records": [
                      {
                         "type": "ALIAS",
