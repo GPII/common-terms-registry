@@ -26,39 +26,70 @@ module.exports = function(config) {
     }
 
     var records = fluid.registerNamespace(namespace);
-
     var request = require('request');
 
-    records.validateInput = function() {
+    records.parseAndValidateInput = function() {
         if (!records.req.query) {
             throw records.constructError(400,"You must provide the required query parameters to use this interface.");
         }
 
-        if (records.req.query.lastUpdated && new Date(records.req.query.lastUpdated).toString === "Invalid Date") {
-            throw records.constructError(400, "Invalid 'lastUpdated' date specified: '" + records.req.query.lastUpdated + "'...");
+        if (records.req.query.updated) {
+            var parsedDate =  new Date(records.req.query.updated);
+            if (parsedDate.toString() === "Invalid Date") {
+                throw records.constructError(400, "Invalid 'updated' date specified: '" + records.req.query.updated + "'...");
+            }
+            else {
+                records.filters.updated = parsedDate;
+            }
         }
 
         var allowedStatuses = ["active","unreviewed","candidate","deleted"];
         if (records.req.query.status) {
+            var statusesToDisplay = [];
             if (records.req.query.status instanceof Array) {
                 records.req.query.status.forEach(function(status){
-                    if (allowedStatuses.indexOf(status.toLowerCase()) === -1){
-                        throw records.constructError(400,"Invalid status '" + status + "' specified...");
+                    var lowerCaseStatus = status.toLowerCase();
+                    if (allowedStatuses.indexOf(lowerCaseStatus) === -1){
+                        throw records.constructError(400,"Invalid status '" + lowerCaseStatus + "' specified...");
                     }
-
+                    else {
+                        statusesToDisplay.push(lowerCaseStatus);
+                    }
                 });
             }
-            else if (allowedStatuses.indexOf(records.req.query.status.toLowerCase()) === -1){
-                 throw records.constructError(400,"Invalid status '" + records.req.query.status + "' specified...");
+            else {
+                var lowerCaseStatus = records.req.query.status.toLowerCase();
+                if (allowedStatuses.indexOf(lowerCaseStatus) === -1){
+                     throw records.constructError(400,"Invalid status '" + lowerCaseStatus + "' specified...");
+                }
+                else {
+                    statusesToDisplay.push(lowerCaseStatus);
+                }
+            }
+
+            if (statusesToDisplay.length > 0) {
+                records.filters.statuses = statusesToDisplay;
             }
         }
 
-        if (records.req.query.offset && isNaN(parseInt(records.req.query.offset))) {
-            throw records.constructError(400,"Offset must be a number.");
+        if (records.req.query.offset) {
+            var parsedOffset = parseInt(records.req.query.offset);
+            if (isNaN(parsedOffset)) {
+                throw records.constructError(400,"Offset must be a number.");
+            }
+            else {
+                records.filters.offset = parsedOffset;
+            }
         }
 
-        if (records.req.query.limit && isNaN(parseInt(records.req.query.limit))) {
-            throw records.constructError(400,"Limit must be a number.");
+        if (records.req.query.limit) {
+            var parsedLimit = parseInt(records.req.query.limit);
+            if (isNaN(parsedLimit)) {
+                throw records.constructError(400,"Limit must be a number.");
+            }
+            else {
+                records.filters.limit = parsedLimit;
+            }
         }
 
         if (config.recordType) {
@@ -68,8 +99,30 @@ module.exports = function(config) {
         }
         else if (records.req.query.recordType) {
             var allowedRecordTypes = ["general","alias","transform","translation","operator"];
-            if (allowedRecordTypes.indexOf(records.req.query.recordType.toLowerCase()) === -1) {
-                throw records.constructError(400, "Invalid record type specified.");
+            var recordTypesToDisplay = [];
+            if (records.req.query.recordType instanceof Array) {
+                records.req.query.recordType.forEach(function(recordType){
+                    var lowerCaseRecordType = recordType.toLowerCase();
+                    if (allowedRecordTypes.indexOf(lowerCaseRecordType) === -1) {
+                        throw records.constructError(400, "Invalid record type specified.");
+                    }
+                    else {
+                        recordTypesToDisplay.push(lowerCaseRecordType);
+                    }
+                });
+            }
+            else {
+                var lowerCaseRecordType = records.req.query.recordType.toLowerCase();
+                if (allowedRecordTypes.indexOf(lowerCaseRecordType) === -1) {
+                    throw records.constructError(400, "Invalid record type specified.");
+                }
+                else {
+                    recordTypesToDisplay.push(lowerCaseRecordType);
+                }
+            }
+
+            if (recordTypesToDisplay.length > 0) {
+                records.filters.recordTypes = recordTypesToDisplay;
             }
         }
     };
@@ -78,32 +131,41 @@ module.exports = function(config) {
         if (error) { return records.res.send(500, JSON.stringify(error)); }
         if (!body.rows) { return records.res.send(500,"No usable result object was returned from couch."); }
 
-        // TODO:  Add support for limiting by status while still preserving paging
-        // TODO:  Add support for limiting by lastUpdated date while still preserving paging
-
         var recordsByTermId = {};
+        var excludedParentIds = [];
+
         body.rows.forEach(function(row) {
             var record = row.value;
             var isParent = row.key[1] === 0;
             var termId = row.key[0];
 
             if (isParent) {
-                recordsByTermId[termId] = record;
-            }
-            else {
-                var parentRecord = recordsByTermId[termId];
-                var arrayName = "aliases";
-
-                if (record.type.toLowerCase() === "translation") {
-                    arrayName = "translations";
-                }
-
-                if (!parentRecord) {
-                    console.error("No parent record was found for record with uniqueId '" + record.uniqueId + "'...");
+                // Exclude records that are too old, the wrong status, or the wrong record type
+                if ((records.filters.updated && new Date(record.updated) < records.filters.updated) ||
+                    (records.filters.statuses && records.filters.statuses.indexOf(record.status.toLowerCase()) === -1) ||
+                    (records.filters.recordTypes && records.filters.recordTypes.indexOf(record.type.toLowerCase()) === -1)) {
+                    excludedParentIds.push(termId);
                 }
                 else {
-                    if (!parentRecord[arrayName]) { parentRecord[arrayName] = []; }
-                    parentRecord[arrayName].push(record);
+                    recordsByTermId[termId] = record;
+                }
+            }
+            else {
+                if (excludedParentIds.indexOf(termId) !== -1) {
+                    var parentRecord = recordsByTermId[termId];
+                    var arrayName = "aliases";
+
+                    if (record.type.toLowerCase() === "translation") {
+                        arrayName = "translations";
+                    }
+
+                    if (!parentRecord) {
+                        console.error("No parent record was found for record with uniqueId '" + record.uniqueId + "'...");
+                    }
+                    else {
+                        if (!parentRecord[arrayName]) { parentRecord[arrayName] = []; }
+                        parentRecord[arrayName].push(record);
+                    }
                 }
             }
         });
@@ -119,14 +181,18 @@ module.exports = function(config) {
         if (error) { return records.res.send(500, JSON.stringify(error)); }
         if (!body.rows) { return records.res.send(500,"No usable result object was returned from couch."); }
 
-        records.results.total_rows = body.rows.length;
-
-        // TODO:  Add support for limiting by status while still preserving paging
-        // TODO:  Add support for limiting by lastUpdated date while still preserving paging
-        // TODO:  Add support for limiting by record type while still preserving paging
-        body.rows.forEach(function(record) {
-            records.results.records.push(record.value);
+        var filteredRecords = [];
+        body.rows.forEach(function(row) {
+            var record = row.value;
+            if ((!records.filters.updated || new Date(record.updated) >= records.filters.updated) &&
+                (!records.filters.statuses    || records.filters.statuses.indexOf(record.status.toLowerCase()) !== -1) &&
+                (!records.filters.recordTypes || records.filters.recordTypes.indexOf(record.type.toLowerCase()) !== -1)) {
+                filteredRecords.push(record);
+            }
         });
+
+        records.results.records = filteredRecords.slice(records.results.offset, records.results.offset + records.results.limit);
+        records.results.total_rows = filteredRecords.length;
 
         return records.res.send(200, JSON.stringify(records.results));
     };
@@ -141,6 +207,7 @@ module.exports = function(config) {
     var express = require('express');
     return express.Router().get('/', function(req, res){
         // per-request variables need to be defined here, otherwise (for example) the results of the previous search will be returned if the next search has no records
+        records.filters = {};
         records.req = req;
         records.res = res;
         res.set('Content-Type', 'application/json');
@@ -149,9 +216,9 @@ module.exports = function(config) {
             "ok": true,
             "total_rows" : 0,
             "records": [],
-            "q": records.req.query.q,
             "offset": records.req.query.offset ? parseInt(records.req.query.offset) : 0,
             "limit": records.req.query.limit ? parseInt(records.req.query.limit) : 100,
+            "filters": records.filters,
             "retrievedAt": new Date()
         };
 
@@ -164,28 +231,18 @@ module.exports = function(config) {
 
         // User input validation
         try {
-            records.validateInput();
+            records.parseAndValidateInput();
         }
         catch(err) {
             return res.send(err.status ? err.status : 500, JSON.stringify(err));
         }
 
-        // If we pass the right query parameters, we can let couch do the paging for us instead of doing it in memory
-        // FIXME:  Only if we want to completely screw up limiting by status or recordType
-        var queryParams = "";
-        if (req.query.offset) {
-            queryParams += "?skip=" + req.query.offset;
-        }
-        if (req.query.limit) {
-            queryParams += (queryParams.length > 0 ? "&" : "?") + "limit=" + req.query.limit;
-        }
-
         var urlsByRecordType = {
-            "entries":     config['couch.url'] + "/_design/app/_view/entries" + queryParams,
-            "alias":       config['couch.url'] + "/_design/app/_view/aliases" + queryParams,
-            "transform":   config['couch.url'] + "/_design/app/_view/transforms" + queryParams,
-            "translation": config['couch.url'] + "/_design/app/_view/translations" + queryParams,
-            "operator":    config['couch.url'] + "/_design/app/_view/operators" + queryParams,
+            "entries":     config['couch.url'] + "/_design/app/_view/entries",
+            "alias":       config['couch.url'] + "/_design/app/_view/aliases",
+            "transform":   config['couch.url'] + "/_design/app/_view/transforms",
+            "translation": config['couch.url'] + "/_design/app/_view/translations",
+            "operator":    config['couch.url'] + "/_design/app/_view/operators",
             "general":     config['couch.url'] + "/_design/app/_view/flat"
         };
 
