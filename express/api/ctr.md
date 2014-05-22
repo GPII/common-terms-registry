@@ -144,7 +144,7 @@ Update an existing record.  If an author is supplied, gives them credit, otherwi
         }
         ```
 
-## DELETE /api/record/{uniqueId}{?confirm}
+## DELETE /api/record/{uniqueId}
 Flags a record as deleted.  If an author is supplied, gives them credit, otherwise the current user is listed as the author.
 
 + Parameters
