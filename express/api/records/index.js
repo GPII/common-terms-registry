@@ -151,21 +151,16 @@ module.exports = function(config) {
                 }
             }
             else {
-                if (excludedParentIds.indexOf(termId) !== -1) {
-                    var parentRecord = recordsByTermId[termId];
+                var parentRecord = recordsByTermId[termId];
+                if (excludedParentIds.indexOf(termId) !== -1 && parentRecord) {
                     var arrayName = "aliases";
 
                     if (record.type.toLowerCase() === "translation") {
                         arrayName = "translations";
                     }
 
-                    if (!parentRecord) {
-                        console.error("No parent record was found for record with uniqueId '" + record.uniqueId + "'...");
-                    }
-                    else {
-                        if (!parentRecord[arrayName]) { parentRecord[arrayName] = []; }
-                        parentRecord[arrayName].push(record);
-                    }
+                    if (!parentRecord[arrayName]) { parentRecord[arrayName] = []; }
+                    parentRecord[arrayName].push(record);
                 }
             }
         });
