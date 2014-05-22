@@ -188,7 +188,7 @@ The full list of records.  Returns all record types by default.
 
 + Parameters
     + lastUpdated (optional, string) ... Timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SSZ` Only records updated at or after this time are returned.
-    + recordType (optional, string) ... The type of records to return.  Supported values are ("term","alias","transform","translation", and "operator").
+    + recordType (optional, string) ... The type of records to return.  Supported values are ("term","alias","transform","translation", and "operator"). Can be repeated to include multiple record types.
     + status (optional, string) ... The record statuses to return (defaults to everything but 'deleted' records).  Can be repeated to include multiple statuses.
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
     + limit (optional, string) ... The number of records to return.  Used for pagination.
