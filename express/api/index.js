@@ -15,6 +15,14 @@ module.exports = function(config) {
     var records = require('./records')(config);
     router.use('/records', records);
 
+    // TODO:  Add Create REST end point (POST /api/record)
+
+    // TODO:  Add Update REST end point (PUT /api/record)
+
+    // TODO:  Add Delete REST end point (DELETE /api/record/{id})
+
+    // TODO:  Add /api/record/{id} REST end point
+
     var termsConfig = JSON.parse(JSON.stringify(config));
     termsConfig.recordType = "general";
     var terms = require("./records")(termsConfig);
