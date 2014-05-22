@@ -38,8 +38,7 @@ request.get(searchUrl, function(e,r,b) {
             jsonData.rows.forEach(function(row) {
                 if (row.id.indexOf("_design") === -1) {
                     var doc = row.doc;
-                    debugger;
-                    if ((!argv.find && ! doc[field]) || (argv.find && doc[field] && doc[field].match(find_regexp))) {
+                    if ((!argv.find && ! doc[field]) || (argv.find && doc[field] && find_regexp.test(doc[field]))) {
                         matchingRecords.push(doc);
                     }
                 }
