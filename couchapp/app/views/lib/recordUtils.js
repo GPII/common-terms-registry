@@ -3,7 +3,7 @@ exports.getRecordFields = function(doc) {
     var fields = {};
 
     // fields in common to all records
-    var commonFields = ["uniqueId", "localId", "type","status", "notes", "nameSpace", "permanency", "lastUpdated"];
+    var commonFields = ["uniqueId", "localId", "type","status", "notes", "nameSpace", "permanency", "updated"];
     commonFields.forEach(function(field){
         if (doc[field]) { fields[field] = doc[field]; }
     });
