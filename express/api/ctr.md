@@ -76,20 +76,6 @@ In addition to the common fields described above, operator records have only one
 ## Relationships
 Terms and Operators are unique records that do not refer to another record implicitly. All other record types (aliases, translations, transformations) must refer to a single parent term (see the aliasOf, translationOf, etc. fields proposed above).
 
-## Change Sets
-Updates to existing records are moderated in the Common Terms Registry.  To manage multiple proposed updates to the same set of records, we use a change set that consists of only the differences between the proposed new record and the existing record.  A change set contains the following information.
-
-|Field|Description|
-| --- | --- |
-|ChangeId|A completely unique identifier for this change set.|
-|UniqueId|The unique identifier of the record to be updated.|
-|Changes|The JSON data that represents the proposed changes.  Fields to be deleted are included and set to `null`.|
-|Created|The date at which the change was proposed.|
-|Status| Whether the change set was approved, rejected, or is still under review.  Can be set to "unreviewed", "approved", or "rejected".|
-|Reviewed| The date at which the change was approved or rejected.  Undefined if the change set has not already been reviewed.|
-|Author|The user proposing the changes.|
-|Reviewer|The user approving or rejecting the changes.  Undefined if the change set has not already been reviewed.|
-
 # API REST endpoints
 
 ## POST /api/record
