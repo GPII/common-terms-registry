@@ -90,7 +90,7 @@ Creates a new record.  If an author is supplied, gives them credit, otherwise th
        "termLabel": "New Record",
        "definition": "This is a new record.",
        "notes": "This record was created as an example.",
-        "lastUpdated": "Wed Apr 09 2014 13:30:00 GMT+0200 (CEST)"
+        "updated": "Wed Apr 09 2014 13:30:00 GMT+0200 (CEST)"
      }
      ```
 
@@ -107,7 +107,7 @@ Creates a new record.  If an author is supplied, gives them credit, otherwise th
                "termLabel": "New Record",
                "definition": "This is a new record.",
                "notes": "This record was created as an example.",
-               "lastUpdated": "Wed Apr 09 2014 13:30:00 GMT+0200 (CEST)"
+               "updated": "Wed Apr 09 2014 13:30:00 GMT+0200 (CEST)"
             }
         }
         ```
@@ -139,7 +139,7 @@ Update an existing record.  If an author is supplied, gives them credit, otherwi
                 "termLabel": "Existing Record",
                 "definition": "This is an existing record.",
                 "notes": "This record is another sample record.",
-                "lastUpdated": "Wed Apr 09 2014 13:30:00 GMT+0200 (CEST)"
+                "updated": "Wed Apr 09 2014 13:30:00 GMT+0200 (CEST)"
             }
         }
         ```
@@ -177,17 +177,17 @@ Returns a single record identified by its uniqueId.
                 "termLabel": "org.gnome.settings-daemon.plugins.sound.active",
                 "status": "active",
                 "source": "gnome",
-                "lastUpdated": "Wed Apr 09 2014 13:30:00 GMT+0200 (CEST)"
+                "updated": "Wed Apr 09 2014 13:30:00 GMT+0200 (CEST)"
             },
             "retrievedAt": "Thu Apr 10 2014 13:38:59 GMT+0200 (CEST)"
         }
         ```
 
-## GET /api/records/{?lastUpdated,recordType,offset,limit}
+## GET /api/records/{?updated,recordType,offset,limit}
 The full list of records.  Returns all record types by default.
 
 + Parameters
-    + lastUpdated (optional, string) ... Timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SSZ` Only records updated at or after this time are returned.
+    + updated (optional, string) ... Timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SSZ` Only records updated at or after this time are returned.
     + recordType (optional, string) ... The type of records to return.  Supported values are ("term","alias","transform","translation", and "operator"). Can be repeated to include multiple record types.
     + status (optional, string) ... The record statuses to return (defaults to everything but 'deleted' records).  Can be repeated to include multiple statuses.
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
@@ -211,19 +211,19 @@ The full list of records.  Returns all record types by default.
                         "termLabel": "org.gnome.settings-daemon.plugins.sound.active",
                         "status": "active",
                         "source": "gnome"
-                        "lastUpdated": "Wed Apr 09 2014 13:30:00 GMT+0200 (CEST)"
+                        "updated": "Wed Apr 09 2014 13:30:00 GMT+0200 (CEST)"
                     }
             ],
             "retrievedAt": "Thu Apr 10 2014 13:38:59 GMT+0200 (CEST)"
         }
         ```
 
-## GET /api/terms/{?lastUpdated,offset,limit}
+## GET /api/terms/{?updated,offset,limit}
 The list of standard terms. Equivalent to using /api/records with the query parameter `recordType=term`.  Supports the same query parameters as /api/records except for `recordType`.  Terms include all of their associated records, include aliases, transforms, and translations.
 
 + Parameters
     + status (optional, string) ... The record statuses to return (defaults to everything but 'deleted' records).  Can be repeated to include multiple statuses.
-    + lastUpdated (optional, string) ... Timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SSZ` Only records updated at or after this time are returned.
+    + updated (optional, string) ... Timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SSZ` Only records updated at or after this time are returned.
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
     + limit (optional, string) ... The number of records to return.  Used for pagination.
 
@@ -262,12 +262,12 @@ The list of standard terms. Equivalent to using /api/records with the query para
         }
         ```
 
-## GET /api/aliases/{?lastUpdated,offset,limit}
+## GET /api/aliases/{?updated,offset,limit}
 The list of aliases. Equivalent to using /api/records with the query parameter `recordType=alias`.  Supports the same query parameters as /api/records except for `recordType`.
 
 + Parameters
     + status (optional, string) ... The record statuses to return (defaults to everything but 'deleted' records).  Can be repeated to include multiple statuses.
-    + lastUpdated (optional, string) ... Timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SSZ` Only records updated at or after this time are returned.
+    + updated (optional, string) ... Timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SSZ` Only records updated at or after this time are returned.
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
     + limit (optional, string) ... The number of records to return.  Used for pagination.
 
@@ -289,37 +289,37 @@ The list of aliases. Equivalent to using /api/records with the query parameter `
                         "termLabel": "org.gnome.settings-daemon.plugins.sound.active",
                         "status": "active",
                         "source": "gnome"
-                        "lastUpdated": "Wed Apr 09 2014 13:30:00 GMT+0200 (CEST)"
+                        "updated": "Wed Apr 09 2014 13:30:00 GMT+0200 (CEST)"
                     }
             ],
             "retrievedAt": "Thu Apr 10 2014 13:38:59 GMT+0200 (CEST)"
         }
         ```
 
-## GET /api/transforms/{?lastUpdated,offset,limit}
+## GET /api/transforms/{?updated,offset,limit}
 The list of transforms. Equivalent to using /api/records with the query parameter `recordType=transform`.  Supports the same query parameters as /api/records except for `recordType`.
 
 + Parameters
     + status (optional, string) ... The record statuses to return (defaults to everything but 'deleted' records).  Can be repeated to include multiple statuses.
-    + lastUpdated (optional, string) ... Timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SSZ` Only records updated at or after this time are returned.
+    + updated (optional, string) ... Timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SSZ` Only records updated at or after this time are returned.
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
     + limit (optional, string) ... The number of records to return.  Used for pagination.
 
-## GET /api/translations/{?lastUpdated,offset,limit}
+## GET /api/translations/{?updated,offset,limit}
 The list of translations. Equivalent to using /api/records with the query parameter `recordType=translation`.  Supports the same query parameters as /api/records except for `recordType`.
 
 + Parameters
     + status (optional, string) ... The record statuses to return (defaults to everything but 'deleted' records).  Can be repeated to include multiple statuses.
-    + lastUpdated (optional, string) ... Timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SSZ` Only records updated at or after this time are returned.
+    + updated (optional, string) ... Timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SSZ` Only records updated at or after this time are returned.
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
     + limit (optional, string) ... The number of records to return.  Used for pagination.
 
-## GET /api/operators/{?lastUpdated,offset,limit}
+## GET /api/operators/{?updated,offset,limit}
 The list of operators.  Equivalent to using /api/records with the query parameter `recordType=operator`.  Supports the same query parameters as /api/records except for `recordType`.
 
 + Parameters
     + status (optional, string) ... The record statuses to return (defaults to everything but 'deleted' records).  Can be repeated to include multiple statuses.
-    + lastUpdated (optional, string) ... Timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SSZ` Only records updated at or after this time are returned.
+    + updated (optional, string) ... Timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SSZ` Only records updated at or after this time are returned.
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
     + limit (optional, string) ... The number of records to return.  Used for pagination.
 
@@ -359,10 +359,10 @@ Performs a full text search of all data, returns matching terms.  Only standard 
                             "notes": "The original alias record contained the following additional information:\n\ndefinition:Allow selection of 6 dot computer braille\nuserPreference:6 dot computer braille table\nvalueSpace:Multiple options based on the grade supported with MA\ngroup:Braille,Everywhere\nid:3\n",
                             "status": "unreviewed",
                             "source": "mobileAccessCf"
-                            "lastUpdated": "Wed Apr 09 2014 13:30:00 GMT+0200 (CEST)"
+                            "updated": "Wed Apr 09 2014 13:30:00 GMT+0200 (CEST)"
                         }
                     ],
-                    "lastUpdated": "Wed Apr 02 2014 13:30:00 GMT+0200 (CEST)"
+                    "updated": "Wed Apr 02 2014 13:30:00 GMT+0200 (CEST)"
                 }
             ],
             "retrievedAt": "Thu Apr 10 2014 13:38:59 GMT+0200 (CEST)"
@@ -403,10 +403,10 @@ Suggest the correct common term to use.  Performs a search as in /api/search, bu
                             "notes": "The original alias record contained the following additional information:\n\ndefinition:Allow selection of 6 dot computer braille\nuserPreference:6 dot computer braille table\nvalueSpace:Multiple options based on the grade supported with MA\ngroup:Braille,Everywhere\nid:3\n",
                             "status": "unreviewed",
                             "source": "mobileAccessCf"
-                            "lastUpdated": "Wed Apr 09 2014 13:30:00 GMT+0200 (CEST)"
+                            "updated": "Wed Apr 09 2014 13:30:00 GMT+0200 (CEST)"
                         }
                     ],
-                    "lastUpdated": "Wed Apr 02 2014 13:30:00 GMT+0200 (CEST)"
+                    "updated": "Wed Apr 02 2014 13:30:00 GMT+0200 (CEST)"
                 }
             ],
             "retrievedAt": "Thu Apr 10 2014 13:38:59 GMT+0200 (CEST)"
