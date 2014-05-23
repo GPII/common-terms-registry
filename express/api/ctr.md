@@ -389,30 +389,23 @@ Suggest the correct common term to use.  Performs a search as in /api/search, bu
             "ok": true,
             "total_rows": 1,
             "offset": 0,
-            "limit": 1,
-            "q": "soundActive",
-            "sort": "uniqueId ASC",
+            "limit": 100,
+            "filters": {
+                "updated": "2014-04-01T00:00:00.000Z",
+                "statuses": [ "unreviewed" ],
+                "recordTypes": [ "alias" ]
+            },
             "records": [
-                {
-                    "type": "GENERAL",
-                    "uniqueId": "6DotComputerBrailleTable",
-                    "definition": "Allow selection of 6 dot computer braille",
-                    "status": "unreviewed",
-                    "source": "gpii",
-                    "aliases": [
-                        {
-                            "type": "ALIAS",
-                            "uniqueId": "6 dot computer braille table",
-                            "aliasOf": "6DotComputerBrailleTable",
-                            "termLabel": "6 dot computer braille table",
-                            "notes": "The original alias record contained the following additional information:\n\ndefinition:Allow selection of 6 dot computer braille\nuserPreference:6 dot computer braille table\nvalueSpace:Multiple options based on the grade supported with MA\ngroup:Braille,Everywhere\nid:3\n",
-                            "status": "unreviewed",
-                            "source": "mobileAccessCf"
-                            "updated": "Wed Apr 09 2014 13:30:00 GMT+0200 (CEST)"
-                        }
-                    ],
-                    "updated": "Wed Apr 02 2014 13:30:00 GMT+0200 (CEST)"
-                }
+                     {
+                        "type": "ALIAS",
+                        "uniqueId": "org.gnome.settings-daemon.plugins.sound.active",
+                        "aliasOf": "soundActive",
+                        "notes": "The original alias record contained the following additional information:\r\n\r\ndefaultValue:TRUE\r\nuserPreference:org.gnome.settings-daemon.plugins.sound.active\r\nvalueSpace:Boolean\r\nid:662\r\n",
+                        "termLabel": "org.gnome.settings-daemon.plugins.sound.active",
+                        "status": "active",
+                        "source": "gnome",
+                        "updated": "Wed Apr 09 2014 13:30:00 GMT+0200 (CEST)"
+                    }
             ],
             "retrievedAt": "Thu Apr 10 2014 13:38:59 GMT+0200 (CEST)"
         }
