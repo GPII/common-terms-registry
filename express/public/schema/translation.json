@@ -1,5 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/",
     "type": "object",
     "allOf": [
         {"$ref": "record.json"},

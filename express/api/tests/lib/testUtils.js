@@ -1,25 +1,29 @@
 "use strict";
 // Utility functions for common sanity checks
 var Validator = require('jsonschema').Validator;
-var validator = new Validator();
 
 // Cache JSON Schemas for all record types for use in isSaneRecord()
 var schemaFiles = {
+    "record": "record.json",
+    "alias": "alias.json",
+    "general": "term.json",
     "term": "term.json",
     "transform": "transform.json",
     "translation": "translation.json",
-    "operator": "operator.json",
-    "alias": "alias.json",
-    "record": "record.json"
+    "operator": "operator.json"
 };
 
 var schemas = {};
 
 Object.keys(schemaFiles).forEach(function(key){
     var schemaKey = schemaFiles[key];
-    var schema = require("../../../public/schema/" + schemaKey);
-    schemas[key] = schema;
-    validator.addSchema(schema,schemaKey);
+    try {
+        var schema = require("../../../public/schema/" + schemaKey);
+        schemas[key] = schema;
+    }
+    catch (e) {
+        console.error(JSON.stringify(e));
+    }
 });
 
 
@@ -36,6 +40,7 @@ module.exports.isSaneRecord = function isSaneRecord(record) {
         return false;
     }
     try {
+        var validator = new Validator();
         var validationOutput = validator.validate(record, schema);
 
         if (validationOutput && validationOutput.errors && validationOutput.errors.length > 0) {
@@ -44,7 +49,6 @@ module.exports.isSaneRecord = function isSaneRecord(record) {
         }
     }
     catch (e) {
-        debugger;
         console.log(e);
         return false;
     }

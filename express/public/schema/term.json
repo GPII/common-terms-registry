@@ -7,14 +7,14 @@
             "required": ["termLabel","definition"],
             "properties": {
                 "uniqueId": {
-                    "$ref": "record.json#/definitions/uniqueId",
+                    "$ref": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/record.json#/definitions/uniqueId",
                     "pattern": "^[a-z]+([A-Z][a-z]+)*$"
                 },
-                "valueSpace": {"$ref": "record.json#/definitions/valueSpace"},
-                "termLabel": {"$ref": "record.json#/definitions/termLabel"},
-                "definition": {"$ref": "record.json#/definitions/definition"},
-                "uses": {"$ref": "record.json#/definitions/uses"},
-                "applicationUniqueFlag": {"$ref": "record.json#/definitions/applicationUniqueFlag"}
+                "valueSpace": {"$ref": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/record.json#/definitions/valueSpace"},
+                "termLabel": {"$ref": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/record.json#/definitions/termLabel"},
+                "definition": {"$ref": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/record.json#/definitions/definition"},
+                "uses": {"$ref": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/record.json#/definitions/uses"},
+                "applicationUniqueFlag": {"$ref": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/record.json#/definitions/applicationUniqueFlag"}
             }
         }
     ]
