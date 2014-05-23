@@ -183,7 +183,7 @@ Returns a single record identified by its uniqueId.
         }
         ```
 
-## GET /api/records/{?updated,recordType,offset,limit}
+## GET /api/records/{?updated,status,recordType,offset,limit}
 The full list of records.  Returns all record types by default.
 
 + Parameters
@@ -223,7 +223,7 @@ The full list of records.  Returns all record types by default.
         }
         ```
 
-## GET /api/terms/{?updated,offset,limit}
+## GET /api/terms/{?updated,status,offset,limit}
 The list of standard terms. Equivalent to using /api/records with the query parameter `recordType=term`.  Supports the same query parameters as /api/records except for `recordType`.  Terms include all of their associated records, include aliases, transforms, and translations.
 
 + Parameters
@@ -267,7 +267,7 @@ The list of standard terms. Equivalent to using /api/records with the query para
         }
         ```
 
-## GET /api/aliases/{?updated,offset,limit}
+## GET /api/aliases/{?updated,status,offset,limit}
 The list of aliases. Equivalent to using /api/records with the query parameter `recordType=alias`.  Supports the same query parameters as /api/records except for `recordType`.
 
 + Parameters
@@ -301,7 +301,7 @@ The list of aliases. Equivalent to using /api/records with the query parameter `
         }
         ```
 
-## GET /api/transforms/{?updated,offset,limit}
+## GET /api/transforms/{?updated,status,offset,limit}
 The list of transforms. Equivalent to using /api/records with the query parameter `recordType=transform`.  Supports the same query parameters as /api/records except for `recordType`.
 
 + Parameters
@@ -310,7 +310,7 @@ The list of transforms. Equivalent to using /api/records with the query paramete
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
     + limit (optional, string) ... The number of records to return.  Used for pagination.
 
-## GET /api/translations/{?updated,offset,limit}
+## GET /api/translations/{?updated,status,offset,limit}
 The list of translations. Equivalent to using /api/records with the query parameter `recordType=translation`.  Supports the same query parameters as /api/records except for `recordType`.
 
 + Parameters
@@ -319,7 +319,7 @@ The list of translations. Equivalent to using /api/records with the query parame
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
     + limit (optional, string) ... The number of records to return.  Used for pagination.
 
-## GET /api/operators/{?updated,offset,limit}
+## GET /api/operators/{?updated,status,offset,limit}
 The list of operators.  Equivalent to using /api/records with the query parameter `recordType=operator`.  Supports the same query parameters as /api/records except for `recordType`.
 
 + Parameters

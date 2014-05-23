@@ -1,0 +1,91 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+
+    "definitions": {
+        "aliasOf": {
+            "type": "string",
+            "description": "The unique identifier of the parent record this record is an alias of."
+        },
+        "applicationUniqueFlag": {
+            "type": "boolean",
+            "description": "Whether this term is unique to a particular application."
+        },
+        "definition": {
+            "type": "string",
+            "description": "A description of the term."
+        },
+        "namespace": {
+            "type": "string",
+            "description": "The namespace to use in combination with the UniqueID to construct a URI that refers to the record."
+        },
+        "notes": {
+            "type": "string",
+            "description": "Any additional information associated with this record."
+        },
+        "permanency": {
+            "type": "string",
+            "description": "An indication of how likely a field is to change over time."
+        },
+        "status": {
+            "enum": ["unreviewed", "candidate", "active", "deleted"],
+            "description": "The review status of this record."
+        },
+        "termLabel": {
+            "type": "string",
+            "description": "A short label for this term as it would appear in a menu or listing."
+        },
+        "translationOf": {
+            "type": "string",
+            "description": "The unique identifier of the parent record this record is a translation of."
+        },
+        "type": {
+            "enum": ["term", "alias", "operator", "translation", "transform", "TERM", "GENERAL", "ALIAS", "OPERATOR", "TRANSLATION", "TRANSFORM"],
+            "description": "The type of record, i.e. term, alias, translation, transformation, operator."
+        },
+        "uniqueId": {
+            "type": "string",
+            "description": "A completely unique identifier for this record."
+        },
+        "updated": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date at which the record was last updated."
+        },
+        "uses": {
+            "type": "string",
+            "description": "A description of other systems that use this term and how they use it."
+        },
+        "valueSpace": {
+            "type": "string",
+            "description": "A description of the values allowed for this term."
+        }
+    },
+
+
+    "properties": {
+        "type": {
+            "$ref": "#/definitions/type"
+        },
+        "permanency": {
+            "$ref": "#/definitions/permanency"
+        },
+        "namespace": {
+            "$ref": "#/definitions/namespace"
+        },
+        "uniqueId": {
+            "$ref": "#/definitions/uniqueId"
+        },
+        "notes": {
+            "$ref": "#/definitions/notes"
+        },
+        "status": {
+            "$ref": "#/definitions/status"
+        },
+        "updated": {
+            "$ref": "#/definitions/updated"
+        }
+    },
+
+    "required": ["uniqueId", "type", "status", "updated"]
+}
