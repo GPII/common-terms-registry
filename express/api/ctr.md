@@ -239,8 +239,8 @@ The list of standard terms. Equivalent to using /api/records with the query para
         {
             "ok": true,
             "total_rows": 1,
-            "startpos": 0,
-            "pagesize": 1,
+            "offset": 0,
+            "limit": 1,
             "records": [
                     {
                         "type": "GENERAL",
@@ -283,8 +283,8 @@ The list of aliases. Equivalent to using /api/records with the query parameter `
         {
             "ok": true,
             "total_rows": 1,
-            "startpos": 0,
-            "pagesize": 1,
+            "offset": 0,
+            "limit": 1,
             "records": [
                      {
                         "type": "ALIAS",
@@ -344,8 +344,8 @@ Performs a full text search of all data, returns matching terms.  Only standard 
         {
             "ok": true,
             "total_rows": 1,
-            "startpos": 0,
-            "pagesize": 1,
+            "offset": 0,
+            "limit": 1,
             "q": "soundActive",
             "sort": "uniqueId ASC",
             "records": [
@@ -388,8 +388,8 @@ Suggest the correct common term to use.  Performs a search as in /api/search, bu
         {
             "ok": true,
             "total_rows": 1,
-            "startpos": 0,
-            "pagesize": 1,
+            "offset": 0,
+            "limit": 1,
             "q": "soundActive",
             "sort": "uniqueId ASC",
             "records": [
