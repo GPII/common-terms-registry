@@ -1,0 +1,16 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "alias.json",
+    "type": "object",
+    "allOf": [
+        {"$ref": "record.json"},
+        {
+            "required": ["termLabel","aliasOf"],
+            "properties": {
+                "aliasOf":   {"$ref": "record.json#/aliasOf"},
+                "termLabel": {"$ref": "record.json#/termLabel"},
+                "uses":      {"$ref": "record.json#/uses"}
+            }
+        }
+    ]
+}

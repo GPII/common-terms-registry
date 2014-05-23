@@ -1,0 +1,13 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "allOf": [
+        {"$ref": "record.json"},
+        {
+            "required": ["definition"],
+            "properties": {
+                "definition": {"$ref": "record.json#/definitions/definition"}
+            }
+        }
+    ]
+}

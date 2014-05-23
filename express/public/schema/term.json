@@ -1,0 +1,21 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "allOf": [
+        {"$ref": "record.json"},
+        {
+            "required": ["termLabel","definition"],
+            "properties": {
+                "uniqueId": {
+                    "$ref": "record.json#/definitions/uniqueId",
+                    "pattern": "^[a-z]+([A-Z][a-z]+)*$"
+                },
+                "valueSpace": {"$ref": "record.json#/definitions/valueSpace"},
+                "termLabel": {"$ref": "record.json#/definitions/termLabel"},
+                "definition": {"$ref": "record.json#/definitions/definition"},
+                "uses": {"$ref": "record.json#/definitions/uses"},
+                "applicationUniqueFlag": {"$ref": "record.json#/definitions/applicationUniqueFlag"}
+            }
+        }
+    ]
+}

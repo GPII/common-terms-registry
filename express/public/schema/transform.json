@@ -1,0 +1,13 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "allOf": [
+        {"$ref": "alias.json"},
+        {
+            "required": ["valueSpace"],
+            "properties": {
+                "valueSpace": {"$ref": "record.json#/definitions/valueSpace" }
+            }
+        }
+    ]
+}
