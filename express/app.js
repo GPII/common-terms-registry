@@ -36,6 +36,9 @@ app.use(session({ secret: 'Printer, printer take a hint-ter.'}));
 // /api/user/* is provided by the express-user-couchdb package
 app.use(couchUser(config));
 
+// Mount the JSON schemas separately so that we have the option to decompose them into a separate module later, and so that the doc links and web links match
+app.use("/schema",express.static(__dirname + '/schema'));
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Most static content including root page
