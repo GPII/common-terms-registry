@@ -19,6 +19,8 @@ All records in the Common Terms Registry have the following common fields:
 |Status|The review status of this record.|
 |Updated|The date at which the record was last updated.|
 
+[View JSON Schema for records](../schema/record.json)
+
 ## Term
 A term is a single canonical way of describing a need or solution. For example, users who require high-contrast schemes may be concerned about the ability to set a high-contrast background and foreground color. Each of these would be a common term, identified by a persistent ID such as backgroundColor or foregroundColor.  In addition to the common fields described above, term records have the following fields:
 
@@ -30,6 +32,9 @@ A term is a single canonical way of describing a need or solution. For example, 
 |ApplicationUniqueFlag|Whether this term is unique to a particular application.|
 |Uses|A description of other systems that use this term and how they use it.|
 
+[View JSON Schema for terms](../schema/term.json)
+
+
 ## Alias
 An alias is another name for a standard term, with no other differences. When describing system settings and other user preferences, the difference may be simply a matter of formatting. For example, one program might have a registry entry or setting for max.volume and another might have a registry entry or setting called max_volume. Other examples may simply be a matter of alternate wording. For example, one developer may use “loudness” instead of “volume” when describing their settings. In addition to the common fields described above, alias records have the following fields:
 
@@ -38,6 +43,9 @@ An alias is another name for a standard term, with no other differences. When de
 |AliasOf|The unique identifier of the parent record this record is an alias of.|
 |TermLabel|A short label for this term as it would appear in a menu or listing.|
 |Uses|A description of other systems that use this term and how they use it.|
+
+[View JSON Schema for aliases](../schema/alias.json)
+
 
 ## Translation
 A translation is representation of a term in another language with no other differences. For example, in US English, the preference for a particular background color might be presented as “backgroundColor”. In Commonwealth countries, that might be presented as “backgroundColour”. In addition to the common fields described above, translation records have the following fields:
@@ -49,6 +57,8 @@ A translation is representation of a term in another language with no other diff
 |TermLabel|A translation of the short label for the parent record as it would appear in a menu or listing.|
 |Definition|A translation of the definition of the parent record.|
 |Uses|A description of other systems that use this term and how they use it.|
+
+[View JSON Schema for translations](../schema/translation.json)
 
 ## Transformation
 Translations and aliases present a term using different words or formatting, with no meaningful difference in the values used to describe a user’s needs or preferences. For example, two devices may have a volume control that can be set from 0 to 10 in increments of 1. If those two devices have the same maximum volume and each of their corresponding volume levels are the same loudness, then a user who prefers (or requires) for the volume to be set to 10 would have the same experience in having that preference applied to each device. It wouldn't matter if one device called the control “volume” and the other called the control “loudness”. On the other hand, if two devices have a different maximum volume, are adjustable using different increments, or have a different perceived loudness when set to the same value, then something else is required.
@@ -62,6 +72,9 @@ For these cases, the Common Terms Registry provides a transformation. A transfor
 |TermLabel|A translation of the short label for the parent record as it would appear in a menu or listing.|
 |Uses|A description of other systems that use this term and how they use it.|
 
+[View JSON Schema for transformations](../schema/transformation.json)
+
+
 ## Operator
 There are some preferences that are conditional, and depend on the environment and the content an AT user is interacting with. For example, an AT user may wish to have two different color schemes, one for daylight hours, and one for nighttime.
 
@@ -72,6 +85,8 @@ In addition to the common fields described above, operator records have only one
 |Field|Description|
 | --- | --- |
 |Definition|A clear definition of the operator.|
+
+[View JSON Schema for operators](../schema/operator.json)
 
 ## Relationships
 Terms and Operators are unique records that do not refer to another record implicitly. All other record types (aliases, translations, transformations) must refer to a single parent term (see the aliasOf, translationOf, etc. fields proposed above).
@@ -162,7 +177,7 @@ Flags a record as deleted.  If an author is supplied, gives them credit, otherwi
 ## GET /api/record/{uniqueId}
 Returns a single record identified by its uniqueId.
 
-+ Response 200 (application/json)
++ Response 200 (application/record+json)
 
     + Body
 
@@ -193,7 +208,10 @@ The full list of records.  Returns all record types by default.
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
     + limit (optional, string) ... The number of records to return.  Used for pagination.
 
-+ Response 200 (application/json)
++ Response 200 (application/headers+json)
+    + Headers
+            Content-Type: application/record+json; profile=https://terms.raisingthefloor.org/schema/records.json#
+            Link: <https://terms.raisingthefloor.org/schema/records.json#>; rel="describedBy"
     + Body
 
         ```
@@ -232,7 +250,10 @@ The list of standard terms. Equivalent to using /api/records with the query para
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
     + limit (optional, string) ... The number of records to return.  Used for pagination.
 
-+ Response 200 (application/json)
++ Response 200 (application/headers+json)
+    + Headers
+            Content-Type: application/record+json; profile=https://terms.raisingthefloor.org/schema/records.json#
+            Link: <https://terms.raisingthefloor.org/schema/records.json#>; rel="describedBy"
     + Body
 
         ```
@@ -276,7 +297,10 @@ The list of aliases. Equivalent to using /api/records with the query parameter `
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
     + limit (optional, string) ... The number of records to return.  Used for pagination.
 
-+ Response 200 (application/json)
++ Response 200 (application/records+json)
+    + Headers
+            Content-Type: application/record+json; profile=https://terms.raisingthefloor.org/schema/records.json#
+            Link: <https://terms.raisingthefloor.org/schema/records.json#>; rel="describedBy"
     + Body
 
         ```
@@ -337,7 +361,10 @@ Performs a full text search of all data, returns matching terms.  Only standard 
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
     + limit (optional, string) ... The number of records to return.  Used for pagination.
 
-+ Response 200 (application/json)
++ Response 200 (application/search+json)
+    + Headers
+            Content-Type: application/record+json; profile=https://terms.raisingthefloor.org/schema/search.json#
+            Link: <https://terms.raisingthefloor.org/schema/search.json#>; rel="describedBy"
     + Body
 
         ```
@@ -381,7 +408,10 @@ Suggest the correct common term to use.  Performs a search as in /api/search, bu
     + q (required, string) ... The query string to match.  Can either consist of a word or phrase as plain text, or can use [lucene's query syntax][1] to construct more complex searches.
     + sort (optional,string) ... The sort order to use when displaying records.  Conforms to [lucene's query syntax][1].
 
-+ Response 200 (application/json)
++ Response 200 (application/search+json)
+    + Headers
+            Content-Type: application/record+json; profile=https://terms.raisingthefloor.org/schema/search.json#
+            Link: <https://terms.raisingthefloor.org/schema/search.json#>; rel="describedBy"
     + Body
 
         ```
