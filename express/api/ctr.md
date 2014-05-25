@@ -210,8 +210,8 @@ The full list of records.  Returns all record types by default.
 
 + Response 200 (application/headers+json)
     + Headers
-            Content-Type: application/record+json; profile=https://terms.raisingthefloor.org/schema/records.json#
-            Link: <https://terms.raisingthefloor.org/schema/records.json#>; rel="describedBy"
+        + Content-Type: application/record+json; profile=https://terms.raisingthefloor.org/schema/records.json#
+        + Link: <https://terms.raisingthefloor.org/schema/records.json#>; rel="describedBy"
     + Body
 
         ```
@@ -252,8 +252,8 @@ The list of standard terms. Equivalent to using /api/records with the query para
 
 + Response 200 (application/headers+json)
     + Headers
-            Content-Type: application/record+json; profile=https://terms.raisingthefloor.org/schema/records.json#
-            Link: <https://terms.raisingthefloor.org/schema/records.json#>; rel="describedBy"
+        + Content-Type: application/record+json; profile=https://terms.raisingthefloor.org/schema/records.json#
+        + Link: <https://terms.raisingthefloor.org/schema/records.json#>; rel="describedBy"
     + Body
 
         ```
@@ -299,8 +299,8 @@ The list of aliases. Equivalent to using /api/records with the query parameter `
 
 + Response 200 (application/records+json)
     + Headers
-            Content-Type: application/record+json; profile=https://terms.raisingthefloor.org/schema/records.json#
-            Link: <https://terms.raisingthefloor.org/schema/records.json#>; rel="describedBy"
+        + Content-Type: application/record+json; profile=https://terms.raisingthefloor.org/schema/records.json#
+        + Link: <https://terms.raisingthefloor.org/schema/records.json#>; rel="describedBy"
     + Body
 
         ```
@@ -363,8 +363,8 @@ Performs a full text search of all data, returns matching terms.  Only standard 
 
 + Response 200 (application/search+json)
     + Headers
-            Content-Type: application/record+json; profile=https://terms.raisingthefloor.org/schema/search.json#
-            Link: <https://terms.raisingthefloor.org/schema/search.json#>; rel="describedBy"
+        + Content-Type: application/record+json; profile=https://terms.raisingthefloor.org/schema/search.json#
+        + Link: <https://terms.raisingthefloor.org/schema/search.json#>; rel="describedBy"
     + Body
 
         ```
@@ -410,8 +410,8 @@ Suggest the correct common term to use.  Performs a search as in /api/search, bu
 
 + Response 200 (application/search+json)
     + Headers
-            Content-Type: application/record+json; profile=https://terms.raisingthefloor.org/schema/search.json#
-            Link: <https://terms.raisingthefloor.org/schema/search.json#>; rel="describedBy"
+        + Content-Type: application/record+json; profile=https://terms.raisingthefloor.org/schema/search.json#
+        + Link: <https://terms.raisingthefloor.org/schema/search.json#>; rel="describedBy"
     + Body
 
         ```
