@@ -90,7 +90,7 @@ Creates a new record.  If an author is supplied, gives them credit, otherwise th
        "termLabel": "New Record",
        "definition": "This is a new record.",
        "notes": "This record was created as an example.",
-        "updated": "Wed Apr 09 2014 13:30:00 GMT+0200 (CEST)"
+        "updated": "2014-05-25T11:23:32.441Z"
      }
      ```
 
@@ -107,7 +107,7 @@ Creates a new record.  If an author is supplied, gives them credit, otherwise th
                "termLabel": "New Record",
                "definition": "This is a new record.",
                "notes": "This record was created as an example.",
-               "updated": "Wed Apr 09 2014 13:30:00 GMT+0200 (CEST)"
+               "updated": "2014-05-25T11:23:32.441Z"
             }
         }
         ```
@@ -139,7 +139,7 @@ Update an existing record.  If an author is supplied, gives them credit, otherwi
                 "termLabel": "Existing Record",
                 "definition": "This is an existing record.",
                 "notes": "This record is another sample record.",
-                "updated": "Wed Apr 09 2014 13:30:00 GMT+0200 (CEST)"
+                "updated": "2014-05-25T11:23:32.441Z"
             }
         }
         ```
@@ -177,9 +177,9 @@ Returns a single record identified by its uniqueId.
                 "termLabel": "org.gnome.settings-daemon.plugins.sound.active",
                 "status": "active",
                 "source": "gnome",
-                "updated": "Wed Apr 09 2014 13:30:00 GMT+0200 (CEST)"
+                "updated": "2014-05-25T11:23:32.441Z"
             },
-            "retrievedAt": "Thu Apr 10 2014 13:38:59 GMT+0200 (CEST)"
+            "retrievedAt": "2014-05-25T11:23:32.441Z"
         }
         ```
 
@@ -206,7 +206,7 @@ The full list of records.  Returns all record types by default.
                 "updated": "2014-04-01T00:00:00.000Z",
                 "statuses": [ "unreviewed" ],
                 "recordTypes": [ "alias" ]
-            }
+            },
             "records": [
                      {
                         "type": "ALIAS",
@@ -216,10 +216,10 @@ The full list of records.  Returns all record types by default.
                         "termLabel": "org.gnome.settings-daemon.plugins.sound.active",
                         "status": "active",
                         "source": "gnome"
-                        "updated": "Wed Apr 09 2014 13:30:00 GMT+0200 (CEST)"
+                        "updated": "2014-05-25T11:23:32.441Z"
                     }
             ],
-            "retrievedAt": "Thu Apr 10 2014 13:38:59 GMT+0200 (CEST)"
+            "retrievedAt": "2014-05-25T11:23:32.441Z"
         }
         ```
 
@@ -263,7 +263,7 @@ The list of standard terms. Equivalent to using /api/records with the query para
                         ]
                     }
             ],
-            "retrievedAt": "Thu Apr 10 2014 13:38:59 GMT+0200 (CEST)"
+            "retrievedAt": "2014-05-25T11:23:32.441Z"
         }
         ```
 
@@ -294,10 +294,10 @@ The list of aliases. Equivalent to using /api/records with the query parameter `
                         "termLabel": "org.gnome.settings-daemon.plugins.sound.active",
                         "status": "active",
                         "source": "gnome"
-                        "updated": "Wed Apr 09 2014 13:30:00 GMT+0200 (CEST)"
+                        "updated": "2014-05-25T11:23:32.441Z"
                     }
             ],
-            "retrievedAt": "Thu Apr 10 2014 13:38:59 GMT+0200 (CEST)"
+            "retrievedAt": "2014-05-25T11:23:32.441Z"
         }
         ```
 
@@ -364,13 +364,13 @@ Performs a full text search of all data, returns matching terms.  Only standard 
                             "notes": "The original alias record contained the following additional information:\n\ndefinition:Allow selection of 6 dot computer braille\nuserPreference:6 dot computer braille table\nvalueSpace:Multiple options based on the grade supported with MA\ngroup:Braille,Everywhere\nid:3\n",
                             "status": "unreviewed",
                             "source": "mobileAccessCf"
-                            "updated": "Wed Apr 09 2014 13:30:00 GMT+0200 (CEST)"
+                            "updated": "2014-05-25T11:23:32.441Z"
                         }
                     ],
-                    "updated": "Wed Apr 02 2014 13:30:00 GMT+0200 (CEST)"
+                    "updated": "2014-05-25T11:23:32.441Z"
                 }
             ],
-            "retrievedAt": "Thu Apr 10 2014 13:38:59 GMT+0200 (CEST)"
+            "retrievedAt": "2014-05-25T11:23:32.441Z"
         }
         ```
 
@@ -391,7 +391,7 @@ Suggest the correct common term to use.  Performs a search as in /api/search, bu
             "offset": 0,
             "limit": 100,
             "filters": {
-                "updated": "2014-04-01T00:00:00.000Z",
+                "updated": "2014-05-25T11:23:32.441Z",
                 "statuses": [ "unreviewed" ],
                 "recordTypes": [ "alias" ]
             },
@@ -404,10 +404,10 @@ Suggest the correct common term to use.  Performs a search as in /api/search, bu
                         "termLabel": "org.gnome.settings-daemon.plugins.sound.active",
                         "status": "active",
                         "source": "gnome",
-                        "updated": "Wed Apr 09 2014 13:30:00 GMT+0200 (CEST)"
+                        "updated": "2014-05-25T11:23:32.441Z"
                     }
             ],
-            "retrievedAt": "Thu Apr 10 2014 13:38:59 GMT+0200 (CEST)"
+            "retrievedAt": "2014-05-25T11:23:32.441Z"
         }
         ```
 
