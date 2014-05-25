@@ -15,32 +15,29 @@
         "limit": {
             "type": "number"
         },
-        "filters": {
+        "updated": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "statuses": {
             "anyOf": [
                 {
-                    "updated": {
-                        "type": "string",
-                        "format": "date-time"
-                    }
-                },
-                {
-                    "statuses": {
-                        "anyOf": [
-                            {
-                                "$ref": "record.json#/definitions/status"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "recordTypes": {
-                        "anyOf": [
-                            {
-                                "$ref": "record.json#/definitions/type"
-                            }
-                        ]
-                    }
+                    "$ref": "record.json#/definitions/status"
                 }
+            ]
+        },
+        "recordTypes": {
+            "anyOf": [
+                {
+                    "$ref": "record.json#/definitions/type"
+                }
+            ]
+        },
+        "filters": {
+            "anyOf": [
+                {"$ref": "#/definitions/updated"},
+                {"$ref": "#/definitions/statuses"},
+                {"$ref": "#/definitions/recordTypes"}
             ]
         },
         "records": {
@@ -52,9 +49,6 @@
                     },
                     {
                         "$ref": "alias.json"
-                    },
-                    {
-                        "$ref": "transform.json"
                     },
                     {
                         "$ref": "transform.json"
