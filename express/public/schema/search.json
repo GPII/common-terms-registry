@@ -1,0 +1,74 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+
+    "definitions": {
+        "ok": {
+            "type": "boolean"
+        },
+        "total_rows": {
+            "type": "number"
+        },
+        "offset": {
+            "type": "number"
+        },
+        "limit": {
+            "type": "number"
+        },
+        "q" : {
+            "type": "string"
+        },
+        "records": {
+            "type": "array",
+            "items": {
+                "anyOf": [
+                    {
+                        "$ref": "term.json"
+                    },
+                    {
+                        "$ref": "alias.json"
+                    },
+                    {
+                        "$ref": "transform.json"
+                    },
+                    {
+                        "$ref": "translation.json"
+                    },
+                    {
+                        "$ref": "operator.json"
+                    }
+                ]
+            }
+        },
+        "retrievedAt": {
+            "type": "string",
+            "format": "date-time"
+        }
+    },
+
+    "properties": {
+        "ok": {
+            "$ref": "#/definitions/ok"
+        },
+        "total_rows": {
+            "$ref": "#/definitions/total_rows"
+        },
+        "offset": {
+            "$ref": "#/definitions/offset"
+        },
+        "limit": {
+            "$ref": "#/definitions/limit"
+        },
+        "filters": {
+            "$ref": "#/definitions/filters"
+        },
+        "records": {
+            "$ref": "#/definitions/records"
+        },
+        "retrievedAt": {
+            "$ref": "#/definitions/retrievedAt"
+        }
+    },
+
+    "required": ["ok", "q", "total_rows", "offset", "limit", "records", "retrievedAt"]
+}
