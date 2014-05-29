@@ -3,6 +3,7 @@
 module.exports = function(config) {
     var fluid = require('infusion');
 
+    var schemaHelper = require("../../schema/lib/schema-helper")(config);
     var namespace = "gpii.ctr.record";
     var record = fluid.registerNamespace(namespace);
     var request = require('request');
@@ -29,9 +30,7 @@ module.exports = function(config) {
         record.req = req;
         record.res = res;
 
-        // TODO:  Pull this from the configuration so that the URLs, etc. can be defined for both testing and production
-        res.set('Content-Type', 'application/message+json; profile=https://terms.raisingthefloor.org/schema/message.json');
-        res.set('Link', 'https://terms.raisingthefloor.org/schema/message.json#; rel="describedBy"');
+        schemaHelper.setHeaders(res, "message");
 
         record.results = {
             "ok": true,
@@ -63,8 +62,7 @@ module.exports = function(config) {
             }
             else {
                 // TODO:  Generalize this to the specific record type returned
-                res.set('Content-Type', 'application/record+json; profile=https://terms.raisingthefloor.org/schema/record.json#');
-                res.set('Link', 'https://terms.raisingthefloor.org/schema/search.json#; rel="describedBy"');
+                schemaHelper.setHeaders(res, "record");
                 record.results.record = jsonData.rows[0].value;
                 res.send(200, JSON.stringify(record.results));
             }
@@ -79,10 +77,7 @@ module.exports = function(config) {
 
 
     router.get("/", function(req,res) {
-        // TODO:  Pull this from the configuration so that the URLs, etc. can be defined for both testing and production
-        res.set('Content-Type', 'application/message+json; profile=https://terms.raisingthefloor.org/schema/message.json');
-        res.set('Link', 'https://terms.raisingthefloor.org/schema/message.json#; rel="describedBy"');
-
+        schemaHelper.setHeaders(res, "message");
         return res.send(400,{ok: false, message: "You must provide the required uniqueId in the path to use this interface."});
     });
 
