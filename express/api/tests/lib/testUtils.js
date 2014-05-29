@@ -1,4 +1,4 @@
-// Utility functions for common sanity checks
+// Utility functions for common sanity checks in unit tests
 "use strict";
 
 module.exports = function(config) {
