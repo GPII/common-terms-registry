@@ -21,7 +21,7 @@ app.set('port', config.port || process.env.PORT || 4895);
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 
-// Mount all variations on the module
+// Mount all named variations on the module
 var records = require('../../records')(config);
 app.use('/records', records);
 
