@@ -14,12 +14,13 @@ app.set('view engine', 'handlebars');
 
 var config = {};
 
+var loader = require("./configs/lib/config-loader");
 if ('development' === app.get('env')) {
-    config = require("./configs/express/dev.json");
+    config = loader.loadConfig(require("./configs/express/dev.json"));
     app.use(logger('dev'));
 }
 else {
-    config = require("./configs/express/prod.json");
+    config = loader.loadConfig(require("./configs/express/prod.json"));
     app.use(logger());
 }
 
