@@ -1,6 +1,7 @@
 "use strict";
 
 module.exports = function(config) {
+    var schemaHelper = require("../../schema/lib/schema-helper")(config);
     var fluid = require('infusion');
 
     var quick = config.lookup ? true : false;
@@ -40,6 +41,7 @@ module.exports = function(config) {
 
         search.results.records = records.slice(search.results.offset, search.results.offset + search.results.limit);
 
+        schemaHelper.setHeaders(search.res, "search");
         return search.res.send(200, JSON.stringify(search.results));
     };
 
@@ -90,6 +92,7 @@ module.exports = function(config) {
             search.results.total_rows = 0;
             search.results.records = {};
 
+            schemaHelper.setHeaders(search.res, "search");
             return search.res.send(200, JSON.stringify(search.results));
         }
 
@@ -104,6 +107,8 @@ module.exports = function(config) {
 
     var express = require('express');
     return express.Router().get('/', function(req, res){
+        schemaHelper.setHeaders(res, "message");
+
         // per-request variables need to be defined here, otherwise (for example) the results of the previous search will be returned if the next search has no records
         search.distinctUniqueIds = [];
         search.termHash          = {};
@@ -123,7 +128,6 @@ module.exports = function(config) {
         var quick = config.lookup ? true : false;
 
         // User input validation
-        res.set('Content-Type', 'application/json');
         if (!req.query || !req.query.q) { return res.send(400, JSON.stringify({ok: false, message: 'A search string is required.'})); }
 
         if (quick && (req.query.offset || req.query.limit)) {
