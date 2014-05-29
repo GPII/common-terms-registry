@@ -2,6 +2,7 @@
 
 module.exports = function(config) {
     var fluid = require('infusion');
+    var schemaHelper = require("../../schema/lib/schema-helper")(config);
 
     var namespace = "gpii.ctr.records";
     if (config.recordType) {
@@ -169,6 +170,7 @@ module.exports = function(config) {
         records.results.total_rows = combinedRecords.length;
         records.results.records = combinedRecords.slice(records.results.offset, records.results.offset + records.results.limit);
 
+        schemaHelper.setHeaders(records.res, "records");
         return records.res.send(200, JSON.stringify(records.results));
     };
 
@@ -189,6 +191,7 @@ module.exports = function(config) {
         records.results.records = filteredRecords.slice(records.results.offset, records.results.offset + records.results.limit);
         records.results.total_rows = filteredRecords.length;
 
+        schemaHelper.setHeaders(records.res, "records");
         return records.res.send(200, JSON.stringify(records.results));
     };
 
@@ -205,7 +208,7 @@ module.exports = function(config) {
         records.filters = {};
         records.req = req;
         records.res = res;
-        res.set('Content-Type', 'application/json');
+        schemaHelper.setHeaders(res, "message");
 
         records.results = {
             "ok": true,
