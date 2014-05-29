@@ -61,9 +61,8 @@ module.exports = function(config) {
                 return res.send(404,JSON.stringify({ok:false, message: "Record not found." }));
             }
             else {
-                // TODO:  Generalize this to the specific record type returned
-                schemaHelper.setHeaders(res, "record");
                 record.results.record = jsonData.rows[0].value;
+                schemaHelper.setHeaders(res, record.results.record.type);
                 res.send(200, JSON.stringify(record.results));
             }
         });
