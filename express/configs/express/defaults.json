@@ -25,6 +25,7 @@
         "records":     "https://terms.raisingthefloor.org/schema/records.json",
         "term":        "https://terms.raisingthefloor.org/schema/term.json",
         "operator":    "https://terms.raisingthefloor.org/schema/operator.json",
+        "search":      "https://terms.raisingthefloor.org/schema/search.json",
         "transform":   "https://terms.raisingthefloor.org/schema/transform.json",
         "translation": "https://terms.raisingthefloor.org/schema/translation.json"
     }
