@@ -1,18 +1,6 @@
 {
     "port" : 5972,
-    "couch.url" : "http://admin:admin@localhost:5984/tr/",
-    "users": "http://admin:admin@localhost:5984/_users",
-    "lucene.url" : "http://localhost:5984/_fti/local/tr/_design/lucene/by_content",
-    "email":  {
-        "from": "no-reply@raisingthefloor.org",
-        "service": "SMTP",
-        "SMTP": {
-            "host": "localhost",
-            "port": 25
-        }
-
-    },
     "app": {
-        "name": "Common Terms Registry (development)"
+        "name": "Common Terms Registry (tests)"
     }
 }
