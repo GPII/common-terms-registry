@@ -10,12 +10,14 @@ var path = require('path');
 //var exphbs  = require('express3-handlebars');
 var bodyParser = require('body-parser');
 var app = express();
-var config = require("../../../configs/express/test.json");
+
+var loader = require("../../../configs/lib/config-loader");
+var config = loader.loadConfig(require("../../../configs/express/test.json"));
+var testUtils = require("../../tests/lib/testUtils")(config);
+
 app.set('port', config.port || process.env.PORT || 4895);
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
-
-var testUtils = require("../../tests/lib/testUtils");
 
 // Mount the module in "search" mode
 var search = require('../../search')(config);
@@ -49,7 +51,7 @@ jqUnit.asyncTest("Search with results", function() {
             jqUnit.assertNotNull("There should be actual record data returned...", jsonData.records);
             jqUnit.assertTrue("The record data should have at least one record...", Object.keys(jsonData.records).length > 0);
 
-            jqUnit.assertTrue("The first record should be sane.", testUtils.isSaneRecord(jsonData.records[0]));
+            testUtils.isSaneRecord(jqUnit, jsonData.records[0]);
         });
     }
 );

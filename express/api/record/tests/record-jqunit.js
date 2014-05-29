@@ -7,12 +7,15 @@ var request = require('request');
 var express = require('express');
 var http = require('http');
 var path = require('path');
-var testUtils = require("../../tests/lib/testUtils");
 //var exphbs  = require('express3-handlebars');
 var bodyParser = require('body-parser');
 
 var app = express();
-var config = require("../../../configs/express/test.json");
+
+var loader = require("../../../configs/lib/config-loader");
+var config = loader.loadConfig(require("../../../configs/express/test.json"));
+
+var testUtils = require("../../tests/lib/testUtils")(config);
 
 app.set('port', config.port || process.env.PORT || 4895);
 app.use(bodyParser.urlencoded());
@@ -41,7 +44,7 @@ jqUnit.asyncTest("Test retrieving record by its uniqueID", function() {
         jqUnit.assertNotNull("There should be record data returned...", jsonData.record);
 
         if (jsonData.record) {
-            jqUnit.assertTrue("The record returned should be sane...",testUtils.isSaneRecord(jsonData.record));
+            testUtils.isSaneRecord(jqUnit, jsonData.record);
         }
     });
 });
