@@ -28,7 +28,10 @@ module.exports = function(config) {
         // per-request variables need to be defined here, otherwise (for example) the results of the previous search will be returned if the next search has no records
         record.req = req;
         record.res = res;
-        res.set('Content-Type', 'application/json');
+
+        // TODO:  Pull this from the configuration so that the URLs, etc. can be defined for both testing and production
+        res.set('Content-Type', 'application/message+json; profile=https://terms.raisingthefloor.org/schema/message.json');
+        res.set('Link', 'https://terms.raisingthefloor.org/schema/message.json#; rel="describedBy"');
 
         record.results = {
             "ok": true,
@@ -59,6 +62,9 @@ module.exports = function(config) {
                 return res.send(404,JSON.stringify({ok:false, message: "Record not found." }));
             }
             else {
+                // TODO:  Generalize this to the specific record type returned
+                res.set('Content-Type', 'application/record+json; profile=https://terms.raisingthefloor.org/schema/record.json#');
+                res.set('Link', 'https://terms.raisingthefloor.org/schema/search.json#; rel="describedBy"');
                 record.results.record = jsonData.rows[0].value;
                 res.send(200, JSON.stringify(record.results));
             }
@@ -73,6 +79,10 @@ module.exports = function(config) {
 
 
     router.get("/", function(req,res) {
+        // TODO:  Pull this from the configuration so that the URLs, etc. can be defined for both testing and production
+        res.set('Content-Type', 'application/message+json; profile=https://terms.raisingthefloor.org/schema/message.json');
+        res.set('Link', 'https://terms.raisingthefloor.org/schema/message.json#; rel="describedBy"');
+
         return res.send(400,{ok: false, message: "You must provide the required uniqueId in the path to use this interface."});
     });
 
