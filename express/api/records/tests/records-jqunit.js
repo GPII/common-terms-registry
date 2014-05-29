@@ -80,7 +80,7 @@ allEndPoints.forEach(function(endPoint){
                 if (jsonData.records) {
                     jqUnit.assertTrue("The record data for endPoint '" + endPoint + "' should have at least one record...", jsonData.records.length > 0);
 
-                    jqUnit.assertTrue("The first record should be sane.", testUtils.isSaneRecord(jsonData.records[0]));
+                    testUtils.isSaneRecord(jqUnit, jsonData.records[0]);
                 }
             });
         });
