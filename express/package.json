@@ -7,19 +7,20 @@
     "test": "node tests/all-tests.js"
   },
   "dependencies": {
-    "cookie-parser": "~1.0.0",
     "body-parser": "~1.0.0",
-    "method-override": "~1.0.0",
+    "cookie-parser": "~1.0.0",
     "errorhandler": "~1.0.0",
     "express": "4.0.0",
     "express-session": "~1.0.0",
     "express-user-couchdb": "0.2.5",
     "express3-handlebars": "0.5.0",
     "infusion": "git://github.com/fluid-project/infusion.git#6c8ea3098c80bf4297ae773cda144c4e58939017",
+    "marked": "~0.3.2",
+    "method-override": "~1.0.0",
     "morgan": "~1.0.0",
     "request": "~2.34.0",
     "static-favicon": "~1.0.0",
-    "marked": "~0.3.2"
+    "underscore-node": "^0.1.2"
   },
   "devDependencies": {
     "jqUnit": "git://github.com/fluid-project/node-jqUnit.git#e9bf72445bd343a4f3aabe3ba96a1087d3498612",
