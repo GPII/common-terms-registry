@@ -4,7 +4,7 @@ module.exports = function(config) {
     var helper = fluid.registerNamespace("gpii.ctr.schema.helper");
 
     helper.setHeaders = function setHeaders (res, key) {
-        var schemaUrl = config.schemaUrls[key];
+        var schemaUrl = config.schemaUrls[key.toLowerCase()];
         if (!schemaUrl) { console.error("Could not find schema configuration for key '" + key + "'.  Please check your configuration."); }
 
         res.set('Content-Type', 'application/' + key + '+json; profile=' + schemaUrl);
