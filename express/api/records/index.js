@@ -227,6 +227,9 @@ module.exports = function(config) {
             return res.send(500,JSON.stringify({ ok:false, message: message }));
         }
 
+        // TODO:  Add support for versions
+        // TODO:  Add support for child records
+
         // User input validation
         try {
             records.parseAndValidateInput();

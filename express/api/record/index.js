@@ -30,6 +30,10 @@ module.exports = function(config) {
         record.req = req;
         record.res = res;
 
+        // TODO:  Add support for "versions" virtual element comprised of attachments
+
+        // TODO:  Add support for "children" option (to allow output to mimic search output).
+
         schemaHelper.setHeaders(res, "message");
 
         record.results = {
@@ -68,12 +72,45 @@ module.exports = function(config) {
         });
     });
 
-    // TODO:  Add Create REST end point (POST /api/record)
+    router.post('/', function(req, res){
+        // TODO:  Add Create REST end point (POST /api/record)
 
-    // TODO:  Add Update REST end point (PUT /api/record)
+        // Create a new record based on the data submitted, adding the initial version field, set to 1
+    });
 
-    // TODO:  Add Delete REST end point (DELETE /api/record/{id})
 
+    router.put('/', function(req, res){
+        // TODO:  Add Update REST end point (PUT /api/record)
+
+        // Add the new record as an unpublished draft attachment
+    });
+
+    router.get('/:uniqueId/publish', function(req, res){
+        // TODO:  Add a mechanism for publishing drafts (GET /api/record/{id}/publish?version=X)
+
+        // Get the current document's _rev value
+
+        // Copy the existing record as an attachment of itself
+
+        // Get the updated _rev value from the response
+
+        // Retrieve the draft
+
+        // Replace the document with the draft
+    });
+
+    router.delete('/:uniqueId', function(req, res){
+        // TODO:  Add Delete REST end point (DELETE /api/record/{id})
+
+        // Get the current document's _rev value
+
+        // Copy the existing record as an attachment of itself
+
+        // Get the updated _rev value from the response
+
+        // Update the existing record to change its status to deleted
+
+    });
 
     router.get("/", function(req,res) {
         schemaHelper.setHeaders(res, "message");

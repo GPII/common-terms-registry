@@ -105,11 +105,13 @@ Creates a new record.  If an author is supplied, gives them credit, otherwise th
        "termLabel": "New Record",
        "definition": "This is a new record.",
        "notes": "This record was created as an example.",
-        "updated": "2014-05-25T11:23:32.441Z"
      }
      ```
 
-+ Response 200 (application/json)
++ Response 200 (application/record+json)
+    + Headers
+        + Content-Type: application/message+json; profile=https://terms.raisingthefloor.org/schema/record.json#
+        + Link: <https://terms.raisingthefloor.org/schema/record.json#>; rel="describedBy"
     + Body
 
         ```
@@ -140,7 +142,10 @@ Update an existing record.  If an author is supplied, gives them credit, otherwi
      }
     ```
 
-+ Response 200 (application/json)
++ Response 200 (application/record+json)
+    + Headers
+        + Content-Type: application/record+json; profile=https://terms.raisingthefloor.org/schema/message.json#
+        + Link: <https://terms.raisingthefloor.org/schema/message.json#>; rel="describedBy"
     + Body
 
         ```
@@ -166,19 +171,28 @@ Flags a record as deleted.  If an author is supplied, gives them credit, otherwi
     + uniqueId (required, string) ... The unique identifier of a single record.
 
 + Response 200 (application/json)
+    + Headers
+        + Content-Type: application/message+json; profile=https://terms.raisingthefloor.org/schema/message.json#
+        + Link: <https://terms.raisingthefloor.org/schema/message.json#>; rel="describedBy"
+    + Body
+        ```
+        {
+            "ok": true,
+            "message": "Record flagged as deleted."
+        }
+        ```
 
-    ```
-    {
-        "ok": true,
-        "message": "Record flagged as deleted."
-    }
-    ```
+## GET /api/record/{uniqueId}{?versions,children}
+Returns a single record identified by its uniqueId.  Only the latest published version is displayed by default.  For terms, child record data (aliases, etc.) is included by default.
 
-## GET /api/record/{uniqueId}
-Returns a single record identified by its uniqueId.
++ Parameters
+    + versions (optional, boolean) ... Whether or not to display the full version history for this record (including any unpublished drafts).  Defaults to "false".
+    + children (optional, boolean) ... Whether or not to display the child records (if any) of this record.  Defaults to "true".
 
 + Response 200 (application/record+json)
-
+    + Headers
+        + Content-Type: application/record+json; profile=https://terms.raisingthefloor.org/schema/record.json#
+        + Link: <https://terms.raisingthefloor.org/schema/record.json#>; rel="describedBy"
     + Body
 
         ```
@@ -198,6 +212,33 @@ Returns a single record identified by its uniqueId.
         }
         ```
 
+## GET /api/record/{uniqueId}/publish?{version}
+Publish a previously submitted draft version of a document (see "Change History" above).
+
++ Parameters
+    + version (required, string) ... The version number of the unpublished draft version (visible in the "versions" attribute of a record).
+
++ Response 200 (application/record+json)
+    + Headers
+        + Content-Type: application/record+json; profile=https://terms.raisingthefloor.org/schema/record.json#
+        + Link: <https://terms.raisingthefloor.org/schema/record.json#>; rel="describedBy"
+    + Body
+        ```
+        {
+            "ok":true,
+            "message":"Draft published."
+            "record": {
+                "uniqueId": "existingRecord",
+                "definition": "This existing record needs to be updated.",
+                "type": "GENERAL",
+                "termLabel": "Existing Record",
+                "definition": "This is an existing record.",
+                "notes": "This record is another sample record.",
+                "updated": "2014-05-25T11:23:32.441Z"
+            }
+        }
+        ```
+
 ## GET /api/records/{?updated,status,recordType,offset,limit}
 The full list of records.  Returns all record types by default.
 
@@ -207,8 +248,10 @@ The full list of records.  Returns all record types by default.
     + status (optional, string) ... The record statuses to return (defaults to everything but 'deleted' records).  Can be repeated to include multiple statuses.
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
     + limit (optional, string) ... The number of records to return.  Used for pagination.
+    + versions (optional, boolean) ... Whether or not to display the full version history for all records (including any unpublished drafts).  Defaults to "false".
+    + children (optional, boolean) ... Whether or not to display the child records (if any) of the records returned.  Defaults to "false".
 
-+ Response 200 (application/headers+json)
++ Response 200 (application/records+json)
     + Headers
         + Content-Type: application/record+json; profile=https://terms.raisingthefloor.org/schema/records.json#
         + Link: <https://terms.raisingthefloor.org/schema/records.json#>; rel="describedBy"
@@ -241,7 +284,7 @@ The full list of records.  Returns all record types by default.
         }
         ```
 
-## GET /api/terms/{?updated,status,offset,limit}
+## GET /api/terms/{?updated,status,offset,limit,versions,children}
 The list of standard terms. Equivalent to using /api/records with the query parameter `recordType=term`.  Supports the same query parameters as /api/records except for `recordType`.  Terms include all of their associated records, include aliases, transforms, and translations.
 
 + Parameters
@@ -249,6 +292,8 @@ The list of standard terms. Equivalent to using /api/records with the query para
     + updated (optional, string) ... Timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SSZ` Only records updated at or after this time are returned.
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
     + limit (optional, string) ... The number of records to return.  Used for pagination.
+    + versions (optional, boolean) ... Whether or not to display the full version history for this record (including any unpublished drafts).  Defaults to "false".
+    + children (optional, boolean) ... Whether or not to display the child records (if any) of this record.  Defaults to "true".
 
 + Response 200 (application/headers+json)
     + Headers
@@ -288,7 +333,7 @@ The list of standard terms. Equivalent to using /api/records with the query para
         }
         ```
 
-## GET /api/aliases/{?updated,status,offset,limit}
+## GET /api/aliases/{?updated,status,offset,limit,versions}
 The list of aliases. Equivalent to using /api/records with the query parameter `recordType=alias`.  Supports the same query parameters as /api/records except for `recordType`.
 
 + Parameters
@@ -296,6 +341,7 @@ The list of aliases. Equivalent to using /api/records with the query parameter `
     + updated (optional, string) ... Timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SSZ` Only records updated at or after this time are returned.
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
     + limit (optional, string) ... The number of records to return.  Used for pagination.
+    + versions (optional, boolean) ... Whether or not to display the full version history for this record (including any unpublished drafts).  Defaults to "false".
 
 + Response 200 (application/records+json)
     + Headers
@@ -325,7 +371,7 @@ The list of aliases. Equivalent to using /api/records with the query parameter `
         }
         ```
 
-## GET /api/transforms/{?updated,status,offset,limit}
+## GET /api/transforms/{?updated,status,offset,limit,versions}
 The list of transforms. Equivalent to using /api/records with the query parameter `recordType=transform`.  Supports the same query parameters as /api/records except for `recordType`.
 
 + Parameters
@@ -333,8 +379,9 @@ The list of transforms. Equivalent to using /api/records with the query paramete
     + updated (optional, string) ... Timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SSZ` Only records updated at or after this time are returned.
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
     + limit (optional, string) ... The number of records to return.  Used for pagination.
+    + versions (optional, boolean) ... Whether or not to display the full version history for this record (including any unpublished drafts).  Defaults to "false".
 
-## GET /api/translations/{?updated,status,offset,limit}
+## GET /api/translations/{?updated,status,offset,limit,versions}
 The list of translations. Equivalent to using /api/records with the query parameter `recordType=translation`.  Supports the same query parameters as /api/records except for `recordType`.
 
 + Parameters
@@ -342,8 +389,9 @@ The list of translations. Equivalent to using /api/records with the query parame
     + updated (optional, string) ... Timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SSZ` Only records updated at or after this time are returned.
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
     + limit (optional, string) ... The number of records to return.  Used for pagination.
+    + versions (optional, boolean) ... Whether or not to display the full version history for this record (including any unpublished drafts).  Defaults to "false".
 
-## GET /api/operators/{?updated,status,offset,limit}
+## GET /api/operators/{?updated,status,offset,limit,versions}
 The list of operators.  Equivalent to using /api/records with the query parameter `recordType=operator`.  Supports the same query parameters as /api/records except for `recordType`.
 
 + Parameters
@@ -351,8 +399,9 @@ The list of operators.  Equivalent to using /api/records with the query paramete
     + updated (optional, string) ... Timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SSZ` Only records updated at or after this time are returned.
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
     + limit (optional, string) ... The number of records to return.  Used for pagination.
+    + versions (optional, boolean) ... Whether or not to display the full version history for this record (including any unpublished drafts).  Defaults to "false".
 
-## GET /api/search/{?q,sort,offset,limit}
+## GET /api/search/{?q,sort,offset,limit,versions}
 Performs a full text search of all data, returns matching terms.  Only standard terms are returned.  All other associated record types are combined with the standard term into a single record.
 
 + Parameters
@@ -360,6 +409,7 @@ Performs a full text search of all data, returns matching terms.  Only standard 
     + sort (optional,string) ... The sort order to use when displaying records.  Conforms to [lucene's query syntax][1].
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
     + limit (optional, string) ... The number of records to return.  Used for pagination.
+    + versions (optional, boolean) ... Whether or not to display the full version history for each record (including any unpublished drafts).  Defaults to "false".
 
 + Response 200 (application/search+json)
     + Headers
@@ -401,12 +451,13 @@ Performs a full text search of all data, returns matching terms.  Only standard 
         }
         ```
 
-## GET /api/suggest/{?q,sort}
+## GET /api/suggest/{?q,sort,versions}
 Suggest the correct common term to use.  Performs a search as in /api/search, but only returns 5 results and does not support paging.  Equivalent to `/api/suggest?q=search&results=5`.
 
 + Parameters
     + q (required, string) ... The query string to match.  Can either consist of a word or phrase as plain text, or can use [lucene's query syntax][1] to construct more complex searches.
     + sort (optional,string) ... The sort order to use when displaying records.  Conforms to [lucene's query syntax][1].
+    + versions (optional, boolean) ... Whether or not to display the full version history for each record (including any unpublished drafts).  Defaults to "false".
 
 + Response 200 (application/search+json)
     + Headers

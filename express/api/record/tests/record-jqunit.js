@@ -77,6 +77,17 @@ jqUnit.asyncTest("Test retrieving a record that does not exist", function() {
     });
 });
 
+// TODO:  Test creating a record
+
+// TODO:  Test updating a record without saving a draft (including checking the history)
+
+// TODO:  Test updating a record (should appear as a draft)
+
+// TODO:  Test publishing a draft (including checking the history for the previous data)
+
+// TODO:  Test deleting a record (including checking the history)
+
+
 jqUnit.onAllTestsDone.addListener(function() {
     // Shut down express (seems to happen implicitly, so commented out)
 //    http.server.close();

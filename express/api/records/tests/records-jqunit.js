@@ -204,6 +204,13 @@ recordTypeEndPoints.forEach(function(endPoint){
     }
 );
 
+// TODO:  Test "versions" functionality
+
+// TODO:  Test "children" functionality
+
+// TODO: Test that modules other than "records" and "terms" do not support the "children" option
+
+
 jqUnit.onAllTestsDone.addListener(function() {
     // Shut down express (seems to happen implicitly, so commented out)
 //    http.server.close();

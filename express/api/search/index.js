@@ -9,6 +9,7 @@ module.exports = function(config) {
 
     var request = require('request');
 
+    // TODO:  Move child record lookup to a common helper module, as we will need it for the search as well as /api/records and /api/record
     search.getChildRecords = function (error, response, body) {
         if (error) { return search.res.send(500, JSON.stringify(error)); }
 
@@ -133,6 +134,8 @@ module.exports = function(config) {
         if (quick && (req.query.offset || req.query.limit)) {
             return res.send(400, JSON.stringify({ok: false, message: 'Paging parameters (limit, offset) are not allowed when using the quick search.'}));
         }
+
+        // TODO:  Add support for displaying versions
 
         search.results.q = req.query.q;
         if (quick) {
