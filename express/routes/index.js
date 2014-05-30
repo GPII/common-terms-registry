@@ -1,1 +1,0 @@
-exports.apidocs = require('./apidocs');
