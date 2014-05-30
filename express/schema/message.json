@@ -9,7 +9,12 @@
         "message": {
             "type": "string",
             "description": "An optional message describing the results of a REST call."
+        },
+        "record": {"$ref": "record.json"},
+        "records": {
+            "anyOf": [ {"$ref": "record.json"} ]
         }
+
     },
     "required": ["ok"]
 }
