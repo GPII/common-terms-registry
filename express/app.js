@@ -21,7 +21,7 @@ if ('development' === app.get('env')) {
 }
 else {
     config = loader.loadConfig(require("./configs/express/prod.json"));
-    app.use(logger());
+    app.use(logger('dev'));
 }
 
 config.templateDir = path.join(__dirname, 'templates');
