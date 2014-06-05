@@ -10,6 +10,16 @@ You will also need to set up couchdb-lucene and configure couch to proxy request
 
     https://github.com/rnewson/couchdb-lucene
 
+For the terminally lazy and incautious, you can set up the integration using the futon interface by adding a new
+configuration entry.  Use the following settings:
+
+|Field|Setting|
+| --- | --- |
+| section: | httpd_global_handlers |
+| option: | \_fti |
+| value: | {couch_httpd_proxy, handle_proxy_req, <<"http://127.0.0.1:5985">>} |
+
+
 Assuming that you have proxied requests using the prefix "_fti", you will be able to see if Lucene integration is working using a URL like the following:
 
     http://localhost:5984/_fti/local/tr/_design/lucene/by_content?q=reading&order=uniqueId
