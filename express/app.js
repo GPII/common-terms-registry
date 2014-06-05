@@ -32,7 +32,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 app.use(cookieParser()); // Required for session storage, must be called before session()
-app.use(session({ secret: 'Printer, printer take a hint-ter.'}));
+app.use(session({ secret: config.session.secret}));
 
 // /api/user/* is provided by the express-user-couchdb package
 app.use(couchUser(config));

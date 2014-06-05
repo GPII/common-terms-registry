@@ -15,6 +15,9 @@
     "app": {
         "name": "Common Terms Registry (development)"
     },
+    "sesion": {
+        "secret": "Printer, printer take a hint-ter."
+    },
     "verify": true,
     "adminRoles": [ "admin"],
     "schemaUrls": {
