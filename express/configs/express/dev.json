@@ -1,4 +1,5 @@
 {
+    "port": 4680,
     "app": {
         "name": "Common Terms Registry (development)"
     }
