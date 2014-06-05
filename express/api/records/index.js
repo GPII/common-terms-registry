@@ -239,12 +239,12 @@ module.exports = function(config) {
         }
 
         var urlsByRecordType = {
-            "entries":     config['couch.url'] + "/_design/app/_view/entries",
-            "alias":       config['couch.url'] + "/_design/app/_view/aliases",
-            "transform":   config['couch.url'] + "/_design/app/_view/transforms",
-            "translation": config['couch.url'] + "/_design/app/_view/translations",
-            "operator":    config['couch.url'] + "/_design/app/_view/operators",
-            "general":     config['couch.url'] + "/_design/app/_view/flat"
+            "entries":     config['couch.url'] + "/_design/api/_view/entries",
+            "alias":       config['couch.url'] + "/_design/api/_view/aliases",
+            "transform":   config['couch.url'] + "/_design/api/_view/transforms",
+            "translation": config['couch.url'] + "/_design/api/_view/translations",
+            "operator":    config['couch.url'] + "/_design/api/_view/operators",
+            "general":     config['couch.url'] + "/_design/api/_view/flat"
         };
 
         var recordType = config.recordType ? config.recordType : "entries";

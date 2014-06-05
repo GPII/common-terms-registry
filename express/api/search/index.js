@@ -57,9 +57,9 @@ module.exports = function(config) {
             }
         }
 
-        // retrieve the child records via /tr/_design/app/_view/children?keys=
+        // retrieve the child records via /tr/_design/api/_view/children?keys=
         var childRecordOptions = {
-            "url" : config['couch.url'] + "/_design/app/_view/children?keys=" + JSON.stringify(search.distinctUniqueIds),
+            "url" : config['couch.url'] + "/_design/api/_view/children?keys=" + JSON.stringify(search.distinctUniqueIds),
             "json": true
         };
 
@@ -97,9 +97,9 @@ module.exports = function(config) {
             return search.res.send(200, JSON.stringify(search.results));
         }
 
-        // Retrieve the parent records via /tr/_design/app/_view/entries?keys=
+        // Retrieve the parent records via /tr/_design/api/_view/entries?keys=
         var parentRecordOptions = {
-            "url" : config['couch.url'] + "/_design/app/_view/entries?keys=" + JSON.stringify(search.distinctUniqueIds),
+            "url" : config['couch.url'] + "/_design/api/_view/entries?keys=" + JSON.stringify(search.distinctUniqueIds),
             "json": true
         };
 

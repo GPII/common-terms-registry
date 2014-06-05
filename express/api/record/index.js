@@ -57,7 +57,7 @@ module.exports = function(config) {
         }
 
         // Get the record from couch
-        request.get(config['couch.url'] + "/_design/app/_view/entries?keys=%5B%22" + record.req.params.uniqueId + "%22%5D", function(e,r,b) {
+        request.get(config['couch.url'] + "/_design/api/_view/entries?keys=%5B%22" + record.req.params.uniqueId + "%22%5D", function(e,r,b) {
             if (e) { return res.send(500,JSON.stringify({ok: false, message: "Error retrieving record from couchdb", error: e}));}
 
             var jsonData = JSON.parse(b);
