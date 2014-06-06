@@ -6,45 +6,8 @@ module.exports = function(config) {
 
     var quick = config.lookup ? true : false;
     var search = fluid.registerNamespace(quick ? "gpii.ctr.api.suggest" : "gpii.ctr.api.search");
-
+    var children = require('../lib/children')(config,search);
     var request = require('request');
-
-    // TODO:  Move child record lookup to a common helper module, as we will need it for the search as well as /api/records and /api/record
-    search.getChildRecords = function (error, response, body) {
-        if (error) { return search.res.send(500, JSON.stringify(error)); }
-
-        for (var i = 0; i < body.rows.length; i++) {
-            var record = body.rows[i].value;
-            var parentId = record.aliasOf;
-            if (record.type === "TRANSLATION") { parentId = record.translationOf; }
-            var parentRecord = search.termHash[parentId];
-            if (parentRecord) {
-                var arrayName = "children";
-
-                if (record.type === "ALIAS") { arrayName = "aliases"; }
-                else if (record.type === "TRANSFORMATION") { arrayName = "transformations"; }
-                else if (record.type === "TRANSLATION") { arrayName = "translations"; }
-
-                if (!parentRecord[arrayName]) { parentRecord[arrayName] = []; }
-                parentRecord[arrayName].push(record);
-            }
-            else {
-                console.error("Something is hugely wrong, I got a child record ('" + record.uniqueId + "') without a corresponding parent ('" + parentId + "').");
-            }
-        }
-
-        var records = Object.keys(search.termHash).map(function(key) { return search.termHash[key]; });
-
-        search.results.ok = true;
-        search.results.total_rows = records.length;
-
-        if (search.req.query.sort) { search.results.sort = search.req.query.sort; }
-
-        search.results.records = records.slice(search.results.offset, search.results.offset + search.results.limit);
-
-        schemaHelper.setHeaders(search.res, "search");
-        return search.res.send(200, JSON.stringify(search.results));
-    };
 
     search.getParentRecords = function (error, response, body) {
         if (error) { return search.res.send(500, JSON.stringify(error)); }
