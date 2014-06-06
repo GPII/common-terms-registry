@@ -16,7 +16,7 @@
     "app": {
         "name": "Common Terms Registry (development)"
     },
-    "sesion": {
+    "session": {
         "secret": "Printer, printer take a hint-ter."
     },
     "verify": true,
