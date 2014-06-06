@@ -94,6 +94,10 @@ module.exports = function(config) {
             }
         }
 
+        if (records.req.query.children) {
+            records.filters.children = JSON.parse(records.req.query.children);
+        }
+
         if (config.recordType) {
             if (records.req.query.recordType) {
                 throw records.constructError(400,"The 'recordType' parameter cannot be used with this interface.");
@@ -221,6 +225,7 @@ module.exports = function(config) {
             "retrievedAt": new Date()
         };
 
+
         // Server config validation
         if (!config || !config['couch.url']) {
             var message = "Your instance is not configured correctly to enable record lookup.  You must have a couch.url variable configured.";
@@ -255,8 +260,7 @@ module.exports = function(config) {
             json: true
         };
 
-        // TODO: Add support for the "children" flag when working with all record types
-        if (recordType === "general") {
+        if ((recordType === "general" || recordType === "entries") && records.filters.children) {
             // For terms, we need to put all the records together
             request.get(requestConfig,records.getParentRecords);
         }
