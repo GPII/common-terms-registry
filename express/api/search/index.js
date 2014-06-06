@@ -9,26 +9,6 @@ module.exports = function(config) {
     var children = require('../lib/children')(config,search);
     var request = require('request');
 
-    search.getParentRecords = function (error, response, body) {
-        if (error) { return search.res.send(500, JSON.stringify(error)); }
-
-        // Add them to the list in process.
-        for (var i = 0; i < body.rows.length; i++) {
-            var record = body.rows[i].value;
-            if (record.type === "GENERAL") {
-                search.termHash[record.uniqueId] = record;
-            }
-        }
-
-        // retrieve the child records via /tr/_design/api/_view/children?keys=
-        var childRecordOptions = {
-            "url" : config['couch.url'] + "/_design/api/_view/children?keys=" + JSON.stringify(search.distinctUniqueIds),
-            "json": true
-        };
-
-        request.get(childRecordOptions, search.getChildRecords);
-    };
-
     search.getLuceneSearchResults = function (error, response, body) {
         if (error) { return search.res.send(500, JSON.stringify(error)); }
 
@@ -75,9 +55,7 @@ module.exports = function(config) {
 
         // per-request variables need to be defined here, otherwise (for example) the results of the previous search will be returned if the next search has no records
         search.distinctUniqueIds = [];
-        search.termHash          = {};
         search.results           = {};
-
         search.req = req;
         search.res = res;
 
