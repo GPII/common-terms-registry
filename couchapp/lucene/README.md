@@ -1,5 +1,9 @@
 This directory contains a simple design document that will enable lucene integration with the Common Terms Registry.
 
+All code follows the "couchapp" conventions and is meant to be deployed with that tool:
+
+https://github.com/couchapp/couchapp
+
 To push this design document to a couchdb instance, run a command like the following from this directory:
 
     couchapp push http://username:password@localhost:5984/tr

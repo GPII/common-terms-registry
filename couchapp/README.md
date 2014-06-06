@@ -1,9 +1,14 @@
 The contents of this directory are meant to be pushed to a couchdb instance and hosted from there.
 
-The "app" directory contains the older application and a few key views.
+All code follows the "couchapp" conventions and is meant to be deployed with that tool:
 
-The "lucene" directory contains the views, etc. required for lucene integration.
+https://github.com/couchapp/couchapp
 
-Both should should be uploaded to the main database (/tr) using the "couchapp" command.
+There are currently three separate couchapps, all of of which can be safely deployed to the same Couchdb instance
+and database.
 
-Consult the README.md files in each of these directories for more information.
+1. The "api" directory contains the views, etc. required to support the CTR API.
+2. The "lucene" directory contains the views, etc. required for lucene integration.
+3. The "app" directory contains the older application and a few key views.  This will be deprecated shortly.
+
+Consult the README.md files in the child directories for more information about a specific couchapp.
