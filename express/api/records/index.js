@@ -27,6 +27,7 @@ module.exports = function(config) {
     }
 
     var records = fluid.registerNamespace(namespace);
+    var children = require('../lib/children')(config, records);
     var request = require('request');
 
     records.parseAndValidateInput = function() {
@@ -254,9 +255,10 @@ module.exports = function(config) {
             json: true
         };
 
+        // TODO: Add support for the "children" flag when working with all record types
         if (recordType === "general") {
-            // For terms, we need to do one mass lookup and put all the records together
-            request.get(requestConfig,records.getAndKnitTerms);
+            // For terms, we need to put all the records together
+            request.get(requestConfig,records.getParentRecords);
         }
         else {
             // For everything else, we can just call the view for the recordType

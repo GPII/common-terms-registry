@@ -5,18 +5,18 @@
 // 1. The current response object (res)
 // 2. The current request object (req)
 // 3. The "results" object that may be returned upstream to the client
+// 4. A "filters" object that contains the list of parsed query parameters
 
 "use strict";
 
 module.exports = function(config,parent) {
     var schemaHelper = require("../../../schema/lib/schema-helper")(config);
-    var request = require('request');
 
     var fluid = require('infusion');
     var children = fluid.registerNamespace("gpii.ctr.api.lib.children");
 
     function getChildRecords(error, response, body) {
-        if (!parent.res || !parent.results || !parent.req ) {
+        if (!parent.res || !parent.results || !parent.req || !parent.filters) {
             return console.error("Can't construct child records, parent object lacks the required variables.");
         }
 
@@ -56,7 +56,7 @@ module.exports = function(config,parent) {
     }
 
     parent.getParentRecords = function (error, response, body) {
-        if (!parent.res || !parent.results || !parent.req ) {
+        if (!parent.res || !parent.results || !parent.req || !parent.filters ) {
             return console.error("Can't retrieve parent records to construct children, parent object lacks the required variables.");
         }
 
@@ -76,12 +76,18 @@ module.exports = function(config,parent) {
             }
         }
 
+        var queryParams = "";
+        if (parent.filters.limit !== undefined && parent.filters.offset !== undefined) {
+            queryParams = "?keys=" + JSON.stringify(children.distinctIDs.slice(parent.filters.offset, parent.filters.offset + parent.filters.limit));
+        }
+
         // retrieve the child records via /tr/_design/api/_view/children?keys=
         var childRecordOptions = {
-            "url" : config['couch.url'] + "/_design/api/_view/children?keys=" + JSON.stringify(children.distinctIDs),
+            "url" : config['couch.url'] + "/_design/api/_view/children" + queryParams,
             "json": true
         };
 
+        var request = require('request');
         request.get(childRecordOptions, getChildRecords);
     };
 
