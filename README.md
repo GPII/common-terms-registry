@@ -36,9 +36,7 @@ To install the legacy interface (in the "couchapp/app" directory), you need to:
 1. Run "npm install" from the _lockit_ directory.
 2. Run the scripts in the "lockit/node_modules/lockit" directory to add required views to the _\_users_ database
 3. Start the "lockit" instance of express (node lockit/app.js).
-4. Set up couchdb-lucene using the instructions on their site and in the "couchapp/lucene" directory.
-5. Push the "lucene" couchapp to your database following the instructions in that directory.
-6. Push the "app" couchapp to your database following the instructions in that directory.
+4. Push the "app" couchapp to your database following the instructions in that directory.
 
 Once you have done this, you should see the legacy interface at:
 
