@@ -223,6 +223,7 @@ Publish a previously submitted draft version of a document (see "Change History"
         + Content-Type: application/record+json; profile=https://terms.raisingthefloor.org/schema/record.json#
         + Link: <https://terms.raisingthefloor.org/schema/record.json#>; rel="describedBy"
     + Body
+
         ```
         {
             "ok":true,
