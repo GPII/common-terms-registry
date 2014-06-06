@@ -75,7 +75,24 @@ module.exports = function(config,parent) {
         children.distinctIDs       = [];
         if (error) { return parent.res.send(500, JSON.stringify(error)); }
 
-        // Add them to the list in process.
+        if (!body.rows) {
+            parent.results.ok = true;
+
+            // TODO:  Something else should process the results more consistently
+            if (parent.schema === "record") {
+                parent.results.record = {};
+            }
+            else {
+                parent.results.total_rows = 0;
+                if (parent.req.query.sort) { parent.results.sort = parent.req.query.sort; }
+                parent.results.records = {};
+            }
+
+            schemaHelper.setHeaders(parent.res, parent.schema);
+            return parent.res.send(200, JSON.stringify(parent.results));
+        }
+
+        // Add any records returned to the list in process.
         for (var i = 0; i < body.rows.length; i++) {
             var record = body.rows[i].value;
             if (record.type === "GENERAL") {
@@ -86,7 +103,7 @@ module.exports = function(config,parent) {
             }
         }
 
-        // we can only pass a limited number of keys in the query, so we have to do a couple of checks to avoid passing too much data.
+        // we can only pass a limited number of keys in the query (< 8000 bytes of data, roughly), so we have to do a couple of checks to avoid passing too much query data.
 
         // By default, we don't limit child records by keys.  That means we make a fast call that returns a lot of data and may end up discarding a bunch.
         var queryParams = "";
