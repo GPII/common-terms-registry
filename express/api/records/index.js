@@ -27,6 +27,8 @@ module.exports = function(config) {
     }
 
     var records = fluid.registerNamespace(namespace);
+    records.schema="records";
+
     var children = require('../lib/children')(config, records);
     var request = require('request');
 
@@ -234,7 +236,6 @@ module.exports = function(config) {
         }
 
         // TODO:  Add support for versions
-        // TODO:  Add support for child records
 
         // User input validation
         try {

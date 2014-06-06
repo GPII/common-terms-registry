@@ -5,12 +5,21 @@ module.exports = function(config) {
 
     var schemaHelper = require("../../schema/lib/schema-helper")(config);
     var namespace = "gpii.ctr.record";
+
     var record = fluid.registerNamespace(namespace);
+    record.schema="record";
+
+    var children = require('../lib/children')(config, record);
+
     var request = require('request');
 
     record.parseAndValidateInput = function() {
         if (!record.req.params || !record.req.params.uniqueId) {
             throw record.constructError(400,"You must provide the required query parameters to use this interface.");
+        }
+
+        if (record.req.query.children) {
+            record.params.children = JSON.parse(record.req.query.children);
         }
     };
 
@@ -66,8 +75,25 @@ module.exports = function(config) {
             }
             else {
                 record.results.record = jsonData.rows[0].value;
-                schemaHelper.setHeaders(res, record.results.record.type);
-                res.send(200, JSON.stringify(record.results));
+
+                if (record.results.record.type.toLowerCase() === "general" && record.params.children) {
+                    // TODO:  This is a temporary hack to pass the predigested parent record data to the common
+                    children.termHash = {};
+                    children.termHash[record.results.record.uniqueId] = record.results.record;
+
+                    // retrieve the child records via /tr/_design/api/_view/children?keys=
+                    var childRecordOptions = {
+                        "url" : config['couch.url'] + "/_design/api/_view/children?keys=" + JSON.stringify([record.results.record.uniqueId]),
+                        "json": true
+                    };
+
+                    var request = require('request');
+                    request.get(childRecordOptions, record.getChildRecords);
+                }
+                else {
+                    schemaHelper.setHeaders(res, record.results.record.type);
+                    res.send(200, JSON.stringify(record.results));
+                }
             }
         });
     });

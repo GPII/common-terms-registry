@@ -5,7 +5,10 @@ module.exports = function(config) {
     var fluid = require('infusion');
 
     var quick = config.lookup ? true : false;
+
     var search = fluid.registerNamespace(quick ? "gpii.ctr.api.suggest" : "gpii.ctr.api.search");
+    search.schema="search";
+
     var children = require('../lib/children')(config,search);
     var request = require('request');
 

@@ -6,6 +6,7 @@
 // 2. The current request object (req)
 // 3. The "results" object that may be returned upstream to the client
 // 4. A "filters" object that contains the list of parsed query parameters
+// 5. A "schema" parameter that points to the schema that should be used with the results
 
 "use strict";
 
@@ -27,6 +28,8 @@ module.exports = function(config,parent) {
             var parentId = record.aliasOf;
             if (record.type === "TRANSLATION") { parentId = record.translationOf; }
             var parentRecord = children.termHash[parentId];
+
+            // Silently skip orphaned child records, which can show up in the rare cases where we can't exclude them upstream
             if (parentRecord) {
                 var arrayName = "children";
 
@@ -37,24 +40,31 @@ module.exports = function(config,parent) {
                 if (!parentRecord[arrayName]) { parentRecord[arrayName] = []; }
                 parentRecord[arrayName].push(record);
             }
-            else {
-                console.error("Something is hugely wrong, I got a child record ('" + record.uniqueId + "') without a corresponding parent ('" + parentId + "').");
-            }
         }
 
         var records = Object.keys(children.termHash).map(function(key) { return children.termHash[key]; });
 
         parent.results.ok = true;
-        parent.results.total_rows = records.length;
 
-        if (parent.req.query.sort) { parent.results.sort = parent.req.query.sort; }
+        if (parent.schema === "record") {
+            parent.results.record = records[0];
+        }
+        else {
+            parent.results.total_rows = records.length;
 
-        parent.results.records = records.slice(parent.results.offset, parent.results.offset + parent.results.limit);
+            if (parent.req.query.sort) { parent.results.sort = parent.req.query.sort; }
 
-        schemaHelper.setHeaders(parent.res, "search");
+            parent.results.records = records.slice(parent.results.offset, parent.results.offset + parent.results.limit);
+        }
+
+        schemaHelper.setHeaders(parent.res, parent.schema);
         return parent.res.send(200, JSON.stringify(parent.results));
     }
 
+    // Expose the child lookup for use in /api/record
+    parent.getChildRecords = getChildRecords;
+
+    // Expose the full lookup for use in /api/records and /api/search
     parent.getParentRecords = function (error, response, body) {
         if (!parent.res || !parent.results || !parent.req || !parent.params || !parent.schema ) {
             return console.error("Can't retrieve parent records to construct children, parent object lacks the required variables.");
