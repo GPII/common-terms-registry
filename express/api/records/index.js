@@ -41,7 +41,7 @@ module.exports = function(config) {
                 throw records.constructError(400, "Invalid 'updated' date specified: '" + records.req.query.updated + "'...");
             }
             else {
-                records.filters.updated = parsedDate;
+                records.params.updated = parsedDate;
             }
         }
 
@@ -70,7 +70,7 @@ module.exports = function(config) {
             }
 
             if (statusesToDisplay.length > 0) {
-                records.filters.statuses = statusesToDisplay;
+                records.params.statuses = statusesToDisplay;
             }
         }
 
@@ -80,7 +80,7 @@ module.exports = function(config) {
                 throw records.constructError(400,"Offset must be a number.");
             }
             else {
-                records.filters.offset = parsedOffset;
+                records.params.offset = parsedOffset;
             }
         }
 
@@ -90,12 +90,12 @@ module.exports = function(config) {
                 throw records.constructError(400,"Limit must be a number.");
             }
             else {
-                records.filters.limit = parsedLimit;
+                records.params.limit = parsedLimit;
             }
         }
 
         if (records.req.query.children) {
-            records.filters.children = JSON.parse(records.req.query.children);
+            records.params.children = JSON.parse(records.req.query.children);
         }
 
         if (config.recordType) {
@@ -128,7 +128,7 @@ module.exports = function(config) {
             }
 
             if (recordTypesToDisplay.length > 0) {
-                records.filters.recordTypes = recordTypesToDisplay;
+                records.params.recordTypes = recordTypesToDisplay;
             }
         }
     };
@@ -147,9 +147,9 @@ module.exports = function(config) {
 
             if (isParent) {
                 // Exclude records that are too old, the wrong status, or the wrong record type
-                if ((records.filters.updated && new Date(record.updated) < records.filters.updated) ||
-                    (records.filters.statuses && records.filters.statuses.indexOf(record.status.toLowerCase()) === -1) ||
-                    (records.filters.recordTypes && records.filters.recordTypes.indexOf(record.type.toLowerCase()) === -1)) {
+                if ((records.params.updated && new Date(record.updated) < records.params.updated) ||
+                    (records.params.statuses && records.params.statuses.indexOf(record.status.toLowerCase()) === -1) ||
+                    (records.params.recordTypes && records.params.recordTypes.indexOf(record.type.toLowerCase()) === -1)) {
                     excludedParentIds.push(termId);
                 }
                 else {
@@ -186,9 +186,9 @@ module.exports = function(config) {
         var filteredRecords = [];
         body.rows.forEach(function(row) {
             var record = row.value;
-            if ((!records.filters.updated || new Date(record.updated) >= records.filters.updated) &&
-                (!records.filters.statuses    || records.filters.statuses.indexOf(record.status.toLowerCase()) !== -1) &&
-                (!records.filters.recordTypes || records.filters.recordTypes.indexOf(record.type.toLowerCase()) !== -1)) {
+            if ((!records.params.updated || new Date(record.updated) >= records.params.updated) &&
+                (!records.params.statuses    || records.params.statuses.indexOf(record.status.toLowerCase()) !== -1) &&
+                (!records.params.recordTypes || records.params.recordTypes.indexOf(record.type.toLowerCase()) !== -1)) {
                 filteredRecords.push(record);
             }
         });
@@ -210,7 +210,7 @@ module.exports = function(config) {
     var express = require('express');
     return express.Router().get('/', function(req, res){
         // per-request variables need to be defined here, otherwise (for example) the results of the previous search will be returned if the next search has no records
-        records.filters = {};
+        records.params = {};
         records.req = req;
         records.res = res;
         schemaHelper.setHeaders(res, "message");
@@ -221,7 +221,7 @@ module.exports = function(config) {
             "records": [],
             "offset": records.req.query.offset ? parseInt(records.req.query.offset) : 0,
             "limit": records.req.query.limit ? parseInt(records.req.query.limit) : 100,
-            "filters": records.filters,
+            "params": records.params,
             "retrievedAt": new Date()
         };
 
@@ -260,7 +260,7 @@ module.exports = function(config) {
             json: true
         };
 
-        if ((recordType === "general" || recordType === "entries") && records.filters.children) {
+        if ((recordType === "general" || recordType === "entries") && records.params.children) {
             // For terms, we need to put all the records together
             request.get(requestConfig,records.getParentRecords);
         }

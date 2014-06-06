@@ -56,6 +56,7 @@ module.exports = function(config) {
         // per-request variables need to be defined here, otherwise (for example) the results of the previous search will be returned if the next search has no records
         search.distinctUniqueIds = [];
         search.results           = {};
+        search.params = {};
         search.req = req;
         search.res = res;
 

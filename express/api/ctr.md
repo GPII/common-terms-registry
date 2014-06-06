@@ -223,7 +223,7 @@ Publish a previously submitted draft version of a document (see "Change History"
         + Content-Type: application/record+json; profile=https://terms.raisingthefloor.org/schema/record.json#
         + Link: <https://terms.raisingthefloor.org/schema/record.json#>; rel="describedBy"
     + Body
-    
+
         ```
         {
             "ok":true,
@@ -262,9 +262,9 @@ The full list of records.  Returns all record types by default.
         {
             "ok": true,
             "total_rows": 1,
-            "offset": 0,
-            "limit": 100,
-            "filters": {
+            "params": {
+                "offset": 0,
+                "limit": 100,
                 "updated": "2014-04-01T00:00:00.000Z",
                 "statuses": [ "unreviewed" ],
                 "recordTypes": [ "alias" ]
@@ -470,9 +470,9 @@ Suggest the correct common term to use.  Performs a search as in /api/search, bu
         {
             "ok": true,
             "total_rows": 1,
-            "offset": 0,
-            "limit": 100,
-            "filters": {
+            "params": {
+                "offset": 0,
+                "limit": 100,
                 "updated": "2014-05-25T11:23:32.441Z",
                 "statuses": [ "unreviewed" ],
                 "recordTypes": [ "alias" ]

@@ -16,7 +16,7 @@ module.exports = function(config,parent) {
     var children = fluid.registerNamespace("gpii.ctr.api.lib.children");
 
     function getChildRecords(error, response, body) {
-        if (!parent.res || !parent.results || !parent.req || !parent.filters) {
+        if (!parent.res || !parent.results || !parent.req || !parent.params || !parent.schema) {
             return console.error("Can't construct child records, parent object lacks the required variables.");
         }
 
@@ -56,7 +56,7 @@ module.exports = function(config,parent) {
     }
 
     parent.getParentRecords = function (error, response, body) {
-        if (!parent.res || !parent.results || !parent.req || !parent.filters ) {
+        if (!parent.res || !parent.results || !parent.req || !parent.params || !parent.schema ) {
             return console.error("Can't retrieve parent records to construct children, parent object lacks the required variables.");
         }
 
@@ -76,9 +76,18 @@ module.exports = function(config,parent) {
             }
         }
 
+        // we can only pass a limited number of keys in the query, so we have to do a couple of checks to avoid passing too much data.
+
+        // By default, we don't limit child records by keys.  That means we make a fast call that returns a lot of data and may end up discarding a bunch.
         var queryParams = "";
-        if (parent.filters.limit !== undefined && parent.filters.offset !== undefined) {
-            queryParams = "?keys=" + JSON.stringify(children.distinctIDs.slice(parent.filters.offset, parent.filters.offset + parent.filters.limit));
+
+        // If we have paging parameters, use those...
+        if (parent.params.limit !== undefined && parent.params.offset !== undefined) {
+            queryParams = "?keys=" + JSON.stringify(children.distinctIDs.slice(parent.params.offset, parent.params.offset + parent.params.limit));
+        }
+        // If we have few enough records (as is usually the case with a search), just go for it
+        else if (children.distinctIDs.length < 75 ) {
+            queryParams = "?keys=" + JSON.stringify(children.distinctIDs);
         }
 
         // retrieve the child records via /tr/_design/api/_view/children?keys=

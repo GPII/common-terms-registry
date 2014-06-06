@@ -29,15 +29,15 @@ module.exports = function(config) {
         // per-request variables need to be defined here, otherwise (for example) the results of the previous search will be returned if the next search has no records
         record.req = req;
         record.res = res;
+        record.params = {};
 
         // TODO:  Add support for "versions" virtual element comprised of attachments
-
-        // TODO:  Add support for "children" option (to allow output to mimic search output).
 
         schemaHelper.setHeaders(res, "message");
 
         record.results = {
             "ok": true,
+            "params": record.params,
             "retrievedAt": new Date()
         };
 

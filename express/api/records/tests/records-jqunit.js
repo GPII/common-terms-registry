@@ -134,7 +134,7 @@ recordTypeEndPoints.forEach(function(endPoint){
                 testUtils.isSaneResponse(jqUnit, error, response, body);
 
                 var jsonData = JSON.parse(body);
-                jqUnit.assertDeepEq("The results should include the status filter information passed in the query...", ["active"], jsonData.filters.statuses);
+                jqUnit.assertDeepEq("The results should include the status filter information passed in the query...", ["active"], jsonData.params.statuses);
 
                 firstRecordCount = jsonData.records.length;
 
@@ -146,7 +146,7 @@ recordTypeEndPoints.forEach(function(endPoint){
                     testUtils.isSaneResponse(jqUnit, error, response, body);
 
                     var jsonData = JSON.parse(body);
-                    jqUnit.assertDeepEq("The results should include the status filter information passed in the query...", ["active", "unreviewed", "deleted"], jsonData.filters.statuses);
+                    jqUnit.assertDeepEq("The results should include the status filter information passed in the query...", ["active", "unreviewed", "deleted"], jsonData.params.statuses);
 
                     secondRecordCount = jsonData.records.length;
 
@@ -166,7 +166,7 @@ recordTypeEndPoints.forEach(function(endPoint){
                 testUtils.isSaneResponse(jqUnit, error, response, body);
 
                 var jsonData = JSON.parse(body);
-                jqUnit.assertTrue("The results should include the date filter information passed in the query...", jsonData.filters.updated);
+                jqUnit.assertTrue("The results should include the date filter information passed in the query...", jsonData.params.updated);
                 jqUnit.assertTrue("Limiting records by a date in the past should have returned results...", jsonData.records && jsonData.records.length > 0);
             });
         });
@@ -182,7 +182,7 @@ recordTypeEndPoints.forEach(function(endPoint){
                 testUtils.isSaneResponse(jqUnit, error, response, body);
 
                 var jsonData = JSON.parse(body);
-                jqUnit.assertTrue("The results should include the date filter information passed in the query...", jsonData.filters.updated);
+                jqUnit.assertTrue("The results should include the date filter information passed in the query...", jsonData.params.updated);
                 jqUnit.assertTrue("Limiting records by a far future date should not have returned anything...", jsonData.records && jsonData.records.length === 0);
             });
         });
