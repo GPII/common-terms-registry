@@ -206,9 +206,65 @@ recordTypeEndPoints.forEach(function(endPoint){
 
 // TODO:  Test "versions" functionality
 
-// TODO:  Test "children" functionality
+// The output from "terms" and "records" should not include children with the "children" option set to false
+["records","terms"].forEach(function(endPoint){
+        jqUnit.asyncTest("Query endpoint '" + endPoint + " with the 'children' argument set to false...", function() {
+            request.get("http://localhost:" + app.get('port') + "/" + endPoint + "?children=false", function(error, response, body) {
+                jqUnit.start();
 
-// TODO: Test that modules other than "records" and "terms" do not support the "children" option
+                testUtils.isSaneResponse(jqUnit, error, response, body);
+                var jsonData = JSON.parse(body);
+
+                jqUnit.assertTrue("There should have been records returned...", jsonData.records);
+                if (jsonData.records) {
+                    jsonData.records.forEach(function(record) {
+                        jqUnit.assertUndefined("Record '" + record.uniqueId + "' should not have contained any children", record.aliases);
+                    });
+                }
+            });
+        });
+    }
+);
+
+// The output from "terms" and "records" should include children when the "children" option is set to true
+["records","terms"].forEach(function(endPoint){
+        jqUnit.asyncTest("Query endpoint '" + endPoint + " with the 'children' argument set to true...", function() {
+            request.get("http://localhost:" + app.get('port') + "/" + endPoint + "?children=true", function(error, response, body) {
+                jqUnit.start();
+
+                testUtils.isSaneResponse(jqUnit, error, response, body);
+                var jsonData = JSON.parse(body);
+
+                jqUnit.assertTrue("There should have been records returned...", jsonData.records);
+                if (jsonData.records) {
+                    var aliasesFound = false;
+                    jsonData.records.forEach(function(record) {
+                        if (record.aliases) { aliasesFound = true; }
+                    });
+
+                    jqUnit.assertTrue("There should have been at least one record with 'aliases' data...",aliasesFound);
+                }
+            });
+        });
+    }
+);
+
+// Test that modules other than "records" and "terms" do not support the "children" option
+recordTypeEndPoints.forEach(function(endPoint){
+        // skip "terms", which should support "children"
+        if (endPoint !== "terms") {
+            jqUnit.asyncTest("Query endpoint '" + endPoint + " with the 'children' argument set to true (should complain)...", function() {
+                request.get("http://localhost:" + app.get('port') + "/" + endPoint + "?children=true", function(error, response, body) {
+                    jqUnit.start();
+
+                    testUtils.isSaneResponse(jqUnit, error, response, body);
+
+                    jqUnit.assertNotEquals("Asking the '" + endPoint + "' end point to return children should not have been successful...", response.statusCode, 200);
+                });
+            });
+        }
+    }
+);
 
 
 jqUnit.onAllTestsDone.addListener(function() {

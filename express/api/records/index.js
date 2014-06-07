@@ -104,6 +104,9 @@ module.exports = function(config) {
             if (records.req.query.recordType) {
                 throw records.constructError(400,"The 'recordType' parameter cannot be used with this interface.");
             }
+            if (config.recordType !== "general" && records.req.query.children) {
+                throw records.constructError(400,"The 'children' parameter can only be use with terms.");
+            }
         }
         else if (records.req.query.recordType) {
             var allowedRecordTypes = ["general","alias","transform","translation","operator"];
