@@ -88,6 +88,53 @@ jqUnit.asyncTest("Test retrieving a record that does not exist", function() {
 // TODO:  Test deleting a record (including checking the history)
 
 
+// The output should not include children with the "children" option set to false
+jqUnit.asyncTest("Retrieve record with the 'children' argument set to false...", function() {
+    // TODO:  This test depends on the existence of a single record.  We should adjust to use test data instead.
+    request.get("http://localhost:" + app.get('port') + "/record/xMPPChatID?children=false", function(error, response, body) {
+        jqUnit.start();
+
+        testUtils.isSaneResponse(jqUnit, error, response, body);
+        var jsonData = JSON.parse(body);
+
+        jqUnit.assertTrue("There should have been a record returned...", jsonData.record);
+        if (jsonData.record) {
+            jqUnit.assertUndefined("Record '" + jsonData.record.uniqueId + "' should not have contained any children", jsonData.record.aliases);
+        }
+    });
+});
+
+// The output from "terms" and "records" should include children when the "children" option is set to true
+jqUnit.asyncTest("Retrieve record with the 'children' argument set to true...", function() {
+    request.get("http://localhost:" + app.get('port') + "/record/xMPPChatID?children=true", function(error, response, body) {
+        jqUnit.start();
+
+        testUtils.isSaneResponse(jqUnit, error, response, body);
+        var jsonData = JSON.parse(body);
+
+        jqUnit.assertTrue("There should have been a record returned...", jsonData.record);
+        if (jsonData.record) {
+            jqUnit.assertNotUndefined("Record '" + jsonData.record.uniqueId + "' should have contained any children", jsonData.record.aliases);
+        }
+    });
+});
+
+// The "children" parameter should not cause problems when loading something that doesn't have children (i.e. an alias)
+jqUnit.asyncTest("Retrieve record with the 'children' argument set to true...", function() {
+    request.get("http://localhost:" + app.get('port') + "/record/XMPP+Chat+ID?children=true", function(error, response, body) {
+        jqUnit.start();
+
+        debugger;
+        testUtils.isSaneResponse(jqUnit, error, response, body);
+        var jsonData = JSON.parse(body);
+
+        jqUnit.assertTrue("There should have been a record returned...", jsonData.record);
+        if (jsonData.record) {
+            jqUnit.assertUndefined("Record '" + jsonData.record.uniqueId + "' should have contained any children", jsonData.record.aliases);
+        }
+    });
+});
+
 jqUnit.onAllTestsDone.addListener(function() {
     // Shut down express (seems to happen implicitly, so commented out)
 //    http.server.close();
