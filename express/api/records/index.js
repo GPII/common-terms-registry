@@ -29,6 +29,8 @@ module.exports = function(config) {
     var records = fluid.registerNamespace(namespace);
     records.schema="records";
 
+    var allowedRecordTypes = ["general","alias","transform","translation","operator"];
+
     var children = require('../lib/children')(config, records);
     var request = require('request');
 
@@ -107,9 +109,16 @@ module.exports = function(config) {
             if (config.recordType !== "general" && records.req.query.children) {
                 throw records.constructError(400,"The 'children' parameter can only be use with terms.");
             }
+
+            var lowerCaseRecordType = config.recordType.toLowerCase();
+            if (allowedRecordTypes.indexOf(lowerCaseRecordType) === -1) {
+                throw records.constructError(400, "Invalid record type specified.");
+            }
+            else {
+                records.params.recordTypes = [lowerCaseRecordType];
+            }
         }
         else if (records.req.query.recordType) {
-            var allowedRecordTypes = ["general","alias","transform","translation","operator"];
             var recordTypesToDisplay = [];
             if (records.req.query.recordType instanceof Array) {
                 records.req.query.recordType.forEach(function(recordType){
