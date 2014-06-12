@@ -12,6 +12,7 @@
 
 module.exports = function(config,parent) {
     var schemaHelper = require("../../../schema/lib/schema-helper")(config);
+    var paging = require("../../lib/paging")(config);
 
     var fluid = require('infusion');
     var children = fluid.registerNamespace("gpii.ctr.api.lib.children");
@@ -54,7 +55,7 @@ module.exports = function(config,parent) {
 
             if (parent.req.query.sort) { parent.results.sort = parent.req.query.sort; }
 
-            parent.results.records = records.slice(parent.results.offset, parent.results.offset + parent.results.limit);
+            parent.results.records = paging.pageArray(records, parent.results);
         }
 
         schemaHelper.setHeaders(parent.res, parent.schema);
