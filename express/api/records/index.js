@@ -3,6 +3,7 @@
 module.exports = function(config) {
     var fluid = require('infusion');
     var schemaHelper = require("../../schema/lib/schema-helper")(config);
+    var paging = require("../lib/paging")(config);
 
     var namespace = "gpii.ctr.records";
     if (config.recordType) {
@@ -187,7 +188,8 @@ module.exports = function(config) {
 
         var combinedRecords = Object.keys(recordsByTermId).map(function(key) { return recordsByTermId[key]; });
         records.results.total_rows = combinedRecords.length;
-        records.results.records = combinedRecords.slice(records.results.offset, records.results.offset + records.results.limit);
+
+        records.results.records = paging.pageArray(combinedRecords, records.results);
 
         schemaHelper.setHeaders(records.res, "records");
         return records.res.send(200, JSON.stringify(records.results));
@@ -207,7 +209,8 @@ module.exports = function(config) {
             }
         });
 
-        records.results.records = filteredRecords.slice(records.results.offset, records.results.offset + records.results.limit);
+        records.results.records = paging.pageArray(filteredRecords, records.results);
+
         records.results.total_rows = filteredRecords.length;
 
         schemaHelper.setHeaders(records.res, "records");
