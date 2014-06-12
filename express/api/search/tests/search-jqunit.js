@@ -74,6 +74,27 @@ jqUnit.asyncTest("Search with no results", function() {
     }
 );
 
+// Make sure that "total_rows" is meaningful
+jqUnit.asyncTest("Sanity check total_rows against the number of records returned...", function() {
+    request.get("http://localhost:" + app.get('port') + "/search?q=braille&limit=-1", function(error, response, body) {
+        jqUnit.start();
+
+        testUtils.isSaneResponse(jqUnit, error, response, body);
+
+        jqUnit.assertEquals("The request should have been successful...", response.statusCode, 200);
+
+        var jsonData = JSON.parse(body);
+
+        jqUnit.assertNotNull("There should be actual record data returned...", jsonData.records);
+
+        if (jsonData.records) {
+            jqUnit.assertEquals("The record data returned should have total_rows records...", jsonData.records.length, jsonData.total_rows);
+
+            testUtils.isSaneRecord(jqUnit, jsonData.records[0]);
+        }
+    });
+});
+
 // Test paging by retrieving records 1-2, reading record 2, then retrieving records 2-2, and comparing what should be the same record (2)
 jqUnit.asyncTest("Paging through search results", function() {
         request.get("http://localhost:" + app.get('port') + "/search?q=braille&offset=0&limit=2",function(error, response, body) {
