@@ -63,8 +63,10 @@ jqUnit.module("Records API");
 var recordTypeEndPoints = ["terms","aliases"];
 var allEndPoints = recordTypeEndPoints.concat(["records"]);
 
+var recordTypesByEndpoint = {"terms": "general", "aliases": "alias", "operators": "operator", "transforms": "transform", "translations": "translation"};
+
 allEndPoints.forEach(function(endPoint){
-    jqUnit.asyncTest("Search endpoint '" + endPoint + "' with no arguments", function() {
+    jqUnit.asyncTest("Load endpoint '" + endPoint + "' with no arguments", function() {
             request.get("http://localhost:" + app.get('port') + "/" + endPoint, function(error, response, body) {
                 jqUnit.start();
 
@@ -79,6 +81,30 @@ allEndPoints.forEach(function(endPoint){
 
                 if (jsonData.records) {
                     jqUnit.assertTrue("The record data for endPoint '" + endPoint + "' should have at least one record...", jsonData.records.length > 0);
+
+                    testUtils.isSaneRecord(jqUnit, jsonData.records[0]);
+                }
+            });
+        });
+    }
+);
+
+// Make sure that "total_rows" is meaningful
+allEndPoints.forEach(function(endPoint){
+        jqUnit.asyncTest("Sanity check total_rows for endpoint '" + endPoint + "'...", function() {
+            request.get("http://localhost:" + app.get('port') + "/" + endPoint + "?limit=-1", function(error, response, body) {
+                jqUnit.start();
+
+                testUtils.isSaneResponse(jqUnit, error, response, body);
+
+                jqUnit.assertEquals("The request for endPoint '" + endPoint + "'should have been successful...", response.statusCode, 200);
+
+                var jsonData = JSON.parse(body);
+
+                jqUnit.assertNotNull("There should be actual record data returned for endPoint '" + endPoint + "'...", jsonData.records);
+
+                if (jsonData.records) {
+                    jqUnit.assertEquals("The record data for endPoint '" + endPoint + "' should have total_rows records...", jsonData.records.length, jsonData.total_rows);
 
                     testUtils.isSaneRecord(jqUnit, jsonData.records[0]);
                 }
@@ -172,6 +198,69 @@ recordTypeEndPoints.forEach(function(endPoint){
         });
     }
 );
+
+// Confirm that /api/records?recordType=term returns the same number of records as /api/terms
+recordTypeEndPoints.forEach(function(endPoint) {
+    var recordType = recordTypesByEndpoint[endPoint];
+    jqUnit.asyncTest("Testing endpoint '" + endPoint + "' versus records?recordType=" + recordType + "...", function() {
+        var firstRecordCount, secondRecordCount, firstTotalRows, secondTotalRows;
+        request.get("http://localhost:" + app.get('port') + "/records?recordType=" + recordType, function(error, response, body) {
+            jqUnit.start();
+
+            testUtils.isSaneResponse(jqUnit, error, response, body);
+
+            var jsonData = JSON.parse(body);
+            firstRecordCount = jsonData.records ? jsonData.records.length : 0;
+            firstTotalRows = jsonData.total_rows;
+
+            jqUnit.stop();
+
+            request.get("http://localhost:" + app.get('port') + "/" + endPoint, function(error, response, body) {
+                jqUnit.start();
+
+                testUtils.isSaneResponse(jqUnit, error, response, body);
+
+                var jsonData = JSON.parse(body);
+                secondRecordCount = jsonData.records ? jsonData.records.length : 0;
+                secondTotalRows = jsonData.total_rows;
+
+                jqUnit.assertEquals("There should be the same number of records returned for both records?recordType=" + recordType + " and /api/" + endPoint + "...", firstRecordCount, secondRecordCount);
+
+                jqUnit.assertEquals("total_rows should be the same for both records?recordType=" + recordType + " and /api/" + endPoint + "...", firstTotalRows, secondTotalRows);
+            });
+        });
+    });
+});
+
+// Confirm that the same number of terms are returned with and without the "children" option
+jqUnit.asyncTest("Testing terms with and without children...", function() {
+    var firstRecordCount, secondRecordCount, firstTotalRows, secondTotalRows;
+    request.get("http://localhost:" + app.get('port') + "/terms", function(error, response, body) {
+        jqUnit.start();
+
+        testUtils.isSaneResponse(jqUnit, error, response, body);
+
+        var jsonData = JSON.parse(body);
+        firstRecordCount = jsonData.records ? jsonData.records.length : 0;
+        firstTotalRows = jsonData.total_rows;
+
+        jqUnit.stop();
+
+        request.get("http://localhost:" + app.get('port') + "/terms?children=true" , function(error, response, body) {
+            jqUnit.start();
+
+            testUtils.isSaneResponse(jqUnit, error, response, body);
+
+            var jsonData = JSON.parse(body);
+            secondRecordCount = jsonData.records ? jsonData.records.length : 0;
+            secondTotalRows = jsonData.total_rows;
+
+            jqUnit.assertEquals("There should be the same number of records returned with and without children...", firstRecordCount, secondRecordCount);
+
+            jqUnit.assertEquals("There should be the same total_rows returned with and without children......", firstTotalRows, secondTotalRows);
+        });
+    });
+});
 
 // There should be no records updated in the year 3000
 recordTypeEndPoints.forEach(function(endPoint){
