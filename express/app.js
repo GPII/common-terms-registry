@@ -40,14 +40,21 @@ app.use(couchUser(config));
 // Mount the JSON schemas separately so that we have the option to decompose them into a separate module later, and so that the doc links and web links match
 app.use("/schema",express.static(__dirname + '/schema'));
 
+// REST APIs
+var api = require('./api')(config);
+app.use('/api',api);
+
+// Code to detect and suggest fixes for duplicates, only enabled in the development environment
+if ('development' === app.get('env')) {
+    var dupes = require('./dupes')(config);
+    app.use('/dupes',dupes);
+}
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Most static content including root page
 app.use(express.static(__dirname + '/public'));
 
-// REST APIs
-var api = require('./api')(config);
-app.use('/api',api);
 
 http.createServer(app).listen(app.get('port'), function(){
     console.log('Express server listening on port ' + app.get('port'));
