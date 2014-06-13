@@ -26,21 +26,15 @@ module.exports = function(config) {
             data.rows.forEach(function(row) {
                 var doc = row.doc;
                 if (row.id.indexOf("_design") === -1 && doc && doc.uniqueId) {
-                    var newDoc = doc;
-                    if (doc.type !== "GENERAL") {
-                        newDoc = JSON.parse(JSON.stringify(doc));
-                        newDoc.uniqueId = doc.source + ":" + doc.uniqueId;
-                    }
-
                     if (!firsts[doc.uniqueId]) {
-                        firsts[doc.uniqueId] = newDoc;
+                        firsts[doc.uniqueId] = doc;
                     }
                     else {
                         if (dupes[doc.uniqueId]) {
-                            dupes[doc.uniqueId].push(newDoc);
+                            dupes[doc.uniqueId].push(doc);
                         }
                         else {
-                            dupes[doc.uniqueId] = [firsts[doc.uniqueId], newDoc];
+                            dupes[doc.uniqueId] = [firsts[doc.uniqueId], doc];
                         }
                     }
 
