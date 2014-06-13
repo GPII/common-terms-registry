@@ -6,6 +6,8 @@ module.exports = function(config) {
     var paging = require("../lib/paging")(config);
 
     var namespace = "gpii.ctr.records";
+
+    // TODO:  Move to a global vocabulary
     if (config.recordType) {
         if (config.recordType.toLowerCase() === "general") {
             namespace = "gpii.ctr.terms";
