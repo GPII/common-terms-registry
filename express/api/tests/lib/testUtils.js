@@ -16,7 +16,7 @@ module.exports = function(config) {
                 //    var schema = schemas[record.type.toLowerCase()];
 
                 // TODO: validate against the full record type with information pulled from the config object
-                var schema = require("../../../schema/" + "record");
+                var schema = require("../../../schema/schemas/" + "record");
                 jqUnit.assertNotNull("There should be schema data for the record type (" + record.type + ")...", schema);
 
                 try {
