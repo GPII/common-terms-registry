@@ -30,5 +30,8 @@ exports.getRecordFields = function(doc) {
         if (doc[field]) { fields[field] = doc[field]; }
     });
 
+    // We must include the _rev field for the "write" portions of our API
+    fields._rev = doc._rev;
+
     return fields;
 };
