@@ -38,7 +38,7 @@ app.use(session({ secret: config.session.secret}));
 app.use(couchUser(config));
 
 // Mount the JSON schemas separately so that we have the option to decompose them into a separate module later, and so that the doc links and web links match
-app.use("/schema",express.static(__dirname + '/schema'));
+app.use("/schema",express.static(__dirname + '/schema/schemas'));
 
 // REST APIs
 var api = require('./api')(config);
