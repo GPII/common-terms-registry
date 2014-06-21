@@ -10,11 +10,15 @@
             "type": "string",
             "description": "An optional message describing the results of a REST call."
         },
+        "errors": {
+            "type": "object",
+            "description": "An optional object containing more details about any errors encountered."
+        },
         "record": {"$ref": "record.json"},
         "records": {
             "anyOf": [ {"$ref": "record.json"} ]
         }
 
     },
-    "required": ["ok"]
+    "required": ["ok", "message"]
 }
