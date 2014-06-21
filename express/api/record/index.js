@@ -101,6 +101,8 @@ module.exports = function(config) {
     router.post('/', function(req, res){
         // TODO:  Add Create REST end point (POST /api/record)
 
+        // TODO:  Check to make sure no record already exists with this uniqueId
+
         // TODO:  Add support for versioning
     });
 
@@ -108,7 +110,7 @@ module.exports = function(config) {
     // Update REST end point (PUT /api/record)
     router.put('/', function(req, res){
         // Make sure the current record has at least a uniqueId
-        if (!req.params || !req.params.uniqueId) {
+        if (!req.body || !req.body.uniqueId) {
             return res.send(400,{"ok":"false","message": "You must provide a uniqueId of the record you wish to update."});
         }
 
@@ -116,37 +118,35 @@ module.exports = function(config) {
 
         // Get the current document
         var readRequest = require('request');
-        readRequest.get(config['couch.url'] + "/_design/api/_view/entries?key=%22" + req.params.uniqueId + "%22", function(readError,readResponse,readBody) {
+        readRequest.get(config['couch.url'] + "/_design/api/_view/entries?key=%22" + req.body.uniqueId + "%22", function(readError,readResponse,readBody) {
             if (readError) {
                 console.log(readError);
-                return res.send(500,{"ok":"false","message": "There was an error retrieving the record with uniqueId '" + req.params.uniqueId + "'..."});
+                return res.send(500,{"ok":"false","message": "There was an error retrieving the record with uniqueId '" + req.body.uniqueId + "'..."});
             }
 
             var jsonData = JSON.parse(readBody);
-            var newRecord = {};
             if (!jsonData.rows || jsonData.rows.length === 0) {
-                // Upload the supplied data as a new record
-                newRecord = req.params;
+                // TODO: Write the method for posting to couch and reuse that here.
+                return res.send(403,{"ok":"false","message":"Creation of new records using the PUT method is not currently supported.  Please use the POST method instead."});
             }
-            else {
-                var originalRecord = jsonData.rows[0].value;
-                newRecord = JSON.parse(originalRecord.stringify());
 
-                // TODO: Only allow data that matches the Schema
-                var allowedFields = ["type","permanency","namespace","uniqueId","notes","status", "termLabel","valueSpace","source","aliasOf","translationOf", "definition", "uses", "applicationUniqueFlag"];
+            var originalRecord = jsonData.rows[0].value;
+            var newRecord = JSON.parse(JSON.stringify(originalRecord));
 
-                // Overlay the supplied data onto this record, deleting any
-                allowedFields.forEach(function(field){
-                    if (req.params[field]) {
-                        if (req.params[field] ===  null) {
-                            newRecord[field].delete();
-                        }
-                        else {
-                            newRecord[field] = req.params[field];
-                        }
+            // TODO: Only allow data that matches the Schema
+            var allowedFields = ["type","permanency","namespace","uniqueId","notes","status", "termLabel","valueSpace","source","aliasOf","translationOf", "definition", "uses", "applicationUniqueFlag"];
+
+            // Overlay the supplied data onto this record, deleting any
+            allowedFields.forEach(function(field){
+                if (req.body[field] !== undefined) {
+                    if (req.body[field] ===  null) {
+                        delete newRecord[field];
                     }
-                });
-            }
+                    else {
+                        newRecord[field] = req.body[field];
+                    }
+                }
+            });
 
             // Set the "updated" field to the current date
             newRecord.updated = new Date().toISOString();
@@ -162,24 +162,29 @@ module.exports = function(config) {
             // Upload the combined record to CouchDB
             var writeRequest = require('request');
             var writeOptions = {
-                url: config['couch.url'] + "/",
-                body: newRecord
+                url: config['couch.url'] + "/" + newRecord._id,
+                body: JSON.stringify(newRecord)
             };
-            
+
             writeRequest.put(writeOptions, function(writeError, writeResponse, writeBody){
                 if (writeError) {
                     console.log(writeError);
-                    return res.send(500,{"ok":"false","message": "There was an error writing the record with uniqueId '" + req.params.uniqueId + "'..."});
+                    return res.send(500,{"ok":"false","message": "There was an error writing the record with uniqueId '" + req.body.uniqueId + "'..."});
                 }
 
-                // TODO:  Return the updated record or update the API docs to indicate that we're not doing this.
-                res.send(200,writeResponse);
+                if (writeResponse.statusCode === 201) {
+                    res.send(200,{"ok":true,"message": "Record updated.", "record": newRecord});
+                }
+                else {
+                    var jsonData = JSON.parse(writeBody);
+                    res.send(writeResponse.statusCode, {"ok": false, "message": "There were one or more problems that prevented your update from taking place.", "errors": jsonData.reason.errors });
+                }
             });
        });
     });
 
     router.get('/:uniqueId/publish', function(req, res){
-        // TODO:  Add a mechanism for publishing drafts (GET /api/record/{id}/publish?version=X)
+        // TODO:  Once versioning is in place, add a mechanism for publishing drafts (GET /api/record/{id}/publish?version=X)
 
         // Get the current document's _rev value
 
