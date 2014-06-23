@@ -3,29 +3,12 @@
 module.exports = function(config) {
     var fluid = require('infusion');
 
-    var schemaHelper = require("../../schema/lib/schema-helper")(config);
     var namespace = "gpii.ctr.record.delete";
 
     var record = fluid.registerNamespace(namespace);
     var request = require('request');
 
-    record.parseAndValidateInput = function() {
-        if (!record.req.params || !record.req.params.uniqueId) {
-            throw record.constructError(400,"You must provide the required query parameters to use this interface.");
-        }
-
-        if (record.req.query.children) {
-            record.params.children = JSON.parse(record.req.query.children);
-        }
-    };
-
-    // TODO:  create a library where we reuse patterns like this
-    record.constructError = function(status, message) {
-        var error = new Error(message);
-        error.status = status;
-        error.ok = false;
-        return error;
-    };
+    record.error = require("../../lib/error")(config);
 
     var express = require('express');
 

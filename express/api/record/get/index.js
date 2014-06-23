@@ -11,7 +11,6 @@ module.exports = function(config) {
     record.error = require("../../lib/error")(config);
     var children = require('../../lib/children')(config, record);
 
-
     var express = require('express');
 
     var router = express.Router();
@@ -41,7 +40,7 @@ module.exports = function(config) {
         // User input validation
         try {
             if (!record.req.params || !record.req.params.uniqueId) {
-                throw record.constructError(400,"You must provide the required query parameters to use this interface.");
+                throw record.error.constructError(400,"You must provide the required query parameters to use this interface.");
             }
 
             if (record.req.query.children) {

@@ -26,8 +26,7 @@ module.exports = function(config) {
 
     var router = express.Router();
 
-    // Update REST end point (PUT /api/record)
-    router.put('/', function(req, res){
+    var handlePut = function(req, res){
         // Make sure the current record has at least a uniqueId
         if (!req.body || !req.body.uniqueId) {
             return res.send(400,{"ok":"false","message": "You must provide a uniqueId of the record you wish to update."});
@@ -44,9 +43,11 @@ module.exports = function(config) {
             }
 
             var jsonData = JSON.parse(readBody);
+
+            // If we are trying to add a record that does not already exist, use a POST to upload to CouchDB
             if (!jsonData.rows || jsonData.rows.length === 0) {
-                // TODO: Write the method for posting to couch and reuse that here.
-                return res.send(403,{"ok":"false","message":"Creation of new records using the PUT method is not currently supported.  Please use the POST method instead."});
+                var postHelper = require("../post/post-helper");
+                return postHelper(req,res);
             }
 
             var originalRecord = jsonData.rows[0].value;
@@ -99,8 +100,14 @@ module.exports = function(config) {
                     res.send(writeResponse.statusCode, {"ok": false, "message": "There were one or more problems that prevented your update from taking place.", "errors": jsonData.reason.errors });
                 }
             });
-       });
-    });
+        });
+    };
+
+    // Update REST end point (PUT /api/record/:uniqueId)
+    router.put('/:uniqueId', handlePut);
+
+    // We will also silently handle PUT /api/record, as we prefer the uniqueId passed with the body anyway.
+    router.put('/', handlePut);
 
     return router;
 };

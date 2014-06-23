@@ -1,5 +1,6 @@
 "use strict";
 
+// All handlers for /api/record
 module.exports = function(config) {
     var express = require('express');
 
