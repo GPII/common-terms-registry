@@ -1,3 +1,4 @@
+// tests for all read methods
 "use strict";
 var fluid = require("infusion");
 var jqUnit = fluid.require("jqUnit");
@@ -29,7 +30,7 @@ http.createServer(app).listen(app.get('port'), function(){
     console.log('Express server listening on port ' + app.get('port'));
 });
 
-jqUnit.module("Record API");
+jqUnit.module("Record API (read)");
 
 jqUnit.asyncTest("Test retrieving record by its uniqueID", function() {
     request.get("http://localhost:" + app.get('port') + "/record/org.gnome.settings-daemon.peripherals.wacom.stylus.pressurecurve", function(error, response, body) {
@@ -77,16 +78,7 @@ jqUnit.asyncTest("Test retrieving a record that does not exist", function() {
     });
 });
 
-// TODO:  Test creating a record
-
-// TODO:  Test updating a record without saving a draft (including checking the history)
-
-// TODO:  Test updating a record (should appear as a draft)
-
-// TODO:  Test publishing a draft (including checking the history for the previous data)
-
-// TODO:  Test deleting a record (including checking the history)
-
+// TODO:  Add tests for versioning (perhaps in their own module)
 
 // The output should not include children with the "children" option set to false
 jqUnit.asyncTest("Retrieve record with the 'children' argument set to false...", function() {
