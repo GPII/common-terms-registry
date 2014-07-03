@@ -1,132 +1,217 @@
 // tests for all write methods
 "use strict";
 var fluid = require("infusion");
-//var jqUnit = fluid.require("jqUnit");
+var namespace = "gpii.ctr.record.tests.write";
+var write = fluid.registerNamespace(namespace);
 
-var request = require('request');
+write.PouchDB = require('pouchdb');
 
-// Spin up an express instance
-var express = require('express');
-var http = require('http');
-var path = require('path');
-//var exphbs  = require('express3-handlebars');
-var bodyParser = require('body-parser');
+//write.tr = write.PouchDB.defaults({db: require('memdown')});
 
-var app = express();
+write.tr = new write.PouchDB('tr', {db: require('memdown')});
+//write.tr = new write.PouchDB('tr');
 
-var PouchDB = require('pouchdb');
+write.loader = require("../../../configs/lib/config-loader");
+write.config = write.loader.loadConfig(require("../../../configs/express/test.json"));
 
-var loader = require("../../../configs/lib/config-loader");
-var config = loader.loadConfig(require("../../../configs/express/test.json"));
-
-var port = config.port || process.env.PORT || 4895;
+write.port = write.config.port || process.env.PORT || 4895;
 
 // manually point at pouch instead of CouchDB
-var pouchBaseUrl = "http://localhost:" + port + "/pouch/";
-var pouchDbUrl = pouchBaseUrl + "/tr";
+write.pouchBaseUrl = "http://localhost:" + write.port + "/pouch";
+write.pouchDbUrl = write.pouchBaseUrl + "/tr";
 
-config["couch.url"] = pouchDbUrl;
+write.config["couch.url"] = write.pouchDbUrl;
 
-var testUtils = require("../../tests/lib/testUtils")(config);
+// TODO:  When we add support for versioning, we should disable it for these tests and test the version code separately
 
-app.set('port', port);
+// TODO:  When we add support for attribution, we should disable it for these tests and test the attribution code separately
 
-// Add PouchDB with simulated CouchDb REST endpoints
-app.use('/pouch', require('express-pouchdb')(PouchDB));
+write.testUtils = require("../../tests/lib/testUtils")(write.config);
+write.request = require("request");
 
-app.use(bodyParser.urlencoded());
-app.use(bodyParser.json());
+write.validRecord = {
+    "uniqueId": "testRecord",
+    "type": "general",
+    "termLabel": "A test term",
+    "definition": "This is a sample term created for test purposes."
+};
+write.invalidRecord = {
+    "uniqueId": "testRecord",
+    "type": "alias",
+    "termLabel": "A test alias with missing data.",
+    "definition": "This record is missing an aliasOf field."
+};
 
-// TODO: Add all required views to pouchdb
+write.express = require('express');
+write.app = write.express();
 
-// TODO:  Wire these callbacks into the test harness
+// Spin up an express instance
+write.startExpress = function() {
+    var app = write.app;
+    app.set('port', write.port);
 
-// We have to create the database before we can populate it
-function loadPouch() {
-    PouchDB.destroy('tr',function(err,info){
-        var tr = new PouchDB('tr');
+    // Mount all variations on the module
+    var record = require('../../record')(write.config);
+    app.use('/record', record);
 
-        loadData();
+    // Add PouchDB with simulated CouchDb REST endpoints
+    app.use('/pouch', require('express-pouchdb')(write.PouchDB));
+
+    var http = require("http");
+    http.createServer(app).listen(app.get('port'), function(){
+        console.log('Express server listening on port ' + app.get('port'));
+
+        console.log("Express started...");
+        write.loadData();
     });
-}
+};
 
-// Post the required data once pouch is running
-function loadData() {
+write.loadData = function() {
+    var data = require("../../tests/data/data.json");
+
+    // Hit our express instance, for some reason the bulk docs function doesn't seem to like us
     var options = {
-      "url": pouchDbUrl + "/_bulk_docs",
-       "body": JSON.stringify(require("../../tests/data/data.json")),
-       "headers": { "Content-Type": "application/json"}
+        "url": write.pouchDbUrl + "/_bulk_docs",
+        "body": JSON.stringify(require("../../tests/data/data.json")),
+        "headers": { "Content-Type": "application/json"}
     };
-    request.post(options,function(e,r,b) {
+
+    write.request.post(options,function(e,r,b) {
         if (e && e !== null) {
             return console.log(e);
         }
 
-        // This needs to be created after the data is populated, apparently (no idea why)
-        loadCouchappViews();
+        console.log("Data loaded...");
+        write.loadViews();
     });
-}
+};
 
-function loadCouchappViews() {
-    var couchappUtils = require("../../tests/lib/couchappUtils")(config);
+write.loadViews = function() {
+    var couchappUtils = require("../../tests/lib/couchappUtils")(write.config);
 
     var path = __dirname + "/../../../../couchapp/api/";
     var viewContent = couchappUtils.loadCouchappViews(path);
 
     var options = {
-        "url": pouchDbUrl + "/_design/api",
+        "url": write.pouchDbUrl + "/_design/api",
         "body": JSON.stringify(viewContent),
         "headers": { "Content-Type": "application/json"}
     };
 
-    debugger;
-
-    request.put(options,function(e,r,b) {
+    write.request.put(options,function(e,r,b) {
         if (e && e !== null) {
             return console.log(e);
         }
-        debugger;
+
+        console.log("Views loaded...");
+        write.runTests();
     });
-}
+};
 
-loadPouch();
+write.runTests = function() {
+    console.log("Running tests...");
 
-http.createServer(app).listen(app.get('port'), function(){
-    console.log('Express server listening on port ' + app.get('port'));
-});
+    var jqUnit = require("jqUnit");
+    jqUnit.module("Record API (write)");
 
-//jqUnit.module("Record API (write)");
+    jqUnit.asyncTest("Use PUT to create a new record", function() {
+        var options = {
+            "url": "http://localhost:" + write.port + "/record/",
+            "json": write.validRecord
+        };
 
-// TODO:  Test using PUT to create a new record
+        var request = require("request");
+        request.put(options, function(e,r,b) {
+            debugger;
+            jqUnit.start();
 
-// TODO:  Test using PUT to update an existing record
+            jqUnit.assertNull("There should be no errors returned",e);
 
-// TODO:  Test using PUT with an invalid record
+            jqUnit.stop();
 
-// TODO:  Test using POST to create a new record
+            // Make sure the record was actually created
+            request.get("http://localhost:" + write.app.get('port') + "/record/" + write.validRecord.uniqueId,function(e,r,b) {
+                jqUnit.start();
+                jqUnit.assertNull("There should be no errors returned",e);
 
-// TODO:  Test using POST with an invalid record
+                var jsonData = JSON.parse(b);
 
-// TODO:  Test using DELETE to delete an existing record
+                jqUnit.assertValue("There should be a record returned.", jsonData.record);
 
-// TODO:  Test versioning on all successful adds and updates
+                if (jsonData.record && jsonData.record !== undefined) {
+                    // The response should closely match the record we submitted
+                    Object.keys(write.validRecord).forEach(function(field){
+                        jqUnit.assertEquals("The field '" + field + "' should match what we submitted.", write.validRecord[field], jsonData.record[field]);
+                    });
+                }
+            });
+        });
+    });
 
-//jqUnit.asyncTest("Retrieve record with the 'children' argument set to false...", function() {
-//    // TODO:  This test depends on the existence of a single record.  We should adjust to use test data instead.
-//    request.get("http://localhost:" + app.get('port') + "/record/xMPPChatID?children=false", function(error, response, body) {
-//        jqUnit.start();
-//
-//        testUtils.isSaneResponse(jqUnit, error, response, body);
-//        var jsonData = JSON.parse(body);
-//
-//        jqUnit.assertTrue("There should have been a record returned...", jsonData.record);
-//        if (jsonData.record) {
-//            jqUnit.assertUndefined("Record '" + jsonData.record.uniqueId + "' should not have contained any children", jsonData.record.aliases);
-//        }
-//    });
-//});
+    // TODO:  Test using PUT to update an existing record
 
-//jqUnit.onAllTestsDone.addListener(function() {
-//    // Shut down express (seems to happen implicitly, so commented out)
-////    http.server.close();
-//});
+    // TODO:  Test using PUT with an invalid record
+
+    jqUnit.asyncTest("Use POST to create a new record", function() {
+        var options = {
+            "url": "http://localhost:" + write.port + "/record/",
+            "json": write.validRecord
+        };
+
+        var request = require("request");
+        request.post(options, function(e,r,b) {
+            debugger;
+            jqUnit.start();
+
+            jqUnit.assertNull("There should be no errors returned",e);
+
+            jqUnit.stop();
+
+            // Make sure the record was actually created
+            request.get("http://localhost:" + write.app.get('port') + "/record/" + write.validRecord.uniqueId,function(e,r,b) {
+                jqUnit.start();
+                jqUnit.assertNull("There should be no errors returned",e);
+
+                var jsonData = JSON.parse(b);
+
+                jqUnit.assertValue("There should be a record returned.", jsonData.record);
+
+                if (jsonData.record && jsonData.record !== undefined) {
+                    // The response should closely match the record we submitted
+                    Object.keys(write.validRecord).forEach(function(field){
+                        jqUnit.assertEquals("The field '" + field + "' should match what we submitted.", write.validRecord[field], jsonData.record[field]);
+                    });
+                }
+            });
+        });
+    });
+
+    // TODO:  Test using POST with an invalid record
+
+    // TODO:  Test using DELETE to delete an existing record
+
+    // TODO:  Test versioning on all successful adds and updates
+
+    //jqUnit.asyncTest("Retrieve record with the 'children' argument set to false...", function() {
+    //    // TODO:  This test depends on the existence of a single record.  We should adjust to use test data instead.
+    //    request.get("http://localhost:" + app.get('port') + "/record/xMPPChatID?children=false", function(error, response, body) {
+    //        jqUnit.start();
+    //
+    //        testUtils.isSaneResponse(jqUnit, error, response, body);
+    //        var jsonData = JSON.parse(body);
+    //
+    //        jqUnit.assertTrue("There should have been a record returned...", jsonData.record);
+    //        if (jsonData.record) {
+    //            jqUnit.assertUndefined("Record '" + jsonData.record.uniqueId + "' should not have contained any children", jsonData.record.aliases);
+    //        }
+    //    });
+    //});
+
+    //jqUnit.onAllTestsDone.addListener(function() {
+    //    // Shut down express (seems to happen implicitly, so commented out)
+    ////    http.server.close();
+    //});
+    //}
+};
+
+write.startExpress();
