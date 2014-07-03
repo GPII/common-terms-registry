@@ -14,6 +14,7 @@ module.exports = function(config) {
     var express = require('express');
 
     var router = express.Router();
+
     router.get('/:uniqueId', function(req, res){
         // per-request variables need to be defined here, otherwise (for example) the results of the previous search will be returned if the next search has no records
         record.req = req;

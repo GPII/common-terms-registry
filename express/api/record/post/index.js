@@ -14,6 +14,10 @@ module.exports = function(config) {
     var express = require('express');
     var router = express.Router();
 
+    var bodyParser = require('body-parser');
+    router.use(bodyParser.urlencoded());
+    router.use(bodyParser.json());
+
     var postHelper = require("./post-helper")(config);
 
     router.post('/', postHelper);

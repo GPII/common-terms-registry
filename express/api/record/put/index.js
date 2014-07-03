@@ -25,6 +25,9 @@ module.exports = function(config) {
     var express = require('express');
 
     var router = express.Router();
+    var bodyParser = require('body-parser');
+    router.use(bodyParser.urlencoded());
+    router.use(bodyParser.json());
 
     var handlePut = function(req, res){
         // Make sure the current record has at least a uniqueId
@@ -46,7 +49,7 @@ module.exports = function(config) {
 
             // If we are trying to add a record that does not already exist, use a POST to upload to CouchDB
             if (!jsonData.rows || jsonData.rows.length === 0) {
-                var postHelper = require("../post/post-helper");
+                var postHelper = require("../post/post-helper")(config);
                 return postHelper(req,res);
             }
 
