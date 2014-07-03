@@ -5,6 +5,11 @@
 // The PUT method also allows creating new records, so we expose the same functions for both.
 module.exports = function(config) {
     return function(req, res){
+        // Make sure the current record has at least a uniqueId
+        if (!req.body || !req.body.uniqueId) {
+            return res.send(400,{"ok":"false","message": "You must provide a uniqueId of the record you wish to create."});
+        }
+
         var checkRequest = require('request');
         checkRequest.get(config['couch.url'] + "/_design/api/_view/entries?key=%22" + req.body.uniqueId + "%22", function(checkError,checkResponse,checkBody) {
             if (checkError && checkError !== null) {
