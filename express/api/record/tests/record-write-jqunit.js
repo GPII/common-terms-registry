@@ -5,11 +5,7 @@ var namespace = "gpii.ctr.record.tests.write";
 var write = fluid.registerNamespace(namespace);
 
 write.PouchDB = require('pouchdb');
-
-//write.tr = write.PouchDB.defaults({db: require('memdown')});
-
-write.tr = new write.PouchDB('tr', {db: require('memdown')});
-//write.tr = new write.PouchDB('tr');
+write.tr = new write.PouchDB({"name": "tr", "db": require('memdown'), "prefix": '/tmp/my-temp-pouch/'});
 
 write.loader = require("../../../configs/lib/config-loader");
 write.config = write.loader.loadConfig(require("../../../configs/express/test.json"));
@@ -207,11 +203,12 @@ write.runTests = function() {
     //    });
     //});
 
-    //jqUnit.onAllTestsDone.addListener(function() {
-    //    // Shut down express (seems to happen implicitly, so commented out)
-    ////    http.server.close();
-    //});
-    //}
+    jqUnit.onAllTestsDone.addListener(function() {
+        // Shut down express (seems to happen implicitly, so commented out)
+    //    http.server.close();
+        write.tr.viewCleanup();
+        write.tr.destroy();
+    });
 };
 
 write.startExpress();
