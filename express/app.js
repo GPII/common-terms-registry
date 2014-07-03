@@ -6,7 +6,6 @@ var logger = require('morgan');
 var couchUser = require('express-user-couchdb');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
-var bodyParser = require('body-parser');
 var app = express();
 
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
@@ -29,8 +28,7 @@ config.templateDir = path.join(__dirname, 'templates');
 app.set('port', config.port || process.env.PORT || 4895);
 app.set('views', path.join(__dirname, 'views'));
 
-app.use(bodyParser.urlencoded());
-app.use(bodyParser.json());
+// TODO:  Move to modules that require this if possible
 app.use(cookieParser()); // Required for session storage, must be called before session()
 app.use(session({ secret: config.session.secret}));
 
