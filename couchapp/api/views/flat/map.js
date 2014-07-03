@@ -1,5 +1,8 @@
-function(doc) {
-    if (doc) {
+function(rawDoc) {
+    if (rawDoc) {
+        // Pouch and couch handle documents differently, which is why we need something like this.
+        var doc = rawDoc.doc ? rawDoc.doc : rawDoc;
+
         var key = doc.uniqueId;
         var type = 0;
 
