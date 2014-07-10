@@ -154,7 +154,6 @@ write.runTests = function() {
         });
     });
 
-    // Test using PUT to update an existing record
     jqUnit.asyncTest("Use PUT to update an existing record", function() {
 
         var originalRecord = JSON.parse(JSON.stringify(write.validRecord));
@@ -209,7 +208,36 @@ write.runTests = function() {
         });
     });
 
-    // TODO:  Test using PUT with an invalid record
+    // We cannot rely on our validate_doc_update function in Couch to enforce basic validation from within Pouch:
+    // https://github.com/pouchdb/pouchdb/issues/1412
+//    jqUnit.asyncTest("Use PUT to add an invalid record", function() {
+//        var options = {
+//            "url": "http://localhost:" + write.port + "/record/",
+//            "json": write.invalidRecord
+//        };
+//
+//        var request = require("request");
+//        request.put(options, function(e,r,b) {
+//            jqUnit.start();
+//
+//            jqUnit.assertNull("There should be no errors returned",e);
+//
+//            console.log("b:" + JSON.stringify(b));
+//            jqUnit.assertFalse("The response should not be 'OK'.", b.ok);
+//
+//            jqUnit.stop();
+//
+//            // Make sure the record was not actually created
+//            request.get("http://localhost:" + write.app.get('port') + "/record/" + write.invalidRecord.uniqueId,function(e,r,b) {
+//                jqUnit.start();
+//                jqUnit.assertNull("There should be no errors returned",e);
+//
+//                var jsonData = JSON.parse(b);
+//
+//                jqUnit.assertTrue("There should be no record returned.", jsonData.record === null || jsonData.record === undefined || jsonData.record === {});
+//            });
+//        });
+//    });
 
     jqUnit.asyncTest("Use POST to create a new record", function() {
         var options = {
@@ -245,8 +273,50 @@ write.runTests = function() {
     });
 
     // TODO:  Test using POST with an invalid record
+    // We cannot rely on our validate_doc_update function in Couch to enforce basic validation from within Pouch:
+    // https://github.com/pouchdb/pouchdb/issues/1412
 
-    // TODO:  Test using DELETE to delete an existing record
+    jqUnit.asyncTest("Use DELETE to remove an existing record", function() {
+
+        var originalRecord = JSON.parse(JSON.stringify(write.validRecord));
+        originalRecord.uniqueId = "deleteTest";
+
+        var request = require("request");
+
+        var createOptions = {
+            "url": "http://localhost:" + write.port + "/record/",
+            "json": originalRecord
+        };
+
+        request.put(createOptions, function(e,r,b) {
+            jqUnit.start();
+
+            jqUnit.assertNull("There should be no errors returned",e);
+
+            jqUnit.stop();
+
+            // DELETE the record
+            request.del("http://localhost:" + write.port + "/record/" + originalRecord.uniqueId, function(e,r,b) {
+                jqUnit.start();
+
+                jqUnit.assertNull("There should be no errors returned",e);
+
+                jqUnit.stop();
+
+                console.log(JSON.stringify(b));
+
+                // Make sure the record no longer exists
+                request.get("http://localhost:" + write.app.get('port') + "/record/" + originalRecord.uniqueId, function(e,r,b) {
+                    jqUnit.start();
+                    jqUnit.assertNull("There should be no errors returned",e);
+
+                    var jsonData = JSON.parse(b);
+
+                    jqUnit.assertTrue("The deleted record should not be returned.", jsonData.record === null || jsonData.record === undefined || jsonData.record === {});
+                });
+            });
+        });
+    });
 
     // TODO:  Test versioning on all successful adds and updates
 
