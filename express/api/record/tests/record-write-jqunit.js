@@ -30,13 +30,13 @@ write.testUtils = require("../../tests/lib/testUtils")(write.config);
 write.request = require("request");
 
 write.validRecord = {
-    "uniqueId": "testRecord",
+    "uniqueId": "validRecord",
     "type": "general",
     "termLabel": "A test term",
     "definition": "This is a sample term created for test purposes."
 };
 write.invalidRecord = {
-    "uniqueId": "testRecord",
+    "uniqueId": "invalidRecord",
     "type": "alias",
     "termLabel": "A test alias with missing data.",
     "definition": "This record is missing an aliasOf field."
@@ -129,7 +129,6 @@ write.runTests = function() {
 
         var request = require("request");
         request.put(options, function(e,r,b) {
-            debugger;
             jqUnit.start();
 
             jqUnit.assertNull("There should be no errors returned",e);
@@ -155,7 +154,60 @@ write.runTests = function() {
         });
     });
 
-    // TODO:  Test using PUT to update an existing record
+    // Test using PUT to update an existing record
+    jqUnit.asyncTest("Use PUT to update an existing record", function() {
+
+        var originalRecord = JSON.parse(JSON.stringify(write.validRecord));
+        originalRecord.uniqueId = "updateTest";
+
+        var updatedRecord = JSON.parse(JSON.stringify(originalRecord));
+        updatedRecord.definition="This has been updated";
+
+        var request = require("request");
+
+        var createOptions = {
+            "url": "http://localhost:" + write.port + "/record/",
+            "json": originalRecord
+        };
+
+        request.put(createOptions, function(e,r,b) {
+            jqUnit.start();
+
+            jqUnit.assertNull("There should be no errors returned",e);
+
+            jqUnit.stop();
+
+            var updateOptions = {
+                "url": "http://localhost:" + write.port + "/record/",
+                "json": updatedRecord
+            };
+            // PUT the update
+            request.put(updateOptions, function(e,r,b) {
+                jqUnit.start();
+
+                jqUnit.assertNull("There should be no errors returned",e);
+
+                jqUnit.stop();
+
+                // Check the results
+                request.get("http://localhost:" + write.app.get('port') + "/record/" + originalRecord.uniqueId, function(e,r,b) {
+                    jqUnit.start();
+                    jqUnit.assertNull("There should be no errors returned",e);
+
+                    var jsonData = JSON.parse(b);
+
+                    jqUnit.assertValue("There should be a record returned.", jsonData.record);
+
+                    if (jsonData.record && jsonData.record !== undefined) {
+                        // The response should closely match the record we submitted
+                        Object.keys(updatedRecord).forEach(function(field){
+                            jqUnit.assertEquals("The field '" + field + "' should match what we submitted.", updatedRecord[field], jsonData.record[field]);
+                        });
+                    }
+                });
+            });
+        });
+    });
 
     // TODO:  Test using PUT with an invalid record
 
@@ -167,7 +219,6 @@ write.runTests = function() {
 
         var request = require("request");
         request.post(options, function(e,r,b) {
-            debugger;
             jqUnit.start();
 
             jqUnit.assertNull("There should be no errors returned",e);
