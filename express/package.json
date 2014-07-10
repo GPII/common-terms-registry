@@ -28,5 +28,6 @@
     "jsonschema": "^0.4.0",
     "kettle": "git://github.com/fluid-project/kettle.git#2cd608b95a7e908769c91f5120cfc50bfc19c4db",
     "pouchdb": "^2.2.3"
+    "memdown": "^0.10.2",
   }
 }
