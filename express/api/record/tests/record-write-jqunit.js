@@ -9,7 +9,7 @@ var write = fluid.registerNamespace(namespace);
 
 write.PouchDB = require('pouchdb');
 write.MemPouchDB = write.PouchDB.defaults({db: require('memdown')});
-write.tr = new write.PouchDB({"name": "tr", "prefix": '/tmp'});
+write.tr = new write.MemPouchDB("tr");
 
 write.loader = require("../../../configs/lib/config-loader");
 write.config = write.loader.loadConfig(require("../../../configs/express/test.json"));
@@ -63,29 +63,15 @@ write.startExpress = function() {
         console.log('Express server listening on port ' + app.get('port'));
 
         console.log("Express started...");
-        write.loadData();
+
+        // TODO:  Find a better way to do this
+
+        // Give express-pouch a few seconds to start up
+        setTimeout(write.loadViews,2500);
     });
 };
 
-write.loadData = function() {
-    var data = require("../../tests/data/data.json");
 
-    // Hit our express instance, for some reason the bulk docs function doesn't seem to like us
-    var options = {
-        "url": write.pouchDbUrl + "/_bulk_docs",
-        "body": JSON.stringify(require("../../tests/data/data.json")),
-        "headers": { "Content-Type": "application/json"}
-    };
-
-    write.request.post(options,function(e,r,b) {
-        if (e && e !== null) {
-            return console.log(e);
-        }
-
-        console.log("Data loaded...");
-        write.loadViews();
-    });
-};
 
 write.loadViews = function() {
     var couchappUtils = require("../../tests/lib/couchappUtils")(write.config);
@@ -105,6 +91,26 @@ write.loadViews = function() {
         }
 
         console.log("Views loaded...");
+        write.loadData();
+    });
+};
+
+write.loadData = function() {
+    var data = require("../../tests/data/data.json");
+
+    // Hit our express instance, for some reason the bulk docs function doesn't seem to like us
+    var options = {
+        "url": write.pouchDbUrl + "/_bulk_docs",
+        "json": data
+    };
+
+    write.request.post(options,function(e,r,b) {
+        if (e && e !== null) {
+            return console.log(e);
+        }
+
+        console.log("Data loaded...");
+
         write.runTests();
     });
 };
