@@ -4,8 +4,12 @@ var fluid = require("infusion");
 var namespace = "gpii.ctr.record.tests.write";
 var write = fluid.registerNamespace(namespace);
 
+//write.PouchDB = require('pouchdb');
+//write.tr = new write.PouchDB({"name": "tr", "db": require('memdown'), "prefix": '/tmp/my-temp-pouch/'});
+
 write.PouchDB = require('pouchdb');
-write.tr = new write.PouchDB({"name": "tr", "db": require('memdown'), "prefix": '/tmp/my-temp-pouch/'});
+write.MemPouchDB = write.PouchDB.defaults({db: require('memdown')});
+write.tr = new write.PouchDB({"name": "tr", "prefix": '/tmp'});
 
 write.loader = require("../../../configs/lib/config-loader");
 write.config = write.loader.loadConfig(require("../../../configs/express/test.json"));
@@ -50,8 +54,9 @@ write.startExpress = function() {
     var record = require('../../record')(write.config);
     app.use('/record', record);
 
+
     // Add PouchDB with simulated CouchDb REST endpoints
-    app.use('/pouch', require('express-pouchdb')(write.PouchDB));
+    app.use('/pouch', require('express-pouchdb')(write.MemPouchDB));
 
     var http = require("http");
     http.createServer(app).listen(app.get('port'), function(){
