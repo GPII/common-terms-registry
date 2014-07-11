@@ -9,7 +9,7 @@ write.config = write.loader.loadConfig(require("../../../configs/express/test-po
 
 // TODO:  When we add support for versioning, we should disable it for these tests and test the version code separately
 
-// TODO:  When we add support for attribution, we should disable it for these tests and test the attribution code separately
+// TODO:  When we add support for attribution, we should test it
 
 write.testUtils = require("../../tests/lib/testUtils")(write.config);
 write.request = require("request");
@@ -30,7 +30,6 @@ write.startExpress = function() {
     write.express = require('../../tests/lib/express')(write.config);
 
     write.express.start(function() {
-
         // Mount all variations on the module
         var record = require('../../record')(write.config);
         write.express.app.use('/record', record);
@@ -39,16 +38,12 @@ write.startExpress = function() {
         var couchUser = require('express-user-couchdb');
 
         var bodyParser = require('body-parser');
-        var cookieParser = require('cookie-parser');
-        var session = require('express-session');
         var router = write.express.express.Router();
-        router.use(cookieParser()); // Required for session storage, must be called before session()
-        router.use(session({ secret: write.config.session.secret}));
         router.use(bodyParser.json());
         router.use(couchUser(write.config));
         write.express.app.use(router);
 
-//        write.runTests();
+        write.runTests();
     });
 };
 
@@ -58,7 +53,7 @@ write.runTests = function() {
     var jqUnit = require("jqUnit");
     jqUnit.module("Record API (write)");
 
-    jqUnit.asyncTest("Use PUT to create a new record", function() {
+    jqUnit.asyncTest("Use PUT to create a new record (not logged in)", function() {
         var options = {
             "url": "http://localhost:" + write.config.port + "/record/",
             "json": write.validRecord
@@ -68,33 +63,73 @@ write.runTests = function() {
         request.put(options, function(e,r,b) {
             jqUnit.start();
 
-            jqUnit.assertNull("There should be no errors returned",e);
+            jqUnit.assertEquals("The response should indicate that a login is required.", 401, r.statusCode);
+            jqUnit.assertFalse("The response should not be 'ok'", b.ok);
 
+            jqUnit.assertNull("There should not be a record returned.", b.record);
+        });
+    });
+
+    jqUnit.asyncTest("Use PUT to create a new record (logged in)", function() {
+        var request = require("request");
+        write.jar = request.jar();
+        request.defaults({"jar":write.jar});
+
+        var loginOptions = {
+            "url": "http://localhost:" + write.config.port + "/api/user/signin",
+            "json": { "name": "admin", "password": "admin"},
+            "jar": write.jar
+        };
+        request.post(loginOptions,function(e,r,b){
+            jqUnit.start();
+            jqUnit.assertNull("There should be no login errors returned",e);
             jqUnit.stop();
 
-            // Make sure the record was actually created
-            var verifyRequest = require("request");
-            verifyRequest.get("http://localhost:" + write.express.app.get('port') + "/record/" + write.validRecord.uniqueId,function(e,r,b) {
+            var options = {
+                "url": "http://localhost:" + write.config.port + "/record/",
+                "json": write.validRecord,
+                "jar": write.jar
+            };
+            request.put(options, function(e,r,b) {
                 jqUnit.start();
                 jqUnit.assertNull("There should be no errors returned",e);
+                jqUnit.stop();
 
-                var jsonData = JSON.parse(b);
+                console.log("put body:" + JSON.stringify(b));
 
-                jqUnit.assertValue("There should be a record returned.", jsonData.record);
+                // Make sure the record was actually created
+                request.get("http://localhost:" + write.express.app.get('port') + "/record/" + write.validRecord.uniqueId,function(e,r,b) {
+                    jqUnit.start();
+                    jqUnit.assertNull("There should be no errors returned",e);
 
-                if (jsonData.record && jsonData.record !== undefined) {
-                    // The response should closely match the record we submitted
-                    Object.keys(write.validRecord).forEach(function(field){
-                        jqUnit.assertEquals("The field '" + field + "' should match what we submitted.", write.validRecord[field], jsonData.record[field]);
+                    console.log("verify body:" + b);
+
+                    var jsonData = JSON.parse(b);
+                    debugger;
+                    jqUnit.assertValue("There should be a record returned.", jsonData.record);
+
+                    if (jsonData.record && jsonData.record !== undefined) {
+                        // The response should closely match the recwrite.express.appord we submitted
+                        Object.keys(write.validRecord).forEach(function(field){
+                            jqUnit.assertEquals("The field '" + field + "' should match what we submitted.", write.validRecord[field], jsonData.record[field]);
+                        });
+                    }
+                    jqUnit.stop();
+
+                    var logoutOptions = {
+                        "url": "http://localhost:" + write.config.port + "/api/user/signout",
+                        "jar": write.jar
+                    };
+                    request.post(logoutOptions,function(e,r,b) {
+                        jqUnit.start();
+                        jqUnit.assertNull("There should be no logout errors returned",e);
                     });
-                }
+                });
             });
         });
     });
 
-    // TODO:  Test that PUTTING a new record only works when a user is logged in
-
-    jqUnit.asyncTest("Use PUT to update an existing record", function() {
+    jqUnit.asyncTest("Use PUT to update an existing record (logged in)", function() {
 
         var originalRecord = JSON.parse(JSON.stringify(write.validRecord));
         originalRecord.uniqueId = "updateTest";
@@ -102,51 +137,68 @@ write.runTests = function() {
         var updatedRecord = JSON.parse(JSON.stringify(originalRecord));
         updatedRecord.definition="This has been updated";
 
-        var request = require("request");
-
         var createOptions = {
             "url": "http://localhost:" + write.config.port + "/record/",
             "json": originalRecord
         };
 
-        request.put(createOptions, function(e,r,b) {
+        var loginRequest = require("request");
+        var loginOptions = {
+            "url": "http://localhost:" + write.config.port + "/api/user/signin",
+            "json": { "name": "admin", "password": "admin"}
+        };
+        loginRequest.post(loginOptions,function(e,r,b){
             jqUnit.start();
-
-            jqUnit.assertNull("There should be no errors returned",e);
-
+            jqUnit.assertNull("There should be no login errors returned",e);
             jqUnit.stop();
 
-            var updateOptions = {
-                "url": "http://localhost:" + write.config.port + "/record/",
-                "json": updatedRecord
-            };
-            // PUT the update
-            request.put(updateOptions, function(e,r,b) {
+            var request = require("request");
+            request.put(createOptions, function(e,r,b) {
                 jqUnit.start();
-
                 jqUnit.assertNull("There should be no errors returned",e);
-
                 jqUnit.stop();
 
-                // Check the results
-                request.get("http://localhost:" + write.express.app.get('port') + "/record/" + originalRecord.uniqueId, function(e,r,b) {
+                var updateOptions = {
+                    "url": "http://localhost:" + write.config.port + "/record/",
+                    "json": updatedRecord
+                };
+                // PUT the update
+                request.put(updateOptions, function(e,r,b) {
                     jqUnit.start();
                     jqUnit.assertNull("There should be no errors returned",e);
+                    jqUnit.stop();
 
-                    var jsonData = JSON.parse(b);
+                    // Check the results
+                    request.get("http://localhost:" + write.express.app.get('port') + "/record/" + originalRecord.uniqueId, function(e,r,b) {
+                        jqUnit.start();
+                        jqUnit.assertNull("There should be no errors returned",e);
 
-                    jqUnit.assertValue("There should be a record returned.", jsonData.record);
+                        var jsonData = JSON.parse(b);
 
-                    if (jsonData.record && jsonData.record !== undefined) {
-                        // The response should closely match the record we submitted
-                        Object.keys(updatedRecord).forEach(function(field){
-                            jqUnit.assertEquals("The field '" + field + "' should match what we submitted.", updatedRecord[field], jsonData.record[field]);
+                        jqUnit.assertNotNull("There should be a record returned.", jsonData.record);
+
+                        if (jsonData.record && jsonData.record !== undefined) {
+                            // The response should closely match the record we submitted
+                            Object.keys(updatedRecord).forEach(function(field){
+                                jqUnit.assertEquals("The field '" + field + "' should match what we submitted.", updatedRecord[field], jsonData.record[field]);
+                            });
+                        }
+                        jqUnit.stop();
+
+                        var logoutRequest = require("request");
+                        var logoutOptions = {
+                            "url": "http://localhost:" + write.config.port + "/api/user/signout"
+                        };
+                        logoutRequest.post(logoutOptions,function(e,r,b) {
+                            jqUnit.start();
+                            jqUnit.assertNull("There should be no logout errors returned",e);
                         });
-                    }
+                    });
                 });
             });
         });
     });
+
 
     // We cannot rely on our validate_doc_update function in Couch to enforce basic validation from within Pouch:
     // https://github.com/pouchdb/pouchdb/issues/1412
@@ -179,7 +231,7 @@ write.runTests = function() {
 //        });
 //    });
 
-    jqUnit.asyncTest("Use POST to create a new record", function() {
+    jqUnit.asyncTest("Use POST to create a new record (not logged in)", function() {
         var options = {
             "url": "http://localhost:" + write.config.port + "/record/",
             "json": write.validRecord
@@ -189,25 +241,60 @@ write.runTests = function() {
         request.post(options, function(e,r,b) {
             jqUnit.start();
 
-            jqUnit.assertNull("There should be no errors returned",e);
+            jqUnit.assertEquals("The response should indicate that a login is required.", 401, r.statusCode);
+            jqUnit.assertFalse("The response should not be 'ok'", b.ok);
+        });
+    });
 
+    jqUnit.asyncTest("Use POST to create a new record (logged in)", function() {
+        var options = {
+            "url": "http://localhost:" + write.config.port + "/record/",
+            "json": write.validRecord
+        };
+
+        var loginRequest = require("request");
+        var loginOptions = {
+            "url": "http://localhost:" + write.config.port + "/api/user/signin",
+            "json": { "name": "admin", "password": "admin"}
+        };
+        loginRequest.post(loginOptions,function(e,r,b){
+            jqUnit.start();
+            jqUnit.assertNull("There should be no login errors returned",e);
             jqUnit.stop();
 
-            // Make sure the record was actually created
-            request.get("http://localhost:" + write.express.app.get('port') + "/record/" + write.validRecord.uniqueId,function(e,r,b) {
+            var request = require("request");
+            request.post(options, function(e,r,b) {
                 jqUnit.start();
                 jqUnit.assertNull("There should be no errors returned",e);
+                jqUnit.stop();
 
-                var jsonData = JSON.parse(b);
+                // Make sure the record was actually created
+                request.get("http://localhost:" + write.express.app.get('port') + "/record/" + write.validRecord.uniqueId,function(e,r,b) {
+                    jqUnit.start();
+                    jqUnit.assertNull("There should be no errors returned",e);
 
-                jqUnit.assertValue("There should be a record returned.", jsonData.record);
+                    var jsonData = JSON.parse(b);
 
-                if (jsonData.record && jsonData.record !== undefined) {
-                    // The response should closely match the record we submitted
-                    Object.keys(write.validRecord).forEach(function(field){
-                        jqUnit.assertEquals("The field '" + field + "' should match what we submitted.", write.validRecord[field], jsonData.record[field]);
+                    jqUnit.assertValue("There should be a record returned.", jsonData.record);
+
+                    if (jsonData.record && jsonData.record !== undefined) {
+                        // The response should closely match the record we submitted
+                        Object.keys(write.validRecord).forEach(function(field){
+                            jqUnit.assertEquals("The field '" + field + "' should match what we submitted.", write.validRecord[field], jsonData.record[field]);
+                        });
+                    }
+
+                    jqUnit.stop();
+
+                    var logoutRequest = require("request");
+                    var logoutOptions = {
+                        "url": "http://localhost:" + write.config.port + "/api/user/signout"
+                    };
+                    logoutRequest.post(logoutOptions,function(e,r,b) {
+                        jqUnit.start();
+                        jqUnit.assertNull("There should be no logout errors returned",e);
                     });
-                }
+                });
             });
         });
     });
@@ -221,7 +308,7 @@ write.runTests = function() {
 
     // TODO:  Test that DELETE only works when a user is logged in
 
-    jqUnit.asyncTest("Use DELETE to remove an existing record", function() {
+    jqUnit.asyncTest("Use DELETE to remove an existing record (not logged in)", function() {
 
         var originalRecord = JSON.parse(JSON.stringify(write.validRecord));
         originalRecord.uniqueId = "deleteTest";
