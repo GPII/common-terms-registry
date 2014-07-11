@@ -19,6 +19,10 @@ module.exports = function(config) {
             return res.send(400,{"ok":"false","message": "You must provide a uniqueId of the record you wish to delete."});
         }
 
+        if (!req.session || !req.session.user) {
+            return res.send(401,JSON.stringify({ok:false, message: "You must be logged in to use this function."}));
+        }
+
         // Get the current document (we need its _rev value)
         var readRequest = require('request');
         readRequest.get(config['couch.url'] + "/_design/api/_view/entries?key=%22" + req.params.uniqueId + "%22", function(readError,readResponse,readBody) {

@@ -9,6 +9,9 @@ module.exports = function(config) {
         if (!req.body || !req.body.uniqueId) {
             return res.send(400,{"ok":"false","message": "You must provide a uniqueId of the record you wish to create."});
         }
+        if (!req.session || !req.session.user) {
+            return res.send(401,JSON.stringify({ok:false, message: "You must be logged in to use this function."}));
+        }
 
         var checkRequest = require('request');
         checkRequest.get(config['couch.url'] + "/_design/api/_view/entries?key=%22" + req.body.uniqueId + "%22", function(checkError,checkResponse,checkBody) {
@@ -25,7 +28,7 @@ module.exports = function(config) {
             var updatedRecord = JSON.parse(JSON.stringify(originalRecord));
             updatedRecord.updated = new Date().toISOString();
 
-            // TODO: Set the "author" field to the current user
+            // TODO: Set the "author" field to the current user (use req.session.user)
 
             // TODO: Validate the record against the relevant JSON schema
 
