@@ -8,17 +8,30 @@ module.exports = function(config) {
     pouch.start = function(callback) {
         var PouchDB = require('pouchdb');
 
-        pouch.MemPouchDB = PouchDB.defaults({db: require('memdown')});
-        var tr = new pouch.MemPouchDB("tr");
-        var _users = new pouch.MemPouchDB("_users");
+        var MemPouchDB = PouchDB.defaults({db: require('memdown')});
+        var tr = new MemPouchDB("tr");
+        var _users = new MemPouchDB("_users");
 
-        if (callback) {
-            callback();
-        }
-    };
+        var express = require('express');
+        var app = express();
 
-    pouch.loadData = function(callback) {
-        loadViews(callback);
+
+        var sessionator = require('../lib/sessionator')(config);
+        app.use("/_session",sessionator);
+
+        // Add PouchDB with simulated CouchDb REST endpoints
+        app.use('/', require('express-pouchdb')(MemPouchDB));
+        app.set('port', config['pouch.port']);
+
+        var http = require("http");
+        http.createServer(app).listen(config['pouch.port'], function(){
+            console.log('Pouch express server listening on port ' + config['pouch.port']);
+
+            console.log("Pouch express started...");
+
+            // Give express-pouch a bit of time to start up.  I gravy hate myself.
+            setTimeout(function() { loadViews(callback); },500);
+        });
     };
 
     function loadViews(callback) {

@@ -35,18 +35,21 @@ write.startExpress = function() {
         var record = require('../../record')(write.config);
         write.express.app.use('/record', record);
 
-        // TODO: Mount user management functions
+        // Load the user management library so we can test permissions, etc.
+        var couchUser = require('express-user-couchdb');
 
-        // Add PouchDB with simulated CouchDb REST endpoints
-        write.express.app.use('/pouch', require('express-pouchdb')(write.pouch.MemPouchDB));
+        var bodyParser = require('body-parser');
+        var cookieParser = require('cookie-parser');
+        var session = require('express-session');
+        var router = write.express.express.Router();
+        router.use(cookieParser()); // Required for session storage, must be called before session()
+        router.use(session({ secret: write.config.session.secret}));
+        router.use(bodyParser.json());
+        router.use(couchUser(write.config));
+        write.express.app.use(router);
 
-        // Give express-pouch a few seconds to start up
-        setTimeout(write.loadData, 2000);
+//        write.runTests();
     });
-};
-
-write.loadData = function() {
-    write.pouch.loadData(write.runTests);
 };
 
 write.runTests = function() {
