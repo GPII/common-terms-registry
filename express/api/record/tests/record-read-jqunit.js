@@ -31,7 +31,7 @@ read.startExpress = function() {
         read.express.app.use('/pouch', require('express-pouchdb')(read.pouch.MemPouchDB));
 
         // Give express-pouch a few seconds to start up
-        setTimeout(read.loadData, 2000);
+        setTimeout(read.loadData, 500);
     });
 };
 
