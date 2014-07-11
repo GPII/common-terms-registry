@@ -5,13 +5,7 @@ var namespace = "gpii.ctr.record.tests.write";
 var write = fluid.registerNamespace(namespace);
 
 write.loader = require("../../../configs/lib/config-loader");
-write.config = write.loader.loadConfig(require("../../../configs/express/test.json"));
-
-// manually point at pouch instead of CouchDB
-write.pouchBaseUrl = "http://localhost:" + write.config.port + "/pouch";
-write.pouchDbUrl = write.pouchBaseUrl + "/tr";
-
-write.config["couch.url"] = write.pouchDbUrl;
+write.config = write.loader.loadConfig(require("../../../configs/express/test-pouch.json"));
 
 // TODO:  When we add support for versioning, we should disable it for these tests and test the version code separately
 

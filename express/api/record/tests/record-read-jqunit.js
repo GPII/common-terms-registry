@@ -5,7 +5,7 @@ var namespace = "gpii.ctr.record.tests.read";
 var read = fluid.registerNamespace(namespace);
 
 var loader = require("../../../configs/lib/config-loader");
-read.config = loader.loadConfig(require("../../../configs/express/test.json"));
+read.config = loader.loadConfig(require("../../../configs/express/test-pouch.json"));
 
 var testUtils = require("../../tests/lib/testUtils")(read.config);
 
