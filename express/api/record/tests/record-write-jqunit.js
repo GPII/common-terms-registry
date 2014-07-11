@@ -4,20 +4,11 @@ var fluid = require("infusion");
 var namespace = "gpii.ctr.record.tests.write";
 var write = fluid.registerNamespace(namespace);
 
-//write.PouchDB = require('pouchdb');
-//write.tr = new write.PouchDB({"name": "tr", "db": require('memdown'), "prefix": '/tmp/my-temp-pouch/'});
-
-write.PouchDB = require('pouchdb');
-write.MemPouchDB = write.PouchDB.defaults({db: require('memdown')});
-write.tr = new write.MemPouchDB("tr");
-
 write.loader = require("../../../configs/lib/config-loader");
 write.config = write.loader.loadConfig(require("../../../configs/express/test.json"));
 
-write.port = write.config.port || process.env.PORT || 4895;
-
 // manually point at pouch instead of CouchDB
-write.pouchBaseUrl = "http://localhost:" + write.port + "/pouch";
+write.pouchBaseUrl = "http://localhost:" + write.config.port + "/pouch";
 write.pouchDbUrl = write.pouchBaseUrl + "/tr";
 
 write.config["couch.url"] = write.pouchDbUrl;
@@ -29,6 +20,7 @@ write.config["couch.url"] = write.pouchDbUrl;
 write.testUtils = require("../../tests/lib/testUtils")(write.config);
 write.request = require("request");
 
+// TODO: Move to test data directory and load using "require"
 write.validRecord = {
     "uniqueId": "validRecord",
     "type": "general",
@@ -42,77 +34,36 @@ write.invalidRecord = {
     "definition": "This record is missing an aliasOf field."
 };
 
-write.express = require('express');
-write.app = write.express();
+write.loadPouch = function() {
+    write.pouch = require('../../tests/lib/pouch')(write.config);
 
-// Spin up an express instance
-write.startExpress = function() {
-    var app = write.app;
-    app.set('port', write.port);
-
-    // Mount all variations on the module
-    var record = require('../../record')(write.config);
-    app.use('/record', record);
-
-
-    // Add PouchDB with simulated CouchDb REST endpoints
-    app.use('/pouch', require('express-pouchdb')(write.MemPouchDB));
-
-    var http = require("http");
-    http.createServer(app).listen(app.get('port'), function(){
-        console.log('Express server listening on port ' + app.get('port'));
-
-        console.log("Express started...");
-
-        // TODO:  Find a better way to do this
-
-        // Give express-pouch a few seconds to start up
-        setTimeout(write.loadViews,2500);
+    write.pouch.start(function() {
+        write.startExpress();
     });
 };
 
+// Spin up an express instance
+write.startExpress = function() {
+    write.express = require('../../tests/lib/express')(write.config);
 
+    write.express.start(function() {
 
-write.loadViews = function() {
-    var couchappUtils = require("../../tests/lib/couchappUtils")(write.config);
+        // Mount all variations on the module
+        var record = require('../../record')(write.config);
+        write.express.app.use('/record', record);
 
-    var path = __dirname + "/../../../../couchapp/api/";
-    var viewContent = couchappUtils.loadCouchappViews(path);
+        // TODO: Mount user management functions
 
-    var options = {
-        "url": write.pouchDbUrl + "/_design/api",
-        "body": JSON.stringify(viewContent),
-        "headers": { "Content-Type": "application/json"}
-    };
+        // Add PouchDB with simulated CouchDb REST endpoints
+        write.express.app.use('/pouch', require('express-pouchdb')(write.pouch.MemPouchDB));
 
-    write.request.put(options,function(e,r,b) {
-        if (e && e !== null) {
-            return console.log(e);
-        }
-
-        console.log("Views loaded...");
-        write.loadData();
+        // Give express-pouch a few seconds to start up
+        setTimeout(write.loadData, 2000);
     });
 };
 
 write.loadData = function() {
-    var data = require("../../tests/data/data.json");
-
-    // Hit our express instance, for some reason the bulk docs function doesn't seem to like us
-    var options = {
-        "url": write.pouchDbUrl + "/_bulk_docs",
-        "json": data
-    };
-
-    write.request.post(options,function(e,r,b) {
-        if (e && e !== null) {
-            return console.log(e);
-        }
-
-        console.log("Data loaded...");
-
-        write.runTests();
-    });
+    write.pouch.loadData(write.runTests);
 };
 
 write.runTests = function() {
@@ -123,7 +74,7 @@ write.runTests = function() {
 
     jqUnit.asyncTest("Use PUT to create a new record", function() {
         var options = {
-            "url": "http://localhost:" + write.port + "/record/",
+            "url": "http://localhost:" + write.config.port + "/record/",
             "json": write.validRecord
         };
 
@@ -136,7 +87,8 @@ write.runTests = function() {
             jqUnit.stop();
 
             // Make sure the record was actually created
-            request.get("http://localhost:" + write.app.get('port') + "/record/" + write.validRecord.uniqueId,function(e,r,b) {
+            var verifyRequest = require("request");
+            verifyRequest.get("http://localhost:" + write.express.app.get('port') + "/record/" + write.validRecord.uniqueId,function(e,r,b) {
                 jqUnit.start();
                 jqUnit.assertNull("There should be no errors returned",e);
 
@@ -154,6 +106,8 @@ write.runTests = function() {
         });
     });
 
+    // TODO:  Test that PUTTING a new record only works when a user is logged in
+
     jqUnit.asyncTest("Use PUT to update an existing record", function() {
 
         var originalRecord = JSON.parse(JSON.stringify(write.validRecord));
@@ -165,7 +119,7 @@ write.runTests = function() {
         var request = require("request");
 
         var createOptions = {
-            "url": "http://localhost:" + write.port + "/record/",
+            "url": "http://localhost:" + write.config.port + "/record/",
             "json": originalRecord
         };
 
@@ -177,7 +131,7 @@ write.runTests = function() {
             jqUnit.stop();
 
             var updateOptions = {
-                "url": "http://localhost:" + write.port + "/record/",
+                "url": "http://localhost:" + write.config.port + "/record/",
                 "json": updatedRecord
             };
             // PUT the update
@@ -189,7 +143,7 @@ write.runTests = function() {
                 jqUnit.stop();
 
                 // Check the results
-                request.get("http://localhost:" + write.app.get('port') + "/record/" + originalRecord.uniqueId, function(e,r,b) {
+                request.get("http://localhost:" + write.express.app.get('port') + "/record/" + originalRecord.uniqueId, function(e,r,b) {
                     jqUnit.start();
                     jqUnit.assertNull("There should be no errors returned",e);
 
@@ -212,7 +166,7 @@ write.runTests = function() {
     // https://github.com/pouchdb/pouchdb/issues/1412
 //    jqUnit.asyncTest("Use PUT to add an invalid record", function() {
 //        var options = {
-//            "url": "http://localhost:" + write.port + "/record/",
+//            "url": "http://localhost:" + write.config.port + "/record/",
 //            "json": write.invalidRecord
 //        };
 //
@@ -228,7 +182,7 @@ write.runTests = function() {
 //            jqUnit.stop();
 //
 //            // Make sure the record was not actually created
-//            request.get("http://localhost:" + write.app.get('port') + "/record/" + write.invalidRecord.uniqueId,function(e,r,b) {
+//            request.get("http://localhost:" + write.express.app.get('port') + "/record/" + write.invalidRecord.uniqueId,function(e,r,b) {
 //                jqUnit.start();
 //                jqUnit.assertNull("There should be no errors returned",e);
 //
@@ -241,7 +195,7 @@ write.runTests = function() {
 
     jqUnit.asyncTest("Use POST to create a new record", function() {
         var options = {
-            "url": "http://localhost:" + write.port + "/record/",
+            "url": "http://localhost:" + write.config.port + "/record/",
             "json": write.validRecord
         };
 
@@ -254,7 +208,7 @@ write.runTests = function() {
             jqUnit.stop();
 
             // Make sure the record was actually created
-            request.get("http://localhost:" + write.app.get('port') + "/record/" + write.validRecord.uniqueId,function(e,r,b) {
+            request.get("http://localhost:" + write.express.app.get('port') + "/record/" + write.validRecord.uniqueId,function(e,r,b) {
                 jqUnit.start();
                 jqUnit.assertNull("There should be no errors returned",e);
 
@@ -272,9 +226,14 @@ write.runTests = function() {
         });
     });
 
+    // TODO:  Test that POSTING a new record only works when a user is logged in
+
     // TODO:  Test using POST with an invalid record
     // We cannot rely on our validate_doc_update function in Couch to enforce basic validation from within Pouch:
     // https://github.com/pouchdb/pouchdb/issues/1412
+
+
+    // TODO:  Test that DELETE only works when a user is logged in
 
     jqUnit.asyncTest("Use DELETE to remove an existing record", function() {
 
@@ -284,7 +243,7 @@ write.runTests = function() {
         var request = require("request");
 
         var createOptions = {
-            "url": "http://localhost:" + write.port + "/record/",
+            "url": "http://localhost:" + write.config.port + "/record/",
             "json": originalRecord
         };
 
@@ -296,7 +255,7 @@ write.runTests = function() {
             jqUnit.stop();
 
             // DELETE the record
-            request.del("http://localhost:" + write.port + "/record/" + originalRecord.uniqueId, function(e,r,b) {
+            request.del("http://localhost:" + write.config.port + "/record/" + originalRecord.uniqueId, function(e,r,b) {
                 jqUnit.start();
 
                 jqUnit.assertNull("There should be no errors returned",e);
@@ -306,7 +265,7 @@ write.runTests = function() {
                 console.log(JSON.stringify(b));
 
                 // Make sure the record no longer exists
-                request.get("http://localhost:" + write.app.get('port') + "/record/" + originalRecord.uniqueId, function(e,r,b) {
+                request.get("http://localhost:" + write.express.app.get('port') + "/record/" + originalRecord.uniqueId, function(e,r,b) {
                     jqUnit.start();
                     jqUnit.assertNull("There should be no errors returned",e);
 
@@ -320,27 +279,10 @@ write.runTests = function() {
 
     // TODO:  Test versioning on all successful adds and updates
 
-    //jqUnit.asyncTest("Retrieve record with the 'children' argument set to false...", function() {
-    //    // TODO:  This test depends on the existence of a single record.  We should adjust to use test data instead.
-    //    request.get("http://localhost:" + app.get('port') + "/record/xMPPChatID?children=false", function(error, response, body) {
-    //        jqUnit.start();
-    //
-    //        testUtils.isSaneResponse(jqUnit, error, response, body);
-    //        var jsonData = JSON.parse(body);
-    //
-    //        jqUnit.assertTrue("There should have been a record returned...", jsonData.record);
-    //        if (jsonData.record) {
-    //            jqUnit.assertUndefined("Record '" + jsonData.record.uniqueId + "' should not have contained any children", jsonData.record.aliases);
-    //        }
-    //    });
-    //});
-
     jqUnit.onAllTestsDone.addListener(function() {
         // Shut down express (seems to happen implicitly, so commented out)
-    //    http.server.close();
-        write.tr.viewCleanup();
-        write.tr.destroy();
+        // http.server.close();
     });
 };
 
-write.startExpress();
+write.loadPouch();
