@@ -14,10 +14,9 @@ module.exports = function(config) {
         res.send(200,{"ok":true,"userCtx":{"name":"admin","roles":["_admin","admin"]},"info":{"authentication_db":"_users","authentication_handlers":["oauth","cookie","default"],"authenticated":"cookie"}});
     });
 
-    // Every login is succesful
+    // Every login is successful
     router.post("/",function(req,res) {
-        console.log("request:" + JSON.stringify(req.body));
-
+        res.cookie('AuthSession',"",{"path":"/", "httpOnly":true})
         res.send(200,{"ok":true,"name": req.body.name, "roles":["_admin","admin"]});
     });
 
