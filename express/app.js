@@ -33,7 +33,7 @@ app.use(cookieParser()); // Required for session storage, must be called before 
 app.use(session({ secret: config.session.secret}));
 
 // /api/user/* is provided by the express-user-couchdb package
-app.use(couchUser(config));
+app.use("/", couchUser(config));
 
 // Mount the JSON schemas separately so that we have the option to decompose them into a separate module later, and so that the doc links and web links match
 app.use("/schema",express.static(__dirname + '/schema/schemas'));
