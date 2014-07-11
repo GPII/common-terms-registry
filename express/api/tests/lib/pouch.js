@@ -10,6 +10,7 @@ module.exports = function(config) {
 
         pouch.MemPouchDB = PouchDB.defaults({db: require('memdown')});
         var tr = new pouch.MemPouchDB("tr");
+        var _users = new pouch.MemPouchDB("_users");
 
         if (callback) {
             callback();
@@ -63,9 +64,33 @@ module.exports = function(config) {
                 return console.log("Error loading data into pouch:  " + b.error + ": " + b.reason);
             }
 
+            console.log("Data loaded...");
+
+            loadUsers(callback);
+        });
+    }
+
+    function loadUsers(callback) {
+        var data = require("../../tests/data/users.json");
+
+        // Hit our express instance, for some reason the bulk docs function doesn't seem to like us
+        var options = {
+            "url": config.users + "/_bulk_docs",
+            "json": data
+        };
+
+        var request = require("request");
+        request.post(options,function(e,r,b) {
+            if (e && e !== null) {
+                return console.log("Error loading users into pouch:  " + e);
+            }
+            else if (b.error) {
+                return console.log("Error loading users into pouch:  " + b.error + ": " + b.reason);
+            }
+
             debugger;
 
-            console.log("Data loaded...");
+            console.log("Users loaded...");
 
             if (callback) {
                 callback();
