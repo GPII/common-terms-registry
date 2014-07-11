@@ -43,7 +43,7 @@ module.exports = function(config) {
     }
 
     function loadData(callback) {
-        var data = require("../../tests/data/data.json");
+        var data = require("../../tests/data/records.json");
 
         // Hit our express instance, for some reason the bulk docs function doesn't seem to like us
         var options = {

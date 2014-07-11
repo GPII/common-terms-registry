@@ -20,19 +20,8 @@ write.config["couch.url"] = write.pouchDbUrl;
 write.testUtils = require("../../tests/lib/testUtils")(write.config);
 write.request = require("request");
 
-// TODO: Move to test data directory and load using "require"
-write.validRecord = {
-    "uniqueId": "validRecord",
-    "type": "general",
-    "termLabel": "A test term",
-    "definition": "This is a sample term created for test purposes."
-};
-write.invalidRecord = {
-    "uniqueId": "invalidRecord",
-    "type": "alias",
-    "termLabel": "A test alias with missing data.",
-    "definition": "This record is missing an aliasOf field."
-};
+write.validRecord = require("../../tests/data/valid");
+write.invalidRecord = require("../../tests/data/invalid");
 
 write.loadPouch = function() {
     write.pouch = require('../../tests/lib/pouch')(write.config);
