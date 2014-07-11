@@ -19,10 +19,6 @@ function loadCouchappViews(path) {
 
     var json = { "_id": "_design/api", "views": {}};
 
-    // read the "validate_doc_update.js file
-    var validateContent = fs.readFileSync(path + "validate_doc_update.js", {"encoding": "utf8"});
-    json.validate_doc_update = validateContent;
-
     // read the couchapp parent directory
     fs.readdirSync(path + "/views").forEach(function(file){
         // skip the library directory that we already scanned...
@@ -42,8 +38,8 @@ function loadCouchappViews(path) {
 
 module.exports = function(config) {
     var fluid = require('infusion');
-    var couchapp = fluid.registerNamespace("gpii.ctr.api.tests.lib.couchapp");
+    var pouchapp = fluid.registerNamespace("gpii.ctr.api.tests.lib.pouchapp");
 
-    couchapp.loadCouchappViews = loadCouchappViews;
-    return couchapp;
+    pouchapp.loadCouchappViews = loadCouchappViews;
+    return pouchapp;
 };

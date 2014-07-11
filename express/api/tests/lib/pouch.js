@@ -5,9 +5,9 @@ module.exports = function(config) {
     var fluid = require('infusion');
     var pouch = fluid.registerNamespace("gpii.ctr.api.tests.pouch");
 
-
     pouch.start = function(callback) {
         var PouchDB = require('pouchdb');
+
         pouch.MemPouchDB = PouchDB.defaults({db: require('memdown')});
         var tr = new pouch.MemPouchDB("tr");
 
@@ -21,7 +21,7 @@ module.exports = function(config) {
     };
 
     function loadViews(callback) {
-        var couchappUtils = require("../../tests/lib/couchappUtils")(config);
+        var couchappUtils = require("../lib/pouchapp")(config);
 
         var path = __dirname + "/../../../../couchapp/api/";
         var viewContent = couchappUtils.loadCouchappViews(path);
@@ -35,6 +35,9 @@ module.exports = function(config) {
         request.put(options,function(e,r,b) {
             if (e && e !== null) {
                 return console.log("Error loading views into pouch:  " + e);
+            }
+            else if (b.error) {
+                return console.log("Error loading views into pouch:  " + b.error + ": " + b.reason);
             }
 
             console.log("Views loaded...");
@@ -56,6 +59,11 @@ module.exports = function(config) {
             if (e && e !== null) {
                 return console.log("Error loading data into pouch:  " + e);
             }
+            else if (b.error) {
+                return console.log("Error loading data into pouch:  " + b.error + ": " + b.reason);
+            }
+
+            debugger;
 
             console.log("Data loaded...");
 
