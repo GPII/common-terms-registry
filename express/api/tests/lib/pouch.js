@@ -101,8 +101,6 @@ module.exports = function(config) {
                 return console.log("Error loading users into pouch:  " + b.error + ": " + b.reason);
             }
 
-            debugger;
-
             console.log("Users loaded...");
 
             if (callback) {
