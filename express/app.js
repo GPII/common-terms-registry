@@ -1,3 +1,5 @@
+"use strict";
+
 var express = require('express');
 var http = require('http');
 var path = require('path');
@@ -27,6 +29,7 @@ config.templateDir = path.join(__dirname, 'templates');
 
 app.set('port', config.port || process.env.PORT || 4895);
 app.set('views', path.join(__dirname, 'views'));
+partialsDir="views/partials/"
 
 // TODO:  Move to modules that require this if possible
 app.use(cookieParser()); // Required for session storage, must be called before session()
@@ -48,10 +51,16 @@ if ('development' === app.get('env')) {
     app.use('/dupes',dupes);
 }
 
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Most static content including root page
 app.use(express.static(__dirname + '/public'));
+
+// Handlebars templates for main interface
+app.use("/",function(req,res) {
+    res.render('index');
+});
 
 
 http.createServer(app).listen(app.get('port'), function(){
