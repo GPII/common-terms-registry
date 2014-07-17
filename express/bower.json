@@ -18,13 +18,10 @@
     "tests"
   ],
   "dependencies": {
-    "bootstrap": "~3.1.1",
     "jquery-cookie": "~1.4.0",
     "jquery-ui": "~1.10.4",
     "handlebars": "~1.3.0",
-    "jquery.couch": "*",
-    "couchdb-login-jquery": "*",
-    "jquery-Mustache": "~0.2.7",
-    "github-markdown-css": "~0.1.0"
+    "github-markdown-css": "~0.1.0",
+    "foundation": "zurb/bower-foundation#~5.3.1"
   }
 }
