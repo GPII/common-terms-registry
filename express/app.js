@@ -56,6 +56,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Most static content including root page
 app.use(express.static(__dirname + '/public'));
 
+// Mount the infusion source from our node_modules directory
+app.use("/infusion",express.static(__dirname + '/node_modules/infusion/src'));
+
 // Handlebars templates for main interface
 app.use("/",function(req,res) {
     res.render('index');
