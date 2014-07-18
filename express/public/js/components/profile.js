@@ -1,28 +1,38 @@
-"use strict";
 (function ($, fluid) {
+    "use strict";
     fluid.registerNamespace("ctr.components");
 
+    var profile;
+    profile.login = function(that) {
+        // Get the user information and update the model
+
+        // Update the affected fields
+
+        // toggle the login and logout buttons
+    };
+
+    profile.logout = function(that) {
+        // Get the user information and update the model
+
+        // Update the affected fields
+
+        // toggle the login and logout buttons
+    };
+
+    profile.toggle = function(that) {
+
+    };
+
     fluid.defaults("ctr.components.profile", {
-        gradeNames: ["fluid.rendererComponent", "autoInit"],
+        gradeNames: ["fluid.viewComponent", "autoInit"],
         selectors: {
-            "icon": "#profile-icon",
             "username": "#profile-name",
-            "profile": "#profile-profile",
-            "login": "#profile-login",
-            "logout": "#profile-logout",
-            "toggle": "#profile-toggle"
+            "profile": "#profile-profile"
         },
         model: {
             user: {
-                "username": "admin",
-                "type": "user",
-                "name": "admin",
-                "email": "tony@raisingthefloor.org",
-                "roles": [ "admin" ],
-                "signupTimestamp": "2014-01-03T17:59:23.634Z",
-                "failedLoginAttempts": 0,
-                "emailVerificationTimestamp": "2014-01-03T18:00:30.787Z",
-                "emailVerified": true
+                "username": "anonymous",
+                "name":     "Anonymous"
             }
         },
         events: {
