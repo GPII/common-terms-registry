@@ -29,7 +29,6 @@ config.templateDir = path.join(__dirname, 'templates');
 
 app.set('port', config.port || process.env.PORT || 4895);
 app.set('views', path.join(__dirname, 'views'));
-partialsDir="views/partials/"
 
 // TODO:  Move to modules that require this if possible
 app.use(cookieParser()); // Required for session storage, must be called before session()
