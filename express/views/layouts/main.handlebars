@@ -3,9 +3,11 @@
   <head>
     <title>Preference Terms Dictionary</title>
 
-    <!-- include foundation -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <script src="/bc/jquery/dist/jquery.js"></script>
+    <script src="/bc/foundation/js/vendor/modernizr.js"></script>
+
     <script type="text/javascript" src="/infusion/lib/jquery/core/js/jquery.js"></script>
     <script type="text/javascript" src="/infusion/lib/jquery/ui/js/jquery.ui.core.js"></script>
     <script type="text/javascript" src="/infusion/lib/json/js/json2.js"></script>
@@ -22,20 +24,39 @@
     <script type="text/javascript" src="/infusion/framework/core/js/FluidRequests.js"></script>
     <script type="text/javascript" src="/infusion/framework/renderer/js/RendererUtilities.js"></script>
 
+    <!-- include foundation and its dependencies -->
+    <link rel="stylesheet" href="/bc/foundation/css/normalize.css">
+    <link rel="stylesheet" href="/bc/foundation/css/foundation.css">
+    <link rel="stylesheet" href="/bc/foundation-icons-sets/foundation_icons_general/stylesheets/general_foundicons.css">
+
     <!-- include our styles -->
+    <link rel="stylesheet" href="/css/glyphicons.css"/>
+    <link rel="stylesheet" href="/css/ptd.css"/>
+
     <!-- include our fluid modules -->
     <script src="/js/components/profile.js"></script>
+
+    <!-- TODO:  Wire up the initial content display -->
+
+    <!-- TODO:  Wire up the search filter controls -->
+
+    <!-- TODO:  Wire up the status filter controls -->
+
+    <!-- TODO:  Wire up the ordering controls -->
+
+    <!-- TODO:  Wire up the language controls and populate with meaningful values -->
+
+    <!-- TODO:  Wire up the record type controls -->
   </head>
   <body>
     <!-- include the header -->
     {{> header}}
 
-    {{body}}
+    {{{body}}}
 
-    <!-- include the footer -->
-    {{> footer}}
-
+    <script src="/bc/foundation/js/foundation.js"></script>
     <script type="text/javascript">
+        $(document).foundation();
         var profile = ctr.components.profile("#profile");
     </script>
   </body>

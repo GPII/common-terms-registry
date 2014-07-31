@@ -1,0 +1,219 @@
+.row {
+    max-width: 90%;
+    margin-left: 0px;
+}
+
+#header {
+    background-color:#E6E6E6;
+    border-bottom: 1px solid #f2f2f2;
+    padding-top: 1.5em;
+    padding-bottom: .5em;
+}
+
+.body {
+    background-color:#e0e0e0;
+    padding-top: 1.5em;
+}
+
+.ptd-search-form {
+    border: none;
+    margin: 0px;
+    padding: 2px;
+    background-color: white;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+}
+.ptd-search-form .ptd-icon {
+    margin-top: .75em;
+    margin-left: .25em;
+}
+
+.ptd-search-form input {
+    border: none;
+    box-shadow: none;
+    margin-top: .33em;
+    margin-bottom: 0px;
+}
+
+.ptd-search-form .button {
+    margin-top: 2px;
+    padding-top: 2px;
+    margin-bottom: 0px;
+    background-color: #dcdcdc;
+}
+
+#add-record-button {
+    background-color: #1ec285;
+}
+
+.dropdown.button {
+    background-color: white;
+    border-color: #e3e3e3;
+    border-radius: 3px;
+}
+
+.dropdown.button.transparent {
+    background-color: transparent;
+}
+
+.button [class*="foundicon-"]:before {
+    margin-left: -1em;
+    margin-right: .5em;
+}
+
+.button .glyphicon:before {
+    margin-left: -1em;
+    margin-right: .5em;
+}
+
+.ptd-search-form [class*="foundicon-"] {
+    top: 4px;
+    position: absolute;
+}
+
+.glyphicon {
+    top: 3px;
+}
+
+button, .button {
+    margin: 0 0 .75rem;
+}
+
+.ptd-non-button-heading {
+    padding-top: .75em;
+}
+
+.ptd-non-button-heading a {
+    color: inherit;
+}
+
+.ptd-non-button-heading .glyphicon:before {
+    margin-top: .2em;
+    margin-left: -1em;
+    margin-right: .5em;
+}
+
+.button.active {
+    color: white;
+    background-color: black;
+}
+
+.button.inactive {
+    background-color: #f2f2f2;;
+    color: black;
+}
+
+
+button.left, .button.left {
+    border-radius: 3px 0px 0px 3px;
+}
+
+button.right, .button.right {
+    border-radius: 0px 3px 3px 0px;
+}
+
+button.right .glyphicon:before, .button.right .glyphicon:before {
+    margin-left: 0px;
+    border-radius: 0px 3px 3px 0px;
+}
+
+.record {
+    border: 1px solid #dcdcdc;
+    background-color: #ffffff;
+    margin-top: 1.5em;
+}
+
+.term {
+    padding: 1.5em;
+}
+
+.record:first-of-type {
+    margin-top: 0px;
+}
+
+.record:last-of-type {
+    margin-bottom: 1.5em;
+}
+
+.term .row, .alias .row {
+    margin-top: 1.5em;
+}
+
+.term .row:first-of-type, .alias .row:first-of-type {
+    margin-top: 0em;
+}
+
+.alias {
+    background-color: #f2f2f2;
+    padding: 1.5em;
+}
+
+.alias .source {
+    float:left; margin-right: 1em;
+}
+
+.term .title {
+    font-size: 1.8em;
+    font-weight: bold;
+}
+
+.term .title:hover {
+    color: #1ec285;
+    text-decoration: underline;
+}
+
+.term .title .glyphicon-pencil, .alias .title .glyphicon-pencil {
+    color: #1ec285;
+}
+
+.subtitle, .heading {
+    color: #969696;
+}
+
+.subtitle {
+    margin-left: 4em;
+}
+
+.heading {
+    margin-bottom: .25em;
+}
+
+.left.prefix,.right.postfix {
+    padding-top: .35em;
+    height: 2.8rem;
+}
+
+.translation-count {
+    margin-top: .75em;
+    font-style: italic;
+}
+
+.order {
+    text-align: right;
+}
+
+.order.f-dropown {
+    max-width: inherit;
+}
+
+.order.f-dropown:before {
+
+}
+
+.order.f-dropown:after {
+
+}
+
+.version {
+    width: 99%;
+    text-align: right;
+}
+
+.loading {
+    font-size: 2em;
+    font-weight: bold;
+    text-align: center;
+    padding:2em;
+    color: #cecece;
+}

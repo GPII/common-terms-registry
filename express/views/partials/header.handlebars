@@ -1,5 +1,80 @@
 <div id="header">
-    <p>This is the header content</p>
+    <div class="row">
+        <div class="medium-offset-1 medium-3 column ptd-non-button-heading">
+            Preference Terms Dictionary
+        </div>
+        <div class="medium-2 column">
+            <div id="add-record-button" class="button small radius" tabindex="0">
+                <div class="foundicon-general-plus">Add New</div>
+            </div>
+        </div>
+        <div class="medium-offset-3 medium-3 column">
+            <div class="row">
+                <div class="medium-4 column ptd-non-button-heading">
+                    <a class="glyphicon glyphicon-info-sign" tabindex="0" href="#">About</a>
+                </div>
+                <div class="medium-8 column">
+                    {{> profile }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="medium-offset-1 medium-3 column">
+            <div class="row collapse">
+                <div class="medium-6 column">
+                    <a class="button left active prefix" href="#">
+                        <span class="glyphicon glyphicon-tree-deciduous"></span>
+                        Terms
+                    </a>
+                </div>
+                <div class="medium-6 column">
+                    <a class="button right postfix inactive" href="#">
+                        <span class="glyphicon glyphicon-cog"></span>
+                        Conditions
+                    </a>
+                </div>
+            </div>
+        </div>
 
-    {{> profile }}
+        <div class="medium-2 column">
+            <a href="#" data-dropdown="record-type-dropdown" class="button dropdown expand secondary small" tabindex="0">
+                <span class="glyphicon glyphicon-unchecked"></span>
+                Active Records
+            </a>
+            <br/>
+            <ul id="record-type-dropdown" data-dropdown-content class="f-dropdown">
+                <li><a href="#" tabindex="-1">All Records</a></li>
+                <li><a href="#" tabindex="-1">Active Records</a></li>
+                <li><a href="#" tabindex="-1">Approved Records</a></li>
+                <li><a href="#" tabindex="-1">Deleted Records</a></li>
+            </ul>
+        </div>
+
+        <div class="medium-2 column">
+            <a href="#" data-dropdown="locale-dropdown" class="button dropdown expand secondary small" tabindex="0">
+                <span class="glyphicon glyphicon-globe"></span>
+                English
+            </a>
+            <br/>
+            <ul id="locale-dropdown" data-dropdown-content class="f-dropdown">
+                <li><a href="#" tabindex="-1">English</a></li>
+                <li><a href="#" tabindex="-1">Not English</a></li>
+            </ul>
+        </div>
+
+        <div class="medium-4 column ptd-search-form">
+            <div class="row collapse">
+                <div class="medium-1 column ptd-icon">
+                    <div class="foundicon-general-search"></div>
+                </div>
+                <div class="medium-9 column">
+                    <input type="text" placeholder="filter results" tabindex="0"/>
+                </div>
+                <div class="medium-1 column">
+                    <a href="#" class="button postfix radius" tabindex="0">GO</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
