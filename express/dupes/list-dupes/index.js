@@ -37,12 +37,24 @@ module.exports = function(config) {
                             dupes[doc.uniqueId] = [firsts[doc.uniqueId], doc];
                         }
                     }
-
                 }
             });
 
+            // I didn't remember that dupes included all duplicates, and ended up purging a lot of content.  This needs to be rewritten to be smarter
+//            var bulkDeleteOutput = { docs: [] };
+//            Object.keys(dupes).forEach(function(key){
+//                var entries = dupes[key];
+//                entries.forEach(function(entry){
+//                    bulkDeleteOutput.docs.push({
+//                        "_id": entry._id,
+//                        "_rev": entry._rev,
+//                        "_deleted": true
+//                    });
+//                });
+//            });
+
             // Present the list of duplicates
-            res.send(200, {"dupes": dupes});
+            res.send(200, dupes);
         });
     });
 
