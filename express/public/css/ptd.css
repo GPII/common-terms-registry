@@ -119,8 +119,12 @@ button.right .glyphicon:before, .button.right .glyphicon:before {
     border-radius: 0px 3px 3px 0px;
 }
 
-.record {
+.record .alias {
     border: 1px solid #dcdcdc;
+
+}
+
+.record {
     background-color: #ffffff;
     margin-top: 1.5em;
 }
