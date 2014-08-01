@@ -1,7 +1,16 @@
 <div class="row">
     <div class="small-6 small-offset-1 column">
-        <div class="translation-count">
-            <a href="#" tabindex="0">1 entry</a> not translated into English
+        <div clas="count">
+            {{#if count}}
+            <span class="record-count">
+                {{count}} records
+            </span>
+            {{/if}}
+            {{#if untranslated}}
+            <span class="translation-count">
+                , <a href="#" tabindex="0">1 entry</a> not translated into English
+            </span>
+            {{/if}}
         </div>
     </div>
     <div class="small-offset-2 small-3 column">
