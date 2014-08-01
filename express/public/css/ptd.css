@@ -13,6 +13,7 @@
 .body {
     background-color:#e0e0e0;
     padding-top: 1.5em;
+    min-height: 100%;
 }
 
 .ptd-search-form {
