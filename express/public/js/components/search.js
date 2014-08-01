@@ -41,9 +41,13 @@
         prependTemplate("#main-viewport","error",{message: errorThrown});
     }
 
+    // TODO:  Extract the template handling functions to a separate utility library
     function renderTemplate(key,context) {
+        // If a template exists, load that.  Otherwise, try to load the partial.
+        var element = $("#template-" + key).length ? $("#template-" + key) : $("#partial-" + key);
+
         // templates are cached the first time they are used per page load
-        var template = search.templates.compiled[key] ? search.templates.compiled[key] : Handlebars.compile($("#" + key).html());
+        var template = search.templates.compiled[key] ? search.templates.compiled[key] : Handlebars.compile(element.html());
         return template(context);
     }
 

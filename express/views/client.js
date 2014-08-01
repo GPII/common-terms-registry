@@ -16,8 +16,6 @@ module.exports = function(config) {
     var express = require('express');
     var app = express();
 
-    debugger;
-
     function loadTemplates(dir, res) {
         var dirContents = fs.readdirSync(dir);
         console.log(JSON.stringify(dirContents));
@@ -27,11 +25,12 @@ module.exports = function(config) {
             if (stats.isFile()) {
                 var matches = templates.hbsExtensionRegexp.exec(entry);
                 if (matches) {
-                    var key = matches[1];
+                    var templateType = dir.indexOf("partials") !== -1 ? "partial" : "template";
+                    var key =  templateType + "-" + matches[1];
 
                     // cache file information so that we only reload templates that have been updated
                     if (templates.cache[key] && stats.mtime.getTime() === templates.cache[key].mtime.getTime()) {
-                        console.log("Skipping cached template '" + key + "'...");
+                        console.log("Skipping cached " + templateType + " '" + key + "'...");
                     }
                     else {
                         templates.updated = true;
