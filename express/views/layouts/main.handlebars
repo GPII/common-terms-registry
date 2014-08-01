@@ -36,10 +36,6 @@
     <link rel="stylesheet" href="/css/glyphicons.css"/>
     <link rel="stylesheet" href="/css/ptd.css"/>
 
-    <!-- include our fluid modules -->
-    <script src="/js/components/search.js"></script>
-    <script src="/js/components/profile.js"></script>
-
     <!-- TODO:  Wire up the initial content display -->
 
     <!-- TODO:  Wire up the search filter controls -->
@@ -59,14 +55,5 @@
     {{> header}}
 
     {{{body}}}
-
-    <script src="/bc/foundation/js/foundation.js"></script>
-    <script type="text/javascript">
-        $(document).foundation();
-
-        var search =ctr.components.search(".ptd-search-form");
-
-        var profile = ctr.components.profile("#profile");
-    </script>
   </body>
 </html>

@@ -6,3 +6,15 @@
     </div>
 </div>
 
+<!-- include our fluid modules -->
+<script src="/js/components/search.js"></script>
+<script src="/js/components/profile.js"></script>
+<script type="text/javascript">
+    $(document).foundation();
+
+    var search =ctr.components.search(".ptd-search-form");
+    var profile = ctr.components.profile("#profile");
+
+    search.refresh();
+</script>
+
