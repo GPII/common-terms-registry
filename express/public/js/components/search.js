@@ -92,6 +92,7 @@
 
     function appendTemplates(data, textStatus, jqXHR) {
         $("body").append(data);
+        $("[id^=partial-]").each(function(index, element) {
     }
 
     search.handleKeys = function(that, event) {
