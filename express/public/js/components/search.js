@@ -13,15 +13,23 @@
         // The query values are all stored in the form's DOM.
         // TODO: Review this with Antranig or Justin
 
-        // TODO:  How do we pick up our base URL from the configuration?
         var settings = {
-            url: "/api/search",
-            data: {
-                q: that.model.input.val()
-            },
             success: displayResults,
             error:   displayError
         };
+
+        // TODO:  Wire in sorting and filtering to both types of requests
+        if (that.model && that.model.input && that.model.input.val()) {
+            settings.url = "/api/search";
+            settings.data = { q: that.model.input.val()};
+        }
+        else {
+            settings.url = "/api/records?children=true";
+        }
+
+        // TODO:  How do we pick up our base URL from the configuration?
+
+
         // TODO:  Wire in support for status controls
 
         // TODO:  Wire in support for record type controls
