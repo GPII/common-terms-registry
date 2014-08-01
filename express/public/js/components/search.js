@@ -66,9 +66,17 @@
     function displayResults(data, textStatus, jqXHR) {
         $("#main-viewport").html("");
         if (data && data.records && data.records.length > 0) {
-            // prepend the control title bar
             // TODO:  Come up with a meaningful list of untranslated records
-            appendTemplate("#main-viewport","navigation",{ count: data.records.length + 1 , untranslated: 0});
+            var localEnd = data.offset + data.limit;
+            var navData = {
+                count: data.total_rows,
+                start: data.offset + 1,
+                end: data.total_rows < localEnd ? data.total_rows : localEnd,
+                untranslated: 0
+            };
+
+            // prepend the control title bar
+            appendTemplate("#main-viewport","navigation", navData);
 
             // display each record in the results area
             data.records.forEach(function(record) {
@@ -92,7 +100,13 @@
 
     function appendTemplates(data, textStatus, jqXHR) {
         $("body").append(data);
+
+        // load all partials so that we can use them in context
         $("[id^=partial-]").each(function(index, element) {
+            var id = element.id;
+            var key = id.substring(id.indexOf("-")+1);
+            Handlebars.registerPartial(key,$("#" + id).html());
+        });
     }
 
     search.handleKeys = function(that, event) {
