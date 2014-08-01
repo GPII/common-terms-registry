@@ -25,7 +25,9 @@ else {
     app.use(logger('dev'));
 }
 
+// Email templates
 config.templateDir = path.join(__dirname, 'templates');
+config.viewTemplateDir = path.join(__dirname, 'views');
 
 app.set('port', config.port || process.env.PORT || 4895);
 app.set('views', path.join(__dirname, 'views'));
@@ -59,11 +61,13 @@ app.use(express.static(__dirname + '/public'));
 // Mount the infusion source from our node_modules directory
 app.use("/infusion",express.static(__dirname + '/node_modules/infusion/src'));
 
-// Handlebars templates for main interface
+// Mount the handlebars templates as a single dynamically generated source file
+app.use("/hbs",require("./views/client.js")(config));
+
+// Handlebars template for main interface
 app.use("/",function(req,res) {
     res.render('index');
 });
-
 
 http.createServer(app).listen(app.get('port'), function(){
     console.log('Express server listening on port ' + app.get('port'));
