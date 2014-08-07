@@ -13,12 +13,6 @@
         search.refresh(that);
     };
 
-    search.handleKeys = function(that, event) {
-        if (event.which === 13) {
-            search.refresh(that);
-        }
-    };
-
     // Update the results displayed whenever we have new search data
     search.refresh = function(that) {
         // The query values are all stored in the form's DOM.
@@ -42,9 +36,11 @@
         // Wire in support for clearing the search easily
         var clearButton = that.locate("clear");
         if (queryInput.val()) {
+            clearButton.attr("tabIndex",0);
             clearButton.show();
         }
         else {
+            clearButton.attr("tabIndex",-1);
             clearButton.hide();
         }
 
@@ -122,19 +118,19 @@
         listeners: {
             onCreate: [
                 {
-                    "this": "{that}.dom.go",
-                    method: "click",
-                    args: "{that}.refresh"
-                },
-                {
                     "this": "{that}.dom.clear",
                     method: "click",
                     args: "{that}.clear"
                 },
                 {
+                    "this": "{that}.dom.clear",
+                    method: "keypress",
+                    args: "{that}.clear"
+                },
+                {
                     "this": "{that}.dom.input",
-                    method: "keyup",
-                    args: "{that}.handleKeys"
+                    method: "change",
+                    args: "{that}.refresh"
                 }
             ],
             "refresh": {
