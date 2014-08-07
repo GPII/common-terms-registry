@@ -35,6 +35,7 @@
     box-shadow: none;
     margin-top: .33em;
     margin-bottom: 0px;
+    transition: none;
 }
 
 .ptd-search-form .button {
@@ -95,6 +96,12 @@ button, .button {
     margin-right: .5em;
 }
 
+.ptd-clear-button {
+    margin-top: .6em;
+    color: #dcdcdc;
+    display:none;
+}
+
 .button.active {
     color: white;
     background-color: black;
@@ -104,7 +111,6 @@ button, .button {
     background-color: #f2f2f2;;
     color: black;
 }
-
 
 button.left, .button.left {
     border-radius: 3px 0px 0px 3px;

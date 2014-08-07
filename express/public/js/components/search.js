@@ -8,6 +8,11 @@
     search.templates = { compiled: {} };
     // TODO:  Create session-scoped variables for query, status, record type, and language, and use if no data is provided.
 
+    search.clear = function(that) {
+        that.model.input.val(null);
+        search.refresh(that);
+    };
+
     // Update the results displayed whenever we have new search data
     search.refresh = function(that) {
         // The query values are all stored in the form's DOM.
@@ -27,8 +32,15 @@
             settings.url = "/api/records?children=true";
         }
 
-        // TODO:  How do we pick up our base URL from the configuration?
+        // Wire in support for clearing the search easily
+        if (that.model.input.val()) {
+            that.model.clear.show();
+        }
+        else {
+            that.model.clear.hide();
+        }
 
+        // TODO:  How do we pick up our base URL from the configuration?
 
         // TODO:  Wire in support for status controls
 
@@ -120,26 +132,34 @@
     fluid.defaults("ctr.components.search", {
         gradeNames: ["fluid.viewComponent", "autoInit"],
         selectors: {
-            "input":  ".ptd-search-input",
-            "button": ".ptd-search-button",
+            "input":   ".ptd-search-input",
+            "go":      ".ptd-search-button",
+            "clear":   ".ptd-clear-button",
             "results": ".ptd-search-results"
         },
         model: {
             "input": "{that}.dom.input",
+            "clear":   "{that}.dom.clear",
             "statuses": [ "active", "unreviewed", "candidate"],
             "type": [ "record"]
         },
         members: {
-            "input":  ".ptd-search-input",
-            "button": ".ptd-search-button",
+            "input":   ".ptd-search-input",
+            "go":      ".ptd-search-button",
+            "clear":   ".ptd-clear-button",
             "results": ".ptd-search-results"
         },
         events: {
-            "refresh":  "preventable"
+            "refresh":  "preventable",
+            "clear":    "preventable"
         },
         invokers: {
             "refresh": {
                 funcName: "ctr.components.search.refresh",
+                args: [ "{that}"]
+            },
+            "clear": {
+                funcName: "ctr.components.search.clear",
                 args: [ "{that}"]
             },
             "handleKeys": {
@@ -150,9 +170,14 @@
         listeners: {
             onCreate: [
                 {
-                    "this": "{that}.dom.button",
+                    "this": "{that}.dom.go",
                     method: "click",
                     args: "{that}.refresh"
+                },
+                {
+                    "this": "{that}.dom.clear",
+                    method: "click",
+                    args: "{that}.clear"
                 },
                 {
                     "this": "{that}.dom.input",
