@@ -1,16 +1,22 @@
 // The main search module that allows users to view the Preference Terms Dictionary
-//
-// Requires Handlebars.js
 
 (function ($, fluid) {
     "use strict";
     var search = fluid.registerNamespace("ctr.components.search");
-    search.templates = { compiled: {} };
+    var templates = fluid.registerNamespace("ctr.components.templates");
+
     // TODO:  Create session-scoped variables for query, status, record type, and language, and use if no data is provided.
 
     search.clear = function(that) {
-        that.model.input.val(null);
+        var queryInput = that.locate("input");
+        queryInput.val(null);
         search.refresh(that);
+    };
+
+    search.handleKeys = function(that, event) {
+        if (event.which === 13) {
+            search.refresh(that);
+        }
     };
 
     // Update the results displayed whenever we have new search data
@@ -23,21 +29,23 @@
             error:   displayError
         };
 
-        // TODO:  Wire in sorting and filtering to both types of requests
-        if (that.model && that.model.input && that.model.input.val()) {
+        // Wire in sorting and filtering to both types of requests
+        var queryInput = that.locate("input");
+        if (queryInput && queryInput.val()) {
             settings.url = "/api/search";
-            settings.data = { q: that.model.input.val()};
+            settings.data = { q: queryInput.val()};
         }
         else {
             settings.url = "/api/records?children=true";
         }
 
         // Wire in support for clearing the search easily
-        if (that.model.input.val()) {
-            that.model.clear.show();
+        var clearButton = that.locate("clear");
+        if (queryInput.val()) {
+            clearButton.show();
         }
         else {
-            that.model.clear.hide();
+            clearButton.hide();
         }
 
         // TODO:  How do we pick up our base URL from the configuration?
@@ -49,32 +57,12 @@
         $.ajax(settings);
     };
 
+    // TODO:  Ask AMB how to access {that} from jQuery-ized handlers like this.
     function displayError(jqXHR, textStatus, errorThrown) {
         prependTemplate("#main-viewport","error",{message: errorThrown});
     }
 
-    // TODO:  Extract the template handling functions to a separate utility library
-    function renderTemplate(key,context) {
-        // If a template exists, load that.  Otherwise, try to load the partial.
-        var element = $("#template-" + key).length ? $("#template-" + key) : $("#partial-" + key);
-
-        // templates are cached the first time they are used per page load
-        var template = search.templates.compiled[key] ? search.templates.compiled[key] : Handlebars.compile(element.html());
-        return template(context);
-    }
-
-    function replaceWithTemplate(el,key,context) {
-        $(el).html(renderTemplate(key,context));
-    }
-
-    function appendTemplate(el,key,context) {
-        $(el).append(renderTemplate(key,context));
-    }
-
-    function prependTemplate(el,key,context) {
-        $(el).prepend(renderTemplate(key,context));
-    }
-
+    // TODO:  Ask AMB how to access {that} from jQuery-ized handlers like this.
     function displayResults(data, textStatus, jqXHR) {
         $("#main-viewport").html("");
         if (data && data.records && data.records.length > 0) {
@@ -88,62 +76,26 @@
             };
 
             // prepend the control title bar
-            appendTemplate("#main-viewport","navigation", navData);
+            templates.appendTo("#main-viewport","navigation", navData);
 
             // display each record in the results area
             data.records.forEach(function(record) {
-                appendTemplate("#main-viewport","record",record);
+                templates.appendTo("#main-viewport","record",record);
             });
         }
         else {
-            replaceWithTemplate("#main-viewport","norecord");
+            templates.replaceWith("#main-viewport","norecord");
         }
 
         // TODO: add support for pagination or infinite scrolling
     }
 
-    function loadTemplates(){
-        var settings = {
-          url: "/hbs",
-          success: appendTemplates
-        };
-        $.ajax(settings);
-    }
+    // TODO:  Extract the template handling functions to a separate utility library
 
-    function appendTemplates(data, textStatus, jqXHR) {
-        $("body").append(data);
-
-        // load all partials so that we can use them in context
-        $("[id^=partial-]").each(function(index, element) {
-            var id = element.id;
-            var key = id.substring(id.indexOf("-")+1);
-            Handlebars.registerPartial(key,$("#" + id).html());
-        });
-    }
-
-    search.handleKeys = function(that, event) {
-        if (event.which === 13) {
-            search.refresh(that);
-        }
-    };
-
-    loadTemplates();
 
     fluid.defaults("ctr.components.search", {
         gradeNames: ["fluid.viewComponent", "autoInit"],
         selectors: {
-            "input":   ".ptd-search-input",
-            "go":      ".ptd-search-button",
-            "clear":   ".ptd-clear-button",
-            "results": ".ptd-search-results"
-        },
-        model: {
-            "input": "{that}.dom.input",
-            "clear":   "{that}.dom.clear",
-            "statuses": [ "active", "unreviewed", "candidate"],
-            "type": [ "record"]
-        },
-        members: {
             "input":   ".ptd-search-input",
             "go":      ".ptd-search-button",
             "clear":   ".ptd-clear-button",
@@ -184,7 +136,6 @@
                     method: "keyup",
                     args: "{that}.handleKeys"
                 }
-
             ],
             "refresh": {
                 func: "ctr.components.search.refresh",
