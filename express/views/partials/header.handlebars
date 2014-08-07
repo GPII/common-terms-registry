@@ -11,7 +11,7 @@
         <div class="medium-offset-3 medium-3 column">
             <div class="row">
                 <div class="medium-4 column ptd-non-button-heading">
-                    <a class="glyphicon glyphicon-info-sign" tabindex="0" href="#">About</a>
+                    <a class="ptd-icon-info" tabindex="0" href="#">About</a>
                 </div>
                 <div class="medium-8 column">
                     {{> profile }}
@@ -39,7 +39,7 @@
 
         <div class="medium-2 column">
             <a href="#" data-dropdown="record-type-dropdown" class="button dropdown expand secondary small" tabindex="0">
-                <span class="glyphicon glyphicon-unchecked"></span>
+                <span class="ptd-icon-radio-unchecked"></span>
                 Active Records
             </a>
             <br/>
@@ -53,7 +53,7 @@
 
         <div class="medium-2 column">
             <a href="#" data-dropdown="locale-dropdown" class="button dropdown expand secondary small" tabindex="0">
-                <span class="glyphicon glyphicon-globe"></span>
+                <span class="ptd-icon-language"></span>
                 English
             </a>
             <br/>
@@ -63,13 +63,16 @@
             </ul>
         </div>
 
-        <div class="medium-4 column ptd-search-form">
-            <div class="row collapse">
+        <div class="medium-4 column">
+            <div class="row collapse ptd-search-form">
                 <div class="medium-1 column ptd-icon">
                     <div class="foundicon-general-search"></div>
                 </div>
                 <div class="medium-9 column">
                     <input type="text" class="ptd-search-input" placeholder="filter results" tabindex="0"/>
+                </div>
+                <div class="medium-1 column">
+                    <span class="foundicon-general-remove ptd-clear-button" title="Click to remove your search filter."></span>
                 </div>
                 <div class="medium-1 column">
                     <a href="#" class="button ptd-search-button postfix radius" tabindex="0">GO</a>
