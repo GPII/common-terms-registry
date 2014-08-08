@@ -1,46 +1,60 @@
 @font-face {
-	font-family: 'ptd-icons';
-	src:url('../fonts/ptd-icons.eot?-9ksj28');
-	src:url('../fonts/ptd-icons.eot?#iefix-9ksj28') format('embedded-opentype'),
-		url('../fonts/ptd-icons.woff?-9ksj28') format('woff'),
-		url('../fonts/ptd-icons.ttf?-9ksj28') format('truetype'),
-		url('../fonts/ptd-icons.svg?-9ksj28#icomoon') format('svg');
-	font-weight: normal;
-	font-style: normal;
+    font-family: 'ptd-icons';
+    src:url('../fonts/ptd-icons.eot?np2qnd');
+    src:url('../fonts/ptd-icons.eot?#iefixnp2qnd') format('embedded-opentype'),
+    url('../fonts/ptd-icons.woff?np2qnd') format('woff'),
+    url('../fonts/ptd-icons.ttf?np2qnd') format('truetype'),
+    url('../fonts/ptd-icons.svg?np2qnd#icomoon') format('svg');
+    font-weight: normal;
+    font-style: normal;
 }
 
 [class^="ptd-icon-"], [class*=" ptd-icon-"] {
-	font-family: 'ptd-icons';
-	speak: none;
-	font-style: normal;
-	font-weight: normal;
-	font-variant: normal;
-	text-transform: none;
-	line-height: 1;
+    font-family: 'ptd-icons';
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
 
-	/* Better Font Rendering =========== */
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+    /* Enable Ligatures ================ */
+    -webkit-font-feature-settings: "liga";
+    -moz-font-feature-settings: "liga=1";
+    -moz-font-feature-settings: "liga";
+    -ms-font-feature-settings: "liga" 1;
+    -o-font-feature-settings: "liga";
+    font-feature-settings: "liga";
+
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
+.ptd-icon-removed:before {
+    content: "\e608";
+}
+.ptd-icon-check:before {
+    content: "\e607";
+}
 .ptd-icon-language:before {
-	content: "\e600";
+    content: "\e600";
 }
 .ptd-icon-arrow-less:before {
-	content: "\e601";
+    content: "\e601";
 }
 .ptd-icon-arrow-more:before {
-	content: "\e602";
+    content: "\e602";
 }
 .ptd-icon-user:before {
-	content: "\e603";
+    content: "\e603";
 }
 .ptd-icon-question:before {
-	content: "\e604";
+    content: "\e604";
 }
 .ptd-icon-info:before {
-	content: "\e605";
+    content: "\e605";
 }
 .ptd-icon-radio-unchecked:before {
-	content: "\e606";
+    content: "\e606";
 }
