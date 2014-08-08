@@ -12,32 +12,13 @@
     search.clear = function(that) {
         var queryInput = that.locate("input");
         queryInput.val(null);
-        search.refresh(that);
+        search.queryChanged(that);
     };
 
-    // Update the results displayed whenever we have new search data
-    search.refresh = function(that) {
-        // The query values are all stored in the form's DOM.
-        // TODO: Review this with Antranig or Justin and migrate to using the model instead
-
-        var settings = {
-            success: displayResults,
-            error:   displayError
-        };
-
-        // Wire in sorting and filtering to both types of requests
-        var queryInput = that.locate("input");
-        if (queryInput && queryInput.val()) {
-            settings.url = "/api/search";
-            settings.data = { q: queryInput.val()};
-        }
-        else {
-            settings.url = "/api/records?children=true";
-        }
-
+    search.showClearButton = function (that, show) {
         // Wire in support for clearing the search easily
         var clearButton = that.locate("clear");
-        if (queryInput.val()) {
+        if (show) {
             clearButton.attr("tabIndex",0);
             clearButton.show();
         }
@@ -45,8 +26,37 @@
             clearButton.attr("tabIndex",-1);
             clearButton.hide();
         }
+    };
 
-        // TODO:  How do we pick up our base URL from the configuration?
+    // Update the results displayed whenever we have new search data
+    search.queryChanged = function(that, queryInput) {
+        var emptyQuery = (!queryInput || queryInput === "");
+        if (that.showClearButton) {
+            that.showClearButton(!emptyQuery);
+        }
+
+        // TODO: Figure out why the hell this is happening...
+        if (!that.displayResults) {
+            console.log("queryChanged was called before invokers were in place.  Bailing out...");
+            return;
+        }
+
+        var settings = {
+            url:     that.options.baseUrl,
+            success: that.displayResults,
+            error:   that.displayError
+        };
+
+        // Wire in sorting and filtering to both types of requests
+        // TODO: Break out this AJAX assembly and launch function into its own function
+        var baseUrl = that.options.baseUrl;
+        if (emptyQuery) {
+            settings.url += "/records?children=true";
+        }
+        else {
+            settings.url += "/search";
+            settings.data = { q: queryInput};
+        }
 
         // TODO:  Wire in support for status controls
 
@@ -55,14 +65,15 @@
         $.ajax(settings);
     };
 
-    // TODO:  Ask AMB how to access {that} from jQuery-ized handlers like this.
-    function displayError(jqXHR, textStatus, errorThrown) {
-        prependTemplate(".ptd-viewport","error",{message: errorThrown});
-    }
+    search.displayError = function(that, jqXHR, textStatus, errorThrown) {
+        templates.prependTo(that.locate("viewport"),"error",{message: errorThrown});
+    };
 
-    function displayResults(data, textStatus, jqXHR) {
-        $(".ptd-viewport").html("");
+    search.displayResults = function(that, data, textStatus, jqXHR) {
+        var viewport = that.locate("viewport");
         if (data && data.records && data.records.length > 0) {
+            viewport.html("");
+
             // TODO:  Come up with a meaningful list of untranslated records
             var localEnd = data.offset + data.limit;
             var navData = {
@@ -72,47 +83,81 @@
                 untranslated: 0
             };
 
-            // TODO:  Ask AMB how to access {that} from jQuery-ized handlers like this.
             // TODO:  Replace raw selectors with that.locate() calls
 
             // prepend the control title bar
-            templates.appendTo(".ptd-viewport","navigation", navData);
+            templates.appendTo(viewport, "navigation", navData);
 
             // display each record in the results area
             data.records.forEach(function(record) {
-                templates.appendTo(".ptd-viewport","record",record);
+                templates.appendTo(viewport, "record", record);
             });
         }
         else {
-            templates.replaceWith(".ptd-viewport","norecord");
+            templates.replaceWith(viewport, "norecord");
         }
 
         // TODO: add support for pagination or infinite scrolling
-    }
+    };
 
-    // TODO:  Extract the template handling functions to a separate utility library
-
+    ctr.components.applyBinding = function (that) {
+        var bindings = that.options.bindings;
+        fluid.each(bindings, function (binding) {
+            var element = that.locate(binding.selector);
+            // in time, break out different ways of accessing the DOM into dedicated functions,
+            // index by the "elementType" field we will add to "bindings"
+            element.change(function () {
+                var value = element.val();
+                that.applier.change(binding.path, value);
+            });
+            that.applier.modelChanged.addListener(binding.path, function (change) {
+                element.val(change.value);
+            });
+        });
+    };
 
     fluid.defaults("ctr.components.search", {
-        gradeNames: ["fluid.viewComponent", "autoInit"],
+        gradeNames: ["fluid.viewRelayComponent", "autoInit"],
+        model: {
+        },
+        baseUrl: "/api",
         selectors: {
             "input":    ".ptd-search-input",
             "go":       ".ptd-search-button",
             "clear":    ".ptd-clear-button",
             "viewport": ".ptd-viewport"
         },
+        bindings: [{
+            selector:    "input",
+            path:        "input",
+            elementType: "encode different ways of accessing values here"
+        }],
         events: {
-            "refresh":  "preventable",
-            "clear":    "preventable"
+            "refresh":   "preventable",
+            "clear":     "preventable"
         },
         invokers: {
-            "refresh": {
-                funcName: "ctr.components.search.refresh",
-                args: [ "{that}"]
-            },
             "clear": {
                 funcName: "ctr.components.search.clear",
                 args: [ "{that}"]
+            },
+            "displayError": {
+                funcName: "ctr.components.search.displayError",
+                args: ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"]
+            },
+            "displayResults": {
+                funcName: "ctr.components.search.displayResults",
+                args: ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"]
+            },
+            "showClearButton": {
+                funcName: "ctr.components.search.showClearButton",
+                args: ["{that}", "{arguments}.0"]
+            }
+        },
+        modelListeners: {
+            "input": {
+                funcName: "ctr.components.search.queryChanged",
+                args: ["{that}", "{change}.value"]
             }
         },
         listeners: {
@@ -120,21 +165,20 @@
                 {
                     "this": "{that}.dom.clear",
                     method: "click",
-                    args: "{that}.clear"
+                    args:   "{that}.clear"
                 },
                 {
                     "this": "{that}.dom.clear",
                     method: "keypress",
-                    args: "{that}.clear"
+                    args:   "{that}.clear"
                 },
                 {
-                    "this": "{that}.dom.input",
-                    method: "change",
-                    args: "{that}.refresh"
+                    "funcName": "ctr.components.applyBinding",
+                    "args":     "{that}"
                 }
             ],
             "refresh": {
-                func: "ctr.components.search.refresh",
+                func: "ctr.components.search.queryChanged",
                 args: [ "{that}"]
             }
         }
