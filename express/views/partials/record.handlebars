@@ -7,8 +7,11 @@
             </div>
             <div class="column small-4">
                 <div class="version">
-                    v. 5 approved
-                    <span class="glyphicon glyphicon-check"></span>
+                    {{#if version}}
+                        v. {{version}}
+                    {{/if}}
+                    {{status}}
+                    <span class="ptd-icon-">{{status}}</span>
                 </div>
             </div>
         </div>
@@ -19,19 +22,17 @@
         </div>
         <div class="row">
             <div class="column small-12">
-                <pre>{{definition}}</pre>
+                <div>
+                    {{#md}}{{definition}}{{/md}}
+                </div>
             </div>
         </div>
         <div class="row">
             <div class="column small-4">
-                <div class="heading">Value Space</div>
-                <div>URI</div>
+                {{>valuespace}}
             </div>
             <div class="column small-8">
-                <div class="heading">Uses</div>
-                <ul>
-                    <li>GPII (source)</li>
-                </ul>
+                {{>uses}}
             </div>
         </div>
     </div>
