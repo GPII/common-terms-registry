@@ -83,8 +83,6 @@
                 untranslated: 0
             };
 
-            // TODO:  Replace raw selectors with that.locate() calls
-
             // prepend the control title bar
             templates.appendTo(viewport, "navigation", navData);
 
