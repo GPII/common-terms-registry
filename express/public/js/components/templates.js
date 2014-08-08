@@ -21,7 +21,7 @@
         }
 
         // If we can't evolve the output, we just pass it through.
-        return options.fn(context);
+        return options.fn(this);
     };
 
     Handlebars.registerHelper('md', templates.mdHelper);
