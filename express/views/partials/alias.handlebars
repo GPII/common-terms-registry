@@ -1,13 +1,18 @@
 <div class="alias">
     <div class="row">
-        <div class="column small-10">
-            <div class="source">
-                iso24751
-            </div>
-            <div class="title">
+        <div class="column small-8 glyphicon glyphicon-leaf">
+            {{#if source}}
+                <span class="source">
+                    {{source}}
+                </span>
+            {{/if}}
+            <span class="title">
                 {{#if termLabel}}{{termLabel}}{{else}}{{uniqueId}}{{/if}}
-                <div class="glyphicon glyphicon-pencil"></div>
-            </div>
+                <span class="glyphicon glyphicon-pencil"></span>
+            </span>
+        </div>
+        <div class="column small-4">
+            {{>version}}
         </div>
     </div>
     <div class="row">

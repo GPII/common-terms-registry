@@ -218,7 +218,7 @@ button.right .glyphicon:before, .button.right .glyphicon:before {
     font-weight: bold;
 }
 
-.term .title:hover {
+.term .title:hover, .alias .title:hover {
     color: #1ec285;
     text-decoration: underline;
 }

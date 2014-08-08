@@ -6,18 +6,12 @@
                 <div class="glyphicon glyphicon-pencil"></div>
             </div>
             <div class="column small-4">
-                <div class="version">
-                    {{#if version}}
-                        v. {{version}}
-                    {{/if}}
-                    {{status}}
-                    <span class="ptd-icon-">{{status}}</span>
-                </div>
+                {{>version}}
             </div>
         </div>
         <div class="row">
             <div class="column small-8 subtitle">
-                {{uniqueID}}
+                {{uniqueId}}
             </div>
         </div>
         <div class="row">
