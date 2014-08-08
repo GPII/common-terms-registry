@@ -19,9 +19,8 @@
 <script type="text/javascript">
     $(document).foundation();
 
-    var search    = ctr.components.search(".ptd-search-form");
+    var search    = ctr.components.search("body");
+    search.events.refresh.fire();
     var profile   = ctr.components.profile("#profile");
-
-    search.refresh();
 </script>
 
