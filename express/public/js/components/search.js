@@ -7,6 +7,8 @@
 
     // TODO:  Create session-scoped variables for query, status, record type, and language, and use if no data is provided.
 
+    // TODO: How do we correctly instantiate a bunch of record objects with their own controls, which contain aliases with their own controls?
+
     search.clear = function(that) {
         var queryInput = that.locate("input");
         queryInput.val(null);
@@ -16,7 +18,7 @@
     // Update the results displayed whenever we have new search data
     search.refresh = function(that) {
         // The query values are all stored in the form's DOM.
-        // TODO: Review this with Antranig or Justin
+        // TODO: Review this with Antranig or Justin and migrate to using the model instead
 
         var settings = {
             success: displayResults,
@@ -55,12 +57,11 @@
 
     // TODO:  Ask AMB how to access {that} from jQuery-ized handlers like this.
     function displayError(jqXHR, textStatus, errorThrown) {
-        prependTemplate("#main-viewport","error",{message: errorThrown});
+        prependTemplate(".ptd-viewport","error",{message: errorThrown});
     }
 
-    // TODO:  Ask AMB how to access {that} from jQuery-ized handlers like this.
     function displayResults(data, textStatus, jqXHR) {
-        $("#main-viewport").html("");
+        $(".ptd-viewport").html("");
         if (data && data.records && data.records.length > 0) {
             // TODO:  Come up with a meaningful list of untranslated records
             var localEnd = data.offset + data.limit;
@@ -71,16 +72,19 @@
                 untranslated: 0
             };
 
+            // TODO:  Ask AMB how to access {that} from jQuery-ized handlers like this.
+            // TODO:  Replace raw selectors with that.locate() calls
+
             // prepend the control title bar
-            templates.appendTo("#main-viewport","navigation", navData);
+            templates.appendTo(".ptd-viewport","navigation", navData);
 
             // display each record in the results area
             data.records.forEach(function(record) {
-                templates.appendTo("#main-viewport","record",record);
+                templates.appendTo(".ptd-viewport","record",record);
             });
         }
         else {
-            templates.replaceWith("#main-viewport","norecord");
+            templates.replaceWith(".ptd-viewport","norecord");
         }
 
         // TODO: add support for pagination or infinite scrolling
@@ -92,10 +96,10 @@
     fluid.defaults("ctr.components.search", {
         gradeNames: ["fluid.viewComponent", "autoInit"],
         selectors: {
-            "input":   ".ptd-search-input",
-            "go":      ".ptd-search-button",
-            "clear":   ".ptd-clear-button",
-            "results": ".ptd-search-results"
+            "input":    ".ptd-search-input",
+            "go":       ".ptd-search-button",
+            "clear":    ".ptd-clear-button",
+            "viewport": ".ptd-viewport"
         },
         events: {
             "refresh":  "preventable",
@@ -109,10 +113,6 @@
             "clear": {
                 funcName: "ctr.components.search.clear",
                 args: [ "{that}"]
-            },
-            "handleKeys": {
-                funcName: "ctr.components.search.handleKeys",
-                args: [ "{that}", "{arguments}.0"]
             }
         },
         listeners: {
