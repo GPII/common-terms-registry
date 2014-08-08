@@ -109,7 +109,7 @@
                 that.applier.change(binding.path, value);
             });
             that.applier.modelChanged.addListener(binding.path, function (change) {
-                element.val(change.value);
+                element.val(change);
             });
         });
     };
