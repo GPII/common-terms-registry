@@ -35,19 +35,20 @@
         return template(context);
     };
 
-    templates.replaceWith = function(el,key,context) {
-        $(el).html(templates.render(key,context));
+    templates.replaceWith = function(element,key,context) {
+        element.html(templates.render(key,context));
     };
 
-    templates.appendTo = function(el,key,context) {
-        $(el).append(templates.render(key,context));
+    templates.appendTo = function(element,key,context) {
+        element.append(templates.render(key,context));
     };
 
-    templates.prependTo = function (el,key,context) {
-        $(el).prepend(templates.render(key,context));
+    templates.prependTo = function (element,key,context) {
+        element.prepend(templates.render(key,context));
     };
 
     templates.appendToBody = function (data, textStatus, jqXHR) {
+        // TODO:  Replace this with a {that} reference
         $("body").append(data);
 
         // load all partials so that we can use them in context
