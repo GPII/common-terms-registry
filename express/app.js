@@ -36,15 +36,17 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(cookieParser()); // Required for session storage, must be called before session()
 app.use(session({ secret: config.session.secret}));
 
-// /api/user/* is provided by the express-user-couchdb package
-app.use("/", couchUser(config));
 
 // Mount the JSON schemas separately so that we have the option to decompose them into a separate module later, and so that the doc links and web links match
 app.use("/schema",express.static(__dirname + '/schema/schemas'));
 
+// /api/user/* is provided by the express-user-couchdb package
+app.use("/", couchUser(config));
+
 // REST APIs
 var api = require('./api')(config);
 app.use('/api',api);
+
 
 // Code to detect and suggest fixes for duplicates, only enabled in the development environment
 if ('development' === app.get('env')) {
@@ -66,7 +68,12 @@ app.use("/hbs",require("./views/client.js")(config));
 
 // Handlebars template for main interface
 app.use("/",function(req,res) {
-    res.render('index');
+    if (req.path === "/") {
+        res.render('review', { layout: 'review'});
+    }
+    else {
+        res.status(404).render('error', {message: "The page you requested was not found."});
+    }
 });
 
 http.createServer(app).listen(app.get('port'), function(){

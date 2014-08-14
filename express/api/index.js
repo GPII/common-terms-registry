@@ -45,25 +45,29 @@ module.exports = function(config) {
 
     // Display the API docs for everything else
     router.use("/",function(req, res) {
-        var marked = require('marked');
+        if (req.path === "/") {
+            var marked = require('marked');
 
-        var markdown = "";
-        var fs = require('fs');
-        var BUF_LENGTH = 64*1024;
-        var buffer = new Buffer(BUF_LENGTH);
-        var mdFile = fs.openSync(__dirname + "/ctr.md", 'r');
-        var bytesRead = 1;
-        var pos = 0;
-        while (bytesRead > 0) {
-            bytesRead = fs.readSync(mdFile, buffer, 0, BUF_LENGTH, pos);
-            markdown += buffer.toString('utf8', 0, bytesRead);
-            pos += bytesRead;
+            var markdown = "";
+            var fs = require('fs');
+            var BUF_LENGTH = 64*1024;
+            var buffer = new Buffer(BUF_LENGTH);
+            var mdFile = fs.openSync(__dirname + "/ctr.md", 'r');
+            var bytesRead = 1;
+            var pos = 0;
+            while (bytesRead > 0) {
+                bytesRead = fs.readSync(mdFile, buffer, 0, BUF_LENGTH, pos);
+                markdown += buffer.toString('utf8', 0, bytesRead);
+                pos += bytesRead;
+            }
+            fs.closeSync(mdFile);
+
+            res.render('page', { "title": "API Documentation", "body": marked(markdown)});
         }
-        fs.closeSync(mdFile);
-
-        res.render('api', { "title": "API Documentation", "code": marked(markdown)});
+        else {
+            res.status(404).render('error', {message: "The page you requested was not found."});
+        }
     });
-
     return router;
 };
 
