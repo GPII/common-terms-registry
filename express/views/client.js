@@ -5,8 +5,6 @@ module.exports = function(config) {
     var fs = require('fs');
     var fluid = require('infusion');
 
-    var exphbs  = require('express3-handlebars');
-
     var templates = fluid.registerNamespace("gpii.ctr.templates");
     templates.hbsExtensionRegexp = /^(.+)\.(?:hbs|handlebars)$/;
     templates.hbsScriptRegexp = /(script>)/g;
