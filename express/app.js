@@ -7,6 +7,7 @@ var exphbs  = require('express-handlebars');
 var logger = require('morgan');
 var couchUser = require('express-user-couchdb');
 var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
 var session = require('express-session');
 var app = express();
 
@@ -40,7 +41,9 @@ app.use(session({ secret: config.session.secret}));
 // Mount the JSON schemas separately so that we have the option to decompose them into a separate module later, and so that the doc links and web links match
 app.use("/schema",express.static(__dirname + '/schema/schemas'));
 
-// /api/user/* is provided by the express-user-couchdb package
+// /api/user/* is provided by the express-user-couchdb package, which requires an application that supports body parsing.
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.use("/", couchUser(config));
 
 // REST APIs
