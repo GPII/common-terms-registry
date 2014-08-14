@@ -15,7 +15,9 @@ module.exports = function(config,parent) {
     var paging = require("../../lib/paging")(config);
 
     var fluid = require('infusion');
+
     var children = fluid.registerNamespace("gpii.ctr.api.lib.children");
+    children.request = require('request');
 
     function getChildRecords(error, response, body) {
         if (!parent.res || !parent.results || !parent.req || !parent.params || !parent.schema) {
@@ -124,8 +126,7 @@ module.exports = function(config,parent) {
             "json": true
         };
 
-        var request = require('request');
-        request.get(childRecordOptions, getChildRecords);
+        children.request.get(childRecordOptions, getChildRecords);
     };
 
     return children;
