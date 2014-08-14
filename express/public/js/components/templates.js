@@ -2,7 +2,7 @@
 //
 // Requires Handlebars.js and Pagedown (for markdown rendering)
 
-(function ($, fluid) {
+(function ($) {
     "use strict";
     var templates = fluid.registerNamespace("ctr.components.templates");
     templates.compiled = {};
@@ -68,6 +68,6 @@
     };
 
     templates.loadTemplates();
-})(jQuery, fluid_1_5);
+})(jQuery);
 
 

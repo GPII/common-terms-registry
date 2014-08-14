@@ -1,6 +1,6 @@
 // The main search module that allows users to view the Preference Terms Dictionary
 
-(function ($, fluid) {
+(function ($) {
     "use strict";
     var search = fluid.registerNamespace("ctr.components.search");
     var templates = fluid.registerNamespace("ctr.components.templates");
@@ -26,6 +26,12 @@
             clearButton.attr("tabIndex",-1);
             clearButton.hide();
         }
+    };
+
+    // This function is meant to be called on an individual alias entry toggle
+    search.toggleAliasRecord = function () {
+        $(this).html("less");
+        $(this).parent().parent().parent().find(".alias-details").toggle();
     };
 
     // Update the results displayed whenever we have new search data
@@ -95,6 +101,9 @@
             templates.replaceWith(viewport, "norecord");
         }
 
+        // Wire up the alias show/hide controls
+        $(viewport).find(".alias-toggle").bind('click',search.toggleAliasRecord);
+
         // TODO: add support for pagination or infinite scrolling
     };
 
@@ -155,6 +164,7 @@
         modelListeners: {
             "input": {
                 funcName: "ctr.components.search.queryChanged",
+                excludeSource: "init",
                 args: ["{that}", "{change}.value"]
             }
         },
@@ -181,4 +191,4 @@
             }
         }
     });
-})(jQuery, fluid_1_5);
+})(jQuery);

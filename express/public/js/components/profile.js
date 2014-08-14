@@ -1,4 +1,4 @@
-(function ($, fluid) {
+(function ($) {
     "use strict";
     fluid.registerNamespace("ctr.components.profile");
 
@@ -72,4 +72,4 @@
             }
         }
     });
-})(jQuery, fluid_1_5);
+})(jQuery);
