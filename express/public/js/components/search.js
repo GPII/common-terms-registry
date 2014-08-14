@@ -30,7 +30,7 @@
 
     // This function is meant to be called on an individual alias entry toggle
     search.toggleAliasRecord = function () {
-        $(this).html("less");
+        $(this).html($(this).html() === "less" ? "more": "less");
         $(this).parent().parent().parent().find(".alias-details").toggle();
     };
 
