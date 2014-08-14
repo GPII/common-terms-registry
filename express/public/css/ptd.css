@@ -11,6 +11,12 @@
     float:left; margin-right: 1em;
 }
 
+.alias-details {
+    display: none;
+}
+.alias-toggle {
+    color: #34a2b9;
+}
 .body {
     background-color:#e0e0e0;
     padding-top: 1.5em;
@@ -231,7 +237,11 @@ button.right .glyphicon:before, .button.right .glyphicon:before {
     font-style: italic;
 }
 
-.version {
+.version-block {
     width: 99%;
     text-align: right;
+}
+
+.version {
+    color: #34a2b9;
 }
