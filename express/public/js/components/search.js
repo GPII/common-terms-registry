@@ -2,7 +2,7 @@
 
 (function ($) {
     "use strict";
-    var search = fluid.registerNamespace("ctr.components.search");
+    var search    = fluid.registerNamespace("ctr.components.search");
     var templates = fluid.registerNamespace("ctr.components.templates");
 
     // TODO:  Create session-scoped variables for query, status, record type, and language, and use if no data is provided.
@@ -12,7 +12,7 @@
     search.clear = function(that) {
         var queryInput = that.locate("input");
         queryInput.val(null);
-        search.queryChanged(that);
+        search.queryChanged(that,null);
     };
 
     search.showClearButton = function (that, show) {
