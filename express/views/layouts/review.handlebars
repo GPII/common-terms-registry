@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Preference Terms Dictionary</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="/bc/handlebars/handlebars.js"></script>
+    <script src="/bc/jquery/dist/jquery.js"></script>
+    <script src="/bc/foundation/js/vendor/modernizr.js"></script>
+
+    <script type="text/javascript" src="/infusion/lib/jquery/core/js/jquery.js"></script>
+    <script type="text/javascript" src="/infusion/lib/jquery/ui/js/jquery.ui.core.js"></script>
+    <script type="text/javascript" src="/infusion/lib/json/js/json2.js"></script>
+
+    <script type="text/javascript" src="/infusion/framework/core/js/FluidDocument.js"></script>
+    <script type="text/javascript" src="/infusion/framework/core/js/Fluid.js"></script>
+    <script type="text/javascript" src="/infusion/framework/core/js/FluidDOMUtilities.js"></script>
+    <script type="text/javascript" src="/infusion/framework/core/js/FluidIoC.js"></script>
+    <script type="text/javascript" src="/infusion/framework/core/js/DataBinding.js"></script>
+    <script type="text/javascript" src="/infusion/framework/core/js/FluidView.js"></script>
+    <script type="text/javascript" src="/infusion/lib/fastXmlPull/js/fastXmlPull.js"></script>
+    <script type="text/javascript" src="/infusion/framework/renderer/js/fluidParser.js"></script>
+    <script type="text/javascript" src="/infusion/framework/renderer/js/fluidRenderer.js"></script>
+    <script type="text/javascript" src="/infusion/framework/core/js/FluidRequests.js"></script>
+    <script type="text/javascript" src="/infusion/framework/core/js/ModelTransformation.js"></script>
+    <script type="text/javascript" src="/infusion/framework/core/js/ModelTransformationTransforms.js"></script>
+
+    <!-- include foundation and its dependencies -->
+    <script src="/bc/foundation/js/foundation/foundation.js"></script>
+    <script src="/bc/foundation/js/foundation/foundation.alert.js"></script>
+    <script src="/bc/foundation/js/foundation/foundation.dropdown.js"></script>
+    <link rel="stylesheet" href="/bc/foundation/css/normalize.css">
+    <link rel="stylesheet" href="/bc/foundation/css/foundation.css">
+    <link rel="stylesheet" href="/bc/foundation-icons-sets/foundation_icons_general/stylesheets/general_foundicons.css">
+
+    <!-- include our styles -->
+    <link rel="stylesheet" href="/css/glyphicons.css"/>
+    <link rel="stylesheet" href="/css/ptd.css"/>
+    <link rel="stylesheet" href="/css/ptd-icons.css"/>
+
+    <!-- TODO:  Wire up the initial content display -->
+
+    <!-- TODO:  Wire up the search filter controls -->
+
+    <!-- TODO:  Wire up the status filter controls -->
+
+    <!-- TODO:  Wire up the ordering controls -->
+
+    <!-- TODO:  Wire up the language controls and populate with meaningful values -->
+
+    <!-- TODO:  Wire up the record type controls -->
+
+    <!-- TODO:  Wire up expand/contract for alias records -->
+  </head>
+  <body>
+    <!-- include the header -->
+    {{> header}}
+
+    {{{body}}}
+    <!-- Add support for ligature fonts to older browsers -->
+    <script src="/js/liga.js"></script>
+  </body>
+</html>
