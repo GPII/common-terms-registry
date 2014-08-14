@@ -110,7 +110,7 @@ module.exports = function(config) {
                 throw records.constructError(400,"The 'recordType' parameter cannot be used with this interface.");
             }
             if (config.recordType !== "general" && records.req.query.children) {
-                throw records.constructError(400,"The 'children' parameter can only be use with terms.");
+                throw records.constructError(400,"The 'children' parameter can only be used with terms.");
             }
 
             var lowerCaseRecordType = config.recordType.toLowerCase();
