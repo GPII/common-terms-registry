@@ -14,6 +14,7 @@
     "express-handlebars": "^1.0.1",
     "express-session": "~1.0.0",
     "express-user-couchdb": "0.3.3",
+    "infusion": "git://github.com/fluid-project/infusion.git#81b0fdde0483b1383d38f27f8e24b963ca6c5d33",
     "marked": "^0.3.2",
     "method-override": "~1.0.0",
     "morgan": "~1.0.0",
