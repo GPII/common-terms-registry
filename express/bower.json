@@ -22,6 +22,7 @@
     "github-markdown-css": "~0.1.0",
     "foundation": "zurb/bower-foundation#~5.3.1",
     "foundation-icons-sets": "*",
-    "pagedown": "~1.1.0"
+    "pagedown": "~1.1.0",
+    "jquery-selectBox": "~1.2.0"
   }
 }
