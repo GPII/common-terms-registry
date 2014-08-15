@@ -33,7 +33,6 @@ config.viewTemplateDir = path.join(__dirname, 'views');
 app.set('port', config.port || process.env.PORT || 4895);
 app.set('views', path.join(__dirname, 'views'));
 
-// TODO:  Move to modules that require this if possible
 app.use(cookieParser()); // Required for session storage, must be called before session()
 app.use(session({ secret: config.session.secret}));
 
@@ -69,10 +68,25 @@ app.use("/infusion",express.static(__dirname + '/node_modules/infusion/src'));
 // Mount the handlebars templates as a single dynamically generated source file
 app.use("/hbs",require("./views/client.js")(config));
 
-// Handlebars template for main interface
+// Detail edit/view for an individual record
+app.get("/detail/:uniqueId", function(req,res) {
+    if (req.params.uniqueId === "new") {
+        res.render('details', { layout: 'main', record: {}, user: req.session.user});
+    }
+    else {
+        var request = require("request");
+
+        res.render('details', { layout: 'main', uniqueId: req.params.uniqueId, user: req.session.user});
+    }
+});
+
+// TODO:  Add support for "history" list
+// TODO:  Add support for "diff" view
+
+// Main Search Interface
 app.use("/",function(req,res) {
     if (req.path === "/") {
-        res.render('review', { layout: 'review'});
+        res.render('search', { layout: 'search', user: req.session.user});
     }
     else {
         res.status(404).render('error', {message: "The page you requested was not found."});
