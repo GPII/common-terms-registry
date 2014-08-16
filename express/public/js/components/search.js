@@ -94,7 +94,7 @@
 
             // display each record in the results area
             data.records.forEach(function(record) {
-                templates.appendTo(viewport, "record", record);
+                templates.appendTo(viewport, "record", { record: record, user: ctr.data.user });
             });
         }
         else {

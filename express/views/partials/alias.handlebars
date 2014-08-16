@@ -8,7 +8,9 @@
             {{/if}}
             <span class="title">
                 {{#if termLabel}}{{termLabel}}{{else}}{{uniqueId}}{{/if}}
-                <span class="glyphicon glyphicon-pencil"></span>
+                <a href="/detail/{{uniqueId}}">
+                    <div class="glyphicon glyphicon-pencil" title="Edit"></div>
+                </a>
             </span>
         </div>
         <div class="column small-4 version-block">

@@ -2,8 +2,14 @@
     <div class="term">
         <div class="row">
             <div class="column small-8 title glyphicon glyphicon-tree-deciduous">
-                {{#if termLabel}}{{termLabel}}{{else}}{{uniqueId}}{{/if}}
-                <div class="glyphicon glyphicon-pencil"></div>
+                {{#if record.termLabel}}{{record.termLabel}}{{else}}{{record.uniqueId}}{{/if}}
+                <a href="/detail/{{record.uniqueId}}">
+                    {{#if user}}
+                        <div class="glyphicon glyphicon-pencil" title="Edit"></div>
+                    {{else}}
+                        <div class="glyphicon glyphicon-eye-open" title="View"></div>
+                    {{/if}}
+                </a>
             </div>
             <div class="column small-4">
                 {{>version}}
@@ -11,13 +17,13 @@
         </div>
         <div class="row">
             <div class="column small-8 subtitle">
-                {{uniqueId}}
+                {{record.uniqueId}}
             </div>
         </div>
         <div class="row">
             <div class="column small-12">
                 <div>
-                    {{#md}}{{definition}}{{/md}}
+                    {{#md}}{{record.definition}}{{/md}}
                 </div>
             </div>
         </div>
@@ -30,9 +36,9 @@
             </div>
         </div>
     </div>
-    {{#if aliases}}
+    {{#if record.aliases}}
         <div class="aliases">
-            {{#each aliases}}
+            {{#each record.aliases}}
                 {{> alias }}
             {{/each}}
         </div>

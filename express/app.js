@@ -68,15 +68,14 @@ app.use("/infusion",express.static(__dirname + '/node_modules/infusion/src'));
 // Mount the handlebars templates as a single dynamically generated source file
 app.use("/hbs",require("./views/client.js")(config));
 
-// Detail edit/view for an individual record
+// Detail edit/view for an individual record.
+// TODO: Move to a component-only load with a client-side REST call.
 app.get("/detail/:uniqueId", function(req,res) {
     if (req.params.uniqueId === "new") {
         res.render('details', { layout: 'main', record: {}, user: req.session.user});
     }
     else {
-        var request = require("request");
-
-        res.render('details', { layout: 'main', uniqueId: req.params.uniqueId, user: req.session.user});
+        res.render('details', { layout: 'details', record: { uniqueId: req.params.uniqueId }, user: req.session.user});
     }
 });
 

@@ -4,3 +4,12 @@
         name: "{{user.name}}"
     };
 {{/if}}
+
+{{#if record }}
+    fluid.registerNamespace("ctr.data.record");
+    ctr.data.record = {
+        uniqueId: "{{record.uniqueId}}"
+    };
+{{/if}}
+
+
