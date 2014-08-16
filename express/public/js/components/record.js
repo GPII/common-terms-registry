@@ -5,6 +5,16 @@
     var record    = fluid.registerNamespace("ctr.components.record");
     var templates = fluid.registerNamespace("ctr.components.templates");
 
+    // This should come from a global configuration of some kind
+    // Also, I should feel bad for using it.
+    record.typeLookups = {
+        "general": "term",
+        "alias": "alias",
+        "operator": "operator",
+        "translation": "translation",
+        "transform": "transform"
+    };
+
     record.load = function(that) {
         if (ctr.data.record.uniqueId) {
             var settings = {
@@ -35,7 +45,10 @@
     record.displayResults = function(that, data, textStatus, jqXHR) {
         var viewport = that.locate("viewport");
         if (data && data.record) {
+            that.model.record = data.record;
             templates.replaceWith(viewport, "term-detail", { record: data.record, user: ctr.data.user });
+            record.selectType(that);
+            record.selectStatus(that);
 
             // TODO:  Add support for all record types
 
@@ -50,8 +63,32 @@
 
 
     // TODO:  Wire up record type controls
+    record.selectType = function(that){
+        var type = that.locate("type");
+        type.removeClass("active");
+
+        if (that.model.record && that.model.record.type) {
+            type.each(function(index,entry) {
+                if ($(entry).text().toLowerCase().indexOf(record.typeLookups[that.model.record.type.toLowerCase()]) !== -1) {
+                    $(entry).addClass("active");
+                }
+            });
+        }
+    };
 
     // TODO:  Wire up status controls
+    record.selectStatus = function(that){
+        var status = that.locate("status");
+        status.removeClass("active");
+
+        if (that.model.record && that.model.record.status) {
+            status.each(function(index,entry) {
+                if ($(entry).text().indexOf(that.model.record.status) !== -1) {
+                    $(entry).addClass("active");
+                }
+            });
+        }
+    };
 
     // TODO:  Wire up comment controls
 
@@ -63,6 +100,8 @@
         model: {
         },
         selectors: {
+            "status":   ".status",
+            "type":     ".type",
             "viewport": ".ptd-viewport"
         },
         events: {
