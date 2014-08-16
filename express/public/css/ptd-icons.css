@@ -31,10 +31,13 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-.ptd-icon-removed:before {
+.ptd-icon-cross:before {
+    content: "\e605";
+}
+.ptd-icon-trash:before {
     content: "\e608";
 }
-.ptd-icon-check:before {
+.ptd-icon-checked:before {
     content: "\e607";
 }
 .ptd-icon-language:before {
@@ -52,9 +55,9 @@
 .ptd-icon-question:before {
     content: "\e604";
 }
-.ptd-icon-info:before {
-    content: "\e605";
+.ptd-icon-radio-checked:before {
+    content: "\e609";
 }
-.ptd-icon-radio-unchecked:before {
+.ptd-icon-unchecked:before {
     content: "\e606";
 }

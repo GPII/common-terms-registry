@@ -1,5 +1,6 @@
 {
     "port": 4680,
+    "base.url": "http://localhost:4680",
     "app": {
         "name": "Common Terms Registry (development)"
     }

@@ -1,0 +1,94 @@
+.add input {
+    display:inline;
+}
+.detail-body {
+    background-color: #f0f0f0;
+}
+.detail-header,.detail-footer {
+    background-color: white;
+}
+
+.detail-header {
+    border-bottom: 1px solid #dcdcdc;
+    margin-bottom: 1em;
+}
+
+.detail-linkbar {
+    padding-bottom: 1em;
+    padding-top:    1em;
+}
+
+.detail-linkbar .label {
+    padding: 2em;
+}
+
+.label-neighbor {
+    padding-top: 1em;
+}
+
+.row.detail-linkbar {
+    margin-bottom: 1em;
+}
+
+.detail-footer {
+    border-bottom: 1px solid #dcdcdc;
+}
+
+.row.detail-footer {
+    padding-top: 1.2em;
+}
+
+.uniqueId {
+    font-size: 1.5rem;
+    border-bottom: 1px solid #d7d7d7;
+    padding-top: 0.3em;
+    padding-bottom: 0.5em;
+}
+
+.detail-heading {
+    font-weight: bold;
+    margin-bottom: .75em;
+}
+
+.detail-header .detail-heading {
+    margin-bottom: 0px;
+}
+
+.button.status, .button.type{
+    background-color: inherit;
+    color: #424242;
+    padding-top: .75em;
+    padding-bottom: .75em;
+}
+
+.button.status.active, .button.type.active{
+    border: 3px solid #009fb7;
+    background-color: white;
+}
+
+.detail-footer input {
+    height: 3.3rem;
+}
+
+.detail-instructions {
+    color: #999696;
+    margin-bottom: .75em;
+}
+
+.row {
+    padding: .5em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.version-header {
+    color: #ff5b01;
+}
+
+.detail-linkbar a {
+    color: #009fb7;
+}
+
+.save-button {
+    background-color: #1ec285;
+}

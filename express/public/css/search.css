@@ -1,0 +1,242 @@
+#add-record-button {
+    background-color: #1ec285;
+}
+
+.alias {
+    background-color: #f2f2f2;
+    padding: 1.5em;
+}
+
+.alias .source {
+    float:left; margin-right: 1em;
+}
+
+.alias-details {
+    display: none;
+}
+.alias-toggle {
+    color: #34a2b9;
+}
+
+.button [class*="foundicon-"]:before {
+    margin-left: -1em;
+    margin-right: .5em;
+}
+
+.button .glyphicon:before {
+    margin-left: -1em;
+    margin-right: .5em;
+}
+
+button, .button {
+    margin: 0 0 .75rem;
+}
+
+.button.active {
+    color: white;
+    background-color: black;
+}
+
+.button.inactive {
+    background-color: #f2f2f2;;
+    color: black;
+}
+
+button.left, .button.left {
+    border-radius: 3px 0px 0px 3px;
+}
+
+button.right, .button.right {
+    border-radius: 0px 3px 3px 0px;
+}
+
+button.right .glyphicon:before, .button.right .glyphicon:before {
+    margin-left: 0px;
+    border-radius: 0px 3px 3px 0px;
+}
+
+.count {
+    margin-top: .75em;
+}
+
+.detail-header,.detail-footer {
+    background-color: white;
+}
+
+.detail-header:last-of-type {
+    border-bottom: 1px solid #dcdcdc;
+}
+
+.detail-instructions {
+    color: #999696;
+}
+
+.dropdown.button {
+    background-color: white;
+    border-color: #e3e3e3;
+    border-radius: 3px;
+}
+
+.dropdown.button.transparent {
+    background-color: transparent;
+}
+
+.glyphicon {
+    top: 3px;
+}
+
+.heading {
+    margin-bottom: .25em;
+}
+
+.left.prefix,.right.postfix {
+    padding-top: .35em;
+    height: 2.8rem;
+}
+
+.loading {
+    font-size: 2em;
+    font-weight: bold;
+    text-align: center;
+    padding:2em;
+    color: #cecece;
+}
+
+.ptd-order {
+    text-align: right;
+}
+
+.ptd-order.f-dropdown {
+    max-width: inherit;
+}
+
+.ptd-order.f-dropdown:before {
+
+}
+
+.ptd-order.f-dropdown:after {
+
+}
+
+.ptd-clear-button {
+    margin-top: .6em;
+    color: #dcdcdc;
+    display:none;
+}
+
+.ptd-no-value {
+    font-style: italic;
+}
+
+.ptd-non-button-heading {
+    padding-top: .75em;
+}
+
+.ptd-non-button-heading a {
+    color: inherit;
+}
+
+.ptd-non-button-heading .glyphicon:before {
+    margin-top: .2em;
+    margin-left: -1em;
+    margin-right: .5em;
+}
+
+.ptd-search-form {
+    border: none;
+    margin: 0px;
+    padding: 2px;
+    background-color: white;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+}
+
+.ptd-search-form .button {
+    margin-top: 2px;
+    padding-top: 2px;
+    margin-bottom: 0px;
+    background-color: #dcdcdc;
+}
+
+.ptd-search-form [class*="foundicon-"] {
+    top: 4px;
+    position: absolute;
+}
+
+.ptd-search-form input {
+    border: none;
+    box-shadow: none;
+    margin-top: .33em;
+    margin-bottom: 0px;
+    transition: none;
+}
+
+.ptd-search-form .ptd-icon {
+    margin-top: .75em;
+    margin-left: .25em;
+}
+
+.record {
+    background-color: #ffffff;
+    margin-top: 1.5em;
+}
+
+.record .alias {
+    border: 1px solid #dcdcdc;
+}
+
+.record:first-of-type {
+    margin-top: 0px;
+}
+
+.record:last-of-type {
+    margin-bottom: 1.5em;
+}
+
+.subtitle {
+    margin-left: 4em;
+}
+
+.subtitle, .heading {
+    color: #969696;
+}
+
+.term {
+    padding: 1.5em;
+}
+
+.term .row, .alias .row {
+    margin-top: 1.5em;
+}
+
+.term .row:first-of-type, .alias .row:first-of-type {
+    margin-top: 0em;
+}
+
+.term .title {
+    font-size: 1.8em;
+    font-weight: bold;
+}
+
+.term .title:hover, .alias .title:hover {
+    color: #1ec285;
+    text-decoration: underline;
+}
+
+.term .title .glyphicon-pencil, .alias .title .glyphicon-pencil {
+    color: #1ec285;
+}
+
+.translation-count {
+    font-style: italic;
+}
+
+.version-block {
+    width: 99%;
+    text-align: right;
+}
+
+.version {
+    color: #34a2b9;
+}
