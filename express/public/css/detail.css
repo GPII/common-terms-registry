@@ -54,6 +54,10 @@
     margin-bottom: 0px;
 }
 
+.button input[type='radio'] {
+    display:none;
+}
+
 .button.status, .button.type{
     background-color: inherit;
     color: #424242;
