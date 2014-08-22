@@ -23,7 +23,14 @@
             </div>
             <div class="row">
                 <div class="column medium-8">
-                    <div class="uniqueId">{{record.uniqueId}}</div>
+                    <div class="uniqueId">
+                        {{#if user}}
+                            <input type="text" name="uniqueId" value="{{record.uniqueId}}"/>
+                        {{else}}
+                            <input type="hidden" name="uniqueId" value="{{record.uniqueId}}"/>
+                            {{record.uniqueId}}
+                        {{/if}}
+                    </div>
                 </div>
                 <div class="column medium-4">
                     {{> language}}
@@ -38,21 +45,21 @@
                     <div class="row">
                         <div class="column medium-4">
                             <input type="radio" name="type" value="term" id="term-type"/>
-                            <label for="term-type" class="type button radius">
+                            <label for="term-type" class="type button radius" tabindex="0">
                                 <span class="glyphicon-tree-deciduous glyphicon"></span>
                                 Term
                             </label>
                         </div>
                         <div class="column medium-4">
                             <input type="radio" name="type" value="alias" id="alias-type"/>
-                            <label for="alias-type" class="type button radius">
+                            <label for="alias-type" class="type button radius" tabindex="0">
                                 <span class="glyphicon-leaf glyphicon"></span>
                                 Alias
                             </label>
                         </div>
                         <div class="column medium-4">
                             <input type="radio" name="type" value="condition" id="condition-type"/>
-                            <label for="condition-type" class="type button radius">
+                            <label for="condition-type" class="type button radius" tabindex="0">
                                 <span class="glyphicon-cog glyphicon"></span>
                                 Condition
                             </label>
@@ -62,13 +69,18 @@
             </div>
             <div class="row">
                 <div class="detail-heading">Uses</div>
+                <input type="hidden" name="uses" value="{{#stringify record.uses}}"/>
                 <ul>
                     {{#if record.uses}}
                         {{#each record.uses}}
                             <li>{{.}}</li>
                         {{/each}}
+                    {{else}}
+                        <li>No uses specified.</li>
                     {{/if}}
-                    <li class="add"><input type="text" placeholder="Add use"></li>
+                    {{#if user}}
+                        <li class="add"><input type="text" name="newUse" placeholder="Add use"></li>
+                    {{/if}}
                 </ul>
             </div>
             <div class="row">
@@ -79,31 +91,65 @@
                             <li>{{uniqueId}}</li>
                         {{/each}}
                     {{/if}}
-                    <li>Create Alias</li>
+                    {{#if user}}
+                        <li>Create Alias</li>
+                    {{/if}}
                 </ul>
             </div>
             <div class="row">
                 <div class="detail-heading">Definition</div>
                 <div class="ptd-inline">
-                    <textarea id="definition" placeholder="Add a definition for this term.">{{record.definition}}</textarea>
+                    {{#if user}}
+                        <textarea name="definition" placeholder="Add a definition for this term.">{{record.definition}}</textarea>
+                    {{else}}
+                        <input name="definition" type="hidden" value="{{record.definition}}"/>
+                        {{#md}}{{record.definition}}{{/md}}
+                    {{/if}}
                 </div>
             </div>
             <div class="row">
                 <div class="detail-heading">Suggested Interface Label</div>
                 <div class="ptd-inline">
-                    <input type="text" id="termLabel" placeholder="Enter a label for this term as it should appear in a menu or listing." value="{{record.termLabel}}"/>
+                    {{#if user}}
+                        <input type="text" name="termLabel" placeholder="Enter a label for this term as it should appear in a menu or listing." value="{{record.termLabel}}"/>
+                    {{else}}
+                        <input type="hidden" name="termLabel" value="{{record.termLabel}}"/>
+                        {{#if record.termLabel}}
+                            {{record.termLabel}}
+                        {{else}}
+                            No term label specified.
+                        {{/if}}
+                    {{/if}}
                 </div>
             </div>
 
             <div class="row">
                 <div class="detail-heading">Value Space</div>
-                <div class="detail-instructions">Separate values by commas, or notation describing the range of acceptable values.</div>
-                <input type="text" id="valueSpace" placeholder="Enter a valueSpace for this term." value="{{record.valueSpace}}"/>
+                {{#if user}}
+                    <div class="detail-instructions">Separate values by commas, or notation describing the range of acceptable values.</div>
+                    <input type="text" name="valueSpace" placeholder="Enter a valueSpace for this term." value="{{record.valueSpace}}"/>
+                {{else}}
+                    <input type="hidden" name="valueSpace" value="{{record.valueSpace}}"/>
+                    {{#if record.valueSpace}}
+                        {{record.valueSpace}}
+                    {{else}}
+                        No value space specified.
+                    {{/if}}
+                {{/if}}
             </div>
 
             <div class="row">
                 <div class="detail-heading">Suggested Default Value</div>
-                <input type="text" id="defaultValue" placeholder="Enter a default value for this term." value="{{record.defaultValue}}"/>
+                {{#if user}}
+                    <input type="text" name="defaultValue" placeholder="Enter a default value for this term." value="{{record.defaultValue}}"/>
+                {{else}}
+                    <input type="hidden" name="defaultValue" value="{{record.defaultValue}}"/>
+                    {{#if record.defaultValue}}
+                        {{record.defaultValue}}
+                    {{else}}
+                        No default value specified.
+                    {{/if}}
+                {{/if}}
             </div>
 
             <div class="row">
@@ -149,19 +195,22 @@
             </div>
         </div>
     </div>
-    <div class="row detail-footer">
-        <div class="column small-offset-1 small-11">
-            <div class="row">
-                <div class="column medium-8">
-                    <input type="text" id="comment" placeholder="Add comment on entry"/>
-                </div>
-                <div class="column medium-4">
-                    <div class="button radius save-button">
-                        Save Changes
+    {{#if user}}
+        <div class="row detail-footer">
+            <div class="column small-offset-1 small-11">
+                <div class="row">
+                    <div class="column medium-8">
+                        <input type="text" id="comment" placeholder="Add comment on entry"/>
+                    </div>
+                    <div class="column medium-4">
+                        <div class="button radius save-button">
+                            Save Changes
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-
+    {{else}}
+        <span class="save-button" style="display:none"></span>
+    {{/if}}
 </form>
