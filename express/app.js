@@ -94,7 +94,7 @@ app.use("/",function(req,res) {
         res.render('pages/' + path, {layout: layout, user: req.session.user});
     }
     else {
-        res.status(404).render('error', {message: "The page you requested was not found."});
+        res.status(404).render('pages/error', {message: "The page you requested was not found."});
     }
 });
 
