@@ -27,16 +27,10 @@ read.startExpress = function() {
         var record = require('../../record')(read.config);
         read.express.app.use('/record', record);
 
-        // Add PouchDB with simulated CouchDb REST endpoints
-        read.express.app.use('/pouch', require('express-pouchdb')(read.pouch.MemPouchDB));
-
+        read.runTests();
         // Give express-pouch a few seconds to start up
-        setTimeout(read.loadData, 500);
+//        setTimeout(read.loadData, 500);
     });
-};
-
-read.loadData = function() {
-    read.pouch.loadData(read.runTests);
 };
 
 read.runTests = function() {
