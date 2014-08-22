@@ -1,22 +1,17 @@
 <div id="profile">
-    {{#if user}}
-        <a href="#" data-dropdown="user-dropdown" class="button expand dropdown secondary small transparent" tabindex="0">
-            <span class="ptd-icon-user"></span>
+    <a href="#" data-dropdown="user-dropdown" class="button expand dropdown secondary small transparent" tabindex="0">
+        <span class="ptd-icon-user"></span>
+        {{#if user}}
             {{#if user.displayName}}{{user.displayName}}{{else}}{{user.name}}{{/if}}
-        </a>
-        <br/>
-        <ul id="user-dropdown" data-dropdown-content class="f-dropdown profile-menu">
-            <li><a href="#" class="profile-logout" tabindex="-1">logout</a></li>
-            <li><a href="#" class="profile-profile" tabindex="-1">profile</a></li>
-        </ul>
-    {{else}}
-        <a href="#" data-dropdown="user-dropdown" class="button expand dropdown secondary small transparent" tabindex="0">
-            <span class="ptd-icon-user"></span>
+        {{else}}
             Not Logged In
-        </a>
-        <br/>
-        <ul id="user-dropdown" data-dropdown-content class="f-dropdown profile-menu">
-            <li><a href="#" class="profile-login" tabindex="-1">login</a></li>
-        </ul>
-    {{/if}}
+        {{/if}}
+    </a>
+    <br/>
+    <ul id="user-dropdown" data-dropdown-content class="f-dropdown user-menu">
+        <li class="user-menu-logout" {{#unless user}}style="display:none"{{/unless}} tabindex="-1">Log Out</li>
+        <li class="user-menu-profile" {{#unless user}}style="display:none"{{/unless}} tabindex="-1">profile</li>
+        <li class="user-menu-login"  {{#if user}}style="display:none"{{/if}} tabindex="-1">Log In</li>
+        <li class="user-menu-signup" {{#if user}}style="display:none"{{/if}} tabindex="-1">Sign Up</li>
+    </ul>
 </div>
