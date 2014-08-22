@@ -30,9 +30,20 @@
         // If a template exists, load that.  Otherwise, try to load the partial.
         var element = $("#template-" + key).length ? $("#template-" + key) : $("#partial-" + key);
 
-        // templates are cached the first time they are used per page load
-        var template = templates.compiled[key] ? templates.compiled[key] : Handlebars.compile(element.html());
-        return template(context);
+        // Cache each compiled template the first time we use it...
+        if (templates.compiled[key]) {
+            return templates.compiled[key](context);
+        }
+        else {
+            if (!element || !element.html()) {
+                console.log("Template '" + key + "' does not have any content. Skipping");
+                return;
+            }
+
+            var template = Handlebars.compile(element.html());
+            templates.compiled[key] = template;
+            return template(context);
+        }
     };
 
     templates.replaceWith = function(element,key,context) {
