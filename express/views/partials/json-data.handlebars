@@ -1,15 +1,8 @@
-{{#if user }}
-    fluid.registerNamespace("ctr.data.user");
-    ctr.data.user = {
-        name: "{{user.name}}"
-    };
-{{/if}}
-
-{{#if record }}
-    fluid.registerNamespace("ctr.data.record");
-    ctr.data.record = {
-        uniqueId: "{{record.uniqueId}}"
-    };
-{{/if}}
-
-
+fluid.defaults("ctr.components.data", {
+    gradeNames: ["fluid.modelComponent", "autoInit"],
+    model: {
+        user: {{#if user }}{ name: "{{user.name}}"}{{else}}undefined{{/if}},
+        record: {{#if record }}{ uniqueId: "{{record.uniqueId}}"}{{else}}undefined{{/if}}
+    }
+});
+var data = ctr.components.data();

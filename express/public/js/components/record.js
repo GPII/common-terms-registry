@@ -9,6 +9,7 @@
     // Also, I should feel bad for using it.
     record.typeLookups = {
         "general": "term",
+        "term": "term",
         "alias": "alias",
         "operator": "operator",
         "translation": "translation",
@@ -47,12 +48,9 @@
         if (data && data.record) {
             that.model.record = data.record;
             templates.replaceWith(viewport, "term-detail", { record: data.record, user: ctr.data.user });
-            record.selectType(that);
-            record.selectStatus(that);
+            record.setFormValues(that);
 
             // TODO:  Add support for all record types
-
-            // TODO:  Preserve data somehow when switching record types
         }
         else {
             templates.replaceWith(viewport, "norecord", {user: ctr.data.user});
@@ -62,31 +60,20 @@
     // bind in sanity checking when changing from a term (with aliases) to any other type of record
 
 
-    // TODO:  Wire up record type controls
-    record.selectType = function(that){
+    // Set the current form values
+    record.setFormValues = function(that){
         var type = that.locate("type");
-        type.removeClass("active");
+        type.prop("checked",false);
 
         if (that.model.record && that.model.record.type) {
-            type.each(function(index,entry) {
-                if ($(entry).text().toLowerCase().indexOf(record.typeLookups[that.model.record.type.toLowerCase()]) !== -1) {
-                    $(entry).addClass("active");
-                }
-            });
+            document.forms[0].type.value = record.typeLookups[that.model.record.type.toLowerCase()];
         }
-    };
 
-    // TODO:  Wire up status controls
-    record.selectStatus = function(that){
         var status = that.locate("status");
-        status.removeClass("active");
+        status.prop("checked", false);
 
         if (that.model.record && that.model.record.status) {
-            status.each(function(index,entry) {
-                if ($(entry).text().indexOf(that.model.record.status) !== -1) {
-                    $(entry).addClass("active");
-                }
-            });
+            document.forms[0].status.value = that.model.record.status;
         }
     };
 
@@ -100,8 +87,8 @@
         model: {
         },
         selectors: {
-            "status":   ".status",
-            "type":     ".type",
+            "status":   "input[name='status']",
+            "type":     "input[name='type']",
             "viewport": ".ptd-viewport"
         },
         events: {

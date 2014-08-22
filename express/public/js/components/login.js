@@ -34,7 +34,8 @@
             templates.replaceWith(that.locate("viewport"),"success", { message: "You have succesfully logged in."});
 
             // update our common session data regarding the logged in user, so that other components can pick up changes.
-            that.model.user = responseData.user;
+            that.data.model.user = jsonData.user;
+            that.profile.refresh(that);
         }
         else {
             templates.prependTo(that.locate("form"),"error",{message: jsonData.message});
@@ -43,8 +44,9 @@
 
     fluid.defaults("ctr.components.login", {
         gradeNames: ["fluid.viewRelayComponent", "autoInit"],
-        model: {
-            "user": "{ctr.components.data}.model.user"
+        components: {
+            data:    { type: "ctr.components.data" },
+            profile: { type: "ctr.components.profile", container: ".user-container", options: { components: { data: "{data}" }}}
         },
         apiUrl: "/api/user",
         selectors: {

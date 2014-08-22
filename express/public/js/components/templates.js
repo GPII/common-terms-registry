@@ -28,7 +28,7 @@
 
     templates.render = function(key,context) {
         // If a template exists, load that.  Otherwise, try to load the partial.
-        var element = $("#template-" + key).length ? $("#template-" + key) : $("#partial-" + key);
+        var element = $("#partial-" + key).length ? $("#partial-" + key) : $("#template-" + key);
 
         // Cache each compiled template the first time we use it...
         if (templates.compiled[key]) {
@@ -70,15 +70,18 @@
         });
     };
 
-    templates.loadTemplates = function(){
+    templates.loadTemplates = function(callback){
         var settings = {
             url: "/hbs",
             success: templates.appendToBody
         };
-        $.ajax(settings);
+        if (callback) {
+            $.ajax(settings).then(callback);
+        }
+        else {
+            $.ajax(settings);
+        }
     };
-
-    templates.loadTemplates();
 })(jQuery);
 
 

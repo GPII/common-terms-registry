@@ -15,7 +15,9 @@
 
 
 <script type="text/javascript">
+    {{>json-data}}
+    var profile   = ctr.components.profile(".user-container");
     var search    = ctr.components.search("body");
-    search.events.refresh.fire();
+    search.init();
 </script>
 

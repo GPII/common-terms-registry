@@ -1,74 +1,88 @@
 (function ($) {
     "use strict";
-    fluid.registerNamespace("ctr.components.profile");
+    var profile   = fluid.registerNamespace("ctr.components.profile");
+    var templates = fluid.registerNamespace("ctr.components.templates");
 
-    ctr.components.profile.login = function(that) {
-        // Get the user information and update the model
+    //TODO:  Bind this so that we can update ourselves if the user changes in the background
 
-        // Update the affected fields
+    profile.logout = function(that) {
+        that.data.model.user = undefined;
 
-        // toggle the login and logout buttons
+        // Fire the REST call that logs a user out, refresh afterward
+        var settings = {
+            type:    "POST",
+            url:     that.options.apiUrl + "/signout",
+            success: that.refresh,
+            error:   that.refresh
+        };
+        $.ajax(settings);
     };
 
-    ctr.components.profile.logout = function(that) {
-        // Get the user information and update the model
+    // After we have our markup in place, wire it up
+    profile.init = function(that) {
+        // Evolve our select using jquery.dropBox
 
-        // Update the affected fields
 
-        // toggle the login and logout buttons
+        // Wire up actions based on classes
     };
 
-    // toggle the dropdown for additional options
-    ctr.components.profile.toggle = function(that) {
-        that.locate("menu").toggle();
+    // Update markup and wiring after a change in user status (login/logout, profile update)
+    profile.refresh = function(that) {
+        templates.replaceWith(that.container,"profile", {user: that.data.model.user});
+
+        // Redo all our evolvers and bindings
+        profile.init(that);
     };
 
     // TODO:  Tie change in model (login/logout) to change in display onscreen.
 
     fluid.defaults("ctr.components.profile", {
-        gradeNames: ["fluid.viewComponent", "autoInit"],
+        apiUrl:    "/api/user",
+        gradeNames: ["fluid.viewRelayComponent", "autoInit"],
         selectors: {
-            "username": ".profile-username",
-            "toggle":   ".profile-toggle",
-            "menu":     ".profile-menu"
+            "badge":     ".user-badge",
+            "menu":      ".user-menu",
+            "logout":    ".user-menu-logout"
         },
-        members: {
-            "toggle":   ".profile-toggle"
-        },
-        model: {
-            user: {
-                "username": "anonymous",
-                "name":     "Anonymous"
-            }
+        components: {
+            data: { type: "ctr.components.data" }
         },
         events: {
-            "login":    "preventable",
             "logout":   "preventable",
-            "toggle":   null
+            "refresh":  "preventable"
         },
         invokers: {
-            "toggle": {
-                funcName: "ctr.components.profile.toggle",
+            "logout": {
+                funcName: "ctr.components.profile.logout",
+                args: [ "{that}"]
+            },
+            "refresh": {
+                funcName: "ctr.components.profile.refresh",
+                args: [ "{that}"]
+            },
+            "init": {
+                funcName: "ctr.components.profile.init",
                 args: [ "{that}"]
             }
         },
         listeners: {
             onCreate: [
                 {
-                    "this": "{that}.dom.toggle",
+                    "funcName": "ctr.components.profile.init",
+                    "args":     "{that}"
+                },
+                {
+                    "this": "{that}.dom.logout",
                     method: "click",
-                    args: "{that}.toggle"
+                    args:   "{that}.logout"
                 }
             ],
-            "login": {
-                func: "ctr.components.profile.login"
+            "refresh": {
+                func: "ctr.components.profile.refresh"
             },
             "logout": {
-                func: "ctr.components.profile.logout"
-            },
-            "toggle": {
-                func: "ctr.components.profile.toggle",
-                args: [ "{that}"]
+                func: "ctr.components.profile.logout",
+                "args" : "{that}"
             }
         }
     });

@@ -94,7 +94,7 @@
 
             // display each record in the results area
             data.records.forEach(function(record) {
-                templates.appendTo(viewport, "record", { record: record, user: ctr.data.user });
+                templates.appendTo(viewport, "record", { record: record, user: that.data.model.user });
             });
         }
         else {
@@ -105,6 +105,10 @@
         $(viewport).find(".alias-toggle").bind('click',search.toggleAliasRecord);
 
         // TODO: add support for pagination or infinite scrolling
+    };
+
+    search.init = function(that) {
+        templates.loadTemplates(function() { search.queryChanged(that); });
     };
 
     ctr.components.applyBinding = function (that) {
@@ -139,6 +143,9 @@
             path:        "input",
             elementType: "encode different ways of accessing values here"
         }],
+        components: {
+            data:    { type: "ctr.components.data" }
+        },
         events: {
             "refresh":   "preventable",
             "clear":     "preventable"
@@ -147,6 +154,10 @@
             "clear": {
                 funcName: "ctr.components.search.clear",
                 args: [ "{that}"]
+            },
+            "init": {
+                funcName: "ctr.components.search.init",
+                args: ["{that}"]
             },
             "displayError": {
                 funcName: "ctr.components.search.displayError",
@@ -183,6 +194,10 @@
                 {
                     "funcName": "ctr.components.applyBinding",
                     "args":     "{that}"
+                },
+                {
+                    "funcName": "ctr.components.search.init",
+                    "args":     "{that"
                 }
             ],
             "refresh": {
