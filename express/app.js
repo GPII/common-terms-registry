@@ -68,24 +68,30 @@ app.use("/infusion",express.static(__dirname + '/node_modules/infusion/src'));
 // Mount the handlebars templates as a single dynamically generated source file
 app.use("/hbs",require("./views/client.js")(config));
 
-// Detail edit/view for an individual record.
-// TODO: Move to a component-only load with a client-side REST call.
+// Detail edit/view for an individual record.  Requires a separate interface because the uniqueId is passed as part of the path
 app.get("/detail/:uniqueId", function(req,res) {
     if (req.params.uniqueId === "new") {
-        res.render('details', { layout: 'main', record: {}, user: req.session.user});
+        res.render('pages/details', { layout: 'main', record: {}, user: req.session.user});
     }
     else {
-        res.render('details', { layout: 'details', record: { uniqueId: req.params.uniqueId }, user: req.session.user});
+        res.render('pages/details', { layout: 'details', record: { uniqueId: req.params.uniqueId }, user: req.session.user});
     }
 });
 
 // TODO:  Add support for "history" list
 // TODO:  Add support for "diff" view
 
-// Main Search Interface
+// Many templates simply require user information.  Those can all be loaded by a common function that:
+// 1. Uses views/layouts/PATH.handlebars as the layout if it exists, "page" if it doesn't.
+// 2. Uses views/pages/PATH.handlebars for the body if it exists
+// 3. Displays an error if a nonsense path is passed in.
 app.use("/",function(req,res) {
-    if (req.path === "/") {
-        res.render('search', { layout: 'search', user: req.session.user});
+    var fs = require("fs");
+
+    var path = req.path === "/" ? "search" : req.path.substring(1);
+    if (fs.existsSync(__dirname + "/views/pages/" + path + ".handlebars")) {
+        var layout = fs.existsSync(__dirname + "/views/layouts/" + path + ".handlebars") ? path : "main";
+        res.render('pages/' + path, {layout: layout, user: req.session.user});
     }
     else {
         res.status(404).render('error', {message: "The page you requested was not found."});

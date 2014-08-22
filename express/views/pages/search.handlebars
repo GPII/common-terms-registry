@@ -3,13 +3,11 @@
         <div class="column small-offset-1 small-11 ptd-viewport">
             <div class="loading">Loading...</div>
         </div>
-   </div>
+    </div>
 </div>
 
 <!-- include our fluid modules -->
-<script src="/js/components/templates.js"></script>
-<script src="/js/components/record.js"></script>
-<script src="/js/components/profile.js"></script>
+<script src="/js/components/search.js"></script>
 
 <!-- include any dependencies specific to this page -->
 <script src="/bc/pagedown/Markdown.Converter.js"></script>
@@ -17,10 +15,7 @@
 
 
 <script type="text/javascript">
-    {{>json-data}}
-
-    $(document).foundation();
-    var record    = ctr.components.record("body");
-    record.events.refresh.fire();
-    var profile   = ctr.components.profile("#profile");
+    var search    = ctr.components.search("body");
+    search.events.refresh.fire();
 </script>
+
