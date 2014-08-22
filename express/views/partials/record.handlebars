@@ -38,9 +38,15 @@
     </div>
     {{#if record.aliases}}
         <div class="aliases">
-            {{#each record.aliases}}
-                {{> alias }}
-            {{/each}}
+            {{#if user}}
+                {{#each record.aliases}}
+                    {{> detail-alias-write }}
+                {{/each}}
+            {{else}}
+                {{#each record.aliases}}
+                    {{> detail-alias-read }}
+                {{/each}}
+            {{/if}}
         </div>
     {{/if}}
  </div>
