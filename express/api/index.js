@@ -62,10 +62,10 @@ module.exports = function(config) {
             }
             fs.closeSync(mdFile);
 
-            res.render('page', { "title": "API Documentation", "body": marked(markdown)});
+            res.render('pages/page', { "title": "API Documentation", "body": marked(markdown)});
         }
         else {
-            res.status(404).render('error', {message: "The page you requested was not found."});
+            res.status(404).render('pages/error', {message: "The page you requested was not found."});
         }
     });
     return router;
