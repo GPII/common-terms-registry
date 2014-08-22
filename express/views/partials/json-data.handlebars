@@ -1,8 +1,10 @@
 fluid.defaults("ctr.components.data", {
-    gradeNames: ["fluid.modelComponent", "autoInit"],
+    gradeNames: ["fluid.modelRelayComponent", "autoInit"],
     model: {
         user: {{#if user }}{ name: "{{user.name}}"}{{else}}undefined{{/if}},
         record: {{#if record }}{ uniqueId: "{{record.uniqueId}}"}{{else}}undefined{{/if}}
+    },
+    modelListeners: {
     }
 });
 var data = ctr.components.data();

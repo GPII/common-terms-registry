@@ -107,6 +107,7 @@
         // TODO: add support for pagination or infinite scrolling
     };
 
+    // We have to do this because templates need to be loaded before we initialize our own code.
     search.init = function(that) {
         templates.loadTemplates(function() { search.queryChanged(that); });
     };
@@ -144,7 +145,14 @@
             elementType: "encode different ways of accessing values here"
         }],
         components: {
-            data:    { type: "ctr.components.data" }
+            data:    {
+                type: "ctr.components.data",
+                options: {
+                    modelListeners: {
+                        "user": "ctr.components.search.init({that})"
+                    }
+                }
+            }
         },
         events: {
             "refresh":   "preventable",
@@ -197,7 +205,7 @@
                 },
                 {
                     "funcName": "ctr.components.search.init",
-                    "args":     "{that"
+                    "args":     "{that}"
                 }
             ],
             "refresh": {

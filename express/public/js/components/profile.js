@@ -6,6 +6,7 @@
     //TODO:  Bind this so that we can update ourselves if the user changes in the background
 
     profile.logout = function(that) {
+        that.data.applier.change("user", undefined);
         that.data.model.user = undefined;
 
         // Fire the REST call that logs a user out, refresh afterward
