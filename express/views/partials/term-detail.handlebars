@@ -1,62 +1,58 @@
-<div class="row detail-header">
-    <div class="column small-offset-1 small-11">
-        <div class="row detail-linkbar">
-            <div class="column medium-3">
-                <div class="label-neighbor">
-                    <a href="#">last changes</a> | <a href="#">history (7)</a></div>
-            </div>
-            <div class="column medium-2 medium-offset-2">
-                <div class="secondary round label">
-                    <span class="version-header">Version 5 (latest)</span>
+<form name="detail-form">
+    <div class="row detail-header">
+        <div class="column small-offset-1 small-11">
+            <div class="row detail-linkbar">
+                <div class="column medium-3">
+                    <div class="label-neighbor">
+                        <a href="#">last changes</a> | <a href="#">history (7)</a></div>
+                </div>
+                <div class="column medium-2 medium-offset-2">
+                    <div class="secondary round label">
+                        <span class="version-header">Version 5 (latest)</span>
+                    </div>
+                </div>
+                <div class="column medium-2 medium-offset-3">
+                    <div class="label-neighbor">
+                        <a href="#">help <span class="ptd-icon-question"></span></a></div>
                 </div>
             </div>
-            <div class="column medium-2 medium-offset-3">
-                <div class="label-neighbor">
-                    <a href="#">help <span class="ptd-icon-question"></span></a></div>
+            <div class="row">
+                <div class="column medium-8">
+                    <div class="detail-heading">Unique Identifier</div>
+                </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="column medium-8">
-                <div class="detail-heading">Unique Identifier</div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="column medium-8">
-                <div class="uniqueId">{{record.uniqueId}}</div>
-            </div>
-            <div class="column medium-4">
-                {{> language}}
+            <div class="row">
+                <div class="column medium-8">
+                    <div class="uniqueId">{{record.uniqueId}}</div>
+                </div>
+                <div class="column medium-4">
+                    {{> language}}
+                </div>
             </div>
         </div>
     </div>
-</div>
-<div class="row detail-body">
-    <div class="column small-offset-1 small-11">
-        <div class="row">
-            <div class="column medium-6">
-                <div class="row">
-                    <div class="column medium-4">
-                        <div class="type button radius">
+    <div class="row detail-body">
+        <div class="column small-offset-1 small-11">
+            <div class="row">
+                <div class="column medium-6">
+                    <div class="row">
+                        <div class="column medium-4">
                             <input type="radio" name="type" value="term" id="term-type"/>
-                            <label for="term-type">
+                            <label for="term-type" class="type button radius">
                                 <span class="glyphicon-tree-deciduous glyphicon"></span>
                                 Term
                             </label>
                         </div>
-                    </div>
-                    <div class="column medium-4">
-                        <div class="type button radius">
+                        <div class="column medium-4">
                             <input type="radio" name="type" value="alias" id="alias-type"/>
-                            <label for="alias-type">
+                            <label for="alias-type" class="type button radius">
                                 <span class="glyphicon-leaf glyphicon"></span>
                                 Alias
                             </label>
                         </div>
-                    </div>
-                    <div class="column medium-4">
-                        <div class="type button radius">
+                        <div class="column medium-4">
                             <input type="radio" name="type" value="condition" id="condition-type"/>
-                            <label for="condition-type">
+                            <label for="condition-type" class="type button radius">
                                 <span class="glyphicon-cog glyphicon"></span>
                                 Condition
                             </label>
@@ -64,96 +60,86 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="detail-heading">Uses</div>
-            <ul>
-                {{#if record.uses}}
-                    {{#each record.uses}}
-                        <li>{{.}}</li>
-                    {{/each}}
-                {{/if}}
-                <li class="add"><input type="text" placeholder="Add use"></li>
-            </ul>
-        </div>
-        <div class="row">
-            <div class="detail-heading">Aliases</div>
-            <ul>
-                {{#if record.aliases}}
-                    {{#each record.aliases}}
-                        <li>{{uniqueId}}</li>
-                    {{/each}}
-                {{/if}}
-                <li>Create Alias</li>
-            </ul>
-        </div>
-        <div class="row">
-            <div class="detail-heading">Definition</div>
-            <div class="ptd-inline">
-                <textarea id="definition" placeholder="Add a definition for this term.">{{record.definition}}</textarea>
+            <div class="row">
+                <div class="detail-heading">Uses</div>
+                <ul>
+                    {{#if record.uses}}
+                        {{#each record.uses}}
+                            <li>{{.}}</li>
+                        {{/each}}
+                    {{/if}}
+                    <li class="add"><input type="text" placeholder="Add use"></li>
+                </ul>
             </div>
-        </div>
-        <div class="row">
-            <div class="detail-heading">Suggested Interface Label</div>
-            <div class="ptd-inline">
-                <input type="text" id="termLabel" placeholder="Enter a label for this term as it should appear in a menu or listing." value="{{record.termLabel}}"/>
+            <div class="row">
+                <div class="detail-heading">Aliases</div>
+                <ul>
+                    {{#if record.aliases}}
+                        {{#each record.aliases}}
+                            <li>{{uniqueId}}</li>
+                        {{/each}}
+                    {{/if}}
+                    <li>Create Alias</li>
+                </ul>
             </div>
-        </div>
+            <div class="row">
+                <div class="detail-heading">Definition</div>
+                <div class="ptd-inline">
+                    <textarea id="definition" placeholder="Add a definition for this term.">{{record.definition}}</textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="detail-heading">Suggested Interface Label</div>
+                <div class="ptd-inline">
+                    <input type="text" id="termLabel" placeholder="Enter a label for this term as it should appear in a menu or listing." value="{{record.termLabel}}"/>
+                </div>
+            </div>
 
-        <div class="row">
-            <div class="detail-heading">Value Space</div>
-            <div class="detail-instructions">Separate values by commas, or notation describing the range of acceptable values.</div>
-            <input type="text" id="valueSpace" placeholder="Enter a valueSpace for this term." value="{{record.valueSpace}}"/>
-        </div>
+            <div class="row">
+                <div class="detail-heading">Value Space</div>
+                <div class="detail-instructions">Separate values by commas, or notation describing the range of acceptable values.</div>
+                <input type="text" id="valueSpace" placeholder="Enter a valueSpace for this term." value="{{record.valueSpace}}"/>
+            </div>
 
-        <div class="row">
-            <div class="detail-heading">Suggested Default Value</div>
-            <input type="text" id="defaultValue" placeholder="Enter a default value for this term." value="{{record.defaultValue}}"/>
-        </div>
+            <div class="row">
+                <div class="detail-heading">Suggested Default Value</div>
+                <input type="text" id="defaultValue" placeholder="Enter a default value for this term." value="{{record.defaultValue}}"/>
+            </div>
 
-        <div class="row">
-            <div class="column medium-12">
-                <div class="row">
-                    <div class="column medium-2">
-                        <div id="status-approved" class="status button radius">
+            <div class="row">
+                <div class="column medium-12">
+                    <div class="row">
+                        <div class="column medium-2">
                             <input id="status-approved" type="radio" name="status" value="approved"/>
-                            <label for="status-approved">
+                            <label for="status-approved" class="status button radius">
                                 <span class="ptd-icon-checked"></span>
                                 approved
                             </label>
                         </div>
-                    </div>
-                    <div class="column medium-2">
-                        <div id="status-candidate" class="status button radius">
+                        <div class="column medium-2">
                             <input id="status-candidate" type="radio" name="status" value="candidate"/>
-                            <label for="status-candidate">
+                            <label for="status-candidate" class="status button radius">
                                 <span class="ptd-icon-">candidate</span>
                                 candidate
                             </label>
                         </div>
-                    </div>
-                    <div class="column medium-2">
-                        <div id="status-unreviewed" class="status button radius">
+                        <div class="column medium-2">
                             <input id="status-unreviewed" type="radio" name="status" value="unreviewed"/>
-                            <label for="status-candidate">
+                            <label for="status-unreviewed" class="status button radius">
                                 <span class="ptd-icon-">unreviewed</span>
                                 unreviewed
                             </label>
                         </div>
-                    </div>
-                    <div class="column medium-2">
-                        <div id="status-draft" class="status button radius">
+                        <div class="column medium-2">
                             <input id="status-draft" type="radio" name="status" value="draft"/>
-                            <label for="status-candidate">
+                            <label for="status-draft" class="status button radius">
                                 <span class="ptd-icon-question"></span>
                                 draft
                             </label>
                         </div>
-                    </div>
-                    <div class="column medium-2 end">
-                        <div id="status-deleted" class="status button radius">
+                        <div class="column medium-2 end">
                             <input id="status-deleted" type="radio" name="status" value="deleted"/>
-                            <label for="status-candidate">
+                            <label for="status-deleted" class="status button radius">
                                 <span class="ptd-icon-">deleted</span>
                                 deleted
                             </label>
@@ -163,18 +149,19 @@
             </div>
         </div>
     </div>
-</div>
-<div class="row detail-footer">
-    <div class="column small-offset-1 small-11">
-        <div class="row">
-            <div class="column medium-8">
-                <input type="text" id="comment" placeholder="Add comment on entry"/>
-            </div>
-            <div class="column medium-4">
-                <div class="button radius save-button">
-                    Save Changes
+    <div class="row detail-footer">
+        <div class="column small-offset-1 small-11">
+            <div class="row">
+                <div class="column medium-8">
+                    <input type="text" id="comment" placeholder="Add comment on entry"/>
+                </div>
+                <div class="column medium-4">
+                    <div class="button radius save-button">
+                        Save Changes
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+
+</form>
