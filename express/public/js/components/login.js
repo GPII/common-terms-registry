@@ -42,6 +42,11 @@
         }
     };
 
+    // We have to do this because templates need to be loaded before we initialize our own code.
+    login.init = function(that) {
+        templates.loadTemplates();
+    };
+
     fluid.defaults("ctr.components.login", {
         gradeNames: ["fluid.viewRelayComponent", "autoInit"],
         components: {
@@ -70,6 +75,10 @@
             "displayReceipt": {
                 funcName: "ctr.components.login.displayReceipt",
                 args: ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"]
+            },
+            "init": {
+                funcName: "ctr.components.search.init",
+                args: ["{that}"]
             }
         },
         listeners: {
@@ -78,6 +87,10 @@
                     "this": "{that}.dom.form",
                     method: "submit",
                     args:   "{that}.submit"
+                },
+                {
+                    "funcName": "ctr.components.login.init",
+                    "args":     "{that}"
                 }
             ],
             "submit": {
