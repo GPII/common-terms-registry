@@ -9,6 +9,10 @@
 
 
     // Add support for markdown if pagedown is available
+    templates.stringify = function(options) {
+        return options.fn(JSON.stringify(this));
+    };
+
     templates.mdHelper = function(options) {
         if (Markdown && Markdown.getSanitizingConverter) {
             var converter = Markdown.getSanitizingConverter();
@@ -25,6 +29,9 @@
     };
 
     Handlebars.registerHelper('md', templates.mdHelper);
+    Handlebars.registerHelper('stringify', templates.stringify);
+
+
 
     templates.render = function(key,context) {
         // If a template exists, load that.  Otherwise, try to load the partial.
