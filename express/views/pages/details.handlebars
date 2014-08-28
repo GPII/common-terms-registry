@@ -7,7 +7,7 @@
 </div>
 
 <!-- include our fluid modules -->
-<script src="/js/components/record.js"></script>
+<script src="/js/components/details.js"></script>
 
 <!-- include any dependencies specific to this page -->
 <script src="/bc/pagedown/Markdown.Converter.js"></script>
@@ -18,6 +18,6 @@
     {{>json-data}}
 
     $(document).foundation();
-    var record    = ctr.components.record("body");
-    record.events.refresh.fire();
+    var details    = ctr.components.details("body");
+    details.events.refresh.fire();
 </script>
