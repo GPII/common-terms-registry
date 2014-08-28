@@ -1,85 +1,46 @@
-// A template handling library that brings in all Handlebars templates and partials and adds functions for more easily using them.
-//
-// Requires Handlebars.js and Pagedown (for markdown rendering)
+// A temporary library to add persistent bindings between form elements and a model
 
 (function ($) {
     "use strict";
-    var templates = fluid.registerNamespace("ctr.components.templates");
-    templates.compiled = {};
+    var binding = fluid.registerNamespace("ctr.components.binding");
 
+    binding.applyBinding = function (that) {
+        var bindings = that.options.bindings;
+        fluid.each(bindings, function (binding) {
+            var element = that.locate(binding.selector);
+            // in time, break out different ways of accessing the DOM into dedicated functions,
+            // index by the "elementType" field we will add to "bindings"
+            element.change(function () {
+                console.log("Changing model based on element update.");
 
-    templates.mdHelper = function(options) {
-        if (Markdown && Markdown.getSanitizingConverter) {
-            var converter = Markdown.getSanitizingConverter();
-            // Double all single carriage returns so that they result in new paragraphs, at least for now
-            converter.hooks.chain("preConversion", function (text) { return text.replace(/[\r\n]+/g, "\n\n"); });
-            return converter.makeHtml(options.fn(this));
-        }
-        else {
-            console.log("Pagedown or one of its dependencies is not available, so markdown will be passed on without any changes.");
-        }
+                var value = element.val();
+                if (element.attr('type') === "radio") {
+                    element.each(function(index, option) {
+                      if (option.checked) {
+                          value = $(option).val();
+                      }
+                    });
+                }
+                that.data.applier.change(binding.path, value);
+            });
+            that.data.applier.modelChanged.addListener(binding.path, function (change) {
+                console.log("Changing value based on model update.");
 
-        // If we can't evolve the output, we just pass it through.
-        return options.fn(this);
-    };
-
-    Handlebars.registerHelper('md', templates.mdHelper);
-
-    templates.render = function(key,context) {
-        // If a template exists, load that.  Otherwise, try to load the partial.
-        var element = $("#partial-" + key).length ? $("#partial-" + key) : $("#template-" + key);
-
-        // Cache each compiled template the first time we use it...
-        if (templates.compiled[key]) {
-            return templates.compiled[key](context);
-        }
-        else {
-            if (!element || !element.html()) {
-                console.log("Template '" + key + "' does not have any content. Skipping");
-                return;
-            }
-
-            var template = Handlebars.compile(element.html());
-            templates.compiled[key] = template;
-            return template(context);
-        }
-    };
-
-    templates.replaceWith = function(element,key,context) {
-        element.html(templates.render(key,context));
-    };
-
-    templates.appendTo = function(element,key,context) {
-        element.append(templates.render(key,context));
-    };
-
-    templates.prependTo = function (element,key,context) {
-        element.prepend(templates.render(key,context));
-    };
-
-    templates.appendToBody = function (data, textStatus, jqXHR) {
-        // TODO:  Replace this with a {that} reference
-        $("body").append(data);
-
-        // load all partials so that we can use them in context
-        $("[id^=partial-]").each(function(index, element) {
-            var id = element.id;
-            var key = id.substring(id.indexOf("-")+1);
-            Handlebars.registerPartial(key,$("#" + id).html());
+                if (element.attr('type') === "radio") {
+                    element.each(function(index, option) {
+                        if ($(option).val() === change) {
+                            option.checked = true;
+                        }
+                        else {
+                            option.checked = false;
+                        }
+                    });
+                }
+                else {
+                    element.val(change);
+                }
+            });
         });
-    };
-
-    templates.loadTemplates = function(callback){
-        var settings = {
-            url: "/hbs",
-            success: templates.appendToBody
-        };
-        if (callback) {
-            $.ajax(settings).then(callback);
-        }
-        else {
-            $.ajax(settings);
-        }
     };
 })(jQuery);
 

@@ -208,7 +208,7 @@
                     args:   "{that}.clear"
                 },
                 {
-                    "funcName": "ctr.components.applyBinding",
+                    "funcName": "ctr.components.binding.applyBinding",
                     "args":     "{that}"
                 },
                 {
