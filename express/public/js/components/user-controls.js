@@ -1,11 +1,11 @@
 (function ($) {
     "use strict";
-    var profile   = fluid.registerNamespace("ctr.components.profile");
+    var controls  = fluid.registerNamespace("ctr.components.userControls");
     var templates = fluid.registerNamespace("ctr.components.templates");
 
     //TODO:  Bind this so that we can update ourselves if the user changes in the background
 
-    profile.logout = function(that) {
+    controls.logout = function(that) {
         that.data.applier.change("user", undefined);
         that.data.model.user = undefined;
 
@@ -13,31 +13,37 @@
         var settings = {
             type:    "POST",
             url:     that.options.apiUrl + "/signout",
-            success: that.refresh,
-            error:   that.refresh
+            success: that.logoutAndRefresh,
+            error:   that.logoutAndRefresh
         };
         $.ajax(settings);
     };
 
     // After we have our markup in place, wire it up
-    profile.init = function(that) {
+    controls.init = function(that) {
         // Evolve our select using jquery.dropBox
 
 
         // Wire up actions based on classes
     };
 
+    controls.logoutAndRefresh = function(that) {
+        that.events.afterLogout.fire();
+
+        that.refresh(that);
+    };
+
     // Update markup and wiring after a change in user status (login/logout, profile update)
-    profile.refresh = function(that) {
+    controls.refresh = function(that) {
         templates.replaceWith(that.container,"profile", {user: that.data.model.user});
 
         // Redo all our evolvers and bindings
-        profile.init(that);
+        controls.init(that);
     };
 
     // TODO:  Tie change in model (login/logout) to change in display onscreen.
 
-    fluid.defaults("ctr.components.profile", {
+    fluid.defaults("ctr.components.userControls", {
         apiUrl:    "/api/user",
         gradeNames: ["fluid.viewRelayComponent", "autoInit"],
         selectors: {
@@ -49,27 +55,32 @@
             data: { type: "ctr.components.data" }
         },
         events: {
-            "logout":   "preventable",
-            "refresh":  "preventable"
+            "logout":      "preventable",
+            "afterLogout": "preventable",
+            "refresh":     "preventable"
         },
         invokers: {
             "logout": {
-                funcName: "ctr.components.profile.logout",
+                funcName: "ctr.components.userControls.logout",
+                args: [ "{that}"]
+            },
+            "logoutAndRefresh": {
+                funcName: "ctr.components.userControls.logoutAndRefresh",
                 args: [ "{that}"]
             },
             "refresh": {
-                funcName: "ctr.components.profile.refresh",
+                funcName: "ctr.components.userControls.refresh",
                 args: [ "{that}"]
             },
             "init": {
-                funcName: "ctr.components.profile.init",
+                funcName: "ctr.components.userControls.init",
                 args: [ "{that}"]
             }
         },
         listeners: {
             onCreate: [
                 {
-                    "funcName": "ctr.components.profile.init",
+                    "funcName": "ctr.components.userControls.init",
                     "args":     "{that}"
                 },
                 {
@@ -79,10 +90,10 @@
                 }
             ],
             "refresh": {
-                func: "ctr.components.profile.refresh"
+                func: "ctr.components.userControls.refresh"
             },
             "logout": {
-                func: "ctr.components.profile.logout",
+                func: "ctr.components.userControls.logout",
                 "args" : "{that}"
             }
         }

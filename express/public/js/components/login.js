@@ -35,11 +35,18 @@
 
             // update our common session data regarding the logged in user, so that other components can pick up changes.
             that.data.model.user = jsonData.user;
-            that.profile.refresh(that);
+
+            // Refresh the user controls to display the current user once they've logged in.
+            // TODO:  We may need to fire an event instead, for now we call the function directly with our own "that"
+            that.controls.refresh(that);
         }
         else {
             templates.prependTo(that.locate("form"),"error",{message: jsonData.message});
         }
+    };
+
+    login.refresh = function(that) {
+        templates.replaceWith(that.locate("viewport"),"login-form");
     };
 
     // We have to do this because templates need to be loaded before we initialize our own code.
@@ -51,7 +58,19 @@
         gradeNames: ["fluid.viewRelayComponent", "autoInit"],
         components: {
             data:    { type: "ctr.components.data" },
-            profile: { type: "ctr.components.profile", container: ".user-container", options: { components: { data: "{data}" }}}
+            controls: {
+                type: "ctr.components.userControls",
+                container: ".user-container",
+                options: {
+                    components: { data: "{data}" },
+                    listeners: {
+                        afterLogout:
+                        {
+                            func: "{ctr.components.login}.events.refresh.fire"
+                        }
+                    }
+                }
+            }
         },
         apiUrl: "/api/user",
         selectors: {
@@ -61,7 +80,8 @@
             "password": "input[name='password']"
         },
         events: {
-            "submit":   "preventable"
+            "submit":   "preventable",
+            "refresh":  "preventable"
         },
         invokers: {
             "submit": {
@@ -95,6 +115,10 @@
             ],
             "submit": {
                 func: "ctr.components.login.submit",
+                args: [ "{that}"]
+            },
+            "refresh": {
+                func: "ctr.components.login.refresh",
                 args: [ "{that}"]
             }
         }

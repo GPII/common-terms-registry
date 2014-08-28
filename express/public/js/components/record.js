@@ -30,7 +30,7 @@
 
     // Save the new version including any comments
     record.save = function(that) {
-
+        window.alert('no saving at the moment until we wire up our data.');
     };
 
     // bind in input validation and feedback
@@ -60,7 +60,7 @@
     // bind in sanity checking when changing from a term (with aliases) to any other type of record
 
 
-    // Set the current form values
+    // Set the current form values for the two radio groups, which we cannot do in our templates
     record.setFormValues = function(that){
         var type = that.locate("type");
         type.prop("checked",false);
@@ -77,31 +77,66 @@
         }
     };
 
+//    record.wireFormElements = function(that) {
+//        $.each(that.options.selectors,function(key,value){
+//            if (that.data.model.record) {
+//                var element = that.locate(key);
+//                that.data.model.record[key] = element.val();
+//                element.bind('change', function() { record.saveFormData(that,key); });
+//            }
+//        });
+//    };
+
+    record.saveFormData = function(that,value) {
+      window.alert(value);
+    };
+
     // We have to do this because templates need to be loaded before we initialize our own code.
     record.init = function(that) {
-        templates.loadTemplates();
+//        templates.loadTemplates(function() { record.wireFormElements(that)});
+        templates.loadTemplates(ctr.components.applyBinding(that));
     };
 
     // TODO:  Wire up comment controls
 
     // TODO:  Wire up save controls
 
+
+    ctr.components.applyBinding = function (that) {
+        var bindings = that.options.bindings;
+        fluid.each(bindings, function (binding) {
+            var element = that.locate(binding.selector);
+            // in time, break out different ways of accessing the DOM into dedicated functions,
+            // index by the "elementType" field we will add to "bindings"
+            element.change(function () {
+                var value = element.val();
+                that.applier.change(binding.path, value);
+            });
+            that.applier.modelChanged.addListener(binding.path, function (change) {
+                element.val(change);
+            });
+        });
+    };
+
     fluid.defaults("ctr.components.record", {
         baseUrl: "/api/record",
         gradeNames: ["fluid.viewRelayComponent", "autoInit"],
         components: {
             data:    { type: "ctr.components.data" },
-            profile: { type: "ctr.components.profile", container: ".user-container", options: { components: { data: "{data}" }}}
+            controls: { type: "ctr.components.userControls", container: ".user-container", options: { components: { data: "{data}" }}}
         },
         selectors: {
-            "status":   "input[name='status']",
-            "type":     "input[name='type']",
-            "viewport": ".ptd-viewport"
+            "button":       ".save-button",
+            "viewport":     ".ptd-viewport"
         },
         events: {
             "refresh":   "preventable"
         },
         invokers: {
+            "save": {
+                funcName: "ctr.components.record.save",
+                args: [ "{that}"]
+            },
             "displayError": {
                 funcName: "ctr.components.record.displayError",
                 args: ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"]
@@ -111,9 +146,18 @@
                 args: ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"]
             }
         },
-
         listeners: {
             onCreate: [
+                {
+                    "this": "{that}.dom.button",
+                    method: "click",
+                    args:   "{that}.save"
+                },
+                {
+                    "this": "{that}.dom.button",
+                    method: "keypress",
+                    args:   "{that}.save"
+                },
                 {
                     "funcName": "ctr.components.record.init",
                     "args":     "{that}"

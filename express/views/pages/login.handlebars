@@ -1,21 +1,7 @@
 <div class="body">
     <div class="row">
         <div class="column small-offset-4 small-4 ptd-viewport">
-            <p>Please enter your username and password to log in to the Preference Terms Dictionary.</p>
-
-            <form class="login-form">
-                <label for="password">Username:</label>
-                <input id="username" type="text" name="username" placeholder="Enter your username...">
-
-                <label for="password">Password:</label>
-                <input id="password" type="password" name="password">
-
-                <input type="submit" class="button" value="Log In">
-            </form>
-
-            <p>Can't remember your username or password?  <a href="reset">Reset your password.</a></p>
-
-            <p>No account?  <a href="signup">Sign up now.</a></p>
+            {{>login-form}}
         </div>
     </div>
 </div>

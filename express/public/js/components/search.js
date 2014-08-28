@@ -130,8 +130,6 @@
 
     fluid.defaults("ctr.components.search", {
         gradeNames: ["fluid.viewRelayComponent", "autoInit"],
-        model: {
-        },
         baseUrl: "/api",
         selectors: {
             "input":    ".ptd-search-input",
@@ -146,10 +144,20 @@
         }],
         components: {
             data:    {
-                type: "ctr.components.data",
+                type: "ctr.components.data"
+            },
+            controls:    {
+                type: "ctr.components.userControls",
+                container: ".user-container",
                 options: {
-                    modelListeners: {
-                        "user": "ctr.components.search.init({that})"
+                    components: {
+                        data: "{ctr.components.search}.data"
+                    },
+                    listeners: {
+                        afterLogout:
+                        {
+                            func: "{ctr.components.search}.events.refresh.fire"
+                        }
                     }
                 }
             }
