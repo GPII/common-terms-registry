@@ -58,8 +58,8 @@ module.exports = function(config) {
             var originalRecord = jsonData.rows[0].value;
             var newRecord = JSON.parse(JSON.stringify(originalRecord));
 
-            // TODO: Only allow data that matches the Schema
-            var allowedFields = ["type","permanency","namespace","uniqueId","notes","status", "termLabel","valueSpace","source","aliasOf","translationOf", "definition", "uses", "applicationUniqueFlag"];
+            // TODO: Only allow data that matches the Schema or move this to the configuration
+            var allowedFields = ["type","permanency","namespace","uniqueId","notes","status", "termLabel","valueSpace","defaultValue", "source","aliasOf","translationOf", "definition", "uses", "applicationUniqueFlag"];
 
             // Overlay the supplied data onto this record, deleting any
             allowedFields.forEach(function(field){

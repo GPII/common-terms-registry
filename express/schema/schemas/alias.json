@@ -6,9 +6,10 @@
         {
             "required": ["termLabel","aliasOf"],
             "properties": {
-                "aliasOf":   {"$ref": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/record.json#/definitions/aliasOf"},
-                "termLabel": {"$ref": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/record.json#/definitions/termLabel"},
-                "uses":      {"$ref": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/record.json#/definitions/uses"}
+                "aliasOf":          {"$ref": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/record.json#/definitions/aliasOf"},
+                "termLabel":        {"$ref": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/record.json#/definitions/termLabel"},
+                "uses":             {"$ref": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/record.json#/definitions/uses"},
+                "defaultValue": {"$ref": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/record.json#/definitions/defaultValue"}
             }
         }
     ]

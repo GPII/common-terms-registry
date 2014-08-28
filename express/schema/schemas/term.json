@@ -14,11 +14,12 @@
                     "anyOf": [ {"$ref": "alias.json"} ]
                 },
                 "transformations": {
-                    "anyOf": [ {"$ref": "tranform.json"} ]
+                    "anyOf": [ {"$ref": "transform.json"} ]
                 },
                 "translations": {
-                    "anyOf": [ {"$ref": "tranform.json"} ]
+                    "anyOf": [ {"$ref": "translation.json"} ]
                 },
+                "defaultValue": {"$ref": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/record.json#/definitions/defaultValue"},
                 "valueSpace": {"$ref": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/record.json#/definitions/valueSpace"},
                 "termLabel": {"$ref": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/record.json#/definitions/termLabel"},
                 "definition": {"$ref": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/record.json#/definitions/definition"},

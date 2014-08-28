@@ -11,16 +11,16 @@ exports.getRecordFields = function(doc) {
     // fields unique to record types
     var recordFields = [];
     if (doc.type.toLowerCase() === "general") {
-        recordFields = ["valueSpace", "termLabel", "definition", "applicationUnique", "uses"];
+        recordFields = ["valueSpace", "termLabel", "defaultValue", "definition", "applicationUnique", "uses"];
     }
     else if (doc.type.toLowerCase() === "alias") {
-        recordFields = ["aliasOf", "termLabel", "uses"];
+        recordFields = ["aliasOf", "termLabel", "defaultValue", "uses"];
     }
     else if (doc.type.toLowerCase() === "translation") {
-        recordFields = ["translationOf", "valueSpace", "termLabel", "definition", "uses"];
+        recordFields = ["translationOf", "valueSpace", "defaultValue", "termLabel", "definition", "uses"];
     }
     else if (doc.type.toLowerCase() === "transformation") {
-        recordFields = ["aliasOf", "valueSpace", "termLabel", "uses"];
+        recordFields = ["aliasOf", "valueSpace", "termLabel", "defaultValue", "uses"];
     }
     else if (doc.type.toLowerCase() === "operator") {
         recordFields = ["definition"];

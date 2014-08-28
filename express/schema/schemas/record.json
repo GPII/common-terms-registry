@@ -31,6 +31,10 @@
             "enum": ["unreviewed", "candidate", "active", "deleted"],
             "description": "The review status of this record."
         },
+        "defaultValue": {
+            "type": "string",
+            "description": "The suggested default value of this preference."
+        },
         "termLabel": {
             "type": "string",
             "description": "A short label for this term as it would appear in a menu or listing."
