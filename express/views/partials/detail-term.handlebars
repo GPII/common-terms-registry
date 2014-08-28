@@ -65,19 +65,9 @@
             </div>
             <div class="row">
                 <div class="detail-heading">Uses</div>
-                <input type="hidden" name="uses" value="{{record.uses}}"/>
-                <ul>
-                    {{#if record.uses}}
-                        {{#each record.uses}}
-                            <li>{{.}}</li>
-                        {{/each}}
-                    {{else}}
-                        <li>No uses specified.</li>
-                    {{/if}}
-                    {{#if user}}
-                        <li class="add"><input type="text" name="newUse" placeholder="Add use"></li>
-                    {{/if}}
-                </ul>
+                <div class="uses-container">
+                    {{>detail-uses}}
+                </div>
             </div>
             <div class="row">
                 <div class="detail-heading">Aliases</div>

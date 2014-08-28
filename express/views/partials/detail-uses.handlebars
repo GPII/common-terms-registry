@@ -1,0 +1,13 @@
+<input type="hidden" name="uses" value="{{record.uses}}"/>
+<ul>
+    {{#if record.uses}}
+        {{#each record.uses}}
+            <li>{{.}}</li>
+        {{/each}}
+    {{else}}
+        <li>No uses specified.</li>
+    {{/if}}
+    {{#if user}}
+        <li class="add"><input type="text" name="addUse" placeholder="Add use"></li>
+    {{/if}}
+</ul>

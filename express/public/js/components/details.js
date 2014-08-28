@@ -45,11 +45,25 @@
 
     };
 
+    details.addUse = function(that) {
+        var newUse = that.locate("addUse");
+        if (newUse) {
+            var newUses = JSON.parse(JSON.stringify(that.data.model.record.uses));
+            newUses.push($(newUse).val());
+            that.data.applier.change("record.uses",newUses);
+
+            var usesContainer = that.locate("usesContainer");
+            templates.replaceWith(usesContainer, "detail-uses", that.data.model);
+            that.events.markupLoaded.fire();
+        }
+    };
+
     details.displayError = function(that, jqXHR, textStatus, errorThrown) {
         var viewport = that.locate("viewport");
         // Clear out any previous messages first.
         $(viewport).find(".alert-box").remove();
 
+        templates.replaceWith(viewport, "detail-term", that.data.model);
         templates.prependTo(viewport,"error",{message: errorThrown});
     };
 
@@ -65,14 +79,14 @@
         var viewport = that.locate("viewport");
         if (data && data.record) {
             that.data.model.record = data.record;
-            templates.replaceWith(viewport, "term-detail", { record: that.data.model.record, user: that.data.model.user });
+            templates.replaceWith(viewport, "detail-term", that.data.model);
             details.setFormValues(that);
 
             ctr.components.binding.applyBinding(that);
             // TODO:  Add support for all record types
         }
         else {
-            templates.replaceWith(viewport, "norecord", {user: that.data.model.user});
+            templates.replaceWith(viewport, "norecord", that.data.model);
         }
 
         that.events.markupLoaded.fire();
@@ -150,17 +164,19 @@
             }
         ],
         selectors: {
-            "save":         ".save-button",
-            "viewport":     ".ptd-viewport",
-            "status":       "input[name='status']",
-            "type":         "input[name='type']",
-            "uses":         "input[name='uses']",
-            "uniqueId":     "input[name='uniqueId']",
-            "definition":   "[name='definition']",
-            "termLabel":    "input[name='termLabel']",
-            "valueSpace":   "input[name='valueSpace']",
-            "defaultValue": "input[name='defaultValue']",
-            "comment":      "input[name='comment']"
+            "save":          ".save-button",
+            "addUse":        "input[name='addUse']",
+            "viewport":      ".ptd-viewport",
+            "status":        "input[name='status']",
+            "type":          "input[name='type']",
+            "uses":          "input[name='uses']",
+            "usesContainer": ".uses-container",
+            "uniqueId":      "input[name='uniqueId']",
+            "definition":    "[name='definition']",
+            "termLabel":     "input[name='termLabel']",
+            "valueSpace":    "input[name='valueSpace']",
+            "defaultValue":  "input[name='defaultValue']",
+            "comment":       "input[name='comment']"
         },
         events: {
             "refresh":      "preventable",
@@ -169,6 +185,10 @@
         invokers: {
             "save": {
                 funcName: "ctr.components.details.save",
+                args: [ "{that}"]
+            },
+            "addUse": {
+                funcName: "ctr.components.details.addUse",
                 args: [ "{that}"]
             },
             "displayError": {
@@ -186,6 +206,11 @@
         },
         listeners: {
             markupLoaded: [
+                {
+                    "this": "{that}.dom.addUse",
+                    method: "change",
+                    args:   "{that}.addUse"
+                },
                 {
                     "this": "{that}.dom.save",
                     method: "click",
