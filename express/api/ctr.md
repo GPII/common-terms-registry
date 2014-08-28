@@ -31,6 +31,7 @@ A term is a single canonical way of describing a need or solution. For example, 
 |Definition|A description of the term.|
 |ApplicationUniqueFlag|Whether this term is unique to a particular application.|
 |Uses|A description of other systems that use this term and how they use it.|
+|DefaultValue|A suggested default value.|
 
 [View JSON Schema for terms](../schema/term.json)
 
@@ -43,6 +44,7 @@ An alias is another name for a standard term, with no other differences. When de
 |AliasOf|The unique identifier of the parent record this record is an alias of.|
 |TermLabel|A short label for this term as it would appear in a menu or listing.|
 |Uses|A description of other systems that use this term and how they use it.|
+|DefaultValue|A suggested default value.|
 
 [View JSON Schema for aliases](../schema/alias.json)
 
@@ -56,7 +58,8 @@ A translation is representation of a term in another language with no other diff
 |ValueSpace|A translation of the terms used in the parent record’s value space.|
 |TermLabel|A translation of the short label for the parent record as it would appear in a menu or listing.|
 |Definition|A translation of the definition of the parent record.|
-|Uses|A description of other systems that use this term and how they use it.|
+|Uses|A translation of the uses in the parent record.|
+|DefaultValue|A translation of the default value in the parent record..|
 
 [View JSON Schema for translations](../schema/translation.json)
 
@@ -71,6 +74,7 @@ For these cases, the Common Terms Registry provides a transformation. A transfor
 |ValueSpace|A bidirectional lossless algorithm for converting to and from the values used by the common term.|
 |TermLabel|A translation of the short label for the parent record as it would appear in a menu or listing.|
 |Uses|A description of other systems that use this term and how they use it.|
+|DefaultValue|A suggested default value.|
 
 [View JSON Schema for transformations](../schema/transformation.json)
 
