@@ -74,6 +74,8 @@
         else {
             templates.replaceWith(viewport, "norecord", {user: that.data.model.user});
         }
+
+        that.events.markupLoaded.fire();
     };
 
     // bind in sanity checking when changing from a term (with aliases) to any other type of record
@@ -96,15 +98,7 @@
         }
     };
 
-    // We have to do this because templates need to be loaded before we initialize our own code.
-    details.init = function(that) {
-//        templates.loadTemplates(function() { that.wireFormElements(that)});
-        templates.loadTemplates(that.events.markupLoaded.fire);
-    };
-
     // TODO:  Wire up comment controls
-
-    // TODO:  Wire up save controls
 
     fluid.defaults("ctr.components.details", {
         baseUrl: "/api/record",
@@ -191,7 +185,7 @@
             }
         },
         listeners: {
-            onCreate: [
+            markupLoaded: [
                 {
                     "this": "{that}.dom.save",
                     method: "click",
@@ -201,10 +195,11 @@
                     "this": "{that}.dom.save",
                     method: "keypress",
                     args:   "{that}.save"
-                },
+                }
+            ],
+            onCreate: [
                 {
-                    "funcName": "ctr.components.details.init",
-                    "args":     "{that}"
+                    "funcName": "ctr.components.templates.loadTemplates"
                 }
             ],
             "refresh": {
