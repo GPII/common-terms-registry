@@ -2,7 +2,7 @@
 (function ($) {
     "use strict";
     var details    = fluid.registerNamespace("ctr.components.details");
-    var templates = fluid.registerNamespace("ctr.components.templates");
+    var templates  = fluid.registerNamespace("ctr.components.templates");
 
     // This should come from a global configuration of some kind
     // Also, I should feel bad for using it.
