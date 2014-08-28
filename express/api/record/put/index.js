@@ -64,7 +64,7 @@ module.exports = function(config) {
             // Overlay the supplied data onto this record, deleting any
             allowedFields.forEach(function(field){
                 if (req.body[field] !== undefined) {
-                    if (req.body[field] ===  null) {
+                    if (!req.body[field] || (req.body[field].trim && (req.body[field].trim() === ""))) {
                         delete newRecord[field];
                     }
                     else {
