@@ -24,12 +24,8 @@
             <div class="row">
                 <div class="column medium-8">
                     <div class="uniqueId">
-                        {{#if user}}
-                            <input type="text" name="uniqueId" value="{{record.uniqueId}}"/>
-                        {{else}}
-                            <input type="hidden" name="uniqueId" value="{{record.uniqueId}}"/>
-                            {{record.uniqueId}}
-                        {{/if}}
+                        <input type="hidden" name="uniqueId" value="{{record.uniqueId}}"/>
+                        {{record.uniqueId}}
                     </div>
                 </div>
                 <div class="column medium-4">
