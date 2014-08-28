@@ -53,9 +53,31 @@
             that.data.applier.change("record.uses",newUses);
 
             var usesContainer = that.locate("usesContainer");
-            templates.replaceWith(usesContainer, "detail-uses", that.data.model);
+            templates.replaceWith(usesContainer, "detail-uses-write", that.data.model);
             that.events.markupLoaded.fire();
         }
+    };
+
+    details.removeUse = function(that, event) {
+        // "this" should be the item clicked
+        // figure out its position
+
+        // This depends on the markup to include a position attribute
+        var position = $(event.currentTarget).attr('position');
+
+        if (position) {
+            var newUses = JSON.parse(JSON.stringify(that.data.model.record.uses));
+            newUses.splice(position,1);
+            that.data.applier.change("record.uses",newUses);
+
+            var usesContainer = that.locate("usesContainer");
+            templates.replaceWith(usesContainer, "detail-uses-write", that.data.model);
+            that.events.markupLoaded.fire();
+        }
+        else {
+            console.log("Couldn't determine list position of use, and as a result couldn't remove it.");
+        }
+
     };
 
     details.displayError = function(that, jqXHR, textStatus, errorThrown) {
@@ -166,6 +188,7 @@
         selectors: {
             "save":          ".save-button",
             "addUse":        "input[name='addUse']",
+            "removeUse":     ".remove-use",
             "viewport":      ".ptd-viewport",
             "status":        "input[name='status']",
             "type":          "input[name='type']",
@@ -191,6 +214,10 @@
                 funcName: "ctr.components.details.addUse",
                 args: [ "{that}"]
             },
+            "removeUse": {
+                funcName: "ctr.components.details.removeUse",
+                args: [ "{that}", "{arguments}.0"]
+            },
             "displayError": {
                 funcName: "ctr.components.details.displayError",
                 args: ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"]
@@ -210,6 +237,16 @@
                     "this": "{that}.dom.addUse",
                     method: "change",
                     args:   "{that}.addUse"
+                },
+                {
+                    "this": "{that}.dom.removeUse",
+                    method: "click",
+                    args:   "{that}.removeUse"
+                },
+                {
+                    "this": "{that}.dom.removeUse",
+                    method: "keypress",
+                    args:   "{that}.removeUse"
                 },
                 {
                     "this": "{that}.dom.save",
