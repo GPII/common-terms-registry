@@ -47,11 +47,13 @@
 
     login.refresh = function(that) {
         templates.replaceWith(that.locate("viewport"),"login-form");
+        that.events.markupLoaded.fire();
     };
 
     // We have to do this because templates need to be loaded before we initialize our own code.
     login.init = function(that) {
         templates.loadTemplates();
+        that.events.markupLoaded.fire();
     };
 
     fluid.defaults("ctr.components.login", {
@@ -80,8 +82,9 @@
             "password": "input[name='password']"
         },
         events: {
-            "submit":   "preventable",
-            "refresh":  "preventable"
+            "submit":       "preventable",
+            "refresh":      "preventable",
+            "markupLoaded": "preventable"
         },
         invokers: {
             "submit": {
@@ -97,20 +100,21 @@
                 args: ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"]
             },
             "init": {
-                funcName: "ctr.components.search.init",
-                args: ["{that}"]
+                funcName: "ctr.components.templates.loadTemplates"
             }
         },
         listeners: {
             onCreate: [
                 {
+                    "funcName": "ctr.components.login.init",
+                    "args":     "{that}"
+                }
+            ],
+            "markupLoaded": [
+                {
                     "this": "{that}.dom.form",
                     method: "submit",
                     args:   "{that}.submit"
-                },
-                {
-                    "funcName": "ctr.components.login.init",
-                    "args":     "{that}"
                 }
             ],
             "submit": {

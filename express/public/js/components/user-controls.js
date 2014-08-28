@@ -21,10 +21,8 @@
 
     // After we have our markup in place, wire it up
     controls.init = function(that) {
-        // Evolve our select using jquery.dropBox
-
-
-        // Wire up actions based on classes
+        // TODO: Evolve our select using jquery.dropBox
+        that.events.markupLoaded.fire();
     };
 
     controls.logoutAndRefresh = function(that) {
@@ -36,12 +34,8 @@
     // Update markup and wiring after a change in user status (login/logout, profile update)
     controls.refresh = function(that) {
         templates.replaceWith(that.container,"profile", {user: that.data.model.user});
-
-        // Redo all our evolvers and bindings
-        controls.init(that);
+        that.events.markupLoaded.fire();
     };
-
-    // TODO:  Tie change in model (login/logout) to change in display onscreen.
 
     fluid.defaults("ctr.components.userControls", {
         apiUrl:    "/api/user",
@@ -55,9 +49,10 @@
             data: { type: "ctr.components.data" }
         },
         events: {
-            "logout":      "preventable",
-            "afterLogout": "preventable",
-            "refresh":     "preventable"
+            "logout":       "preventable",
+            "afterLogout":  "preventable",
+            "refresh":      "preventable",
+            "markupLoaded": "preventable"
         },
         invokers: {
             "logout": {
@@ -82,7 +77,9 @@
                 {
                     "funcName": "ctr.components.userControls.init",
                     "args":     "{that}"
-                },
+                }
+            ],
+            "markupLoaded": [
                 {
                     "this": "{that}.dom.logout",
                     method: "click",
