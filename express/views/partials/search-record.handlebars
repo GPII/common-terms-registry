@@ -29,10 +29,10 @@
         </div>
         <div class="row">
             <div class="column small-4">
-                {{>valuespace}}
+                {{>search-valuespace}}
             </div>
             <div class="column small-8">
-                {{>uses}}
+                {{>search-uses}}
             </div>
         </div>
     </div>
@@ -40,11 +40,11 @@
         <div class="aliases">
             {{#if user}}
                 {{#each record.aliases}}
-                    {{> detail-alias-write }}
+                    {{> search-alias-write }}
                 {{/each}}
             {{else}}
                 {{#each record.aliases}}
-                    {{> detail-alias-read }}
+                    {{> search-alias-read }}
                 {{/each}}
             {{/if}}
         </div>
