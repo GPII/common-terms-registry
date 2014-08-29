@@ -1,10 +1,14 @@
 {
-    "port" : 4895,
-    "base.url": "http://localhost:4895",
+    "port" :           4895,
+    "base.url":        "http://localhost:4895",
     "couch.base.url" : "http://admin:admin@localhost:5984/",
-    "couch.url" : "http://admin:admin@localhost:5984/tr/",
-    "users": "http://admin:admin@localhost:5984/_users",
-    "lucene.url" : "http://localhost:5984/_fti/local/tr/_design/lucene/by_content",
+    "couch.url" :      "http://admin:admin@localhost:5984/tr/",
+    "users":           "http://admin:admin@localhost:5984/_users",
+    "lucene.url" :     "http://localhost:5984/_fti/local/tr/_design/lucene/by_content",
+    "record.defaults": {
+        "type":   "GENERAL",
+        "status": "draft"
+    },
     "email":  {
         "from": "no-reply@raisingthefloor.org",
         "service": "SMTP",
@@ -12,7 +16,6 @@
             "host": "localhost",
             "port": 25
         }
-
     },
     "app": {
         "name": "Common Terms Registry (development)"

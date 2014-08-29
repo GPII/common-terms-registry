@@ -71,7 +71,8 @@ app.use("/hbs",require("./views/client.js")(config));
 // Detail edit/view for an individual record.  Requires a separate interface because the uniqueId is passed as part of the path
 app.get("/details/:uniqueId", function(req,res) {
     if (req.params.uniqueId === "new") {
-        var record = {};
+        // Use the record defaults from our configuration
+        var record = config["record.defaults"];
 
         // Add support for prepopulating the link to the parent record for aliases, translations, etc.
         var fieldsToPrepopulate = ["aliasOf","translationOf"];
@@ -80,7 +81,7 @@ app.get("/details/:uniqueId", function(req,res) {
                 record[field] = req.params[field];
             }
         });
-        res.render('pages/details', { layout: 'main', record: record, user: req.session.user});
+        res.render('pages/details', { layout: 'details', record: record, user: req.session.user});
     }
     else {
         res.render('pages/details', { layout: 'details', record: { uniqueId: req.params.uniqueId }, user: req.session.user});
