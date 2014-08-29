@@ -1,0 +1,15 @@
+<div class="row">
+    <div class="details-heading">Suggested Interface Label</div>
+    <div class="ptd-inline">
+        {{#if user}}
+            <input type="text" name="termLabel" placeholder="Enter a label for this term as it should appear in a menu or listing." value="{{record.termLabel}}"/>
+        {{else}}
+            <input type="hidden" name="termLabel" value="{{record.termLabel}}"/>
+            {{#if record.termLabel}}
+                {{record.termLabel}}
+            {{else}}
+                No term label specified.
+            {{/if}}
+        {{/if}}
+    </div>
+</div>

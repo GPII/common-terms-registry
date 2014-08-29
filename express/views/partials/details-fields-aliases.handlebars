@@ -1,0 +1,13 @@
+<div class="row">
+    <div class="details-heading">Aliases</div>
+    <ul>
+        {{#if record.aliases}}
+            {{#each record.aliases}}
+                <li>{{uniqueId}}</li>
+            {{/each}}
+        {{/if}}
+        {{#if user}}
+            <li>Create Alias</li>
+        {{/if}}
+    </ul>
+</div>
