@@ -7,8 +7,6 @@
 
     // TODO:  Create session-scoped variables for query, status, record type, and language, and use if no data is provided.
 
-    // TODO: How do we correctly instantiate a bunch of record objects with their own controls, which contain aliases with their own controls?
-
     search.clear = function(that) {
         var queryInput = that.locate("input");
         queryInput.val(null);
@@ -112,6 +110,8 @@
         templates.loadTemplates(function() { search.queryChanged(that); });
     };
 
+
+    // TODO:  Figure out why this couldn't address {data}.model.record and make the general library work for both the search and the details page.
     ctr.components.applyBinding = function (that) {
         var bindings = that.options.bindings;
         fluid.each(bindings, function (binding) {
@@ -208,7 +208,7 @@
                     args:   "{that}.clear"
                 },
                 {
-                    "funcName": "ctr.components.binding.applyBinding",
+                    "funcName": "ctr.components.applyBinding",
                     "args":     "{that}"
                 },
                 {
