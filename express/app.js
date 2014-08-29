@@ -74,11 +74,11 @@ app.get("/details/:uniqueId", function(req,res) {
         // Use the record defaults from our configuration
         var record = config["record.defaults"];
 
-        // Add support for prepopulating the link to the parent record for aliases, translations, etc.
-        var fieldsToPrepopulate = ["aliasOf","translationOf"];
+        // Add support for prepopulating the link to the parent record for aliases, translations, etc. using query variables
+        var fieldsToPrepopulate = ["aliasOf","translationOf", "type"];
         fieldsToPrepopulate.forEach(function(field){
-            if (req.params[field]) {
-                record[field] = req.params[field];
+            if (req.query[field]) {
+                record[field] = req.query[field];
             }
         });
         res.render('pages/details', { layout: 'details', record: record, user: req.session.user});
