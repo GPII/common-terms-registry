@@ -6,7 +6,7 @@
     "users":           "http://admin:admin@localhost:5984/_users",
     "lucene.url" :     "http://localhost:5984/_fti/local/tr/_design/lucene/by_content",
     "record.defaults": {
-        "type":   "GENERAL",
+        "type":   "term",
         "status": "draft"
     },
     "email":  {
@@ -28,12 +28,11 @@
     "adminRoles": [ "admin"],
     "schemaUrls": {
         "alias":       "https://terms.raisingthefloor.org/schema/alias.json",
-        "general":     "https://terms.raisingthefloor.org/schema/term.json",
+        "term":        "https://terms.raisingthefloor.org/schema/term.json",
         "message":     "https://terms.raisingthefloor.org/schema/message.json",
         "record":      "https://terms.raisingthefloor.org/schema/record.json",
         "records":     "https://terms.raisingthefloor.org/schema/records.json",
-        "term":        "https://terms.raisingthefloor.org/schema/term.json",
-        "operator":    "https://terms.raisingthefloor.org/schema/operator.json",
+        "condition":   "https://terms.raisingthefloor.org/schema/condition.json",
         "search":      "https://terms.raisingthefloor.org/schema/search.json",
         "transform":   "https://terms.raisingthefloor.org/schema/transform.json",
         "translation": "https://terms.raisingthefloor.org/schema/translation.json"

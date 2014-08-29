@@ -4,19 +4,6 @@
     var details    = fluid.registerNamespace("ctr.components.details");
     var templates  = fluid.registerNamespace("ctr.components.templates");
 
-    // This should come from a global configuration of some kind
-    // Also, I should feel bad for using it.
-    details.typeLookups = {
-        "general":        "term",
-        "term":           "term",
-        "alias":          "alias",
-        "operator":       "condition",
-        "condition":      "condition",
-        "translation":    "translation",
-        "transformation": "transform",
-        "transform":      "transform"
-    };
-
     details.load = function(that) {
         // We are working with an existing record.  Load its full information
         if (that.data && that.data.model && that.data.model.record && that.data.model.record.uniqueId) {
@@ -108,7 +95,7 @@
 
     details.getTemplate = function(type) {
         var template = "details-term";
-        if (type && ["alias","ALIAS","transformation","transform","TRANSFORM"].indexOf(type.toLowerCase()) !== -1) {
+        if (type && ["alias","transform"].indexOf(type.toLowerCase()) !== -1) {
             template = "details-alias";
         }
         else if (type === "condition") {
@@ -150,7 +137,7 @@
         type.prop("checked",false);
 
         if (that.data.model.record && that.data.model.record.type) {
-            document.forms[0].type.value = details.typeLookups[that.data.model.record.type.toLowerCase()];
+            document.forms[0].type.value = that.data.model.record.type.toLowerCase();
         }
 
         var status = that.locate("status");

@@ -9,7 +9,7 @@ module.exports = function(config) {
 
     // TODO:  Move to a global vocabulary
     if (config.recordType) {
-        if (config.recordType.toLowerCase() === "general") {
+        if (config.recordType.toLowerCase() === "term") {
             namespace = "gpii.ctr.terms";
         }
         else if (config.recordType.toLowerCase() === "alias") {
@@ -21,8 +21,8 @@ module.exports = function(config) {
         else if (config.recordType.toLowerCase() === "translation") {
             namespace = "gpii.ctr.translations";
         }
-        else if (config.recordType.toLowerCase() === "operator") {
-            namespace = "gpii.ctr.operators";
+        else if (config.recordType.toLowerCase() === "condition") {
+            namespace = "gpii.ctr.conditions";
         }
         else {
             console.error("The record lookup API was configured to return an invalid record type '" + config.recordType + "'.  Ignoring this option, all records will be returned.");
@@ -32,7 +32,8 @@ module.exports = function(config) {
     var records = fluid.registerNamespace(namespace);
     records.schema="records";
 
-    var allowedRecordTypes = ["general","alias","transform","translation","operator"];
+    // TODO:  Move this to a global configuration
+    var allowedRecordTypes = ["term","alias","transform","translation","condition"];
 
     var children = require('../lib/children')(config, records);
     var request = require('request');
@@ -52,7 +53,8 @@ module.exports = function(config) {
             }
         }
 
-        var allowedStatuses = ["active","unreviewed","candidate","deleted"];
+        // TODO: Move to a global configuration option for this
+       var allowedStatuses = ["active","unreviewed","candidate","deleted", "draft"];
         if (records.req.query.status) {
             var statusesToDisplay = [];
             if (records.req.query.status instanceof Array) {
@@ -109,7 +111,7 @@ module.exports = function(config) {
             if (records.req.query.recordType) {
                 throw records.constructError(400,"The 'recordType' parameter cannot be used with this interface.");
             }
-            if (config.recordType !== "general" && records.req.query.children) {
+            if (config.recordType !== "term" && records.req.query.children) {
                 throw records.constructError(400,"The 'children' parameter can only be used with terms.");
             }
 
@@ -267,8 +269,8 @@ module.exports = function(config) {
             "alias":       config['couch.url'] + "/_design/api/_view/aliases",
             "transform":   config['couch.url'] + "/_design/api/_view/transforms",
             "translation": config['couch.url'] + "/_design/api/_view/translations",
-            "operator":    config['couch.url'] + "/_design/api/_view/operators",
-            "general":     config['couch.url'] + "/_design/api/_view/flat"
+            "condition":   config['couch.url'] + "/_design/api/_view/conditions",
+            "term":        config['couch.url'] + "/_design/api/_view/flat"
         };
 
         var recordType = config.recordType ? config.recordType : "entries";
@@ -278,7 +280,7 @@ module.exports = function(config) {
             json: true
         };
 
-        if ((recordType === "general" || recordType === "entries") && records.params.children) {
+        if ((recordType === "term" || recordType === "entries") && records.params.children) {
             // For terms, we need to put all the records together
             request.get(requestConfig,records.getParentRecords);
         }

@@ -29,16 +29,16 @@ module.exports = function(config,parent) {
         for (var i = 0; i < body.rows.length; i++) {
             var record = body.rows[i].value;
             var parentId = record.aliasOf;
-            if (record.type === "TRANSLATION") { parentId = record.translationOf; }
+            if (record.type === "translation") { parentId = record.translationOf; }
             var parentRecord = children.termHash[parentId];
 
             // Silently skip orphaned child records, which can show up in the rare cases where we can't exclude them upstream
             if (parentRecord) {
                 var arrayName = "children";
 
-                if (record.type === "ALIAS") { arrayName = "aliases"; }
-                else if (record.type === "TRANSFORMATION") { arrayName = "transformations"; }
-                else if (record.type === "TRANSLATION") { arrayName = "translations"; }
+                if (record.type === "alias") { arrayName = "aliases"; }
+                else if (record.type === "transform") { arrayName = "transformations"; }
+                else if (record.type === "translation") { arrayName = "translations"; }
 
                 if (!parentRecord[arrayName]) { parentRecord[arrayName] = []; }
                 parentRecord[arrayName].push(record);
@@ -98,7 +98,7 @@ module.exports = function(config,parent) {
         // Add any records returned to the list in process.
         for (var i = 0; i < body.rows.length; i++) {
             var record = body.rows[i].value;
-            if (record.type === "GENERAL") {
+            if (record.type === "term") {
                 children.termHash[record.uniqueId] = record;
                 if (children.distinctIDs.indexOf(record.uniqueId) === -1) {
                     children.distinctIDs.push(record.uniqueId);

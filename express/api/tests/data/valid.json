@@ -1,6 +1,6 @@
 {
     "uniqueId": "validRecord",
-    "type": "general",
+    "type": "term",
     "termLabel": "A test term",
     "definition": "This is a sample term created for test purposes."
 }

@@ -64,7 +64,7 @@ module.exports = function(config) {
             else {
                 record.results.record = jsonData.rows[0].value;
 
-                if (record.results.record.type.toLowerCase() === "general" && record.params.children) {
+                if (record.results.record.type.toLowerCase() === "term" && record.params.children) {
                     // TODO:  This is a temporary hack to pass the predigested parent record data to the common
                     children.termHash = {};
                     children.termHash[record.results.record.uniqueId] = record.results.record;

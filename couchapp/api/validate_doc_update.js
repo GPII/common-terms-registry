@@ -13,7 +13,7 @@ function(newDoc, oldDoc, userCtx) {
             }
         }
         else {
-            var ValidTypes = ["ALIAS", "TRANSFORMATION","TRANSLATION","GENERAL","OPERATOR","alias","transformation","transform","term","operator","translation"];
+            var ValidTypes = [,"alias","transform","term","condition","translation"];
             var ValidStatus = ["active","unreviewed","candidate","deleted","draft"];
 
             // Set the date of the last update to a user-specified date and time or to today's date and time if no value is specified.
@@ -34,7 +34,7 @@ function(newDoc, oldDoc, userCtx) {
                 errors.push({"type" : "Record type is required."});
             }
             else {
-                if (ValidTypes.indexOf(newDoc.type) == -1) {
+                if (ValidTypes.indexOf(newDoc.type) === -1) {
                     errors.push({"type" : "Record type '" + newDoc.type + " is not valid."});
                 }
             }
@@ -43,7 +43,7 @@ function(newDoc, oldDoc, userCtx) {
                 errors.push({"status" : "Status is required."});
             }
             else {
-                if (ValidStatus.indexOf(newDoc.status) == -1) {
+                if (ValidStatus.indexOf(newDoc.status) === -1) {
                     errors.push({"status" : "Status '" + newDoc.status + "' is not valid."});
                 }
             }
@@ -53,29 +53,29 @@ function(newDoc, oldDoc, userCtx) {
                 errors.push({"uniqueId" : "Unique ID is required."});
             }
             else {
-                // if the record type is GENERAL, the uniqueId must be in lowerCamelCase
-                if (newDoc.type && newDoc.type == "GENERAL" && !isLowerCamelCase(newDoc.uniqueId)) {
+                // if this is a term, the uniqueId must be in lowerCamelCase
+                if (newDoc.type && newDoc.type === "term" && !isLowerCamelCase(newDoc.uniqueId)) {
                     errors.push({"uniqueId" : "Unique ID '" + newDoc.uniqueId + "' is not in lowerCamelCase."});
                 }
             }
 
-            // if the record type is GENERAL, the definition must not be null
-            if (!newDoc.definition && newDoc.type && newDoc.type == "GENERAL") {
+            // if this is a term, the definition must not be null
+            if (!newDoc.definition && newDoc.type && newDoc.type === "term") {
                 errors.push({"definition" : "Terms must have a definition."});
             }
 
-            // if the record type is ALIAS or TRANSFORMATION, a definition is not allowed
-            if (newDoc.definition && newDoc.type && (newDoc.type == "ALIAS" || newDoc.type == "TRANSFORMATION") ) {
+            // if this is an alias or transform, a definition is not allowed
+            if (newDoc.definition && newDoc.type && (newDoc.type === "alias" || newDoc.type === "transform") ) {
                 errors.push({"definition" : "Aliases and transformations are not allowed to have a definition."});
             }
 
-            // if the record type is not GENERAL, no defaultValue is allowed
-            if (newDoc.defaultValue && newDoc.type && newDoc.type !== "GENERAL") {
+            // if this is not a term, no defaultValue is allowed
+            if (newDoc.defaultValue && newDoc.type && newDoc.type !== "term") {
                 errors.push({"defaultValue" : "Default values are only allowed for terms."});
             }
 
             // if the record type is ALIAS or TRANSFORMATION, the aliasOf field must not be null and must be in lowerCamelCase
-            if (newDoc.type === "ALIAS" || newDoc.type === "TRANSFORMATION" || newDoc.type === "TRANSFORM" || newDoc.type === "alias" || newDoc.type === "transformation" || newDoc.type === "transform") {
+            if (newDoc.type === "transform" || newDoc.type === "alias") {
                 if (!newDoc.aliasOf) {
                     errors.push({"aliasOf" : "The aliasOf field cannot be empty for an alias."});
                 }
@@ -91,7 +91,7 @@ function(newDoc, oldDoc, userCtx) {
             }
 
             // if the record type is TRANSLATION, the translationOf field must not be null and must be in lowerCamelCase
-            if (newDoc.type == "TRANSLATION") {
+            if (newDoc.type === "translation") {
                 if (!newDoc.translationOf) {
                     errors.push({"translationOf" : "The translationOf field cannot be empty for a translation."});
                 }
@@ -106,23 +106,23 @@ function(newDoc, oldDoc, userCtx) {
                 }
             }
 
-            // if the record type is ALIAS or TRANSFORMATION, valueSpace is not allowed
-            if (newDoc.valueSpace && newDoc.type && ( newDoc.type == "ALIAS" || newDoc.type == "TRANSFORMATION" )) {
+            // if the record type is an alias or transform, valueSpace is not allowed
+            if (newDoc.valueSpace && newDoc.type && ( newDoc.type === "alias" || newDoc.type === "transform" )) {
                 errors.push({"valueSpace" : "The valueSpace field not allowed for aliases or transformations."});
             }
 
             // if the record type is OPERATOR, a termLabel is not allowed
-            if (newDoc.termLabel && newDoc.type && newDoc.type == "OPERATOR") {
-                errors.push({"termLabel" : "The termLabel field not allowed for operators."});
+            if (newDoc.termLabel && newDoc.type && newDoc.type === "condition") {
+                errors.push({"termLabel" : "The termLabel field not allowed for conditions."});
             }
 
-            // if the record type is not TRANSLATION or GENERAL, applicationUniqueFlag is not allowed
-            if (newDoc.applicationUniqueField && newDoc.type && ( newDoc.type !== "TRANSLATION" && newDoc.type !== "GENERAL" )) {
+            // If this is not a translation or term, the applicationUniqueFlag is not allowed
+            if (newDoc.applicationUniqueField && newDoc.type && ( newDoc.type !== "translation" && newDoc.type !== "term" )) {
                 errors.push({"applicationUniqueField" : "The applicationUniqueField is only allowed for translations and terms."});
             }
             // If the record type is OPERATOR, the uses field is not allowed
-            if (newDoc.uses && newDoc.type && newDoc.type == "OPERATOR") {
-                errors.push({"uses" : "Operators are not allowed to have usage information."});
+            if (newDoc.uses && newDoc.type && newDoc.type === "condition") {
+                errors.push({"uses" : "Conditions are not allowed to have usage information."});
             }
 
             // For versioning, we require two things

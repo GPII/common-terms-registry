@@ -11,7 +11,7 @@ All records in the Common Terms Registry have the following common fields:
 
 |Field|Description|
 | --- | --- |
-|Type|The type of record, i.e. term, alias, translation, transformation, operator.|
+|Type|The type of record, i.e. term, alias, translation, transformation, condition.|
 |Permanency|An indication of how likely a field is to change over time.|
 |NameSpace|The namespace to use in combination with the UniqueID to construct a URI that refers to the record.|
 |UniqueId|A completely unique identifier for this record.|
@@ -36,12 +36,12 @@ A term is a single canonical way of describing a need or solution. For example, 
 [View JSON Schema for terms](../schema/term.json)
 
 
-## Alias
+## alias
 An alias is another name for a standard term, with no other differences. When describing system settings and other user preferences, the difference may be simply a matter of formatting. For example, one program might have a registry entry or setting for max.volume and another might have a registry entry or setting called max_volume. Other examples may simply be a matter of alternate wording. For example, one developer may use “loudness” instead of “volume” when describing their settings. In addition to the common fields described above, alias records have the following fields:
 
 |Field|Description|
 | --- | --- |
-|AliasOf|The unique identifier of the parent record this record is an alias of.|
+|aliasOf|The unique identifier of the parent record this record is an alias of.|
 |TermLabel|A short label for this term as it would appear in a menu or listing.|
 |Uses|A description of other systems that use this term and how they use it.|
 |DefaultValue|A suggested default value.|
@@ -70,7 +70,7 @@ For these cases, the Common Terms Registry provides a transformation. A transfor
 
 |Field|Description|
 | --- | --- |
-|AliasOf|The unique identifier of the parent record this record is a transformation alias of.|
+|aliasOf|The unique identifier of the parent record this record is a transformation alias of.|
 |ValueSpace|A bidirectional lossless algorithm for converting to and from the values used by the common term.|
 |TermLabel|A translation of the short label for the parent record as it would appear in a menu or listing.|
 |Uses|A description of other systems that use this term and how they use it.|
@@ -79,21 +79,21 @@ For these cases, the Common Terms Registry provides a transformation. A transfor
 [View JSON Schema for transformations](../schema/transformation.json)
 
 
-## Operator
+## condition
 There are some preferences that are conditional, and depend on the environment and the content an AT user is interacting with. For example, an AT user may wish to have two different color schemes, one for daylight hours, and one for nighttime.
 
-Operators are terms that can be used to clearly identify what settings should be applied under what circumstances.  For example, “greater than”, “less than”, and “in the following range” are all operators. The conjunctions “and”, “or” as well as the adverbs “not” and “only” are also operators. Operators can be combined to describe complex conditions.
+conditions are terms that can be used to clearly identify what settings should be applied under what circumstances.  For example, “greater than”, “less than”, and “in the following range” are all conditions. The conjunctions “and”, “or” as well as the adverbs “not” and “only” are also conditions. conditions can be combined to describe complex conditions.
 
-In addition to the common fields described above, operator records have only one additional field.
+In addition to the common fields described above, condition records have only one additional field.
 
 |Field|Description|
 | --- | --- |
-|Definition|A clear definition of the operator.|
+|Definition|A clear definition of the condition.|
 
-[View JSON Schema for operators](../schema/operator.json)
+[View JSON Schema for conditions](../schema/condition.json)
 
 ## Relationships
-Terms and Operators are unique records that do not refer to another record implicitly. All other record types (aliases, translations, transformations) must refer to a single parent term (see the aliasOf, translationOf, etc. fields proposed above).
+Terms and conditions are unique records that do not refer to another record implicitly. All other record types (aliases, translations, transformations) must refer to a single parent term (see the aliasOf, translationOf, etc. fields proposed above).
 
 # API REST endpoints
 
@@ -104,7 +104,7 @@ Creates a new record.  If an author is supplied, gives them credit, otherwise th
 
     ```
     {
-       "type": "GENERAL",
+       "type": "term",
        "uniqueId": "newRecord",
        "termLabel": "New Record",
        "definition": "This is a new record.",
@@ -123,7 +123,7 @@ Creates a new record.  If an author is supplied, gives them credit, otherwise th
             "ok":true,
             "message":"New record submitted."
             "record": {
-               "type": "GENERAL",
+               "type": "term",
                "uniqueId": "newRecord",
                "termLabel": "New Record",
                "definition": "This is a new record.",
@@ -159,7 +159,7 @@ Update an existing record.  If an author is supplied, gives them credit, otherwi
             "record": {
                 "uniqueId": "existingRecord",
                 "definition": "This existing record needs to be updated.",
-                "type": "GENERAL",
+                "type": "term",
                 "termLabel": "Existing Record",
                 "definition": "This is an existing record.",
                 "notes": "This record is another sample record.",
@@ -203,7 +203,7 @@ Returns a single record identified by its uniqueId.  Only the latest published v
         {
             "ok": true,
             "record": {
-                "type": "ALIAS",
+                "type": "alias",
                 "uniqueId": "org.gnome.settings-daemon.plugins.sound.active",
                 "aliasOf": "soundActive",
                 "notes": "The original alias record contained the following additional information:\r\n\r\ndefaultValue:TRUE\r\nuserPreference:org.gnome.settings-daemon.plugins.sound.active\r\nvalueSpace:Boolean\r\nid:662\r\n",
@@ -235,7 +235,7 @@ Publish a previously submitted draft version of a document (see "Change History"
             "record": {
                 "uniqueId": "existingRecord",
                 "definition": "This existing record needs to be updated.",
-                "type": "GENERAL",
+                "type": "term",
                 "termLabel": "Existing Record",
                 "definition": "This is an existing record.",
                 "notes": "This record is another sample record.",
@@ -249,7 +249,7 @@ The full list of records.  Returns all record types by default.
 
 + Parameters
     + updated (optional, string) ... Timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SSZ` Only records updated at or after this time are returned.
-    + recordType (optional, string) ... The type of records to return.  Supported values are ("term","alias","transform","translation", and "operator"). Can be repeated to include multiple record types.
+    + recordType (optional, string) ... The type of records to return.  Supported values are ("term","alias","transform","translation", and "condition"). Can be repeated to include multiple record types.
     + status (optional, string) ... The record statuses to return (defaults to everything but 'deleted' records).  Can be repeated to include multiple statuses.
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
     + limit (optional, string) ... The number of records to return.  Used for pagination.
@@ -275,7 +275,7 @@ The full list of records.  Returns all record types by default.
             },
             "records": [
                      {
-                        "type": "ALIAS",
+                        "type": "alias",
                         "uniqueId": "org.gnome.settings-daemon.plugins.sound.active",
                         "aliasOf": "soundActive",
                         "notes": "The original alias record contained the following additional information:\r\n\r\ndefaultValue:TRUE\r\nuserPreference:org.gnome.settings-daemon.plugins.sound.active\r\nvalueSpace:Boolean\r\nid:662\r\n",
@@ -314,7 +314,7 @@ The list of standard terms. Equivalent to using /api/records with the query para
             "limit": 1,
             "records": [
                     {
-                        "type": "GENERAL",
+                        "type": "term",
                         "uniqueId": "brailleGrade",
                         "valueSpace": "uncontracted, contracted",
                         "termLabel": "braille grade",
@@ -323,7 +323,7 @@ The list of standard terms. Equivalent to using /api/records with the query para
                         "source": "gpii",
                         "aliases": [
                                 {
-                                    "type": "ALIAS",
+                                    "type": "alias",
                                     "uniqueId": "Input Braille Grade, output Braille Grade",
                                     "aliasOf": "brailleGrade",
                                     "notes": "The original alias record contained the following additional information:\n\ndefinition:Allow to select braille grade for braille input, Allow to select braille grade for braille output on braille display\nuserPreference:Input Braille Grade, output Braille Grade\nvalueSpace:Multiple options based on the grade supported with MA\ngroup:Braille,Everywhere\nid:25, 32\n",
@@ -362,7 +362,7 @@ The list of aliases. Equivalent to using /api/records with the query parameter `
             "limit": 1,
             "records": [
                      {
-                        "type": "ALIAS",
+                        "type": "alias",
                         "uniqueId": "org.gnome.settings-daemon.plugins.sound.active",
                         "aliasOf": "soundActive",
                         "notes": "The original alias record contained the following additional information:\r\n\r\ndefaultValue:TRUE\r\nuserPreference:org.gnome.settings-daemon.plugins.sound.active\r\nvalueSpace:Boolean\r\nid:662\r\n",
@@ -396,8 +396,8 @@ The list of translations. Equivalent to using /api/records with the query parame
     + limit (optional, string) ... The number of records to return.  Used for pagination.
     + versions (optional, boolean) ... Whether or not to display the full version history for this record (including any unpublished drafts).  Defaults to "false".
 
-## GET /api/operators/{?updated,status,offset,limit,versions}
-The list of operators.  Equivalent to using /api/records with the query parameter `recordType=operator`.  Supports the same query parameters as /api/records except for `recordType`.
+## GET /api/conditions/{?updated,status,offset,limit,versions}
+The list of conditions.  Equivalent to using /api/records with the query parameter `recordType=condition`.  Supports the same query parameters as /api/records except for `recordType`.
 
 + Parameters
     + status (optional, string) ... The record statuses to return (defaults to everything but 'deleted' records).  Can be repeated to include multiple statuses.
@@ -432,14 +432,14 @@ Performs a full text search of all data, returns matching terms.  Only standard 
             "sort": "uniqueId ASC",
             "records": [
                 {
-                    "type": "GENERAL",
+                    "type": "term",
                     "uniqueId": "6DotComputerBrailleTable",
                     "definition": "Allow selection of 6 dot computer braille",
                     "status": "unreviewed",
                     "source": "gpii",
                     "aliases": [
                         {
-                            "type": "ALIAS",
+                            "type": "alias",
                             "uniqueId": "6 dot computer braille table",
                             "aliasOf": "6DotComputerBrailleTable",
                             "termLabel": "6 dot computer braille table",
@@ -483,7 +483,7 @@ Suggest the correct common term to use.  Performs a search as in /api/search, bu
             },
             "records": [
                      {
-                        "type": "ALIAS",
+                        "type": "alias",
                         "uniqueId": "org.gnome.settings-daemon.plugins.sound.active",
                         "aliasOf": "soundActive",
                         "notes": "The original alias record contained the following additional information:\r\n\r\ndefaultValue:TRUE\r\nuserPreference:org.gnome.settings-daemon.plugins.sound.active\r\nvalueSpace:Boolean\r\nid:662\r\n",

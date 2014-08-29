@@ -28,7 +28,7 @@
             "description": "An indication of how likely a field is to change over time."
         },
         "status": {
-            "enum": ["unreviewed", "candidate", "active", "deleted"],
+            "enum": ["unreviewed", "candidate", "active", "draft", "deleted"],
             "description": "The review status of this record."
         },
         "defaultValue": {
@@ -44,8 +44,8 @@
             "description": "The unique identifier of the parent record this record is a translation of."
         },
         "type": {
-            "enum": ["term", "alias", "operator", "translation", "transform", "TERM", "GENERAL", "ALIAS", "OPERATOR", "TRANSLATION", "TRANSFORM"],
-            "description": "The type of record, i.e. term, alias, translation, transformation, operator."
+            "enum": ["term", "alias", "condition", "translation", "transform"],
+            "description": "The type of record, i.e. term, alias, translation, transform, condition."
         },
         "uniqueId": {
             "type": "string",

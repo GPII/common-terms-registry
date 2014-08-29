@@ -27,7 +27,7 @@ module.exports = function(config) {
                 var doc = row.doc;
                 if (row.id.indexOf("_design") === -1 && doc && doc.uniqueId) {
                     var newDoc = doc;
-                    if (doc.type !== "GENERAL") {
+                    if (doc.type !== "term") {
                         newDoc = JSON.parse(JSON.stringify(doc));
                         newDoc.uniqueId = doc.source + ":" + doc.uniqueId;
                     }

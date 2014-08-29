@@ -26,7 +26,7 @@ var records = require('../../records')(config);
 app.use('/records', records);
 
 var termsConfig = JSON.parse(JSON.stringify(config));
-termsConfig.recordType = "general";
+termsConfig.recordType = "term";
 var terms = require("../../records")(termsConfig);
 app.use('/terms', terms);
 
@@ -46,9 +46,9 @@ var translations = require("../../records")(translationConfig);
 app.use('/translations', translations);
 
 var operatorsConfig = JSON.parse(JSON.stringify(config));
-operatorsConfig.recordType = "operator";
+operatorsConfig.recordType = "condition";
 var operators = require("../../records")(operatorsConfig);
-app.use('/operators', operators);
+app.use('/conditions', operators);
 
 
 http.createServer(app).listen(app.get('port'), function(){
@@ -63,7 +63,7 @@ jqUnit.module("Records API");
 var recordTypeEndPoints = ["terms","aliases"];
 var allEndPoints = recordTypeEndPoints.concat(["records"]);
 
-var recordTypesByEndpoint = {"terms": "general", "aliases": "alias", "operators": "operator", "transforms": "transform", "translations": "translation"};
+var recordTypesByEndpoint = {"terms": "term", "aliases": "alias", "conditions": "condition", "transforms": "transform", "translations": "translation"};
 
 allEndPoints.forEach(function(endPoint){
     jqUnit.asyncTest("Load endpoint '" + endPoint + "' with no arguments", function() {

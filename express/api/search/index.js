@@ -21,10 +21,10 @@ module.exports = function(config) {
                 var record = body.rows[i].fields;
                 var uniqueId = record.uniqueId;
 
-                if (record.type === "ALIAS" || record.type === "TRANSFORMATION") {
+                if (record.type === "alias" || record.type === "transform") {
                     uniqueId = record.aliasOf;
                 }
-                else if (record.type === "TRANSLATION") {
+                else if (record.type === "translation") {
                     uniqueId = record.translationOf;
                 }
 
