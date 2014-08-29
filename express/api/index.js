@@ -16,7 +16,7 @@ module.exports = function(config) {
     router.use('/records', records);
 
     var termsConfig = JSON.parse(JSON.stringify(config));
-    termsConfig.recordType = "general";
+    termsConfig.recordType = "term";
     var terms = require("./records")(termsConfig);
     router.use('/terms', terms);
 
@@ -35,10 +35,10 @@ module.exports = function(config) {
     var translations = require("./records")(translationConfig);
     router.use('/translations', translations);
 
-    var operatorsConfig = JSON.parse(JSON.stringify(config));
-    operatorsConfig.recordType = "operator";
-    var operators = require("./records")(operatorsConfig);
-    router.use('/operators', operators);
+    var conditionsConfig = JSON.parse(JSON.stringify(config));
+    conditionsConfig.recordType = "condition";
+    var conditions = require("./records")(conditionsConfig);
+    router.use('/conditions', conditions);
 
     var record = require('./record')(config);
     router.use('/record', record);
