@@ -69,7 +69,7 @@ app.use("/infusion",express.static(__dirname + '/node_modules/infusion/src'));
 app.use("/hbs",require("./views/client.js")(config));
 
 // Detail edit/view for an individual record.  Requires a separate interface because the uniqueId is passed as part of the path
-app.get("/detail/:uniqueId", function(req,res) {
+app.get("/details/:uniqueId", function(req,res) {
     if (req.params.uniqueId === "new") {
         var record = {};
 
