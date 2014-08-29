@@ -55,7 +55,7 @@
         // TODO: Break out this AJAX assembly and launch function into its own function
         var baseUrl = that.options.baseUrl;
         if (emptyQuery) {
-            settings.url += "/records?children=true";
+            settings.url += "/terms?children=true";
         }
         else {
             settings.url += "/search";
