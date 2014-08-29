@@ -1,206 +1,23 @@
-<form name="detail-form">
-    <div class="row detail-header">
+<form name="details-form">
+    <div class="row details-header">
         <div class="column small-offset-1 small-11">
-            <div class="row detail-linkbar">
-                <div class="column medium-3">
-                    <div class="label-neighbor">
-                        <a href="#">last changes</a> | <a href="#">history (7)</a></div>
-                </div>
-                <div class="column medium-2 medium-offset-2">
-                    <div class="secondary round label">
-                        <span class="version-header">Version 5 (latest)</span>
-                    </div>
-                </div>
-                <div class="column medium-2 medium-offset-3">
-                    <div class="label-neighbor">
-                        <a href="#">help <span class="ptd-icon-question"></span></a></div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="column medium-8">
-                    <div class="detail-heading">Unique Identifier</div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="column medium-8">
-                    <div class="uniqueId">
-                        {{#if record.uniqueId}}
-                            <input type="hidden" name="uniqueId" value="{{record.uniqueId}}"/>
-                            {{record.uniqueId}}
-                        {{else}}
-                            <input type="text" name="uniqueId" value="{{record.uniqueId}}"/>
-                        {{/if}}
-                    </div>
-                </div>
-                <div class="column medium-4">
-                    {{> language}}
-                </div>
-            </div>
+            {{>details-controls-linkbar}}
+            {{>details-fields-uniqueid}}
         </div>
     </div>
-    <div class="row detail-body">
+    <div class="row details-body">
         <div class="column small-offset-1 small-11">
-            <div class="row">
-                <div class="column medium-6">
-                    <div class="row">
-                        <div class="column medium-4">
-                            <input type="radio" name="type" value="term" id="term-type"/>
-                            <label for="term-type" class="type button radius" tabindex="0">
-                                <span class="glyphicon-tree-deciduous glyphicon"></span>
-                                Term
-                            </label>
-                        </div>
-                        <div class="column medium-4">
-                            <input type="radio" name="type" value="alias" id="alias-type"/>
-                            <label for="alias-type" class="type button radius" tabindex="0">
-                                <span class="glyphicon-leaf glyphicon"></span>
-                                Alias
-                            </label>
-                        </div>
-                        <div class="column medium-4">
-                            <input type="radio" name="type" value="condition" id="condition-type"/>
-                            <label for="condition-type" class="type button radius" tabindex="0">
-                                <span class="glyphicon-cog glyphicon"></span>
-                                Condition
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="detail-heading">Uses</div>
-                <div class="uses-container">
-                    {{#if user}}{{>detail-uses-write}}{{else}}{{>detail-uses-read}}{{/if}}
-                </div>
-            </div>
-            <div class="row">
-                <div class="detail-heading">Aliases</div>
-                <ul>
-                    {{#if record.aliases}}
-                        {{#each record.aliases}}
-                            <li>{{uniqueId}}</li>
-                        {{/each}}
-                    {{/if}}
-                    {{#if user}}
-                        <li>Create Alias</li>
-                    {{/if}}
-                </ul>
-            </div>
-            <div class="row">
-                <div class="detail-heading">Definition</div>
-                <div class="ptd-inline">
-                    {{#if user}}
-                        <textarea name="definition" placeholder="Add a definition for this term.">{{record.definition}}</textarea>
-                    {{else}}
-                        <input name="definition" type="hidden" value="{{record.definition}}"/>
-                        {{#md}}{{record.definition}}{{/md}}
-                    {{/if}}
-                </div>
-            </div>
-            <div class="row">
-                <div class="detail-heading">Suggested Interface Label</div>
-                <div class="ptd-inline">
-                    {{#if user}}
-                        <input type="text" name="termLabel" placeholder="Enter a label for this term as it should appear in a menu or listing." value="{{record.termLabel}}"/>
-                    {{else}}
-                        <input type="hidden" name="termLabel" value="{{record.termLabel}}"/>
-                        {{#if record.termLabel}}
-                            {{record.termLabel}}
-                        {{else}}
-                            No term label specified.
-                        {{/if}}
-                    {{/if}}
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="detail-heading">Value Space</div>
-                {{#if user}}
-                    <div class="detail-instructions">Separate values by commas, or notation describing the range of acceptable values.</div>
-                    <input type="text" name="valueSpace" placeholder="Enter a valueSpace for this term." value="{{record.valueSpace}}"/>
-                {{else}}
-                    <input type="hidden" name="valueSpace" value="{{record.valueSpace}}"/>
-                    {{#if record.valueSpace}}
-                        {{record.valueSpace}}
-                    {{else}}
-                        No value space specified.
-                    {{/if}}
-                {{/if}}
-            </div>
-
-            <div class="row">
-                <div class="detail-heading">Suggested Default Value</div>
-                {{#if user}}
-                    <input type="text" name="defaultValue" placeholder="Enter a default value for this term." value="{{record.defaultValue}}"/>
-                {{else}}
-                    <input type="hidden" name="defaultValue" value="{{record.defaultValue}}"/>
-                    {{#if record.defaultValue}}
-                        {{record.defaultValue}}
-                    {{else}}
-                        No default value specified.
-                    {{/if}}
-                {{/if}}
-            </div>
-
-            <div class="row">
-                <div class="column medium-12">
-                    <div class="row">
-                        <div class="column medium-2">
-                            <input id="status-approved" type="radio" name="status" value="approved"/>
-                            <label for="status-approved" class="status button radius">
-                                <span class="ptd-icon-checked"></span>
-                                approved
-                            </label>
-                        </div>
-                        <div class="column medium-2">
-                            <input id="status-candidate" type="radio" name="status" value="candidate"/>
-                            <label for="status-candidate" class="status button radius">
-                                <span class="ptd-icon-">candidate</span>
-                                candidate
-                            </label>
-                        </div>
-                        <div class="column medium-2">
-                            <input id="status-unreviewed" type="radio" name="status" value="unreviewed"/>
-                            <label for="status-unreviewed" class="status button radius">
-                                <span class="ptd-icon-">unreviewed</span>
-                                unreviewed
-                            </label>
-                        </div>
-                        <div class="column medium-2">
-                            <input id="status-draft" type="radio" name="status" value="draft"/>
-                            <label for="status-draft" class="status button radius">
-                                <span class="ptd-icon-question"></span>
-                                draft
-                            </label>
-                        </div>
-                        <div class="column medium-2 end">
-                            <input id="status-deleted" type="radio" name="status" value="deleted"/>
-                            <label for="status-deleted" class="status button radius">
-                                <span class="ptd-icon-">deleted</span>
-                                deleted
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {{>details-fields-type}}
+            {{>details-fields-uses}}
+            {{>details-fields-aliases}}
+            {{>details-fields-definition}}
+            {{>details-fields-termlabel}}
+            {{>details-fields-valuespace}}
+            {{>details-fields-defaultvalue}}
+            {{>details-fields-notes}}
+            {{>details-fields-status}}
         </div>
     </div>
-    {{#if user}}
-        <div class="row detail-footer">
-            <div class="column small-offset-1 small-11">
-                <div class="row">
-                    <div class="column medium-8">
-                        <input type="text" id="comment" placeholder="Add comment on entry"/>
-                    </div>
-                    <div class="column medium-4">
-                        <div class="button radius save-button">
-                            Save Changes
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    {{else}}
-        <span class="save-button" style="display:none"></span>
-    {{/if}}
+
+    {{>details-controls-save}}
 </form>

@@ -1,12 +1,12 @@
 
 <div class="row">
-    <div class="details-heading">Definition</div>
+    <div class="details-heading">Notes</div>
     <div class="ptd-inline">
         {{#if user}}
-            <textarea name="definition" placeholder="Add a definition for this term.">{{record.definition}}</textarea>
+            <textarea rows="10" name="notes" placeholder="Add any additional notes you would like to associate with this term.">{{record.notes}}</textarea>
         {{else}}
-            <input name="definition" type="hidden" value="{{record.definition}}"/>
-            {{#md}}{{record.definition}}{{/md}}
+            <input name="notes" type="hidden" value="{{record.notes}}"/>
+            {{#md}}{{record.notes}}{{/md}}
         {{/if}}
     </div>
 </div>
