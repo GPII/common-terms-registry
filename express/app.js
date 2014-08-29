@@ -71,17 +71,22 @@ app.use("/hbs",require("./views/client.js")(config));
 // Detail edit/view for an individual record.  Requires a separate interface because the uniqueId is passed as part of the path
 app.get("/details/:uniqueId", function(req,res) {
     if (req.params.uniqueId === "new") {
-        // Use the record defaults from our configuration
-        var record = config["record.defaults"];
+        if (req.session.user) {
+            // Use the record defaults from our configuration
+            var record = config["record.defaults"];
 
-        // Add support for prepopulating the link to the parent record for aliases, translations, etc. using query variables
-        var fieldsToPrepopulate = ["aliasOf","translationOf", "type"];
-        fieldsToPrepopulate.forEach(function(field){
-            if (req.query[field]) {
-                record[field] = req.query[field];
-            }
-        });
-        res.render('pages/details', { layout: 'details', record: record, user: req.session.user});
+            // Add support for prepopulating the link to the parent record for aliases, translations, etc. using query variables
+            var fieldsToPrepopulate = ["aliasOf","translationOf", "type"];
+            fieldsToPrepopulate.forEach(function(field){
+                if (req.query[field]) {
+                    record[field] = req.query[field];
+                }
+            });
+            res.render('pages/details', { layout: 'details', record: record, user: req.session.user});
+        }
+        else {
+            res.render('pages/error', {message: "You must be logged in to create new records."});
+        }
     }
     else {
         res.render('pages/details', { layout: 'details', record: { uniqueId: req.params.uniqueId }, user: req.session.user});
