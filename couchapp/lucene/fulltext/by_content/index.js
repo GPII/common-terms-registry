@@ -24,7 +24,7 @@ function(doc) {
             }
         }
 
-        var keysToIndex = ["notes","uses","definition","termLabel","source"];
+        var keysToIndex = ["notes","definition","termLabel","source"];
         for (var i in keysToIndex) {
             var field = keysToIndex[i];
             if (doc[field]) {
