@@ -75,7 +75,7 @@ function(newDoc, oldDoc, userCtx) {
             }
 
             // if the record type is ALIAS or TRANSFORMATION, the aliasOf field must not be null and must be in lowerCamelCase
-            if (newDoc.type == "ALIAS" || newDoc.type == "TRANSFORMATION") {
+            if (newDoc.type === "ALIAS" || newDoc.type === "TRANSFORMATION" || newDoc.type === "TRANSFORM" || newDoc.type === "alias" || newDoc.type === "transformation" || newDoc.type === "transform") {
                 if (!newDoc.aliasOf) {
                     errors.push({"aliasOf" : "The aliasOf field cannot be empty for an alias."});
                 }
