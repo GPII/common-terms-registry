@@ -60,10 +60,10 @@ module.exports = function(config) {
             // TODO: Only allow data that matches the Schema or move this to the configuration
             var allowedFields = ["type","permanency","namespace","uniqueId","notes","status", "termLabel","valueSpace","defaultValue", "source","aliasOf","translationOf", "definition", "uses", "applicationUniqueFlag"];
 
-            // Overlay the supplied data onto this record, deleting any
+            // Overlay the supplied data onto this record, deleting any fields that are null, zero-length, undefined, or which only consist of whitespace
             allowedFields.forEach(function(field){
                 if (req.body[field] !== undefined) {
-                    if (!req.body[field] || (req.body[field].trim && (req.body[field].trim() === ""))) {
+                    if (!req.body[field] || (req.body[field].trim && (req.body[field].trim() === "")) || req.body[field].length === 0) {
                         delete newRecord[field];
                     }
                     else {
