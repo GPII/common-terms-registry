@@ -30,6 +30,8 @@ module.exports = function(config) {
     router.use(bodyParser.json());
 
     var handlePut = function(req, res){
+        // TODO:  Add support for commenting on a particular version as well as adding a comment while saving a change.
+
         // Make sure the current record has at least a uniqueId
         if (!req.body || !req.body.uniqueId) {
             return res.send(400,{"ok":"false","message": "You must provide a uniqueId of the record you wish to update."});
