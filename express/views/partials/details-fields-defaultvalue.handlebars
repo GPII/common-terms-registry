@@ -1,15 +1,14 @@
-
-
-<div class="row">
-    <div class="details-heading">Suggested Default Value</div>
     {{#if user}}
-        <input type="text" name="defaultValue" placeholder="Enter a default value for this term." value="{{record.defaultValue}}"/>
+        <div class="row">
+            <div class="details-heading">Suggested Default Value</div>
+            <input type="text" name="defaultValue" placeholder="Enter a default value for this term." value="{{record.defaultValue}}"/>
+        </div>
     {{else}}
         <input type="hidden" name="defaultValue" value="{{record.defaultValue}}"/>
         {{#if record.defaultValue}}
-            {{record.defaultValue}}
-        {{else}}
-            No default value specified.
+            <div class="row">
+                <div class="details-heading">Suggested Default Value</div>
+                {{record.defaultValue}}
+            </div>
         {{/if}}
     {{/if}}
-</div>

@@ -1,10 +1,8 @@
 <input type="hidden" name="uses" value="{{record.uses}}"/>
-<ul>
-    {{#if record.uses}}
+{{#if record.uses}}
+    <ul>
         {{#each record.uses}}
             <li>{{.}}</li>
         {{/each}}
-    {{else}}
-        <li>No uses specified.</li>
-    {{/if}}
-</ul>
+    </ul>
+{{/if}}

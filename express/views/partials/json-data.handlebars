@@ -1,7 +1,7 @@
 fluid.defaults("ctr.components.data", {
     gradeNames: ["fluid.modelRelayComponent", "autoInit"],
     model: {
-        {{>json-data-user}},
+        {{#if user}}{{>json-data-user}},{{/if}}
         {{>json-data-record}}
     }
 });

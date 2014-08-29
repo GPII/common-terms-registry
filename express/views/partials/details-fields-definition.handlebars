@@ -1,12 +1,18 @@
-
-<div class="row">
-    <div class="details-heading">Definition</div>
-    <div class="ptd-inline">
-        {{#if user}}
-            <textarea name="definition" placeholder="Add a definition for this term.">{{record.definition}}</textarea>
-        {{else}}
-            <input name="definition" type="hidden" value="{{record.definition}}"/>
-            {{#md}}{{record.definition}}{{/md}}
-        {{/if}}
+{{#if user}}
+    <div class="row">
+        <div class="details-heading">Definition</div>
+        <div class="ptd-inline">
+           <textarea name="definition" placeholder="Add a definition for this term.">{{record.definition}}</textarea>
+        </div>
     </div>
-</div>
+{{else}}
+    <input name="definition" type="hidden" value="{{record.definition}}"/>
+    {{#if record.definition}}
+        <div class="row">
+            <div class="details-heading">Definition</div>
+            <div class="ptd-inline">
+                {{#md}}{{record.definition}}{{/md}}
+            </div>
+        </div>
+    {{/if}}
+{{/if}}
