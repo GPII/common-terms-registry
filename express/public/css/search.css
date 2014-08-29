@@ -59,15 +59,15 @@ button.right .glyphicon:before, .button.right .glyphicon:before {
     margin-top: .75em;
 }
 
-.detail-header,.detail-footer {
+.details-header,.details-footer {
     background-color: white;
 }
 
-.detail-header:last-of-type {
+.details-header:last-of-type {
     border-bottom: 1px solid #dcdcdc;
 }
 
-.detail-instructions {
+.details-instructions {
     color: #999696;
 }
 
