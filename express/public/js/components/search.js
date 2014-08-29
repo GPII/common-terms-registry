@@ -7,7 +7,7 @@
 
     // TODO:  Create session-scoped variables for query, status, record type, and language, and use if no data is provided.
 
-    search.clear = function(that) {
+    search.clearSearchFilter = function(that) {
         var queryInput = that.locate("input");
         queryInput.val(null);
         search.queryChanged(that,null);
@@ -163,12 +163,12 @@
             }
         },
         events: {
-            "refresh":   "preventable",
-            "clear":     "preventable"
+            "refresh":           "preventable",
+            "clearSearchFilter": "preventable"
         },
         invokers: {
-            "clear": {
-                funcName: "ctr.components.search.clear",
+            "clearSearchFilter": {
+                funcName: "ctr.components.search.clearSearchFilter",
                 args: [ "{that}"]
             },
             "init": {
@@ -200,12 +200,12 @@
                 {
                     "this": "{that}.dom.clear",
                     method: "click",
-                    args:   "{that}.clear"
+                    args:   "{that}.clearSearchFilter"
                 },
                 {
                     "this": "{that}.dom.clear",
                     method: "keypress",
-                    args:   "{that}.clear"
+                    args:   "{that}.clearSearchFilter"
                 },
                 {
                     "funcName": "ctr.components.applyBinding",
