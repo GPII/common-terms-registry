@@ -8,9 +8,9 @@ exports.getRecordFields = function(doc) {
         if (doc[field]) { fields[field] = doc[field]; }
     });
 
-    // fields unique to record types
+    // fields unique to record types, including hard-wired aliases
     var recordFields = [];
-    if (doc.type.toLowerCase() === "general") {
+    if (doc.type.toLowerCase() === "general" || doc.type.toLowerCase() === "term") {
         recordFields = ["valueSpace", "termLabel", "defaultValue", "definition", "applicationUnique", "uses"];
     }
     else if (doc.type.toLowerCase() === "alias") {
@@ -19,10 +19,10 @@ exports.getRecordFields = function(doc) {
     else if (doc.type.toLowerCase() === "translation") {
         recordFields = ["translationOf", "valueSpace", "defaultValue", "termLabel", "definition", "uses"];
     }
-    else if (doc.type.toLowerCase() === "transformation") {
+    else if (doc.type.toLowerCase() === "transformation" || doc.type.toLowerCase() === "transform") {
         recordFields = ["aliasOf", "valueSpace", "termLabel", "defaultValue", "uses"];
     }
-    else if (doc.type.toLowerCase() === "operator") {
+    else if (doc.type.toLowerCase() === "operator" || doc.type.toLowerCase() === "condition") {
         recordFields = ["definition"];
     }
 

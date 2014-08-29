@@ -13,8 +13,8 @@ function(newDoc, oldDoc, userCtx) {
             }
         }
         else {
-            var ValidTypes = ["ALIAS", "TRANSFORMATION","TRANSLATION","GENERAL","OPERATOR"];
-            var ValidStatus = ["active","unreviewed","candidate","deleted"];
+            var ValidTypes = ["ALIAS", "TRANSFORMATION","TRANSLATION","GENERAL","OPERATOR","alias","transformation","transform","term","operator","translation"];
+            var ValidStatus = ["active","unreviewed","candidate","deleted","draft"];
 
             // Set the date of the last update to a user-specified date and time or to today's date and time if no value is specified.
             if (newDoc.updated) {
