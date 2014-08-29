@@ -7,15 +7,18 @@
     // This should come from a global configuration of some kind
     // Also, I should feel bad for using it.
     details.typeLookups = {
-        "general": "term",
-        "term": "term",
-        "alias": "alias",
-        "operator": "operator",
-        "translation": "translation",
-        "transform": "transform"
+        "general":        "term",
+        "term":           "term",
+        "alias":          "alias",
+        "operator":       "condition",
+        "condition":      "condition",
+        "translation":    "translation",
+        "transformation": "transform",
+        "transform":      "transform"
     };
 
     details.load = function(that) {
+        // We are working with an existing record.  Load its full information
         if (that.data && that.data.model && that.data.model.record && that.data.model.record.uniqueId) {
             var settings = {
                 url:     that.options.baseUrl + "/" + that.data.model.record.uniqueId,
@@ -24,6 +27,10 @@
             };
 
             $.ajax(settings);
+        }
+        // We are working with a new record.  Display the empty form with any data we have prepopulated.
+        else {
+            details.loadTypeTemplate(that);
         }
     };
 
@@ -42,7 +49,7 @@
         $.ajax(settings);
     };
 
-    // bind in input validation and feedback
+    // TODO: bind in input validation and feedback
     details.validate = function(that) {
 
     };
@@ -50,12 +57,12 @@
     details.addUse = function(that) {
         var newUse = that.locate("addUse");
         if (newUse) {
-            var newUses = JSON.parse(JSON.stringify(that.data.model.record.uses));
+            var newUses = that.data.model.record.uses ? JSON.parse(JSON.stringify(that.data.model.record.uses)) : [];
             newUses.push($(newUse).val());
             that.data.applier.change("record.uses",newUses);
 
             var usesContainer = that.locate("usesContainer");
-            templates.replaceWith(usesContainer, "detail-uses-write", that.data.model);
+            templates.replaceWith(usesContainer, "details-uses-write", that.data.model);
             that.events.markupLoaded.fire();
         }
     };
@@ -68,12 +75,12 @@
         var position = $(event.currentTarget).attr('position');
 
         if (position) {
-            var newUses = JSON.parse(JSON.stringify(that.data.model.record.uses));
+            var newUses = that.data.model.record.uses ? JSON.parse(JSON.stringify(that.data.model.record.uses)) : [];
             newUses.splice(position,1);
             that.data.applier.change("record.uses",newUses);
 
             var usesContainer = that.locate("usesContainer");
-            templates.replaceWith(usesContainer, "detail-uses-write", that.data.model);
+            templates.replaceWith(usesContainer, "details-uses-write", that.data.model);
             that.events.markupLoaded.fire();
         }
         else {
@@ -87,7 +94,7 @@
         // Clear out any previous messages first.
         $(viewport).find(".alert-box").remove();
 
-        templates.replaceWith(viewport, "detail-term", that.data.model);
+        templates.replaceWith(viewport, "details-term", that.data.model);
         templates.prependTo(viewport,"error",{message: errorThrown});
     };
 
@@ -99,24 +106,42 @@
         templates.prependTo(viewport,"success",{message: "Record updated."});
     };
 
+    details.getTemplate = function(type) {
+        var template = "details-term";
+        if (type && ["alias","ALIAS","transformation","transform","TRANSFORM"].indexOf(type.toLowerCase()) !== -1) {
+            template = "details-alias";
+        }
+        else if (type === "condition") {
+            template = "details-condition";
+        }
+        return template;
+    };
+
+    details.loadTypeTemplate = function(that) {
+        if (!that.data || !that.data.model) {
+            console.log("loadTypeTemplate called before 'that' is correctly wired up.  Exiting.");
+            return;
+        }
+
+        var viewport = that.locate("viewport");
+        templates.replaceWith(viewport, details.getTemplate(that.data.model.record.type), that.data.model);
+        that.events.markupLoaded.fire();
+    };
+
     details.displayRecord = function(that, data, textStatus, jqXHR) {
         var viewport = that.locate("viewport");
         if (data && data.record) {
             that.data.model.record = data.record;
-            templates.replaceWith(viewport, "detail-term", that.data.model);
-            details.setFormValues(that);
-
-            ctr.components.binding.applyBinding(that);
-            // TODO:  Add support for all record types
+            details.loadTypeTemplate(that);
         }
         else {
             templates.replaceWith(viewport, "norecord", that.data.model);
+            that.events.markupLoaded.fire();
         }
 
-        that.events.markupLoaded.fire();
     };
 
-    // bind in sanity checking when changing from a term (with aliases) to any other type of record
+    // TODO: bind in sanity checking when changing from a term (with aliases) to any other type of record
 
 
     // Set the current form values for the two radio groups, which we cannot do in our templates
@@ -136,16 +161,35 @@
         }
     };
 
+
+    details.init = function(that) {
+        ctr.components.templates.loadTemplates(function() {
+            details.load(that);
+        });
+    };
+
     // TODO:  Wire up comment controls
 
     fluid.defaults("ctr.components.details", {
         baseUrl: "/api/record",
         gradeNames: ["fluid.viewRelayComponent", "autoInit"],
         components: {
-            data:    { type: "ctr.components.data" },
+            data:    {
+                type: "ctr.components.data",
+                options: {
+                    modelListeners: {
+                        "record.type": "{ctr.components.details}.events.typeChanged"
+                    }
+                }
+            },
             controls: { type: "ctr.components.userControls", container: ".user-container", options: { components: { data: "{data}" }}}
         },
         bindings: [
+            {
+                selector:    "uniqueId",
+                path:        "record.uniqueId",
+                elementType: "encode different ways of accessing values here"
+            },
             {
                 selector:    "status",
                 path:        "record.status",
@@ -205,7 +249,8 @@
         },
         events: {
             "refresh":      "preventable",
-            "markupLoaded": "preventable"
+            "markupLoaded": "preventable",
+            "typeChanged":  "preventable"
         },
         invokers: {
             "save": {
@@ -219,6 +264,10 @@
             "removeUse": {
                 funcName: "ctr.components.details.removeUse",
                 args: [ "{that}", "{arguments}.0"]
+            },
+            "loadTypeTemplate": {
+                funcName: "ctr.components.details.loadTypeTemplate",
+                args: ["{that}"]
             },
             "displayError": {
                 funcName: "ctr.components.details.displayError",
@@ -259,13 +308,25 @@
                     "this": "{that}.dom.save",
                     method: "keypress",
                     args:   "{that}.save"
+                },
+                {
+                    "funcName": "ctr.components.binding.applyBinding",
+                    "args":     "{that}"
+                },
+                {
+                    "funcName": "ctr.components.details.setFormValues",
+                    "args":     "{that}"
                 }
             ],
             onCreate: [
                 {
-                    "funcName": "ctr.components.templates.loadTemplates"
+                    "funcName": "ctr.components.details.init"
                 }
             ],
+            "typeChanged": {
+                func: "ctr.components.details.loadTypeTemplate",
+                args: [ "{that}"]
+            },
             "refresh": {
                 func: "ctr.components.details.load",
                 args: [ "{that}"]
