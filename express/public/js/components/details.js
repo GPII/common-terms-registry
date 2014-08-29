@@ -21,7 +21,7 @@
         // We are working with an existing record.  Load its full information
         if (that.data && that.data.model && that.data.model.record && that.data.model.record.uniqueId) {
             var settings = {
-                url:     that.options.baseUrl + "/" + that.data.model.record.uniqueId,
+                url:     that.options.baseUrl + "/" + that.data.model.record.uniqueId + "?children=true",
                 success: that.displayRecord,
                 error:   that.displayError
             };
