@@ -1,3 +1,4 @@
+// TODO:  Phase this out in favor of JSON schema validation in express
 // Rules that control what record content can be stored in Couch for the Common Terms Registry
 function(newDoc, oldDoc, userCtx) {
     // The user has to be logged in to perform updates
@@ -15,20 +16,6 @@ function(newDoc, oldDoc, userCtx) {
         else {
             var ValidTypes = [,"alias","transform","term","condition","translation"];
             var ValidStatus = ["active","unreviewed","candidate","deleted","draft"];
-
-            // Set the date of the last update to a user-specified date and time or to today's date and time if no value is specified.
-            if (newDoc.updated) {
-                var newDate = new Date(newDoc.updated);
-                if (newDate.getTime() > 0 ) {
-                }
-                // The user didn't pass a usable date.  Throw an error.
-                else {
-                    errors.push({"updated" : "Date of last update '" + newDoc.updated + " is not valid."});
-                }
-            }
-            else {
-                errors.push({"updated" : "You must provide date at which this record was last updated."});
-            }
 
             if (!newDoc.type) {
                 errors.push({"type" : "Record type is required."});
