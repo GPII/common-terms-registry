@@ -21,7 +21,7 @@
 
     // After we have our markup in place, wire it up
     controls.init = function(that) {
-        // TODO: Evolve our select using jquery.dropBox
+        // TODO: Evolve our select using jquery.dropBox or something comparable
         that.events.markupLoaded.fire();
     };
 
@@ -33,7 +33,7 @@
 
     // Update markup and wiring after a change in user status (login/logout, profile update)
     controls.refresh = function(that) {
-        templates.replaceWith(that.container,"profile", {user: that.data.model.user});
+        templates.replaceWith(that.container,"user-controls", that.model);
         that.events.markupLoaded.fire();
     };
 
@@ -48,6 +48,7 @@
         components: {
             data: { type: "ctr.components.data" }
         },
+        model: "{data}.model",
         events: {
             "logout":       "preventable",
             "afterLogout":  "preventable",
