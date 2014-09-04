@@ -145,6 +145,7 @@
                 }
             }
         },
+        model: "{data}.model",
         events: {
             "refresh":           "preventable",
             "clearSearchFilter": "preventable"

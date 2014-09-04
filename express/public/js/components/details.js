@@ -152,10 +152,7 @@
             },
             controls: { type: "ctr.components.userControls", container: ".user-container", options: { components: { data: "{data}" }}}
         },
-        model: {
-            record: "{data}.model.record",
-            user:   "{data}.model.user"
-        },
+        model: "{data}.model",
         bindings: [
             {
                 selector:    "uniqueId",
