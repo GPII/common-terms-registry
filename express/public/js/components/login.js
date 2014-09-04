@@ -31,13 +31,9 @@
     login.displayReceipt = function(that, responseData, textStatus, jqXHR) {
         var jsonData = JSON.parse(responseData);
         if (jsonData && jsonData.ok) {
-            templates.replaceWith(that.locate("viewport"),"success", { message: "You have succesfully logged in."});
+            that.applier.change("user",jsonData.user);
 
-            // update our common session data regarding the logged in user, so that other components can pick up changes.
-            that.data.model.user = jsonData.user;
-
-            // Refresh the user controls to display the current user once they've logged in.
-            // TODO:  We may need to fire an event instead, for now we call the function directly with our own "that"
+            templates.replaceWith(that.locate("viewport"),"login-form", that.model);
             that.controls.refresh(that);
         }
         else {
@@ -46,7 +42,7 @@
     };
 
     login.refresh = function(that) {
-        templates.replaceWith(that.locate("viewport"),"login-form");
+        templates.replaceWith(that.locate("viewport"),"login-form", that.model);
         that.events.markupLoaded.fire();
     };
 
@@ -59,7 +55,7 @@
     fluid.defaults("ctr.components.login", {
         gradeNames: ["fluid.viewRelayComponent", "autoInit"],
         components: {
-            data:    { type: "ctr.components.data" },
+            data:     { type: "ctr.components.data" },
             controls: {
                 type: "ctr.components.userControls",
                 container: ".user-container",
@@ -74,6 +70,7 @@
                 }
             }
         },
+        model: "{data}.model",
         apiUrl: "/api/user",
         selectors: {
             "form":     ".login-form",
