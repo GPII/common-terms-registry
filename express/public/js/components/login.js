@@ -11,7 +11,7 @@
         $(that.container).find(".alert-box").remove();
 
         if (event) { event.preventDefault(); }
-        var name = that.locate("name").val();
+        var name     = that.locate("name").val();
         var password = that.locate("password").val();
         var settings = {
             type:    "POST",
