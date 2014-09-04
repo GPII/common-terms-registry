@@ -129,7 +129,7 @@
             data:    {
                 type: "ctr.components.data"
             },
-            controls:    {
+            userControls:    {
                 type: "ctr.components.userControls",
                 container: ".user-container",
                 options: {
