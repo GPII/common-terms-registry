@@ -11,6 +11,4 @@ record: { {{~#if record.aliasOf}}aliasOf: "{{record.aliasOf}}",{{/if}}
 {{~#if record.type}}type: "{{record.type}}",{{/if}}
 {{~#if record.updated}}updated: "{{record.updated}}",{{/if}}
 {{~#if record.uses}}uses: [{{#each record.uses}}{{#if @index}}, {{/if}}"{{.}}"{{/each}}]{{/if}}
-{{~#if record.valueSpace}}valueSpace: "{{record.valueSpace}}",{{/if}}
-uniqueId: "{{~record.uniqueId}}"
-}
+{{~#if record.valueSpace}}valueSpace: "{{record.valueSpace}}",{{/if}} uniqueId: "{{~record.uniqueId}}" }
