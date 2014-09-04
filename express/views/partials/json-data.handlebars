@@ -4,6 +4,7 @@ fluid.defaults("ctr.components.data", {
         {{#if path}}path: "{{path}}",{{/if}}
         {{#if user}}{{>json-data-user}},{{/if}}
         {{#if query}}{{>json-data-query}},{{/if}}
+        {{#if cookies}}{{>json-data-cookies}},{{/if}}
         {{>json-data-record}}
     }
 });

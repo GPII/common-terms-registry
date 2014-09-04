@@ -17,6 +17,7 @@
             "port": 25
         }
     },
+    "safeCookies": ["searchSettings"],
     "app": {
         "name": "Common Terms Registry (development)"
     },

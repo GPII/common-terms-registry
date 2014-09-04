@@ -131,8 +131,25 @@ http.createServer(app).listen(app.get('port'), function(){
 
 // Expose whatever data the user has included to our template handling
 function exposeRequestData(req,options) {
-    if (req.path)   { options.path   = req.path;}
-    if (req.params) { options.params = req.params;}
-    if (req.body)   { options.body   = req.body;}
-    if (req.query)  { options.query  = req.query;}
+    if (req.path)    { options.path    = req.path;}
+    if (req.params)  { options.params  = req.params;}
+    if (req.body)    { options.body    = req.body;}
+    if (req.query)   { options.query   = req.query;}
+    if (req.cookies) {
+        var safeCookies = {};
+        config.safeCookies.forEach(function(key){
+            if (req.cookies[key]) {
+                var value = "";
+                try {
+                    value = JSON.parse(req.cookies[key]);
+                } catch(e) {
+                    value = req.cookies[key];
+                }
+                safeCookies[key] = value;
+            }
+        });
+        if (safeCookies.length > 0) {
+            options.cookies = safeCookies;
+        }
+    }
 }
