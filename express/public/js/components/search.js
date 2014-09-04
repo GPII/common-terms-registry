@@ -92,7 +92,7 @@
 
             // display each record in the results area
             data.records.forEach(function(record) {
-                templates.appendTo(viewport, "search-record", { record: record, user: that.data.model.user });
+                templates.appendTo(viewport, "search-record", { record: record, user: that.model.user });
             });
         }
         else {
