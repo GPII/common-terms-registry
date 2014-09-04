@@ -70,6 +70,9 @@ app.use("/hbs",require("./views/client.js")(config));
 
 // Detail edit/view for an individual record.  Requires a separate interface because the uniqueId is passed as part of the path
 app.get("/details/:uniqueId", function(req,res) {
+    var options = { user: req.session.user};
+    exposeRequestData(req,options);
+
     if (req.params.uniqueId === "new") {
         if (req.session.user) {
             // Use the record defaults from our configuration
@@ -82,14 +85,20 @@ app.get("/details/:uniqueId", function(req,res) {
                     record[field] = req.query[field];
                 }
             });
-            res.render('pages/details', { layout: 'details', record: record, user: req.session.user});
+
+            options.layout = 'details';
+            options.record = record;
+            res.render('pages/details', options);
         }
         else {
-            res.render('pages/error', {message: "You must be logged in to create new records."});
+            options.message = "You must be logged in to create new records.";
+            res.render('pages/error', options);
         }
     }
     else {
-        res.render('pages/details', { layout: 'details', record: { uniqueId: req.params.uniqueId }, user: req.session.user});
+        options.layout = 'details';
+        options.record = { uniqueId: req.params.uniqueId };
+        res.render('pages/details', options);
     }
 });
 
@@ -103,10 +112,13 @@ app.get("/details/:uniqueId", function(req,res) {
 app.use("/",function(req,res) {
     var fs = require("fs");
 
+    var options = { user: req.session.user};
+    exposeRequestData(req,options);
+
     var path = req.path === "/" ? "search" : req.path.substring(1);
     if (fs.existsSync(__dirname + "/views/pages/" + path + ".handlebars")) {
-        var layout = fs.existsSync(__dirname + "/views/layouts/" + path + ".handlebars") ? path : "main";
-        res.render('pages/' + path, {layout: layout, user: req.session.user});
+        options.layout = fs.existsSync(__dirname + "/views/layouts/" + path + ".handlebars") ? path : "main";
+        res.render('pages/' + path, options);
     }
     else {
         res.status(404).render('pages/error', {message: "The page you requested was not found."});
@@ -117,4 +129,10 @@ http.createServer(app).listen(app.get('port'), function(){
     console.log('Express server listening on port ' + app.get('port'));
 });
 
-
+// Expose whatever data the user has included to our template handling
+function exposeRequestData(req,options) {
+    if (req.path)   { options.path   = req.path;}
+    if (req.params) { options.params = req.params;}
+    if (req.body)   { options.body   = req.body;}
+    if (req.query)  { options.query  = req.query;}
+}
