@@ -111,23 +111,6 @@
     };
 
 
-    // TODO:  Figure out why this couldn't address {data}.model.record and make the general library work for both the search and the details page.
-    ctr.components.applyBinding = function (that) {
-        var bindings = that.options.bindings;
-        fluid.each(bindings, function (binding) {
-            var element = that.locate(binding.selector);
-            // in time, break out different ways of accessing the DOM into dedicated functions,
-            // index by the "elementType" field we will add to "bindings"
-            element.change(function () {
-                var value = element.val();
-                that.applier.change(binding.path, value);
-            });
-            that.applier.modelChanged.addListener(binding.path, function (change) {
-                element.val(change);
-            });
-        });
-    };
-
     fluid.defaults("ctr.components.search", {
         gradeNames: ["fluid.viewRelayComponent", "autoInit"],
         baseUrl: "/api",
@@ -140,7 +123,7 @@
         bindings: [{
             selector:    "input",
             path:        "input",
-            elementType: "encode different ways of accessing values here"
+            elementType: "text"
         }],
         components: {
             data:    {
@@ -208,7 +191,7 @@
                     args:   "{that}.clearSearchFilter"
                 },
                 {
-                    "funcName": "ctr.components.applyBinding",
+                    "funcName": "ctr.components.binder.applyBinding",
                     "args":     "{that}"
                 },
                 {

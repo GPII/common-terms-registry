@@ -118,7 +118,7 @@
     details.displayRecord = function(that, data, textStatus, jqXHR) {
         var viewport = that.locate("viewport");
         if (data && data.record) {
-            that.data.model.record = data.record;
+            that.applier.change("record",data.record);
             details.loadTypeTemplate(that);
         }
         else {
@@ -129,25 +129,6 @@
     };
 
     // TODO: bind in sanity checking when changing from a term (with aliases) to any other type of record
-
-
-    // Set the current form values for the two radio groups, which we cannot do in our templates
-    details.setFormValues = function(that){
-        var type = that.locate("type");
-        type.prop("checked",false);
-
-        if (that.data.model.record && that.data.model.record.type) {
-            document.forms[0].type.value = that.data.model.record.type.toLowerCase();
-        }
-
-        var status = that.locate("status");
-        status.prop("checked", false);
-
-        if (that.data.model.record && that.data.model.record.status) {
-            document.forms[0].status.value = that.data.model.record.status;
-        }
-    };
-
 
     details.init = function(that) {
         ctr.components.templates.loadTemplates(function() {
@@ -171,51 +152,55 @@
             },
             controls: { type: "ctr.components.userControls", container: ".user-container", options: { components: { data: "{data}" }}}
         },
+        model: {
+            record: "{data}.model.record",
+            user:   "{data}.model.user"
+        },
         bindings: [
             {
                 selector:    "uniqueId",
                 path:        "record.uniqueId",
-                elementType: "encode different ways of accessing values here"
+                elementType: "text"
             },
             {
                 selector:    "status",
                 path:        "record.status",
-                elementType: "encode different ways of accessing values here"
+                elementType: "radio"
             },
             {
                 selector:    "type",
                 path:        "record.type",
-                elementType: "encode different ways of accessing values here"
+                elementType: "radio"
             },
             {
                 selector:    "uses",
                 path:        "record.uses",
-                elementType: "encode different ways of accessing values here"
+                elementType: "list"
             },
             {
                 selector:    "definition",
                 path:        "record.definition",
-                elementType: "encode different ways of accessing values here"
+                elementType: "text"
             },
             {
                 selector:    "termLabel",
                 path:        "record.termLabel",
-                elementType: "encode different ways of accessing values here"
+                elementType: "text"
             },
             {
                 selector:    "valueSpace",
                 path:        "record.valueSpace",
-                elementType: "encode different ways of accessing values here"
+                elementType: "text"
             },
             {
                 selector:    "defaultValue",
                 path:        "record.defaultValue",
-                elementType: "encode different ways of accessing values here"
+                elementType: "text"
             },
             {
                 selector:    "comment",
                 path:        "comment",
-                elementType: "encode different ways of accessing values here"
+                elementType: "text"
             }
         ],
         selectors: {
@@ -297,11 +282,7 @@
                     args:   "{that}.save"
                 },
                 {
-                    "funcName": "ctr.components.binding.applyBinding",
-                    "args":     "{that}"
-                },
-                {
-                    "funcName": "ctr.components.details.setFormValues",
+                    "funcName": "ctr.components.binder.applyBinding",
                     "args":     "{that}"
                 }
             ],
