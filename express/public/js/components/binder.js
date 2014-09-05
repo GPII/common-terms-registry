@@ -1,4 +1,4 @@
-// Add persistent bindings between a selector and a model value.  Changes to one are propagated to the other, and vice versa.
+// Add persistent bindings between a selector and a model value.  Changes are propagated between the two.
 //
 // To use this, you should have a "bindings" element in your fluid defaults, as in:
 //      bindings: [{
@@ -35,7 +35,8 @@
 //      input:  ""
 //  }
 //
-// Finally, you will need to invoke the binding applier where it makes sense (typically in response to the onCreate event or another event):
+// Finally, you will need to invoke the binding applier where it makes sense, for example in response to an event.
+// Here's an example that binds to the "onCreate" event:
 //
 //  listeners: {
 //      onCreate: {
