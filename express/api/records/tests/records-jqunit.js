@@ -1,3 +1,4 @@
+// TODO:  Convert this to use pouchdb and canned data (see "record" for an example of how this is done).
 "use strict";
 var fluid = require("infusion");
 var jqUnit = fluid.require("jqUnit");
@@ -277,6 +278,39 @@ recordTypeEndPoints.forEach(function(endPoint){
         });
     }
 );
+
+// When using the children option, "updated" should also be respected
+jqUnit.asyncTest("Terms with children, limited by future date...", function() {
+    request.get("http://localhost:" + app.get('port') + "/terms?children=true&updated=3000-01-01", function(error, response, body) {
+        jqUnit.start();
+
+        testUtils.isSaneResponse(jqUnit, error, response, body);
+
+        var jsonData = JSON.parse(body);
+        jqUnit.assertTrue("The results should include the date filter information passed in the query...", jsonData.params.updated);
+        jqUnit.assertTrue("Limiting records by a far future date should not have returned anything...", jsonData.records && jsonData.records.length === 0);
+    });
+});
+
+// When using the children option, the "status" field should work correctly
+config.allowedStatuses.forEach(function(status){
+    jqUnit.asyncTest("Terms w/ children, limited by status '" + status + "'...", function() {
+        request.get("http://localhost:" + app.get('port') + "/terms?children=true&status=" + status, function(error, response, body) {
+            jqUnit.start();
+
+            testUtils.isSaneResponse(jqUnit, error, response, body);
+
+            var jsonData = JSON.parse(body);
+            jqUnit.assertEquals("The results should include the status filter information passed in the query...", status, jsonData.params.statuses[0]);
+            if (jsonData.records) {
+                jsonData.records.forEach(function(record){
+                    jqUnit.assertEquals("All records should have the requested status...", status, record.status);
+                });
+            }
+        });
+
+    });
+});
 
 
 // Test that modules other than "records" do not support the recordType option
