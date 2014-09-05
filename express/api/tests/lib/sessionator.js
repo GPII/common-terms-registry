@@ -11,18 +11,18 @@ module.exports = function(config) {
 
     // Everyone is always already logged in
     router.get("/",function(req,res) {
-        res.send(200,{"ok":true,"userCtx":{"name":"admin","roles":["_admin","admin"]},"info":{"authentication_db":"_users","authentication_handlers":["oauth","cookie","default"],"authenticated":"cookie"}});
+        res.status(200).send({"ok":true,"userCtx":{"name":"admin","roles":["_admin","admin"]},"info":{"authentication_db":"_users","authentication_handlers":["oauth","cookie","default"],"authenticated":"cookie"}});
     });
 
     // Every login is successful
     router.post("/",function(req,res) {
-        res.cookie('AuthSession',"",{"path":"/", "httpOnly":true})
-        res.send(200,{"ok":true,"name": req.body.name, "roles":["_admin","admin"]});
+        res.cookie('AuthSession',"",{"path":"/", "httpOnly":true});
+        res.status(200).send({"ok":true,"name": req.body.name, "roles":["_admin","admin"]});
     });
 
     // Every delete is silently ignored
     router.delete("/", function(req,res) {
-        res.send(200,{"ok":true});
+        res.status(200).send({"ok":true});
     });
 
 

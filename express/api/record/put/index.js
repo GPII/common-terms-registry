@@ -34,10 +34,10 @@ module.exports = function(config) {
 
         // Make sure the current record has at least a uniqueId
         if (!req.body || !req.body.uniqueId) {
-            return res.send(400,{"ok":"false","message": "You must provide a uniqueId of the record you wish to update."});
+            return res.status(400).send({"ok":"false","message": "You must provide a uniqueId of the record you wish to update."});
         }
         if (!req.session || !req.session.user) {
-            return res.send(401,JSON.stringify({ok:false, message: "You must be logged in to use this function."}));
+            return res.status(401).send(JSON.stringify({ok:false, message: "You must be logged in to use this function."}));
         }
 
         // Get the current document
@@ -45,7 +45,7 @@ module.exports = function(config) {
         readRequest.get(config['couch.url'] + "/_design/api/_view/entries?key=%22" + req.body.uniqueId + "%22", function(readError,readResponse,readBody) {
             if (readError) {
                 console.log(readError);
-                return res.send(500,{"ok":"false","message": "There was an error retrieving the record with uniqueId '" + req.body.uniqueId + "'..."});
+                return res.status(500).send({"ok":"false","message": "There was an error retrieving the record with uniqueId '" + req.body.uniqueId + "'..."});
             }
 
             var jsonData = JSON.parse(readBody);
@@ -95,15 +95,15 @@ module.exports = function(config) {
             writeRequest.put(writeOptions, function(writeError, writeResponse, writeBody){
                 if (writeError) {
                     console.log(writeError);
-                    return res.send(500,{"ok":"false","message": "There was an error writing the record with uniqueId '" + req.body.uniqueId + "'..."});
+                    return res.status(500).send({"ok":"false","message": "There was an error writing the record with uniqueId '" + req.body.uniqueId + "'..."});
                 }
 
                 if (writeResponse.statusCode === 201) {
-                    res.send(200,{"ok":true,"message": "Record updated.", "record": newRecord});
+                    res.status(200).send({"ok":true,"message": "Record updated.", "record": newRecord});
                 }
                 else {
                     var jsonData = JSON.parse(writeBody);
-                    res.send(writeResponse.statusCode, {"ok": false, "message": "There were one or more problems that prevented your update from taking place.", "errors": jsonData.reason.errors });
+                    res.status(writeResponse.statusCode).send({"ok": false, "message": "There were one or more problems that prevented your update from taking place.", "errors": jsonData.reason.errors });
                 }
             });
         });

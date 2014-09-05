@@ -35,7 +35,7 @@ module.exports = function(config) {
         if (!config || !config['couch.url']) {
             var message = "Your instance is not configured correctly to enable record lookup.  You must have a couch.url variable configured.";
             console.log(message);
-            return res.send(500,JSON.stringify({ ok:false, message: message }));
+            return res.status(500).send(JSON.stringify({ ok:false, message: message }));
         }
 
         // User input validation
@@ -49,17 +49,17 @@ module.exports = function(config) {
             }
         }
         catch(err) {
-            return res.send(err.status ? err.status : 500, JSON.stringify(err));
+            return res.status(err.status ? err.status : 500).send(JSON.stringify(err));
         }
 
         // Get the record from couch
         var request = require('request');
         request.get(config['couch.url'] + "/_design/api/_view/entries?keys=%5B%22" + record.req.params.uniqueId + "%22%5D", function(e,r,b) {
-            if (e) { return res.send(500,JSON.stringify({ok: false, message: "Error retrieving record from couchdb", error: e}));}
+            if (e) { return res.status(500).send(JSON.stringify({ok: false, message: "Error retrieving record from couchdb", error: e}));}
 
             var jsonData = JSON.parse(b);
             if (!jsonData.rows || jsonData.rows.length === 0) {
-                return res.send(404,JSON.stringify({ok:false, message: "Record not found." }));
+                return res.status(404).send(JSON.stringify({ok:false, message: "Record not found." }));
             }
             else {
                 record.results.record = jsonData.rows[0].value;
@@ -80,7 +80,7 @@ module.exports = function(config) {
                 }
                 else {
                     schemaHelper.setHeaders(res, record.results.record.type);
-                    res.send(200, JSON.stringify(record.results));
+                    res.status(200).send( JSON.stringify(record.results));
                 }
             }
         });
@@ -88,7 +88,7 @@ module.exports = function(config) {
 
     router.get("/", function(req,res) {
         schemaHelper.setHeaders(res, "message");
-        return res.send(400,{ok: false, message: "You must provide the required uniqueId in the path to use this interface."});
+        return res.status(400).send({ok: false, message: "You must provide the required uniqueId in the path to use this interface."});
     });
 
     return router;

@@ -153,8 +153,8 @@ module.exports = function(config) {
     };
 
     records.getAndKnitTerms = function(error,response, body) {
-        if (error) { return records.res.send(500, JSON.stringify(error)); }
-        if (!body.rows) { return records.res.send(500,"No usable result object was returned from couch."); }
+        if (error) { return records.res.status(500).send( JSON.stringify(error)); }
+        if (!body.rows) { return records.res.status(500).send("No usable result object was returned from couch."); }
 
         var recordsByTermId = {};
         var excludedParentIds = [];
@@ -196,12 +196,12 @@ module.exports = function(config) {
         records.results.records = paging.pageArray(combinedRecords, records.results);
 
         schemaHelper.setHeaders(records.res, "records");
-        return records.res.send(200, JSON.stringify(records.results));
+        return records.res.status(200).send( JSON.stringify(records.results));
     };
 
     records.getRecords = function(error,response,body) {
-        if (error) { return records.res.send(500, JSON.stringify(error)); }
-        if (!body.rows) { return records.res.send(500,"No usable result object was returned from couch."); }
+        if (error) { return records.res.status(500).send( JSON.stringify(error)); }
+        if (!body.rows) { return records.res.status(500).send("No usable result object was returned from couch."); }
 
         var filteredRecords = [];
         body.rows.forEach(function(row) {
@@ -218,7 +218,7 @@ module.exports = function(config) {
         records.results.total_rows = filteredRecords.length;
 
         schemaHelper.setHeaders(records.res, "records");
-        return records.res.send(200, JSON.stringify(records.results));
+        return records.res.status(200).send( JSON.stringify(records.results));
     };
 
     records.constructError = function(status, message) {
@@ -251,7 +251,7 @@ module.exports = function(config) {
         if (!config || !config['couch.url']) {
             var message = "Your instance is not configured correctly to enable record lookup.  You must have a couch.url variable configured.";
             console.log(message);
-            return res.send(500,JSON.stringify({ ok:false, message: message }));
+            return res.status(500).send(JSON.stringify({ ok:false, message: message }));
         }
 
         // TODO:  Add support for versions
@@ -261,7 +261,7 @@ module.exports = function(config) {
             records.parseAndValidateInput();
         }
         catch(err) {
-            return res.send(err.status ? err.status : 500, JSON.stringify(err));
+            return res.status(err.status ? err.status : 500).send(JSON.stringify(err));
         }
 
         var urlsByRecordType = {

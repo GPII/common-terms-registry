@@ -13,7 +13,7 @@ module.exports = function(config) {
     var request = require('request');
 
     search.getLuceneSearchResults = function (error, response, body) {
-        if (error) { return search.res.send(500, JSON.stringify(error)); }
+        if (error) { return search.res.status(500).send( JSON.stringify(error)); }
 
         if (body && body.rows) {
             // build a list of unique term IDs, skipping duplicates.
@@ -40,7 +40,7 @@ module.exports = function(config) {
             search.results.records = {};
 
             schemaHelper.setHeaders(search.res, "search");
-            return search.res.send(200, JSON.stringify(search.results));
+            return search.res.status(200).send( JSON.stringify(search.results));
         }
 
         // Retrieve the parent records via /tr/_design/api/_view/entries?keys=
@@ -67,22 +67,23 @@ module.exports = function(config) {
         if (!config || !config['couch.url'] || !config['lucene.url']) {
             var message = "Your instance is not configured correctly to enable searching.  You must have a couch.url and lucene.url variable configured.";
             console.log(message);
-            return res.send(500,JSON.stringify({ ok:false, message: message }));
+            return res.status(500).send(JSON.stringify({ ok:false, message: message }));
         }
 
         // Support a "quick" mode in which paging is disabled and only the top results are returns (used for auto-suggest, etc.)
         var quick = config.lookup ? true : false;
 
         // User input validation
-        if (!req.query || !req.query.q) { return res.send(400, JSON.stringify({ok: false, message: 'A search string is required.'})); }
+        if (!req.query || !req.query.q) { return res.status(400).send( JSON.stringify({ok: false, message: 'A search string is required.'})); }
 
         if (quick && (req.query.offset || req.query.limit)) {
-            return res.send(400, JSON.stringify({ok: false, message: 'Paging parameters (limit, offset) are not allowed when using the quick search.'}));
+            return res.status(400).send( JSON.stringify({ok: false, message: 'Paging parameters (limit, offset) are not allowed when using the quick search.'}));
         }
 
         // TODO:  Add support for displaying versions
 
         search.results.q = req.query.q;
+
         if (quick) {
             search.results.offset = 0;
             // config.quickResults can be used to increase the page size for "quick" searches

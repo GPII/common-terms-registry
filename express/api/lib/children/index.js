@@ -24,7 +24,7 @@ module.exports = function(config,parent) {
             return console.error("Can't construct child records, parent object lacks the required variables.");
         }
 
-        if (error) { return parent.res.send(500, JSON.stringify(error)); }
+        if (error) { return parent.res.status(500).send(JSON.stringify(error)); }
 
         for (var i = 0; i < body.rows.length; i++) {
             var record = body.rows[i].value;
@@ -61,7 +61,7 @@ module.exports = function(config,parent) {
         }
 
         schemaHelper.setHeaders(parent.res, parent.schema);
-        return parent.res.send(200, JSON.stringify(parent.results));
+        return parent.res.status(200).send(JSON.stringify(parent.results));
     }
 
     // Expose the child lookup for use in /api/record
@@ -76,7 +76,8 @@ module.exports = function(config,parent) {
         // clear out the existing results
         children.termHash          = {};
         children.distinctIDs       = [];
-        if (error) { return parent.res.send(500, JSON.stringify(error)); }
+        children.strippedIDs       = [];
+        if (error) { return parent.res.status(500).send(JSON.stringify(error)); }
 
         if (!body.rows) {
             parent.results.ok = true;
@@ -92,7 +93,7 @@ module.exports = function(config,parent) {
             }
 
             schemaHelper.setHeaders(parent.res, parent.schema);
-            return parent.res.send(200, JSON.stringify(parent.results));
+            return parent.res.status(200).send(JSON.stringify(parent.results));
         }
 
         // Add any records returned to the list in process.
