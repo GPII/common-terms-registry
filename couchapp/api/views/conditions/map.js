@@ -1,6 +1,6 @@
 function(doc) {
     if (doc) {
-        if (doc && doc.type && (doc.type.toLowerCase() === 'condition') && doc.status !== "deleted") {
+        if (doc && doc.type && (doc.type.toLowerCase() === 'condition')) {
             emit(doc.uniqueId, require('views/lib/recordUtils').getRecordFields(doc));
         }
     }
