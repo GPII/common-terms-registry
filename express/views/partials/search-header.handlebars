@@ -39,17 +39,18 @@
         </div>
 
         <div class="medium-2 column">
-            <a href="#" data-dropdown="record-type-dropdown" class="button dropdown expand secondary small" tabindex="0">
+            <a href="#" data-dropdown="record-type-dropdown" class="button expand secondary small" tabindex="0">
                 <span class="ptd-icon-radio-unchecked"></span>
                 Active Records
             </a>
             <br/>
-            <ul id="record-type-dropdown" data-dropdown-content class="f-dropdown">
-                <li><a href="#" tabindex="-1">All Records</a></li>
-                <li><a href="#" tabindex="-1">Active Records</a></li>
-                <li><a href="#" tabindex="-1">Approved Records</a></li>
-                <li><a href="#" tabindex="-1">Deleted Records</a></li>
-            </ul>
+            <select multiple="true" class="ptd-search-status" name="status">
+                <option value="active">Active</option>
+                <option value="unreviewed">Unreviewed</option>
+                <option value="candidate">Candidate</option>
+                <option value="draft">Draft</option>
+                <option value="deleted">Deleted</option>
+            </select>
         </div>
 
         <div class="medium-2 column">
@@ -62,7 +63,7 @@
                     <div class="foundicon-general-search"></div>
                 </div>
                 <div class="medium-9 column">
-                    <input type="text" class="ptd-search-input" placeholder="filter results" tabindex="0"/>
+                    <input type="text" class="ptd-search-query" placeholder="filter results" tabindex="0"/>
                 </div>
                 <div class="medium-1 column">
                     <span class="foundicon-general-remove ptd-clear-button" title="Click to remove your search filter."></span>

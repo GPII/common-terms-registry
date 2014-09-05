@@ -177,6 +177,10 @@ button.right .glyphicon:before, .button.right .glyphicon:before {
     margin-left: .25em;
 }
 
+.ptd-search-status {
+    height: 10em;
+}
+
 .record {
     background-color: #ffffff;
     margin-top: 1.5em;
