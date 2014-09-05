@@ -25,6 +25,7 @@
         "secret": "Printer, printer take a hint-ter."
     },
     "verify": true,
+    "allowedStatuses": ["draft","deleted","active","candidate","unreviewed"],
     "safeUserFields": "name email displayName",
     "adminRoles": [ "admin"],
     "schemaUrls": {

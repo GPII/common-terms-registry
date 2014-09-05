@@ -53,14 +53,12 @@ module.exports = function(config) {
             }
         }
 
-        // TODO: Move to a global configuration option for this
-       var allowedStatuses = ["active","unreviewed","candidate","deleted", "draft"];
         if (records.req.query.status) {
             var statusesToDisplay = [];
             if (records.req.query.status instanceof Array) {
                 records.req.query.status.forEach(function(status){
                     var lowerCaseStatus = status.toLowerCase();
-                    if (allowedStatuses.indexOf(lowerCaseStatus) === -1){
+                    if (config.allowedStatuses.indexOf(lowerCaseStatus) === -1){
                         throw records.constructError(400,"Invalid status '" + lowerCaseStatus + "' specified...");
                     }
                     else {
@@ -70,7 +68,7 @@ module.exports = function(config) {
             }
             else {
                 var lowerCaseStatus = records.req.query.status.toLowerCase();
-                if (allowedStatuses.indexOf(lowerCaseStatus) === -1){
+                if (config.allowedStatuses.indexOf(lowerCaseStatus) === -1){
                      throw records.constructError(400,"Invalid status '" + lowerCaseStatus + "' specified...");
                 }
                 else {
