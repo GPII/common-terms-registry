@@ -1,4 +1,50 @@
-// A temporary library to add persistent bindings between form elements and a model
+// Add persistent bindings between a selector and a model value.  Changes to one are propagated to the other, and vice versa.
+//
+// To use this, you should have a "bindings" element in your fluid defaults, as in:
+//      bindings: [{
+//          selector:    "input",
+//          path:        "input",
+//          elementType: "text",
+//          cookify:     true
+//      }]
+//
+//
+// The options are as follows:
+// * selector:    A valid selector for your component.
+//                Must be able to be resolved using that.locate(selector)
+//
+// * path:        A valid path for the model variable whose value will be watched.
+//                Must be able to be resolved using fluid.get(path)
+//
+// * elementType: The type of html element (typically form elements) that allows the user to control the value.
+//                Only "radio" is meaningful at the moment, as those are handled differently.
+//                For everything else, the value is set using element.val(value).
+//
+//
+// To make use of this, you will need to start by sourcing this file after all fluid sources.
+//
+// In your component, you will need a valid selector, as in:
+//
+//  selectors: {
+//      "input":    ".ptd-search-input"
+//  }
+//
+// You will also need a valid model path, as in:
+//
+//  model: {
+//      input:  ""
+//  }
+//
+// Finally, you will need to invoke the binding applier where it makes sense (typically in response to the onCreate event or another event):
+//
+//  listeners: {
+//      onCreate: {
+//        "funcName": "ctr.components.binder.applyBinding",
+//        "args":     "{that}"
+//      }
+//  }
+//
+// Once you have done this, model changes should be passed to form controls and vice versa.
 
 (function ($) {
     "use strict";
