@@ -8,9 +8,7 @@
     // TODO:  Create session-scoped variables for query, status, record type, and language, and use if no data is provided.
 
     search.clearSearchFilter = function(that) {
-        var queryInput = that.locate("input");
-        queryInput.val(null);
-        search.queryChanged(that,null);
+        that.applier.change("searchSettings.query", undefined);
     };
 
     search.showClearButton = function (that, show) {
