@@ -148,8 +148,8 @@ function exposeRequestData(req,options) {
                 safeCookies[key] = value;
             }
         });
-        if (safeCookies.length > 0) {
-            options.cookies = safeCookies;
+        if (Object.keys(safeCookies).length > 0) {
+            options.cookies = JSON.stringify(safeCookies);
         }
     }
 }
