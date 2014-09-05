@@ -277,6 +277,7 @@ module.exports = function(config) {
 
         var requestConfig = {
             url: urlsByRecordType[recordType],
+            data: records.params,
             json: true
         };
 

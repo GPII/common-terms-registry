@@ -98,23 +98,43 @@ module.exports = function(config) {
 
         var queryString = "";
         var fields = ["q","sort"];
-        fields.forEach(function (field) {
-            if (req.query[field]) {
-                if (queryString.length > 0) {
-                    queryString += '&';
-                }
 
+        // "qualifier" fields are those that are added to an existing field's value (like the status field)
+        var qualifierFields = { "q": "status"};
+
+        fields.forEach(function (field) {
+            var qualifierFieldName = qualifierFields[field];
+            var qualifiersFound =  Boolean(qualifierFieldName && req.query[qualifierFieldName]);
+
+            var qualifierString = "";
+            if (qualifiersFound) {
+               var qualifierValue = req.query[qualifierFieldName];
+               if (qualifierValue instanceof Array) {
+                   qualifierString += "(status:" + qualifierValue.join(" OR status:") + ") AND ";
+               }
+               else {
+                   qualifierString += qualifierFieldName + ":" + qualifierValue + " AND ";
+               }
+            }
+
+            if (req.query[field]) {
                 if (req.query[field] instanceof Array) {
                     req.query[field].forEach(function(entry) {
                         if (queryString.length > 0) {
                             queryString += '&';
                         }
-                        queryString += field + "=" + encodeURIComponent(entry);
+                        queryString += field + "=" + encodeURIComponent(qualifierString + entry);
                     });
                 }
                 else {
-                    queryString += field + "=" + encodeURIComponent(req.query[field]);
+                    if (queryString.length > 0) {
+                        queryString += '&';
+                    }
+                    queryString += field + "=" + encodeURIComponent(qualifierString + req.query[field]);
                 }
+            }
+            else if (qualifiersFound) {
+                queryString = field + "=" + encodeURIComponent(qualifierString);
             }
         });
 

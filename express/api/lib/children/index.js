@@ -100,9 +100,17 @@ module.exports = function(config,parent) {
         for (var i = 0; i < body.rows.length; i++) {
             var record = body.rows[i].value;
             if (record.type === "term") {
-                children.termHash[record.uniqueId] = record;
-                if (children.distinctIDs.indexOf(record.uniqueId) === -1) {
-                    children.distinctIDs.push(record.uniqueId);
+
+                if ((parent.params.updated && new Date(record.updated) < parent.params.updated) ||
+                    (parent.params.statuses && parent.params.statuses.indexOf(record.status.toLowerCase()) === -1) ||
+                    (parent.params.recordTypes && parent.params.recordTypes.indexOf(record.type.toLowerCase()) === -1)) {
+                    // Exclude this record
+                }
+                else {
+                    children.termHash[record.uniqueId] = record;
+                    if (children.distinctIDs.indexOf(record.uniqueId) === -1) {
+                        children.distinctIDs.push(record.uniqueId);
+                    }
                 }
             }
         }
