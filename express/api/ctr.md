@@ -1,13 +1,13 @@
-# Common Terms Registry API
-The Common Terms Registry API is a tool to allow developers to find and reuse common terms that describe user needs and preferences, and to contribute new standard terms and aliases not already included in the Common Terms Registry.
+# Preference Terms Dictionary API
+The Preference Terms Dictionary API is a tool to allow developers to find and reuse common terms that describe user needs and preferences, and to contribute new standard terms and aliases not already included in the Preference Terms Dictionary.
 
 This document describes the REST API available to developers.
 
 # Data Objects
-This section describes the data objects which are accepted by and returned by the Common Terms Registry API.
+This section describes the data objects which are accepted by and returned by the Preference Terms Dictionary API.
 
 ## Record
-All records in the Common Terms Registry have the following common fields:
+All records in the Preference Terms Dictionary have the following common fields:
 
 |Field|Description|
 | --- | --- |
@@ -66,7 +66,7 @@ A translation is representation of a term in another language with no other diff
 ## Transformation
 Translations and aliases present a term using different words or formatting, with no meaningful difference in the values used to describe a user’s needs or preferences. For example, two devices may have a volume control that can be set from 0 to 10 in increments of 1. If those two devices have the same maximum volume and each of their corresponding volume levels are the same loudness, then a user who prefers (or requires) for the volume to be set to 10 would have the same experience in having that preference applied to each device. It wouldn't matter if one device called the control “volume” and the other called the control “loudness”. On the other hand, if two devices have a different maximum volume, are adjustable using different increments, or have a different perceived loudness when set to the same value, then something else is required.
 
-For these cases, the Common Terms Registry provides a transformation. A transformation provides a bidirectional lossless algorithm for converting from one way of describing preferences and needs to another. To continue the previous example, the common term describing volume preferences might be expressed using a decibel scale. For an implementation that uses 0-10 to indicate volume, the transformation record would provide an algorithm for converting from decibel to 0-10 values and from 0-10 values to decibel values. In addition to the common fields described above, transformation records have the following fields:
+For these cases, the Preference Terms Dictionary provides a transformation. A transformation provides a bidirectional lossless algorithm for converting from one way of describing preferences and needs to another. To continue the previous example, the common term describing volume preferences might be expressed using a decibel scale. For an implementation that uses 0-10 to indicate volume, the transformation record would provide an algorithm for converting from decibel to 0-10 values and from 0-10 values to decibel values. In addition to the common fields described above, transformation records have the following fields:
 
 |Field|Description|
 | --- | --- |
@@ -406,11 +406,12 @@ The list of conditions.  Equivalent to using /api/records with the query paramet
     + limit (optional, string) ... The number of records to return.  Used for pagination.
     + versions (optional, boolean) ... Whether or not to display the full version history for this record (including any unpublished drafts).  Defaults to "false".
 
-## GET /api/search/{?q,sort,offset,limit,versions}
+## GET /api/search/{?q,status,sort,offset,limit,versions}
 Performs a full text search of all data, returns matching terms.  Only standard terms are returned.  All other associated record types are combined with the standard term into a single record.
 
 + Parameters
     + q (required, string) ... The query string to match.  Can either consist of a word or phrase as plain text, or can use [lucene's query syntax][1] to construct more complex searches.
+    + status (optional, string) ... The record statuses to return (defaults to everything but 'deleted' records).  Can be repeated to include multiple statuses.
     + sort (optional,string) ... The sort order to use when displaying records.  Conforms to [lucene's query syntax][1].
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
     + limit (optional, string) ... The number of records to return.  Used for pagination.
@@ -456,11 +457,12 @@ Performs a full text search of all data, returns matching terms.  Only standard 
         }
         ```
 
-## GET /api/suggest/{?q,sort,versions}
-Suggest the correct common term to use.  Performs a search as in /api/search, but only returns 5 results and does not support paging.  Equivalent to `/api/suggest?q=search&results=5`.
+## GET /api/suggest/{?q,status,sort,versions}
+Suggest the correct common term to use.  Performs a search as in /api/search, but only returns 5 results and does not support paging.  Equivalent to `/api/search?q=search&results=5`.
 
 + Parameters
     + q (required, string) ... The query string to match.  Can either consist of a word or phrase as plain text, or can use [lucene's query syntax][1] to construct more complex searches.
+    + status (optional, string) ... The record statuses to return (defaults to everything but 'deleted' records).  Can be repeated to include multiple statuses.
     + sort (optional,string) ... The sort order to use when displaying records.  Conforms to [lucene's query syntax][1].
     + versions (optional, boolean) ... Whether or not to display the full version history for each record (including any unpublished drafts).  Defaults to "false".
 
