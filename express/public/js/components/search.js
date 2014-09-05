@@ -31,38 +31,40 @@
     };
 
     // Update the results displayed whenever we have new search data
-    search.queryChanged = function(that, queryInput) {
-        var emptyQuery = (!queryInput || queryInput === "");
+    search.searchSettingsChanged = function(that) {
+        var emptyQuery = !Boolean(that.model.searchSettings.query);
         if (that.showClearButton) {
             that.showClearButton(!emptyQuery);
         }
 
         // TODO: Figure out why the hell this is happening...
         if (!that.displayResults) {
-            console.log("queryChanged was called before invokers were in place.  Bailing out...");
+            console.log("searchSettingsChanged was called before invokers were in place.  Bailing out...");
             return;
         }
 
         var settings = {
             url:     that.options.baseUrl,
             success: that.displayResults,
-            error:   that.displayError
+            error:   that.displayError,
+            data: {}
         };
 
         // Wire in sorting and filtering to both types of requests
         // TODO: Break out this AJAX assembly and launch function into its own function
         var baseUrl = that.options.baseUrl;
         if (emptyQuery) {
-            settings.url += "/terms?children=true";
+            settings.url += "/terms";
+            settings.data.children=true;
         }
         else {
             settings.url += "/search";
-            settings.data = { q: queryInput};
+            if (that.model.searchSettings.query) { settings.data.q = that.model.searchSettings.query };
         }
 
-        // TODO:  Wire in support for status controls
+        if (that.model.searchSettings.statuses) { settings.data.status = that.model.searchSettings.statuses };
 
-        // TODO:  Wire in support for record type controls
+        // TODO:  Wire in support for term/condition controls
 
         $.ajax(settings);
     };
@@ -105,27 +107,42 @@
 
     // We have to do this because templates need to be loaded before we initialize our own code.
     search.init = function(that) {
-        templates.loadTemplates(function() { search.queryChanged(that); });
+        templates.loadTemplates(function() { search.searchSettingsChanged(that); });
     };
-
 
     fluid.defaults("ctr.components.search", {
         gradeNames: ["fluid.viewRelayComponent", "autoInit"],
         baseUrl: "/api",
         selectors: {
-            "input":    ".ptd-search-input",
+            "query":    ".ptd-search-query",
+            "status":   ".ptd-search-status",
             "go":       ".ptd-search-button",
             "clear":    ".ptd-clear-button",
             "viewport": ".ptd-viewport"
         },
         bindings: [{
-            selector:    "input",
-            path:        "input",
-            elementType: "text"
-        }],
+                selector:    "query",
+                path:        "searchSettings.query",
+                elementType: "text",
+                cookify:     true
+            },
+            {
+                selector:    "status",
+                path:        "searchSettings.statuses",
+                elementType: "select"
+            }
+        ],
         components: {
             data:    {
-                type: "ctr.components.data"
+                type: "ctr.components.data",
+                options: {
+                    model: {
+                        searchSettings: {
+                            statuses: ["active","unreviewed","candidate","draft"],
+                            query:    ""
+                        }
+                    }
+                }
             },
             userControls:    {
                 type: "ctr.components.userControls",
@@ -171,11 +188,13 @@
             }
         },
         modelListeners: {
-            "input": {
-                funcName: "ctr.components.search.queryChanged",
-                excludeSource: "init",
-                args: ["{that}", "{change}.value"]
-            }
+            "searchSettings.*": [
+                {
+                    funcName: "ctr.components.search.searchSettingsChanged",
+                    excludeSource: "init",
+                    args: ["{that}"]
+                }
+            ]
         },
         listeners: {
             onCreate: [
@@ -199,7 +218,7 @@
                 }
             ],
             "refresh": {
-                func: "ctr.components.search.queryChanged",
+                func: "ctr.components.search.searchSettingsChanged",
                 args: [ "{that}"]
             }
         }
