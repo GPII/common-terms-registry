@@ -235,12 +235,12 @@ module.exports = function(config) {
         schemaHelper.setHeaders(res, "message");
 
         records.results = {
-            "ok": true,
+            "ok":          true,
             "total_rows" : 0,
-            "records": [],
-            "offset": records.req.query.offset ? parseInt(records.req.query.offset) : 0,
-            "limit": records.req.query.limit ? parseInt(records.req.query.limit) : 100,
-            "params": records.params,
+            "records":     [],
+            "offset":      records.req.query.offset ? parseInt(records.req.query.offset) : 0,
+            "limit":       records.req.query.limit ? parseInt(records.req.query.limit) : 100,
+            "params":      records.params,
             "retrievedAt": new Date()
         };
 
