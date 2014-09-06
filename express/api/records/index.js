@@ -214,7 +214,7 @@ module.exports = function(config) {
         });
 
         if (records.params.sort) {
-            filteredRecords.sort(sorting.generateSortFunction(records.params.sort));
+            sorting.sort(filteredRecords, records.params.sort);
         }
 
         records.results.records = paging.pageArray(filteredRecords, records.results);

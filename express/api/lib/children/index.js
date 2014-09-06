@@ -46,6 +46,10 @@ module.exports = function(config,parent) {
         }
 
         var records = Object.keys(children.termHash).map(function(key) { return children.termHash[key]; });
+        if (parent.params.sort) {
+            sorting.sort(records,parent.params.sort);
+        }
+
 
         parent.results.ok = true;
 
@@ -98,18 +102,9 @@ module.exports = function(config,parent) {
             return parent.res.status(200).send(JSON.stringify(parent.results));
         }
 
-        var recordArray = [];
-        for (var i = 0; i < body.rows.length; i++) {
-            recordArray.push(body.rows[i].value);
-        }
-
-        // Sort the records before we start taking out the terms.  We have to do this before we can page the data below.
-        if (parent.params.sort) {
-            recordArray.sort(sorting.generateSortFunction(parent.params.sort));
-        }
-
         // Add any records returned to the list in process.
-        recordArray.forEach(function(record){
+        body.rows.forEach(function(row){
+            var record = row.value;
             if (record.type === "term") {
 
                 if ((parent.params.updated && new Date(record.updated) < parent.params.updated) ||
@@ -126,18 +121,17 @@ module.exports = function(config,parent) {
             }
         });
 
-        // we can only pass a limited number of keys in the query (< 8000 bytes of data, roughly), so we have to do a couple of checks to avoid passing too much query data.
+        // we can only pass a limited number of keys in the query (< 8000 bytes of data, roughly).
+        //
+        // If we have more key data than that, we have just get the whole mess of data and discard anything we don't want.
+        //
+        // We can't slice the data by our paging limits because the records aren't in the right order yet.
 
-        // By default, we don't limit child records by keys.  That means we make a fast call that returns a lot of data and may end up discarding a bunch.
         var queryParams = "";
 
-        // If we have paging parameters, use those...
-        if (parent.params.limit !== undefined && parent.params.offset !== undefined) {
-            queryParams = "?keys=" + JSON.stringify(children.distinctIDs.slice(parent.params.offset, parent.params.offset + parent.params.limit));
-        }
-        // If we have few enough records (as is usually the case with a search), just go for it
-        else if (children.distinctIDs.length < 75 ) {
-            queryParams = "?keys=" + JSON.stringify(children.distinctIDs);
+        var keyString = JSON.stringify(children.distinctIDs);
+        if (keyString.length <= 7500) {
+            queryParams += "?keys=" + keyString;
         }
 
         // retrieve the child records via /tr/_design/api/_view/children?keys=
