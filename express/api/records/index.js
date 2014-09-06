@@ -1,11 +1,12 @@
 "use strict";
 
 module.exports = function(config) {
-    var fluid = require('infusion');
+    var fluid        = require('infusion');
     var schemaHelper = require("../../schema/lib/schema-helper")(config);
-    var paging = require("../lib/paging")(config);
+    var paging       = require("../lib/paging")(config);
+    var sorting      = require("../lib/sorting")(config);
 
-    var namespace = "gpii.ctr.records";
+    var namespace    = "gpii.ctr.records";
 
     // TODO:  Move to a global vocabulary
     if (config.recordType) {
@@ -29,18 +30,19 @@ module.exports = function(config) {
         }
     }
 
-    var records = fluid.registerNamespace(namespace);
-    records.schema="records";
-
-    // TODO:  Move this to a global configuration
-    var allowedRecordTypes = ["term","alias","transform","translation","condition"];
+    var records    = fluid.registerNamespace(namespace);
+    records.schema = "records";
 
     var children = require('../lib/children')(config, records);
-    var request = require('request');
+    var request  = require('request');
 
     records.parseAndValidateInput = function() {
         if (!records.req.query) {
             throw records.constructError(400,"You must provide the required query parameters to use this interface.");
+        }
+
+        if (records.req.query.sort) {
+            records.params.sort = records.req.query.sort;
         }
 
         if (records.req.query.updated) {
@@ -114,7 +116,7 @@ module.exports = function(config) {
             }
 
             var lowerCaseRecordType = config.recordType.toLowerCase();
-            if (allowedRecordTypes.indexOf(lowerCaseRecordType) === -1) {
+            if (config.allowedRecordTypes.indexOf(lowerCaseRecordType) === -1) {
                 throw records.constructError(400, "Invalid record type specified.");
             }
             else {
@@ -126,7 +128,7 @@ module.exports = function(config) {
             if (records.req.query.recordType instanceof Array) {
                 records.req.query.recordType.forEach(function(recordType){
                     var lowerCaseRecordType = recordType.toLowerCase();
-                    if (allowedRecordTypes.indexOf(lowerCaseRecordType) === -1) {
+                    if (config.allowedRecordTypes.indexOf(lowerCaseRecordType) === -1) {
                         throw records.constructError(400, "Invalid record type specified.");
                     }
                     else {
@@ -136,7 +138,7 @@ module.exports = function(config) {
             }
             else {
                 var lowerCaseRecordType = records.req.query.recordType.toLowerCase();
-                if (allowedRecordTypes.indexOf(lowerCaseRecordType) === -1) {
+                if (config.allowedRecordTypes.indexOf(lowerCaseRecordType) === -1) {
                     throw records.constructError(400, "Invalid record type specified.");
                 }
                 else {
@@ -198,7 +200,7 @@ module.exports = function(config) {
     };
 
     records.getRecords = function(error,response,body) {
-        if (error) { return records.res.status(500).send( JSON.stringify(error)); }
+        if (error)      { return records.res.status(500).send( JSON.stringify(error)); }
         if (!body.rows) { return records.res.status(500).send("No usable result object was returned from couch."); }
 
         var filteredRecords = [];
@@ -210,6 +212,10 @@ module.exports = function(config) {
                 filteredRecords.push(record);
             }
         });
+
+        if (records.params.sort) {
+            filteredRecords.sort(sorting.generateSortFunction(records.params.sort));
+        }
 
         records.results.records = paging.pageArray(filteredRecords, records.results);
 
@@ -230,8 +236,8 @@ module.exports = function(config) {
     return express.Router().get('/', function(req, res){
         // per-request variables need to be defined here, otherwise (for example) the results of the previous search will be returned if the next search has no records
         records.params = {};
-        records.req = req;
-        records.res = res;
+        records.req    = req;
+        records.res    = res;
         schemaHelper.setHeaders(res, "message");
 
         records.results = {
@@ -239,11 +245,10 @@ module.exports = function(config) {
             "total_rows" : 0,
             "records":     [],
             "offset":      records.req.query.offset ? parseInt(records.req.query.offset) : 0,
-            "limit":       records.req.query.limit ? parseInt(records.req.query.limit) : 100,
+            "limit":       records.req.query.limit  ? parseInt(records.req.query.limit)  : 100,
             "params":      records.params,
             "retrievedAt": new Date()
         };
-
 
         // Server config validation
         if (!config || !config['couch.url']) {
@@ -274,7 +279,7 @@ module.exports = function(config) {
         var recordType = config.recordType ? config.recordType : "entries";
 
         var requestConfig = {
-            url: urlsByRecordType[recordType],
+            url:  urlsByRecordType[recordType],
             data: records.params,
             json: true
         };

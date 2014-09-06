@@ -26,6 +26,7 @@
     },
     "verify": true,
     "allowedStatuses": ["draft","deleted","active","candidate","unreviewed"],
+    "allowedRecordTypes" : ["term","alias","transform","translation","condition"],
     "safeUserFields": "name email displayName",
     "adminRoles": [ "admin"],
     "schemaUrls": {

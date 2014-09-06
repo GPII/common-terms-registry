@@ -37,20 +37,34 @@
             that.showClearButton(!emptyQuery);
         }
 
+        // TODO:  Hide the option to sort by best match if there is no query data, show it if there is.
+        // TODO:  Set the sort to "best match" when search query data is entered.
+        // TODO:  Allow users to override the sort option once search query data is entered (look for what has changed)
+
+
         // TODO: Figure out why the hell this is happening...
         if (!that.displayResults) {
             console.log("searchSettingsChanged was called before invokers were in place.  Bailing out...");
             return;
         }
 
+        // TODO: add controls for pagination or infinite scrolling.  For now, searches will return and display all results.
+
         var settings = {
             url:     that.options.baseUrl,
             success: that.displayResults,
             error:   that.displayError,
-            data: {}
+            data:    {
+                limit:  that.model.searchSettings.limit,
+                sort:   that.model.searchSettings.sort,
+                status: that.model.searchSettings.statuses
+            }
         };
 
-        // Wire in sorting and filtering to both types of requests
+        if (!emptyQuery) {
+            settings.data.q = that.model.searchSettings.query;
+        }
+
         // TODO: Break out this AJAX assembly and launch function into its own function
         var baseUrl = that.options.baseUrl;
         if (emptyQuery) {
@@ -59,10 +73,7 @@
         }
         else {
             settings.url += "/search";
-            if (that.model.searchSettings.query) { settings.data.q = that.model.searchSettings.query };
         }
-
-        if (that.model.searchSettings.statuses) { settings.data.status = that.model.searchSettings.statuses };
 
         // TODO:  Wire in support for term/condition controls
 
@@ -71,6 +82,7 @@
 
     search.displayError = function(that, jqXHR, textStatus, errorThrown) {
         templates.prependTo(that.locate("viewport"),"error",{message: errorThrown});
+        that.events.markupLoaded.fire();
     };
 
     search.displayResults = function(that, data, textStatus, jqXHR) {
@@ -79,16 +91,18 @@
             viewport.html("");
 
             // TODO:  Come up with a meaningful list of untranslated records
+
+            // TODO:  Expose pagination information once we have it
             var localEnd = data.offset + data.limit;
             var navData = {
-                count: data.total_rows,
-                start: data.offset + 1,
-                end: data.total_rows < localEnd ? data.total_rows : localEnd,
+                count:        data.total_rows,
+                start:        data.offset + 1,
+                end:          data.total_rows < localEnd ? data.total_rows : localEnd,
                 untranslated: 0
             };
 
             // prepend the control title bar
-            templates.appendTo(viewport, "navigation", navData);
+            templates.appendTo(viewport, "search-navigation", navData);
 
             // display each record in the results area
             data.records.forEach(function(record) {
@@ -99,10 +113,7 @@
             templates.replaceWith(viewport, "norecord");
         }
 
-        // Wire up the alias show/hide controls
-        $(viewport).find(".alias-toggle").bind('click',search.toggleAliasRecord);
-
-        // TODO: add support for pagination or infinite scrolling
+        that.events.markupLoaded.fire();
     };
 
     // We have to do this because templates need to be loaded before we initialize our own code.
@@ -115,16 +126,22 @@
         baseUrl: "/api",
         selectors: {
             "query":    ".ptd-search-query",
+            "sort":     ".ptd-search-sort",
             "status":   ".ptd-search-status",
             "go":       ".ptd-search-button",
             "clear":    ".ptd-clear-button",
             "viewport": ".ptd-viewport"
         },
-        bindings: [{
+        bindings: [
+            {
                 selector:    "query",
                 path:        "searchSettings.query",
-                elementType: "text",
-                cookify:     true
+                elementType: "text"
+            },
+            {
+                selector:    "sort",
+                path:        "searchSettings.sort",
+                elementType: "select"
             },
             {
                 selector:    "status",
@@ -138,6 +155,8 @@
                 options: {
                     model: {
                         searchSettings: {
+                            limit:    -1,
+                            sort:     "termLabel",
                             statuses: ["active","unreviewed","candidate","draft"],
                             query:    ""
                         }
@@ -163,9 +182,14 @@
         model: "{data}.model",
         events: {
             "refresh":           "preventable",
-            "clearSearchFilter": "preventable"
+            "clearSearchFilter": "preventable",
+            "markupLoaded":      "preventable"
         },
         invokers: {
+            "toggleAliasRecord": {
+                funcName: "ctr.components.search.toggleAliasRecord",
+                args: [ "{that}"]
+            },
             "clearSearchFilter": {
                 funcName: "ctr.components.search.clearSearchFilter",
                 args: [ "{that}"]
@@ -199,6 +223,12 @@
         listeners: {
             onCreate: [
                 {
+                    "funcName": "ctr.components.search.init",
+                    "args":     "{that}"
+                }
+            ],
+            markupLoaded: [
+                {
                     "this": "{that}.dom.clear",
                     method: "click",
                     args:   "{that}.clearSearchFilter"
@@ -209,11 +239,17 @@
                     args:   "{that}.clearSearchFilter"
                 },
                 {
-                    "funcName": "ctr.components.binder.applyBinding",
-                    "args":     "{that}"
+                    "this": "{that}.dom.aliasToggle",
+                    method: "click",
+                    args:   "{that}.toggleAliasRecord"
                 },
                 {
-                    "funcName": "ctr.components.search.init",
+                    "this": "{that}.dom.aliasToggle",
+                    method: "keypress",
+                    args:   "{that}.toggleAliasRecord"
+                },
+                {
+                    "funcName": "ctr.components.binder.applyBinding",
                     "args":     "{that}"
                 }
             ],

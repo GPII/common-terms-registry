@@ -12,9 +12,9 @@
 
 module.exports = function(config,parent) {
     var schemaHelper = require("../../../schema/lib/schema-helper")(config);
-    var paging = require("../../lib/paging")(config);
-
-    var fluid = require('infusion');
+    var paging       = require("../../lib/paging")(config);
+    var fluid        = require('infusion');
+    var sorting      = require("../../lib/sorting")(config);
 
     var children = fluid.registerNamespace("gpii.ctr.api.lib.children");
     children.request = require('request');
@@ -60,6 +60,7 @@ module.exports = function(config,parent) {
             parent.results.records = paging.pageArray(records, parent.results);
         }
 
+        // TODO:  This pattern seems to break things if there are underlying errors and crash the server.  Keep an eye out and investigate once we have more data.
         schemaHelper.setHeaders(parent.res, parent.schema);
         return parent.res.status(200).send(JSON.stringify(parent.results));
     }
@@ -68,6 +69,7 @@ module.exports = function(config,parent) {
     parent.getChildRecords = getChildRecords;
 
     // Expose the full lookup for use in /api/records and /api/search
+    // TODO:  Figure out why this is not sorting correctly...
     parent.getParentRecords = function (error, response, body) {
         if (!parent.res || !parent.results || !parent.req || !parent.params || !parent.schema ) {
             return console.error("Can't retrieve parent records to construct children, parent object lacks the required variables.");
@@ -96,9 +98,18 @@ module.exports = function(config,parent) {
             return parent.res.status(200).send(JSON.stringify(parent.results));
         }
 
-        // Add any records returned to the list in process.
+        var recordArray = [];
         for (var i = 0; i < body.rows.length; i++) {
-            var record = body.rows[i].value;
+            recordArray.push(body.rows[i].value);
+        }
+
+        // Sort the records before we start taking out the terms.  We have to do this before we can page the data below.
+        if (parent.params.sort) {
+            recordArray.sort(sorting.generateSortFunction(parent.params.sort));
+        }
+
+        // Add any records returned to the list in process.
+        recordArray.forEach(function(record){
             if (record.type === "term") {
 
                 if ((parent.params.updated && new Date(record.updated) < parent.params.updated) ||
@@ -113,7 +124,7 @@ module.exports = function(config,parent) {
                     }
                 }
             }
-        }
+        });
 
         // we can only pass a limited number of keys in the query (< 8000 bytes of data, roughly), so we have to do a couple of checks to avoid passing too much query data.
 

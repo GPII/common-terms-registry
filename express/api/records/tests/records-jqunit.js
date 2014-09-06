@@ -151,6 +151,50 @@ recordTypeEndPoints.forEach(function(endPoint){
     }
 );
 
+// Test sorting (all record types)
+recordTypeEndPoints.forEach(function(endPoint){
+    jqUnit.asyncTest("Testing sorting for " + endPoint + " records...", function() {
+            request.get("http://localhost:" + app.get('port') + "/" + endPoint + "?&sort=termLabel",function(error, response, body) {
+
+                jqUnit.start();
+                testUtils.isSaneResponse(jqUnit, error, response, body);
+                jqUnit.stop();
+
+                var firstRecord = JSON.parse(body).records[0];
+
+                request.get("http://localhost:" + app.get('port') + "/" + endPoint + "?sort=%5CtermLabel",function(error, response, body) {
+                    jqUnit.start();
+                    testUtils.isSaneResponse(jqUnit, error, response, body);
+
+                    var secondRecord = JSON.parse(body).records[0];
+                    jqUnit.assertDeepNeq("The first record when sorting A-Z should not be equal to the first record when sorting Z-A...", firstRecord, secondRecord);
+                });
+            });
+        }
+    );
+});
+
+// Test sorting (terms, with children)
+jqUnit.asyncTest("Testing term sorting, with children", function() {
+        request.get("http://localhost:" + app.get('port') + "/terms?sort=termLabel",function(error, response, body) {
+
+            jqUnit.start();
+            testUtils.isSaneResponse(jqUnit, error, response, body);
+            jqUnit.stop();
+
+            var firstRecord = JSON.parse(body).records[0];
+
+            request.get("http://localhost:" + app.get('port') + "/terms?sort=%5CtermLabel",function(error, response, body) {
+                jqUnit.start();
+                testUtils.isSaneResponse(jqUnit, error, response, body);
+
+                var secondRecord = JSON.parse(body).records[0];
+                jqUnit.assertDeepNeq("The first record when sorting A-Z should not be equal to the first record when sorting Z-A...", firstRecord, secondRecord);
+            });
+        });
+    }
+);
+
 // Limit by one status, and then limit by two.  There should be more active and deleted records than just active records
 recordTypeEndPoints.forEach(function(endPoint){
         jqUnit.asyncTest("Testing filtering by status w/ endpoint '" + endPoint + "' ...", function() {
