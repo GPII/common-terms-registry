@@ -373,6 +373,68 @@ recordTypeEndPoints.forEach(function(endPoint){
 
 // TODO:  Test "versions" functionality
 
+// Test multi-sort functionality
+recordTypeEndPoints.forEach(function(endPoint) {
+    jqUnit.asyncTest("Testing multi-sort of '" + endPoint + "'...", function() {
+        var firstRecordCount, secondRecordCount, firstTotalRows, secondTotalRows, firstData, secondData;
+        request.get("http://localhost:" + app.get('port') + "/" + endPoint + "?sort=status&sort=uniqueId", function(error, response, body) {
+            jqUnit.start();
+
+            testUtils.isSaneResponse(jqUnit, error, response, body);
+
+            firstData        = JSON.parse(body);
+            firstRecordCount = firstData.records ? firstData.records.length : 0;
+            firstTotalRows   = firstData.total_rows;
+
+            jqUnit.stop();
+
+            request.get("http://localhost:" + app.get('port') + "/" + endPoint + "?sort=status&sort=\\uniqueId", function(error, response, body) {
+                jqUnit.start();
+
+                testUtils.isSaneResponse(jqUnit, error, response, body);
+
+                secondData        = JSON.parse(body);
+                secondRecordCount = secondData.records ? secondData.records.length : 0;
+                secondTotalRows   = secondData.total_rows;
+
+                jqUnit.assertEquals("There should be the same number of records returned for both sorts...", firstRecordCount, secondRecordCount);
+                jqUnit.assertEquals("There should be the same number of total_rows for both sorts...", firstTotalRows, secondTotalRows);
+                jqUnit.assertDeepNeq("The sorted data from both runs should not be equal", firstData.records, secondData.records);
+            });
+        });
+    });
+});
+
+// Test multi-sort functionality with ?children=true
+jqUnit.asyncTest("Testing multi-sort of terms with children=true...", function() {
+    var firstRecordCount, secondRecordCount, firstTotalRows, secondTotalRows, firstData, secondData;
+    request.get("http://localhost:" + app.get('port') + "/records?recordType=term&sort=status&sort=uniqueId", function(error, response, body) {
+        jqUnit.start();
+
+        testUtils.isSaneResponse(jqUnit, error, response, body);
+
+        firstData        = JSON.parse(body);
+        firstRecordCount = firstData.records ? firstData.records.length : 0;
+        firstTotalRows   = firstData.total_rows;
+
+        jqUnit.stop();
+
+        request.get("http://localhost:" + app.get('port') + "/records?recordType=term&sort=status&sort=\\uniqueId", function(error, response, body) {
+            jqUnit.start();
+
+            testUtils.isSaneResponse(jqUnit, error, response, body);
+
+            secondData        = JSON.parse(body);
+            secondRecordCount = secondData.records ? secondData.records.length : 0;
+            secondTotalRows   = secondData.total_rows;
+
+            jqUnit.assertEquals("There should be the same number of records returned for both sorts...", firstRecordCount, secondRecordCount);
+            jqUnit.assertEquals("There should be the same number of total_rows for both sorts...", firstTotalRows, secondTotalRows);
+            jqUnit.assertDeepNeq("The sorted data from both runs should not be equal", firstData.records, secondData.records);
+        });
+    });
+});
+
 // The output from "terms" and "records" should not include children with the "children" option set to false
 ["records","terms"].forEach(function(endPoint){
         jqUnit.asyncTest("Query endpoint '" + endPoint + " with the 'children' argument set to false...", function() {
