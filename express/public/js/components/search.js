@@ -156,7 +156,7 @@
                     model: {
                         searchSettings: {
                             limit:    -1,
-                            sort:     "termLabel",
+                            sort:     "uniqueId",
                             statuses: ["active","unreviewed","candidate","draft"],
                             query:    ""
                         }
