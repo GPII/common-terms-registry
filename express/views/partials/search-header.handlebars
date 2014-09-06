@@ -39,18 +39,22 @@
         </div>
 
         <div class="medium-2 column">
-            <a href="#" data-dropdown="record-type-dropdown" class="button expand secondary small" tabindex="0">
-                <span class="ptd-icon-radio-unchecked"></span>
-                Active Records
+            <a href="#" class="ptd-search-status-toggle" tabindex="0">
+                <div class="button secondary dropdown expand small">
+                    <span class="ptd-icon-radio-unchecked"></span>
+                    <span class="ptd-search-status-current-text">Active Records</span>
+                </div>
             </a>
             <br/>
-            <select multiple="true" class="ptd-search-status" name="status">
-                <option value="active">Active</option>
-                <option value="unreviewed">Unreviewed</option>
-                <option value="candidate">Candidate</option>
-                <option value="draft">Draft</option>
-                <option value="deleted">Deleted</option>
-            </select>
+            <div class="ptd-search-status-selector" style="display:none;">
+                <select multiple="true" class="ptd-search-status" name="status">
+                    <option value="active">Active</option>
+                    <option value="unreviewed">Unreviewed</option>
+                    <option value="candidate">Candidate</option>
+                    <option value="draft">Draft</option>
+                    <option value="deleted">Deleted</option>
+                </select>
+            </div>
         </div>
 
         <div class="medium-2 column">
