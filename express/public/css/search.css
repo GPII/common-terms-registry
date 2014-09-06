@@ -178,7 +178,14 @@ button.right .glyphicon:before, .button.right .glyphicon:before {
 }
 
 .ptd-search-status {
-    height: 10em;
+    height: 7.5em;
+}
+
+.ptd-search-status-selector {
+    position: absolute;
+    top: 3em;
+    z-index: 999;
+    width: 90%;
 }
 
 .record {
