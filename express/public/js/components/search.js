@@ -25,9 +25,10 @@
     };
 
     // This function is meant to be called on an individual alias entry toggle
-    search.toggleAliasRecord = function () {
-        $(this).html($(this).html() === "less" ? "more": "less");
-        $(this).parent().parent().parent().find(".alias-details").toggle();
+    search.toggleAliasRecord = function (that, event) {
+        var element = $(event.currentTarget);
+        element.html(element.html() === "less" ? "more": "less");
+        element.parent().parent().parent().find(".alias-details").toggle();
     };
 
     // Update the results displayed whenever we have new search data
