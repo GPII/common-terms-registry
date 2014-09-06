@@ -81,6 +81,26 @@
         $.ajax(settings);
     };
 
+    search.updateStatusControls = function(that) {
+//        var statusString = "...";
+//        if (!that.model.searchSettings.statuses) {
+//            statusString = "No Status Selected";
+//        }
+//        else if (that.model.searchSettings.statuses.length === 1) {
+//            // TODO:  Title Case the strings used here, or at least the first one.
+//            statusString = that.model.searchSettings.statuses[0]+ " Records";
+//        }
+//        else {
+//            statusString = that.model.searchSettings.statuses.join(", ") + " Records";
+//        }
+//
+//        that.locate("statusText").html(statusString);
+    };
+
+    search.toggleStatusControls = function(that) {
+        that.locate("statusSelect").toggle();
+    };
+
     search.displayError = function(that, jqXHR, textStatus, errorThrown) {
         templates.prependTo(that.locate("viewport"),"error",{message: errorThrown});
         that.events.markupLoaded.fire();
@@ -122,16 +142,30 @@
         templates.loadTemplates(function() { search.searchSettingsChanged(that); });
     };
 
+    /*
+
+     Wire up the status toggle show/hide
+     (fix the styles afterward)
+
+     Update the text after the list changes using a new function.
+
+
+     */
+
     fluid.defaults("ctr.components.search", {
         gradeNames: ["fluid.viewRelayComponent", "autoInit"],
         baseUrl: "/api",
         selectors: {
-            "query":    ".ptd-search-query",
-            "sort":     ".ptd-search-sort",
-            "status":   ".ptd-search-status",
-            "go":       ".ptd-search-button",
-            "clear":    ".ptd-clear-button",
-            "viewport": ".ptd-viewport"
+            "query":         ".ptd-search-query",
+            "sort":          ".ptd-search-sort",
+            "status":        ".ptd-search-status",
+            "go":            ".ptd-search-button",
+            "clear":         ".ptd-clear-button",
+            "aliasToggle":   ".alias-toggle",
+            "statusToggle":  ".ptd-search-status-toggle",
+            "statusText":    ".ptd-search-status-current-text",
+            "statusSelect":  ".ptd-search-status-selector",
+            "viewport":      ".ptd-viewport"
         },
         bindings: [
             {
@@ -189,7 +223,7 @@
         invokers: {
             "toggleAliasRecord": {
                 funcName: "ctr.components.search.toggleAliasRecord",
-                args: [ "{that}"]
+                args: [ "{that}", "{arguments}.0"]
             },
             "clearSearchFilter": {
                 funcName: "ctr.components.search.clearSearchFilter",
@@ -207,6 +241,14 @@
                 funcName: "ctr.components.search.displayResults",
                 args: ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"]
             },
+            "updateStatusControls": {
+                funcName: "ctr.components.search.updateStatusControls",
+                args: ["{that}"]
+            },
+            "toggleStatusControls": {
+                funcName: "ctr.components.search.toggleStatusControls",
+                args: ["{that}"]
+            },
             "showClearButton": {
                 funcName: "ctr.components.search.showClearButton",
                 args: ["{that}", "{arguments}.0"]
@@ -219,6 +261,13 @@
                     excludeSource: "init",
                     args: ["{that}"]
                 }
+            ],
+            "searchSettings.statuses": [
+                {
+                    funcName: "ctr.components.search.updateStatusControls",
+                    excludeSource: "init",
+                    args: ["{that}"]
+                }
             ]
         },
         listeners: {
@@ -226,6 +275,16 @@
                 {
                     "funcName": "ctr.components.search.init",
                     "args":     "{that}"
+                },
+                {
+                    "this": "{that}.dom.statusToggle",
+                    method: "click",
+                    args:   "{that}.toggleStatusControls"
+                },
+                {
+                    "this": "{that}.dom.statusToggle",
+                    method: "keypress",
+                    args:   "{that}.toggleStatusControls"
                 }
             ],
             markupLoaded: [
@@ -248,6 +307,10 @@
                     "this": "{that}.dom.aliasToggle",
                     method: "keypress",
                     args:   "{that}.toggleAliasRecord"
+                },
+                {
+                    funcName: "ctr.components.search.updateStatusControls",
+                    args: ["{that}"]
                 },
                 {
                     "funcName": "ctr.components.binder.applyBinding",
