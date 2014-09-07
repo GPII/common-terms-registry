@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{title}}</title>
+
+    {{>common-includes}}
+  </head>
+  <body>
+    <!-- include the header -->
+    {{> header}}
+
+    {{{body}}}
+    <!-- Add support for ligature fonts to older browsers -->
+    <script src="/js/liga.js"></script>
+    <script type="text/javascript">
+        $(document).foundation();
+    </script>
+  </body>
+</html>
