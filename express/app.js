@@ -125,6 +125,14 @@ app.use("/",function(req,res) {
     }
 });
 
+// Error handling has to be added last
+function logErrors(err, req, res, next) {
+    console.error(err.stack);
+    next(err);
+}
+
+app.use(logErrors);
+
 http.createServer(app).listen(app.get('port'), function(){
     console.log('Express server listening on port ' + app.get('port'));
 });
