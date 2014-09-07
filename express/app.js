@@ -27,8 +27,8 @@ else {
 }
 
 // Email templates
-config.templateDir = path.join(__dirname, 'templates');
-config.viewTemplateDir = path.join(__dirname, 'views');
+config.email.templateDir = path.join(__dirname, 'templates/email');
+config.viewTemplateDir   = path.join(__dirname, 'views');
 
 app.set('port', config.port || process.env.PORT || 4895);
 app.set('views', path.join(__dirname, 'views'));
