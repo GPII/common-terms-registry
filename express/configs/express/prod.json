@@ -1,6 +1,7 @@
 {
     "port" : 4896,
     "app": {
-        "name": "Common Terms Registry"
+        "name": "Preference Terms Dictionary",
+        "url":  "https://terms.raisingthefloor.org:8443"
     }
 }

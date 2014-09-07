@@ -19,7 +19,8 @@
     },
     "safeCookies": ["searchSettings"],
     "app": {
-        "name": "Common Terms Registry (development)"
+        "name": "Preference Terms Dictionary (development)",
+        "url":  "http://localhost:4895"
     },
     "session": {
         "secret": "Printer, printer take a hint-ter."
