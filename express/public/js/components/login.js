@@ -25,7 +25,16 @@
     };
 
     login.displayError = function(that, jqXHR, textStatus, errorThrown) {
-        templates.prependTo(that.locate("form"),"error",{message: errorThrown});
+        var message = errorThrown;
+        try {
+            var jsonData = JSON.parse(jqXHR.responseText);
+            if (jsonData.message) { message = jsonData.message; }
+        }
+        catch (e) {
+            console.log("jQuery.ajax call returned meaningless jqXHR.responseText payload. Using 'errorThrown' instead.");
+        }
+
+        templates.prependTo(that.locate("form"),"error",{message: message});
     };
 
     login.displayReceipt = function(that, responseData, textStatus, jqXHR) {

@@ -76,13 +76,23 @@
 
     };
 
+
     details.displayError = function(that, jqXHR, textStatus, errorThrown) {
         var viewport = that.locate("viewport");
         // Clear out any previous messages first.
         $(viewport).find(".alert-box").remove();
 
+        var message = errorThrown;
+        try {
+            var jsonData = JSON.parse(jqXHR.responseText);
+            if (jsonData.message) { message = jsonData.message; }
+        }
+        catch (e) {
+            console.log("jQuery.ajax call returned meaningless jqXHR.responseText payload. Using 'errorThrown' instead.");
+        }
+
         templates.replaceWith(viewport, "details-term", that.data.model);
-        templates.prependTo(viewport,"error",{message: errorThrown});
+        templates.prependTo(viewport,"error",{message: message});
     };
 
     details.displayConfirmation = function(that, jqXHR, textStatus, errorThrown) {
