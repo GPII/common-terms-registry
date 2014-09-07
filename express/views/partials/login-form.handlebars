@@ -10,14 +10,14 @@
 {{else}}
     <p>Please enter your username and password to log in to the Preference Terms Dictionary.</p>
 
-    <form class="login-form">
-        <label for="password">Username:</label>
+    <form class="login-form" method="POST">
+        <label for="username">Username:</label>
         <input id="username" type="text" tabindex="1" name="username" placeholder="Enter your username...">
 
         <label for="password">Password:</label>
         <input id="password" type="password" tabindex="2" name="password">
 
-        <input type="submit" class="button login-button" value="Log In">
+        <input type="submit" tabindex="3" class="button login-button" value="Log In">
     </form>
 
     <p>Can't remember your username or password?  <a href="reset">Reset your password.</a></p>
