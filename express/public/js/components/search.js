@@ -340,6 +340,23 @@
             ],
             "searchSettings.limit": [
                 {
+                    funcName: "ctr.components.search.clearOffset",
+                    excludeSource: "init",
+                    args: ["{that}"]
+                },
+                {
+                    funcName: "ctr.components.search.searchSettingsChanged",
+                    excludeSource: "init",
+                    args: ["{that}"]
+                }
+            ],
+            "searchSettings.sort": [
+                {
+                    funcName: "ctr.components.search.clearOffset",
+                    excludeSource: "init",
+                    args: ["{that}"]
+                },
+                {
                     funcName: "ctr.components.search.searchSettingsChanged",
                     excludeSource: "init",
                     args: ["{that}"]
@@ -358,6 +375,11 @@
                 }
             ],
             "searchSettings.statuses": [
+                {
+                    funcName: "ctr.components.search.clearOffset",
+                    excludeSource: "init",
+                    args: ["{that}"]
+                },
                 {
                     funcName: "ctr.components.search.updateStatusControls",
                     excludeSource: "init",
