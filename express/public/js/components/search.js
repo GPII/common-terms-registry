@@ -75,7 +75,7 @@
                 var pageOffset = a * that.model.searchSettings.limit;
 
                 if (page === currentPage) {
-                    templates.prependTo(container,"search-navigation-page-number",{offset: pageOffset, page: page});
+                    templates.prependTo(container,"search-navigation-page-current-link",{offset: pageOffset, page: page});
                 }
                 else {
                     templates.prependTo(container,"search-navigation-page-link",{offset: pageOffset, page: page});
