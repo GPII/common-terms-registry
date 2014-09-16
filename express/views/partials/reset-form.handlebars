@@ -1,12 +1,13 @@
-<p>Please enter the email you used when creating your Preference Terms Dictionary account, and a password reset email will be sent to you.</p>
+<p>Use the form below to reset your password.</p>
 
 <form class="reset-form" method="POST">
-    <label for="email">Email Address:</label>
-    <input id="email" type="text" tabindex="1" name="email" placeholder="Enter your email address...">
+    <input type="hidden" name="code" value="{{code}}"/>
 
-    <input type="submit" tabindex="3" class="button login-button" value="Send Email">
+    <label for="password">New Password:</label>
+    <input id="password" type="password" tabindex="3" name="password">
+
+    <label for="confirm">Retype Password:</label>
+    <input id="confirm" type="password" tabindex="4" name="confirm">
+
+    <input type="submit" tabindex="5" class="button login-button" value="Reset Password">
 </form>
-
-<p>Already know your username and password?  <a href="signin">Sign in now.</a></p>
-
-<p>No account?  <a href="signup">Sign up now.</a></p>

@@ -72,6 +72,12 @@ app.use("/hbs",require("./views/client.js")(config));
 var details = require("./details")(config);
 app.use("/details", details);
 
+var verify = require("./verify")(config);
+app.use('/verify', verify);
+
+var reset = require("./reset")(config);
+app.use('/reset', reset);
+
 // TODO:  Add support for "history" list
 // TODO:  Add support for "diff" view
 
