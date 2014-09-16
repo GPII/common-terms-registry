@@ -32,6 +32,17 @@ button, .button {
     margin: 0 0 .75rem;
 }
 
+.ptd-search-nav-page-link {
+    margin-right: .5em;
+}
+
+.ptd-search-nav-page-link:last-of-type {
+    margin-right: 0px;
+}
+.ptd-search-nav-page-current-link {
+    color:inherit;
+}
+
 .button.active {
     color: white;
     background-color: black;
