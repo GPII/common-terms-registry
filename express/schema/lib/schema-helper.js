@@ -7,8 +7,13 @@ module.exports = function(config) {
         var schemaUrl = config.schemaUrls[key.toLowerCase()];
         if (!schemaUrl) { console.error("Could not find schema configuration for key '" + key + "'.  Please check your configuration."); }
 
-        res.set('Content-Type', 'application/' + key + '+json; profile=' + schemaUrl);
-        res.set('Link', schemaUrl + '#; rel="describedBy"');
+        if (res.headersSent) {
+            console.error("Can't set headers, they have already been sent.");
+        }
+        else {
+            res.set('Content-Type', 'application/' + key + '+json; profile=' + schemaUrl);
+            res.set('Link', schemaUrl + '#; rel="describedBy"');
+        }
     };
 
     return helper;
