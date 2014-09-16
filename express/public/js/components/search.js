@@ -57,7 +57,7 @@
         var navEnd      = that.locate("navEnd");
 
         if (pages === 1) {
-            templates.prependTo(container,"search-navigation-page-link",{offset: 0, page: 1});
+            templates.prependTo(container,"search-navigation-page-current-link",{offset: 0, page: 1});
         }
         else {
 
