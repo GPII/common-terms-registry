@@ -2,8 +2,8 @@
     <div class="term">
         <div class="row">
             <div class="column small-8 title glyphicon glyphicon-tree-deciduous">
-                {{#if record.termLabel}}{{record.termLabel}}{{else}}{{record.uniqueId}}{{/if}}
                 <a href="/details/{{record.uniqueId}}">
+                {{#if record.termLabel}}{{record.termLabel}}{{else}}{{record.uniqueId}}{{/if}}
                     {{#if user}}
                         <div class="glyphicon glyphicon-pencil" title="Edit"></div>
                     {{else}}

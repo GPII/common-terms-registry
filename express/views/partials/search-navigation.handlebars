@@ -1,17 +1,23 @@
 <div class="row">
-    <div class="small-6 small-offset-1 column">
-        <div clas="count">
-            {{#if count}}
-            <span class="record-count">
-                Displaying {{start}} - {{end}} of {{count}} records
+    <div class="small-3 column">
+        {{#if count}}
+            <div class="count">
+                <span class="record-count">
+                    {{count}} records found
+                </span>
+            </div>
+        {{/if}}
+    </div>
+    <div class="small-3 small-offset-1 column">
+        {{#if count}}
+            <a class="ptd-search-nav-start ptd-search-nav-page-link" offset="0">&lt;&lt;</a>
+            <a class="ptd-search-nav-previous ptd-search-nav-page-link" offset="0">&lt;<a/>
+            <span class="ptd-search-page-links">
+                {{>search-navigation-page-link}}
             </span>
-            {{/if}}
-            {{#if untranslated}}
-            <span class="translation-count">
-                , <a href="#" tabindex="0">1 entry</a> not translated into English
-            </span>
-            {{/if}}
-        </div>
+            <a class="ptd-search-nav-next ptd-search-nav-page-link" offset="0">&gt;</a>
+            <a class="ptd-search-nav-end ptd-search-nav-page-link" offset="0">&gt;&gt;
+        {{/if}}
     </div>
     <div class="small-offset-2 small-3 column">
         <select name="sort" class="ptd-search-sort">

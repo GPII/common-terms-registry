@@ -24,6 +24,74 @@
         }
     };
 
+    // Change the search offset and trigger a refresh when a page navigation link is clicked
+    search.changePage = function(that,event) {
+        var element = $(event.currentTarget);
+        var offset = parseInt(element.attr('offset'));
+
+        // If we click on a link that has the same offset as the current value, no change functions are fired.
+        that.applier.change("searchSettings.offset", offset);
+    };
+
+    // Generate navigation links when the page is refreshed, as the number of pages may have changed
+    search.updatePagination = function(that) {
+        var container = that.locate("pageLinks");
+        container.html("");
+
+        var pages = 1;
+        // If the limits are off, we have one page of results, guaranteed
+        if (that.model.searchSettings.limit !== -1) {
+            if (that.model.count && that.model.count > 0) {
+                pages = Math.ceil(that.model.count/that.model.searchSettings.limit);
+            }
+        }
+
+        var currentPage = 1;
+        if (that.model.limit !== -1) {
+            currentPage = Math.floor(that.model.searchSettings.offset/that.model.searchSettings.limit) + 1;
+        }
+
+        var navStart    = that.locate("navStart");
+        var navPrevious = that.locate("navPrevious");
+        var navNext     = that.locate("navNext");
+        var navEnd      = that.locate("navEnd");
+
+        if (pages === 1) {
+            templates.prependTo(container,"search-navigation-page-link",{offset: 0, page: 1});
+        }
+        else {
+
+            if (currentPage > 1 ) {
+                navPrevious.attr('offset', (currentPage - 2) * that.model.searchSettings.limit);
+            }
+
+            if (pages > 1 && currentPage < pages) {
+                navNext.attr('offset', currentPage * that.model.searchSettings.limit);
+                navEnd.attr('offset', (pages-1) * that.model.searchSettings.limit);
+            }
+
+            for (var a = pages - 1; a >= 0; a--) {
+                var page = a+1;
+                var pageOffset = a * that.model.searchSettings.limit;
+
+                if (page === currentPage) {
+                    templates.prependTo(container,"search-navigation-page-number",{offset: pageOffset, page: page});
+                }
+                else {
+                    templates.prependTo(container,"search-navigation-page-link",{offset: pageOffset, page: page});
+                }
+            }
+        }
+
+        // Fire a "nav loaded" event so that we can wire up the appropriate listeners
+        that.events.navBarLoaded.fire();
+    };
+
+    // We have to reset the offset if someone changes the search terms.  Otherwise we could be on a page that's larger than the result set.
+    search.clearOffset = function(that)  {
+        that.applier.change("searchSettings.offset",0);
+    };
+
     // This function is meant to be called on an individual alias entry toggle
     search.toggleAliasRecord = function (that, event) {
         var element = $(event.currentTarget);
@@ -56,6 +124,7 @@
             success: that.displayResults,
             error:   that.displayError,
             data:    {
+                offset: that.model.searchSettings.offset,
                 limit:  that.model.searchSettings.limit,
                 sort:   that.model.searchSettings.sort,
                 status: that.model.searchSettings.statuses
@@ -121,17 +190,10 @@
 
             // TODO:  Come up with a meaningful list of untranslated records
 
-            // TODO:  Expose pagination information once we have it
-            var localEnd = data.offset + data.limit;
-            var navData = {
-                count:        data.total_rows,
-                start:        data.offset + 1,
-                end:          data.total_rows < localEnd ? data.total_rows : localEnd,
-                untranslated: 0
-            };
+            that.applier.change("count", data.total_rows);
 
             // prepend the control title bar
-            templates.appendTo(viewport, "search-navigation", navData);
+            templates.appendTo(viewport, "search-navigation", that.model);
 
             // display each record in the results area
             data.records.forEach(function(record) {
@@ -150,16 +212,6 @@
         templates.loadTemplates(function() { search.searchSettingsChanged(that); });
     };
 
-    /*
-
-     Wire up the status toggle show/hide
-     (fix the styles afterward)
-
-     Update the text after the list changes using a new function.
-
-
-     */
-
     fluid.defaults("ctr.components.search", {
         gradeNames: ["fluid.viewRelayComponent", "autoInit"],
         baseUrl: "/api",
@@ -173,6 +225,12 @@
             "statusToggle":  ".ptd-search-status-toggle",
             "statusText":    ".ptd-search-status-current-text",
             "statusSelect":  ".ptd-search-status-selector",
+            "navStart":      ".ptd-search-nav-start",
+            "navPrevious":   ".ptd-search-nav-previous",
+            "pageLinks":     ".ptd-search-page-links",
+            "navNext":       ".ptd-search-nav-next",
+            "navEnd":        ".ptd-search-nav-end",
+            "navPageLink":   ".ptd-search-nav-page-link",
             "viewport":      ".ptd-viewport"
         },
         bindings: [
@@ -198,7 +256,8 @@
                 options: {
                     model: {
                         searchSettings: {
-                            limit:    -1,
+                            offset:   0,
+                            limit:    100,
                             sort:     "uniqueId",
                             statuses: ["active","unreviewed","candidate","draft"],
                             query:    ""
@@ -226,11 +285,16 @@
         events: {
             "refresh":           "preventable",
             "clearSearchFilter": "preventable",
-            "markupLoaded":      "preventable"
+            "markupLoaded":      "preventable",
+            "navBarLoaded":      "preventable"
         },
         invokers: {
             "toggleAliasRecord": {
                 funcName: "ctr.components.search.toggleAliasRecord",
+                args: [ "{that}", "{arguments}.0"]
+            },
+            "changePage": {
+                funcName: "ctr.components.search.changePage",
                 args: [ "{that}", "{arguments}.0"]
             },
             "clearSearchFilter": {
@@ -253,6 +317,10 @@
                 funcName: "ctr.components.search.updateStatusControls",
                 args: ["{that}"]
             },
+            "updatePagination": {
+                funcName: "ctr.components.search.updatePagination",
+                args: ["{that}"]
+            },
             "toggleStatusControls": {
                 funcName: "ctr.components.search.toggleStatusControls",
                 args: ["{that}"]
@@ -263,7 +331,26 @@
             }
         },
         modelListeners: {
-            "searchSettings.*": [
+            "searchSettings.offset": [
+                {
+                    funcName: "ctr.components.search.searchSettingsChanged",
+                    excludeSource: "init",
+                    args: ["{that}"]
+                }
+            ],
+            "searchSettings.limit": [
+                {
+                    funcName: "ctr.components.search.searchSettingsChanged",
+                    excludeSource: "init",
+                    args: ["{that}"]
+                }
+            ],
+            "searchSettings.query":    [
+                {
+                    funcName: "ctr.components.search.clearOffset",
+                    excludeSource: "init",
+                    args: ["{that}"]
+                },
                 {
                     funcName: "ctr.components.search.searchSettingsChanged",
                     excludeSource: "init",
@@ -295,6 +382,18 @@
                     args:   "{that}.toggleStatusControls"
                 }
             ],
+            navBarLoaded: [
+                {
+                    "this": "{that}.dom.navPageLink",
+                    method: "click",
+                    args:   "{that}.changePage"
+                },
+                {
+                    "this": "{that}.dom.navPageLink",
+                    method: "keypress",
+                    args:   "{that}.changePage"
+                }
+            ],
             markupLoaded: [
                 {
                     "this": "{that}.dom.clear",
@@ -318,6 +417,10 @@
                 },
                 {
                     funcName: "ctr.components.search.updateStatusControls",
+                    args: ["{that}"]
+                },
+                {
+                    funcName: "ctr.components.search.updatePagination",
                     args: ["{that}"]
                 },
                 {
