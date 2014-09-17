@@ -1,10 +1,11 @@
 {
-    "$schema": "http://json-schema.org/draft-04/schema#",
     "type": "object",
+    "id": "record",
 
     "definitions": {
         "aliasOf": {
             "type": "string",
+            "pattern": "^[a-z]+([A-Z][a-z]+)*$",
             "description": "The unique identifier of the parent record this record is an alias of."
         },
         "applicationUniqueFlag": {
@@ -66,33 +67,29 @@
         }
     },
 
-
     "properties": {
         "type": {
-            "$ref": "#/definitions/type"
+            "$ref": "record#/definitions/type"
         },
         "permanency": {
-            "$ref": "#/definitions/permanency"
+            "$ref": "record#/definitions/permanency"
         },
         "namespace": {
-            "$ref": "#/definitions/namespace"
+            "$ref": "record#/definitions/namespace"
         },
         "uniqueId": {
-            "$ref": "#/definitions/uniqueId"
+            "$ref": "record#/definitions/uniqueId"
         },
         "notes": {
-            "$ref": "#/definitions/notes"
+            "$ref": "record#/definitions/notes"
         },
         "status": {
-            "$ref": "#/definitions/status"
+            "$ref": "record#/definitions/status"
         },
         "updated": {
-            "$ref": "#/definitions/updated"
-        },
-        "versions": {
-            "anyOf": [{"$ref": "#"}]
+            "$ref": "record#/definitions/updated"
         }
     },
 
-    "required": ["uniqueId", "type", "status", "updated"]
+    "required": ["type","uniqueId","status","updated"]
 }

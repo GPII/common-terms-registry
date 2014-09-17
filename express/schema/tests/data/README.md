@@ -1,0 +1,1 @@
+This directory contains sample files for use in testing JSON schema validation.

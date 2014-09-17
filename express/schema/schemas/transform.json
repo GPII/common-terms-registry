@@ -1,14 +1,15 @@
 {
-    "$schema": "http://json-schema.org/draft-04/schema#",
-    "id": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/",
     "type": "object",
+    "id": "transform",
     "allOf": [
-        {"$ref": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/alias.json"},
+        {"$ref": "alias"},
         {
-            "required": ["valueSpace"],
             "properties": {
-                "valueSpace": {"$ref": "record.json#/definitions/valueSpace" }
-            }
+                "valueSpace": {
+                    "$ref": "record#/definitions/valueSpace"
+                }
+            },
+            "required": ["valueSpace"]
         }
     ]
 }

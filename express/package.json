@@ -1,5 +1,5 @@
 {
-  "name": "application-name",
+  "name": "ptd-front-end",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -20,7 +20,8 @@
     "morgan": "~1.0.0",
     "request": "~2.34.0",
     "static-favicon": "~1.0.0",
-    "underscore-node": "^0.1.2"
+    "underscore-node": "^0.1.2",
+    "z-schema": "^3.0.0"
   },
   "devDependencies": {
     "express-pouchdb": "^0.4.0",

@@ -1,0 +1,16 @@
+{
+    "empty": {},
+    "missing required parent data": {
+        "termLabel":  "got it",
+        "definition": "also good"
+    },
+    "bogus uniqueId": {
+        "type":       "term",
+        "status":     "draft",
+        "updated":    "2014-05-22T10:01:33.655Z",
+        "uniqueId":   "nope a dope",
+        "termLabel":  "got it",
+        "definition": "also good"
+    },
+    "required": ["type","uniqueId","status","updated"]
+}

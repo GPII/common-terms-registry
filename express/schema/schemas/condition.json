@@ -1,14 +1,15 @@
 {
-    "$schema": "http://json-schema.org/draft-04/schema#",
-    "id": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/",
     "type": "object",
+    "id": "condition",
     "allOf": [
-        {"$ref": "record.json"},
+        {"$ref": "record"},
         {
-            "required": ["definition"],
             "properties": {
-                "definition": {"$ref": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/record.json#/definitions/definition"}
-            }
+                "definition": {
+                    "$ref": "record#/definitions/definition"
+                }
+            },
+            "required": ["definition"]
         }
     ]
 }

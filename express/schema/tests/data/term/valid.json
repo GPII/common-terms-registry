@@ -1,0 +1,10 @@
+{
+    "all fields": {
+        "type":       "term",
+        "status":     "draft",
+        "updated":    "2014-05-22T10:01:33.655Z",
+        "uniqueId":   "thisIsReasonable",
+        "termLabel":  "got it",
+        "definition": "also good"
+    }
+}

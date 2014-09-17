@@ -1,30 +1,36 @@
 {
-    "$schema": "http://json-schema.org/draft-04/schema#",
     "type": "object",
+    "id":   "term",
+
     "allOf": [
-        {"$ref": "record.json"},
+        {"$ref": "record"},
         {
             "required": ["termLabel","definition"],
             "properties": {
                 "uniqueId": {
-                    "$ref": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/record.json#/definitions/uniqueId",
+                    "type": "string",
+                    "description": "A completely unique identifier for this record.  Must be in lowerCamelCase with no spaces.",
                     "pattern": "^[a-z]+([A-Z][a-z]+)*$"
                 },
                 "aliases": {
-                    "anyOf": [ {"$ref": "alias.json"} ]
+                    "anyOf": [ {"$ref": "alias"} ]
                 },
                 "transformations": {
-                    "anyOf": [ {"$ref": "transform.json"} ]
+                    "anyOf": [ {"$ref": "transform"} ]
                 },
                 "translations": {
-                    "anyOf": [ {"$ref": "translation.json"} ]
+                    "anyOf": [ {"$ref": "translation"} ]
                 },
-                "defaultValue": {"$ref": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/record.json#/definitions/defaultValue"},
-                "valueSpace": {"$ref": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/record.json#/definitions/valueSpace"},
-                "termLabel": {"$ref": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/record.json#/definitions/termLabel"},
-                "definition": {"$ref": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/record.json#/definitions/definition"},
-                "uses": {"$ref": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/record.json#/definitions/uses"},
-                "applicationUniqueFlag": {"$ref": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/record.json#/definitions/applicationUniqueFlag"}
+                "defaultValue": {"$ref": "record#/definitions/defaultValue"},
+                "valueSpace": {"$ref": "record#/definitions/valueSpace"},
+                "termLabel": {
+                    "$ref": "record#/definitions/termLabel"
+                },
+                "definition": {
+                    "$ref": "record#/definitions/definition"
+                },
+                "uses": {"$ref": "record#/definitions/uses"},
+                "applicationUniqueFlag": {"$ref": "record#/definitions/applicationUniqueFlag"}
             }
         }
     ]

@@ -1,15 +1,16 @@
 {
-    "$schema": "http://json-schema.org/draft-04/schema#",
     "type": "object",
+    "id":   "alias",
+
     "allOf": [
-        {"$ref": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/record.json"},
+        {"$ref": "record"},
         {
-            "required": ["termLabel","aliasOf"],
+            "required": ["aliasOf","termLabel"],
             "properties": {
-                "aliasOf":          {"$ref": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/record.json#/definitions/aliasOf"},
-                "termLabel":        {"$ref": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/record.json#/definitions/termLabel"},
-                "uses":             {"$ref": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/record.json#/definitions/uses"},
-                "defaultValue": {"$ref": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/record.json#/definitions/defaultValue"}
+                "aliasOf":      { "$ref": "record#/definitions/aliasOf" },
+                "termLabel":    { "$ref": "record#/definitions/termLabel" },
+                "uses":         { "$ref": "record#/definitions/uses" },
+                "defaultValue": { "$ref": "record#/definitions/defaultValue" }
             }
         }
     ]

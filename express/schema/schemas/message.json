@@ -1,6 +1,7 @@
 {
-    "$schema": "http://json-schema.org/draft-04/schema#",
     "type": "object",
+    "id": "message",
+
     "properties": {
         "ok": {
             "type": "boolean",
@@ -14,11 +15,11 @@
             "type": "object",
             "description": "An optional object containing more details about any errors encountered."
         },
-        "record": {"$ref": "record.json"},
+        "record": {"$ref": "record"},
         "records": {
-            "anyOf": [ {"$ref": "record.json"} ]
+            "anyOf": [ {"$ref": "record"} ]
         }
 
     },
-    "required": ["ok", "message"]
+    "required": ["ok","message"]
 }

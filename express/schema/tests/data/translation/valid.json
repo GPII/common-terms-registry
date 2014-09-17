@@ -1,0 +1,11 @@
+{
+    "all fields": {
+        "uniqueId":      "validRecord",
+        "translationOf": "validParent",
+        "type":          "term",
+        "termLabel":     "A test term",
+        "status":        "active",
+        "updated":       "2014-05-22T10:01:33.655Z",
+        "definition":    "This is a sample term created for test purposes."
+    }
+}

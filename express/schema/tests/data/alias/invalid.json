@@ -1,0 +1,21 @@
+{
+    "missing aliasOf": {
+        "uniqueId":   "invalidRecord",
+        "type":       "alias",
+        "termLabel":  "A test alias with missing data.",
+        "definition": "This record is missing an aliasOf field."
+    },
+    "empty": {},
+    "missing required parent data": {
+        "aliasOf":    "somethingSuperCool"
+    },
+    "bogus aliasOf": {
+        "uniqueId":   "best alias ever",
+        "aliasOf":    "should not work",
+        "type":       "term",
+        "status":     "draft",
+        "updated":    "2014-05-22T10:01:33.655Z",
+        "termLabel":  "got it",
+        "definition": "also good"
+    }
+}

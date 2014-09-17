@@ -1,18 +1,18 @@
 {
-    "$schema": "http://json-schema.org/draft-04/schema#",
-    "id": "https://raw.githubusercontent.com/the-t-in-rtf/common-terms-registry/master/express/public/schema/",
     "type": "object",
+    "id": "translation",
+
     "allOf": [
-        {"$ref": "record.json"},
+        {"$ref": "record"},
         {
-            "required": ["termLabel","translationOf"],
             "properties": {
-                "translationOf": {"$ref": "record.json#/definitions/translationOf"},
-                "valueSpace": {"$ref": "record.json#/definitions/valueSpace"},
-                "termLabel": {"$ref": "record.json#/definitions/termLabel"},
-                "definition": {"$ref": "record.json#/definitions/definition"},
-                "uses": {"$ref": "record.json#/definitions/uses"}
+                "translationOf": {"$ref": "record#/definitions/translationOf"},
+                "valueSpace": {"$ref": "record#/definitions/valueSpace"},
+                "termLabel": {"$ref": "record#/definitions/termLabel"},
+                "definition": {"$ref": "record#/definitions/definition"},
+                "uses": {"$ref": "record#/definitions/uses"}
             }
         }
-    ]
+    ],
+    "required": ["translationOf","termLabel"]
 }

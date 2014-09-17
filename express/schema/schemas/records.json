@@ -1,6 +1,6 @@
 {
-    "$schema": "http://json-schema.org/draft-04/schema#",
     "type": "object",
+    "id": "records",
 
     "definitions": {
         "ok": {
@@ -20,44 +20,59 @@
             "format": "date-time"
         },
         "statuses": {
+            "type": "array",
             "anyOf": [
                 {
-                    "$ref": "record.json#/definitions/status"
+                    "$ref": "record#/definitions/status"
                 }
             ]
         },
         "recordTypes": {
+            "type": "array",
             "anyOf": [
                 {
-                    "$ref": "record.json#/definitions/type"
+                    "$ref": "record#/definitions/type"
                 }
             ]
         },
         "filters": {
-            "anyOf": [
-                {"$ref": "#/definitions/updated"},
-                {"$ref": "#/definitions/statuses"},
-                {"$ref": "#/definitions/recordTypes"}
-            ]
+            "type": "object",
+            "properties": {
+                "updated": {
+                    "$ref": "search#/definitions/updated"
+                },
+                "statuses": {
+                    "type": "array",
+                    "anyOf": [
+                        {"$ref": "search#/definitions/statuses"}
+                    ]
+                },
+                "recordTypes": {
+                    "type": "array",
+                    "anyOf": [
+                        {"$ref": "search#/definitions/recordTypes"}
+                    ]
+                }
+            }
         },
         "records": {
             "type": "array",
             "items": {
                 "anyOf": [
                     {
-                        "$ref": "term.json"
+                        "$ref": "term"
                     },
                     {
-                        "$ref": "alias.json"
+                        "$ref": "alias"
                     },
                     {
-                        "$ref": "transform.json"
+                        "$ref": "transform"
                     },
                     {
-                        "$ref": "translation.json"
+                        "$ref": "translation"
                     },
                     {
-                        "$ref": "operator.json"
+                        "$ref": "condition"
                     }
                 ]
             }
@@ -70,27 +85,26 @@
 
     "properties": {
         "ok": {
-            "$ref": "#/definitions/ok"
+            "$ref": "records#/definitions/ok"
         },
         "total_rows": {
-            "$ref": "#/definitions/total_rows"
+            "$ref": "records#/definitions/total_rows"
         },
         "offset": {
-            "$ref": "#/definitions/offset"
+            "$ref": "records#/definitions/offset"
         },
         "limit": {
-            "$ref": "#/definitions/limit"
+            "$ref": "records#/definitions/limit"
         },
         "filters": {
-            "$ref": "#/definitions/filters"
+            "$ref": "records#/definitions/filters"
         },
         "records": {
-            "$ref": "#/definitions/records"
+            "$ref": "records#/definitions/records"
         },
         "retrievedAt": {
-            "$ref": "#/definitions/retrievedAt"
+            "$ref": "records#/definitions/retrievedAt"
         }
     },
-
-    "required": ["ok", "total_rows", "offset", "limit", "retrievedAt"]
+    "required": ["ok","total_rows","offset","limit","filters","records","retrievedAt"]
 }
