@@ -80,6 +80,8 @@ module.exports = function(config) {
 
             // TODO:  Add support for versioning
 
+            // TODO:  Confirm that the parent record exists when adding or editing a child record.
+
             var errors = record.schemaHelper.validate(newRecord.type, newRecord);
             if (errors) {
                 return res.status(400).send({"ok": false, "message": "The data you have entered is not valid.  Please review.", "errors": errors});

@@ -14,6 +14,8 @@ module.exports = function(config) {
             return res.status(401).send(JSON.stringify({ok:false, message: "You must be logged in to use this function."}));
         }
 
+        // TODO:  Confirm that the parent record exists when adding a child record.
+
         var checkRequest = require('request');
         checkRequest.get(config['couch.url'] + "/_design/api/_view/entries?key=%22" + req.body.uniqueId + "%22", function(checkError,checkResponse,checkBody) {
             if (checkError && checkError !== null) {
