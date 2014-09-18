@@ -5,7 +5,7 @@
     "definitions": {
         "aliasOf": {
             "type": "string",
-            "pattern": "^[a-z]+([A-Z][a-z]+)*$",
+            "pattern": "^[0-9a-z]+([A-Z][a-z]+)*$",
             "description": "The unique identifier of the parent record this record is an alias of."
         },
         "applicationUniqueFlag": {
@@ -42,6 +42,7 @@
         },
         "translationOf": {
             "type": "string",
+            "pattern": "^[0-9a-z]+([A-Z][a-z]+)*$",
             "description": "The unique identifier of the parent record this record is a translation of."
         },
         "type": {

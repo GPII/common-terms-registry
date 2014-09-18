@@ -10,7 +10,7 @@
                 "uniqueId": {
                     "type": "string",
                     "description": "A completely unique identifier for this record.  Must be in lowerCamelCase with no spaces.",
-                    "pattern": "^[a-z]+([A-Z][a-z]+)*$"
+                    "pattern": "^[0-9a-z]+([A-Z][a-z]+)*$"
                 },
                 "aliases": {
                     "anyOf": [ {"$ref": "alias"} ]
