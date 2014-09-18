@@ -95,17 +95,12 @@ write.runTests = function() {
                 jqUnit.assertNull("There should be no errors returned",e);
                 jqUnit.stop();
 
-                console.log("put body:" + JSON.stringify(b));
-
                 // Make sure the record was actually created
                 request.get("http://localhost:" + write.express.app.get('port') + "/record/" + write.validRecord.uniqueId,function(e,r,b) {
                     jqUnit.start();
                     jqUnit.assertNull("There should be no errors returned",e);
 
-                    console.log("verify body:" + b);
-
                     var jsonData = JSON.parse(b);
-                    debugger;
                     jqUnit.assertValue("There should be a record returned.", jsonData.record);
 
                     if (jsonData.record && jsonData.record !== undefined) {
@@ -199,37 +194,34 @@ write.runTests = function() {
         });
     });
 
+    jqUnit.asyncTest("Use PUT to add an invalid record", function() {
+        var options = {
+            "url": "http://localhost:" + write.config.port + "/record/",
+            "json": write.invalidRecord
+        };
 
-    // We cannot rely on our validate_doc_update function in Couch to enforce basic validation from within Pouch:
-    // https://github.com/pouchdb/pouchdb/issues/1412
-//    jqUnit.asyncTest("Use PUT to add an invalid record", function() {
-//        var options = {
-//            "url": "http://localhost:" + write.config.port + "/record/",
-//            "json": write.invalidRecord
-//        };
-//
-//        var request = require("request");
-//        request.put(options, function(e,r,b) {
-//            jqUnit.start();
-//
-//            jqUnit.assertNull("There should be no errors returned",e);
-//
-//            console.log("b:" + JSON.stringify(b));
-//            jqUnit.assertFalse("The response should not be 'OK'.", b.ok);
-//
-//            jqUnit.stop();
-//
-//            // Make sure the record was not actually created
-//            request.get("http://localhost:" + write.express.app.get('port') + "/record/" + write.invalidRecord.uniqueId,function(e,r,b) {
-//                jqUnit.start();
-//                jqUnit.assertNull("There should be no errors returned",e);
-//
-//                var jsonData = JSON.parse(b);
-//
-//                jqUnit.assertTrue("There should be no record returned.", jsonData.record === null || jsonData.record === undefined || jsonData.record === {});
-//            });
-//        });
-//    });
+        var request = require("request");
+        request.put(options, function(e,r,b) {
+            jqUnit.start();
+
+            jqUnit.assertNull("There should be no errors returned",e);
+
+            jqUnit.assertFalse("The response should not be 'OK'.", b.ok);
+            jqUnit.assertValue("There should be validation errors.", b.errors);
+
+            jqUnit.stop();
+
+            // Make sure the record was not actually created
+            request.get("http://localhost:" + write.express.app.get('port') + "/record/" + write.invalidRecord.uniqueId,function(e,r,b) {
+                jqUnit.start();
+                jqUnit.assertNull("There should be no errors returned",e);
+
+                var jsonData = JSON.parse(b);
+
+                jqUnit.assertTrue("There should be no record returned.", jsonData.record === null || jsonData.record === undefined || jsonData.record === {});
+            });
+        });
+    });
 
     jqUnit.asyncTest("Use POST to create a new record (not logged in)", function() {
         var options = {
@@ -301,10 +293,35 @@ write.runTests = function() {
 
     // TODO:  Test that POSTING a new record only works when a user is logged in
 
-    // TODO:  Test using POST with an invalid record
-    // We cannot rely on our validate_doc_update function in Couch to enforce basic validation from within Pouch:
-    // https://github.com/pouchdb/pouchdb/issues/1412
+    jqUnit.asyncTest("Use POST to add an invalid record", function() {
+        var options = {
+            "url": "http://localhost:" + write.config.port + "/record/",
+            "json": write.invalidRecord
+        };
 
+        var request = require("request");
+        request.post(options, function(e,r,b) {
+            jqUnit.start();
+
+            jqUnit.assertNull("There should be no raw errors", e);
+
+            debugger;
+            jqUnit.assertFalse("The response should not be 'OK'.", b.ok);
+            jqUnit.assertValue("There should be validation errors.", b.errors);
+
+            jqUnit.stop();
+
+            // Make sure the record was not actually created
+            request.get("http://localhost:" + write.express.app.get('port') + "/record/" + write.invalidRecord.uniqueId,function(e,r,b) {
+                jqUnit.start();
+                jqUnit.assertNull("There should be no errors returned",e);
+
+                var jsonData = JSON.parse(b);
+
+                jqUnit.assertTrue("There should be no record returned.", jsonData.record === null || jsonData.record === undefined || jsonData.record === {});
+            });
+        });
+    });
 
     // TODO:  Test that DELETE only works when a user is logged in
 
@@ -334,8 +351,6 @@ write.runTests = function() {
                 jqUnit.assertNull("There should be no errors returned",e);
 
                 jqUnit.stop();
-
-                console.log(JSON.stringify(b));
 
                 // Make sure the record no longer exists
                 request.get("http://localhost:" + write.express.app.get('port') + "/record/" + originalRecord.uniqueId, function(e,r,b) {
