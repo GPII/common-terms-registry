@@ -16,7 +16,7 @@ module.exports = function(config) {
     });
 
     helper.setHeaders = function setHeaders (res, key) {
-        var schemaUrl = config.base.url + "/schema/" + key + ".json";
+        var schemaUrl = config["base.url"] + "/schema/" + key + ".json";
 
         if (res.headersSent) {
             console.error("Can't set headers, they have already been sent.");
@@ -46,8 +46,46 @@ module.exports = function(config) {
     };
 
     helper.sanitizeValidationErrors = function(errors) {
-        // TODO:  Unpack the format and clean it up
-        return errors;
+        /*
+         z-schema gives us output like:
+
+         [
+             {
+                 "code": "OBJECT_MISSING_REQUIRED_PROPERTY",
+                 "params":["termLabel"],
+                 "message":"Missing required property: termLabel",
+                 "path":"#/"
+             },
+             {
+                 "code":"PATTERN",
+                 "params":["^[a-z]+([A-Z][a-z]+)*$","6DotComputerBrailleTable"],
+                 "message":"String does not match pattern ^[a-z]+([A-Z][a-z]+)*$: 6DotComputerBrailleTable",
+                 "path":"#/uniqueId"
+             }
+         ]
+
+         See https://github.com/zaggino/z-schema/blob/master/src/Errors.js for the list of errors and
+         https://github.com/zaggino/z-schema/blob/master/src/JsonValidation.js for the logic behind them.
+
+         We need to turn this into something human-readable, especially for pattern-based matches like uniqueId.
+
+         We also need to break it down by field so that we can show feedback in-context;
+         */
+        var saneErrors = {};
+
+        errors.forEach(function(error){
+            // Errors with fields that contain data are already associated with the field based on the path
+            var field = error.path.replace("#/","");
+
+            // Document-level failures about missing fields need to associated with the field based on the params
+            if (error.code === "OBJECT_MISSING_REQUIRED_PROPERTY") { field = error.params[0]; }
+
+            // We could have multiple validation errors for a single field, so we need to allow arrays
+            if (!saneErrors[field]) { saneErrors[field]=[];}
+            saneErrors[field].push(error.message);
+        });
+
+        return saneErrors;
     };
 
     return helper;
