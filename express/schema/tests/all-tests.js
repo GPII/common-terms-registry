@@ -3,36 +3,19 @@
 var fluid = require("infusion");
 var namespace = "gpii.ctr.schemas.tests";
 var schemas   = fluid.registerNamespace(namespace);
-var fs = require('fs');
 
-// We use z-schema to validate the schemas themselves
+var loader     = require("../../configs/lib/config-loader");
+schemas.config = loader.loadConfig(require("../../configs/express/test"));
+schemas.helper = require("../lib/schema-helper")(schemas.config);
+
+// We use z-schema directly to validate our schemas independently of the helper library
 var ZSchema   = require("z-schema");
-var options   = {
-    noExtraKeywords: true
-};
-
-schemas.schemaNames = [
-    "record",
-    "alias",
-    "condition",
-    "message",
-    "records",
-    "search",
-    "term",
-    "transform",
-    "translation"
-];
+var options   = { noExtraKeywords: true };
 
 schemas.runTests = function() {
-    // Make sure the validator is aware of all the references we plan to use by preloading them
-//    schemas.schemaNames.forEach(function(schemaName){
-//
-//    });
-
-
     var jqUnit = fluid.require("jqUnit");
     var schemaContents = {};
-    schemas.schemaNames.forEach(function(schemaName){
+    schemas.config.schemas.names.forEach(function(schemaName){
         var schemaContent = require("../schemas/" + schemaName + ".json");
         schemaContents[schemaName] = schemaContent;
     });
@@ -48,37 +31,27 @@ schemas.runTests = function() {
     });
 
     jqUnit.module("Testing invalid records...");
-    schemas.schemaNames.forEach(function(schemaName){
+    schemas.config.schemas.names.forEach(function(schemaName){
         var testRecords = require("./data/" + schemaName + "/invalid.json");
 
         Object.keys(testRecords).forEach(function(key){
             jqUnit.test("Testing schema '" + schemaName + "' with invalid record '" + key + "'...", function() {
-                var validator = new ZSchema(options);
-                validator.validateSchema(Object.keys(schemaContents).map(function(v) { return schemaContents[v]; }));
+                var errors = schemas.helper.validate(schemaName,testRecords[key]);
 
-                var valid = validator.validate(testRecords[key], schemaContents[schemaName]);
-                var err   = validator.getLastErrors();
-
-                jqUnit.assertFalse("Validation should have failed for record '" + key + "'.", valid);
-                jqUnit.assertTrue("There should have been one or more errors returned.", err && (err.length > 0));
+                jqUnit.assertValue("Validation should have failed for record '" + key + "'.", errors);
             });
         });
     });
 
     jqUnit.module("Testing valid records...");
-    schemas.schemaNames.forEach(function(schemaName){
+    schemas.config.schemas.names.forEach(function(schemaName){
         var testRecords = require("./data/" + schemaName + "/valid.json");
 
         Object.keys(testRecords).forEach(function(key){
             jqUnit.test("Testing schema '" + schemaName + "' with valid record '" + key + "'...", function() {
-                var validator = new ZSchema(options);
-                validator.validateSchema(Object.keys(schemaContents).map(function(v) { return schemaContents[v]; }));
+                var errors = schemas.helper.validate(schemaName,testRecords[key]);
 
-                var valid = validator.validate(testRecords[key], schemaContents[schemaName]);
-                var err   = validator.getLastErrors();
-
-                jqUnit.assertTrue("Validation should not have failed for record '" + key + "'.", valid);
-                jqUnit.assertUndefined("Errors were returned: " + JSON.stringify(err), err);
+                jqUnit.assertUndefined("Validation errors returned for record '" + key + "':\n" + JSON.stringify(errors), errors);
             });
         });
     });

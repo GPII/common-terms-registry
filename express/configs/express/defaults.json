@@ -30,15 +30,17 @@
     "allowedRecordTypes" : ["term","alias","transform","translation","condition"],
     "safeUserFields": "name email displayName",
     "adminRoles": [ "admin"],
-    "schemaUrls": {
-        "alias":       "https://terms.raisingthefloor.org/schema/alias.json",
-        "term":        "https://terms.raisingthefloor.org/schema/term.json",
-        "message":     "https://terms.raisingthefloor.org/schema/message.json",
-        "record":      "https://terms.raisingthefloor.org/schema/record.json",
-        "records":     "https://terms.raisingthefloor.org/schema/records.json",
-        "condition":   "https://terms.raisingthefloor.org/schema/condition.json",
-        "search":      "https://terms.raisingthefloor.org/schema/search.json",
-        "transform":   "https://terms.raisingthefloor.org/schema/transform.json",
-        "translation": "https://terms.raisingthefloor.org/schema/translation.json"
+    "schemas": {
+        "names": [
+            "record",
+            "alias",
+            "condition",
+            "message",
+            "records",
+            "search",
+            "term",
+            "transform",
+            "translation"
+        ]
     }
 }
