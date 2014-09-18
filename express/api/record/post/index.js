@@ -8,7 +8,6 @@ module.exports = function(config) {
     var namespace = "gpii.ctr.record.post";
 
     var record = fluid.registerNamespace(namespace);
-    record.schema="record";
     record.error = require("../../lib/error")(config);
 
     var express = require('express');

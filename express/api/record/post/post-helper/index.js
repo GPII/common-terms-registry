@@ -4,10 +4,11 @@
 
 // The PUT method also allows creating new records, so we expose the same functions for both.
 module.exports = function(config) {
+    var schemaHelper = require("../../../../schema/lib/schema-helper")(config);
     return function(req, res){
         // Make sure the current record has at least a uniqueId
         if (!req.body || !req.body.uniqueId) {
-            return res.status(400).send({"ok":"false","message": "You must provide a uniqueId of the record you wish to create."});
+            return res.status(400).send({"ok":false, "message": "You must provide a uniqueId of the record you wish to create."});
         }
         if (!req.session || !req.session.user) {
             return res.status(401).send(JSON.stringify({ok:false, message: "You must be logged in to use this function."}));
@@ -21,7 +22,7 @@ module.exports = function(config) {
 
             var jsonData = JSON.parse(checkBody);
             if (jsonData.rows && jsonData.rows.length > 0) {
-                return res.status(409).send({"ok":false,"message": "Could not post record because another record with the same uniqueId already exists."});
+                return res.status(409).send({"ok":false, "message": "Could not post record because another record with the same uniqueId already exists."});
             }
 
             var originalRecord = req.body;
@@ -30,9 +31,10 @@ module.exports = function(config) {
 
             // TODO: Set the "author" field to the current user (use req.session.user)
 
-            // TODO: Validate the record against the relevant JSON schema
-
-            // TODO: Make schema validation work for more than just the generic "record" type
+            var errors = schemaHelper.validate(updatedRecord.type, updatedRecord);
+            if (errors) {
+                return res.status(400).send({"ok": false, "message": "The data you have entered is not valid.  Please review.", "errors": errors});
+            }
 
             var writeRequest = require('request');
             var writeOptions = {

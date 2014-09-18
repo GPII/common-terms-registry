@@ -33,7 +33,7 @@ module.exports = function(config) {
 
         // Make sure the current record has at least a uniqueId
         if (!req.body || !req.body.uniqueId) {
-            return res.status(400).send({"ok":"false","message": "You must provide a uniqueId of the record you wish to update."});
+            return res.status(400).send({"ok": false, "message": "You must provide a uniqueId of the record you wish to update."});
         }
         if (!req.session || !req.session.user) {
             return res.status(401).send(JSON.stringify({ok:false, message: "You must be logged in to use this function."}));
@@ -44,7 +44,7 @@ module.exports = function(config) {
         readRequest.get(config['couch.url'] + "/_design/api/_view/entries?key=%22" + req.body.uniqueId + "%22", function(readError,readResponse,readBody) {
             if (readError) {
                 console.log(readError);
-                return res.status(500).send({"ok":"false","message": "There was an error retrieving the record with uniqueId '" + req.body.uniqueId + "'..."});
+                return res.status(500).send({"ok": false, "message": "There was an error retrieving the record with uniqueId '" + req.body.uniqueId + "'..."});
             }
 
             var jsonData = JSON.parse(readBody);
@@ -82,7 +82,7 @@ module.exports = function(config) {
 
             var errors = record.schemaHelper.validate(newRecord.type, newRecord);
             if (errors) {
-                return res.status(400).send({"ok":"false","message": "The data you have entered is not valid.  Please review.", "errors": errors});
+                return res.status(400).send({"ok": false, "message": "The data you have entered is not valid.  Please review.", "errors": errors});
             }
 
             // Upload the combined record to CouchDB
@@ -95,7 +95,7 @@ module.exports = function(config) {
             writeRequest.put(writeOptions, function(writeError, writeResponse, writeBody){
                 if (writeError) {
                     console.log(writeError);
-                    return res.status(500).send({"ok":"false","message": "There was an error writing the record with uniqueId '" + req.body.uniqueId + "'..."});
+                    return res.status(500).send({"ok": false, "message": "There was an error writing the record with uniqueId '" + req.body.uniqueId + "'..."});
                 }
 
                 if (writeResponse.statusCode === 201) {

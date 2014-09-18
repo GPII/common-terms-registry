@@ -1,6 +1,8 @@
 {
-    "uniqueId": "validRecord",
-    "type": "term",
-    "termLabel": "A test term",
+    "uniqueId":   "validRecord",
+    "type":       "term",
+    "status":     "active",
+    "updated":    "2014-05-22T10:01:33.655Z",
+    "termLabel":  "A test term",
     "definition": "This is a sample term created for test purposes."
 }
