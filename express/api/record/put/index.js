@@ -3,12 +3,11 @@
 module.exports = function(config) {
     var fluid = require('infusion');
 
-    var schemaHelper = require("../../../schema/lib/schema-helper")(config);
     var namespace = "gpii.ctr.record.put";
 
-    var record = fluid.registerNamespace(namespace);
-    record.error = require("../../lib/error")(config);
-    record.schema="record";
+    var record          = fluid.registerNamespace(namespace);
+    record.error        = require("../../lib/error")(config);
+    record.schemaHelper = require("../../../schema/lib/schema-helper")(config);
 
     var request = require('request');
 
@@ -79,11 +78,12 @@ module.exports = function(config) {
 
             // TODO: Set the "author" field to the current user
 
-            // TODO: Validate the record against the relevant JSON schema
-
-            // TODO: Make schema validation work for more than just the generic "record" type
-
             // TODO:  Add support for versioning
+
+            var errors = record.schemaHelper.validate(newRecord.type, newRecord);
+            if (errors) {
+                return res.status(400).send({"ok":"false","message": "The data you have entered is not valid.  Please review.", "errors": errors});
+            }
 
             // Upload the combined record to CouchDB
             var writeRequest = require('request');
