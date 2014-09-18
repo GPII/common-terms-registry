@@ -6,14 +6,14 @@ module.exports = function(config) {
     var pouch = fluid.registerNamespace("gpii.ctr.api.tests.pouch");
 
     pouch.start = function(callback) {
-        var PouchDB = require('pouchdb');
+        var PouchDB    = require('pouchdb');
 
         var MemPouchDB = PouchDB.defaults({db: require('memdown')});
-        var tr = new MemPouchDB("tr");
-        var _users = new MemPouchDB("_users");
+        var tr         = new MemPouchDB("tr");
+        var _users     = new MemPouchDB("_users");
 
-        var express = require('express');
-        var app = express();
+        var express    = require('express');
+        var app        = express();
 
 
         var sessionator = require('../lib/sessionator')(config);
