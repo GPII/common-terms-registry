@@ -5,11 +5,11 @@ module.exports = function(config) {
     var data = fluid.registerNamespace("gpii.ctr.lib.data");
 
     data.exposeRequestData = function (req,options) {
-        if (req.path)    { options.path    = req.path;}
-        if (req.params)  { options.params  = req.params;}
-        if (req.body)    { options.body    = req.body;}
-        if (req.query)   { options.query   = req.query;}
-        if (req.cookies) {
+        if (req.originalUrl) { options.path    = req.originalUrl;}
+        if (req.params)      { options.params  = req.params;}
+        if (req.body)        { options.body    = req.body;}
+        if (req.query)       { options.query   = req.query;}
+        if (req.cookies)     {
             var safeCookies = {};
             config.safeCookies.forEach(function(key){
                 if (req.cookies[key]) {
