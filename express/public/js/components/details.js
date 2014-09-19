@@ -45,11 +45,6 @@
         $.ajax(settings);
     };
 
-    // TODO: bind in input validation and feedback
-    details.validate = function(that) {
-
-    };
-
     details.addUse = function(that) {
         var newUse = that.locate("addUse");
         if (newUse) {
@@ -82,9 +77,7 @@
         else {
             console.log("Couldn't determine list position of use, and as a result couldn't remove it.");
         }
-
     };
-
 
     details.displayError = function(that, jqXHR, textStatus, errorThrown) {
         var viewport = that.locate("viewport");
@@ -127,10 +120,18 @@
 
     details.displayConfirmation = function(that, jqXHR, textStatus, errorThrown) {
         var viewport = that.locate("viewport");
-        // Clear out any previous messages first.
-        $(viewport).find(".alert-box").remove();
 
-        templates.prependTo(viewport,"success",{message: "Record updated."});
+        // This is the only way we can tell that we've saved a new record at the moment
+        if (that.model.path === "/details/new") {
+            templates.replaceWith(viewport,"details-created", that.model.record);
+        }
+        else {
+            // Clear out any previous messages first.
+            $(viewport).find(".alert-box").remove();
+
+            templates.prependTo(viewport,"success",{message: "Record saved."});
+        }
+        $(viewport).find(".alert-box:first").get(0).scrollIntoView();
     };
 
     details.getTemplate = function(type) {
