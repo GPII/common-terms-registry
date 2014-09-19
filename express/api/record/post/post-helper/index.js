@@ -8,7 +8,7 @@ module.exports = function(config) {
     return function(req, res){
         // Make sure the current record has at least a uniqueId
         if (!req.body || !req.body.uniqueId) {
-            return res.status(400).send({"ok":false, "message": "You must provide a uniqueId of the record you wish to create."});
+            return res.status(400).send({"ok": false, "errors": { "uniqueId": "You must provide a uniqueId of the record you wish to update."}});
         }
         if (!req.session || !req.session.user) {
             return res.status(401).send(JSON.stringify({ok:false, message: "You must be logged in to use this function."}));

@@ -5,6 +5,15 @@
     var templates  = fluid.registerNamespace("ctr.components.templates");
 
     details.load = function(that) {
+        // If we're not logged in, display the error page
+        // TODO:  We should not have to do this in two places (back and front end), should we?
+        if (!that.data || !that.data.model || !that.data.model.user) {
+            var viewport = that.locate("viewport");
+            templates.replaceWith(viewport, "error", {"message": "You must be logged in to create new records."});
+            that.events.markupLoaded.fire();
+            return;
+        }
+
         // We are working with an existing record.  Load its full information
         if (that.data && that.data.model && that.data.model.record && that.data.model.record.uniqueId) {
             var settings = {
@@ -79,20 +88,41 @@
 
     details.displayError = function(that, jqXHR, textStatus, errorThrown) {
         var viewport = that.locate("viewport");
+
         // Clear out any previous messages first.
         $(viewport).find(".alert-box").remove();
 
-        var message = errorThrown;
+        // Clear out any ARIA error hints
+        $(viewport).find("[aria-invalid='true']").removeAttr("aria-invalid");
+
+        var jsonData = {};
         try {
-            var jsonData = JSON.parse(jqXHR.responseText);
-            if (jsonData.message) { message = jsonData.message; }
+            jsonData = JSON.parse(jqXHR.responseText);
         }
         catch (e) {
-            console.log("jQuery.ajax call returned meaningless jqXHR.responseText payload. Using 'errorThrown' instead.");
+            console.log("jQuery.ajax call returned meaningless jqXHR.responseText payload. Error messages may not be correctly displayed.");
         }
 
-        templates.replaceWith(viewport, "details-term", that.data.model);
-        templates.prependTo(viewport,"error",{message: message});
+        // Display "summary" message if found
+        var message = jsonData.message;
+        if (message) {
+            templates.prependTo(viewport,"common-error", message);
+        }
+
+        // Display "field" messages inline
+        if (jsonData.errors) {
+            Object.keys(jsonData.errors).forEach(function(field){
+                var fieldElement = that.locate(field);
+                var fieldErrors = jsonData.errors[field];
+                if (fieldErrors) {
+                    fieldElement.attr("aria-invalid",true);
+                    templates.after(fieldElement,"details-field-errors",{errors: fieldErrors});
+                }
+            });
+        }
+
+        // scroll to the first error
+        $(viewport).find(".alert-box:first").get(0).scrollIntoView();
     };
 
     details.displayConfirmation = function(that, jqXHR, textStatus, errorThrown) {
@@ -160,7 +190,19 @@
                     }
                 }
             },
-            controls: { type: "ctr.components.userControls", container: ".user-container", options: { components: { data: "{data}" }}}
+            controls: {
+                type: "ctr.components.userControls",
+                container: ".user-container",
+                options: {
+                    components: { data: "{data}" },
+                    listeners: {
+                        afterLogout:
+                        {
+                            func: "{ctr.components.details}.events.refresh.fire"
+                        }
+                    }
+                }
+            }
         },
         model: "{data}.model",
         bindings: [
@@ -221,6 +263,8 @@
             "usesContainer": ".uses-container",
             "uniqueId":      "input[name='uniqueId']",
             "definition":    "[name='definition']",
+            "aliasOf":       "input[name='aliasOf']",
+            "translationOf": "input[name='translationOf']",
             "termLabel":     "input[name='termLabel']",
             "valueSpace":    "input[name='valueSpace']",
             "defaultValue":  "input[name='defaultValue']",
