@@ -57,6 +57,14 @@
         element.prepend(templates.render(key,context));
     };
 
+    templates.before = function (element,key,context) {
+        element.before(templates.render(key,context));
+    };
+
+    templates.after = function (element,key,context) {
+        element.after(templates.render(key,context));
+    };
+
     templates.appendToBody = function (data, textStatus, jqXHR) {
         // TODO:  Replace this with a {that} reference
         $("body").append(data);
