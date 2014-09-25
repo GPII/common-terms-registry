@@ -1,1 +1,1 @@
-function(doc) { emit(doc.uniqueId, 1); }
+function(doc) { if (doc.status !== "deleted") { emit(doc.uniqueId, 1); } }

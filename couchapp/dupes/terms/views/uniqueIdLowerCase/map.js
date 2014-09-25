@@ -1,1 +1,1 @@
-function(doc) { emit(doc.uniqueId.toLowerCase(), 1); }
+function(doc) { if (doc.status !== "deleted") { emit(doc.uniqueId.toLowerCase(), 1); } }
