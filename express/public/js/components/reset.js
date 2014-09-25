@@ -30,7 +30,7 @@
         }
         // TODO:  Add support for password validation, using a module common to this and the signup form.
         else {
-            templates.prependTo(that.locate("form"),"error",{message: "The passwords you entered do not match."});
+            templates.prependTo(that.locate("form"),"common-error", "The passwords you entered do not match.");
         }
     };
 
@@ -45,7 +45,7 @@
             console.log("jQuery.ajax call returned meaningless jqXHR.responseText payload. Using 'errorThrown' instead.");
         }
 
-        templates.prependTo(that.locate("form"),"error",{message: message});
+        templates.prependTo(that.locate("form"),"common-error", message);
     };
 
     reset.displayReceipt = function(that, responseData, textStatus, jqXHR) {
@@ -57,7 +57,7 @@
             that.controls.refresh(that);
         }
         else {
-            templates.prependTo(that.locate("form"),"error",{message: jsonData.message});
+            templates.prependTo(that.locate("form"),"common-error", jsonData.message);
         }
     };
 

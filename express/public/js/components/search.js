@@ -179,7 +179,7 @@
         catch (e) {
             console.log("jQuery.ajax call returned meaningless jqXHR.responseText payload. Using 'errorThrown' instead.");
         }
-        templates.prependTo(that.locate("viewport"),"error",{message: message});
+        templates.prependTo(that.locate("viewport"),"common-error", message);
         that.events.markupLoaded.fire();
     };
 
