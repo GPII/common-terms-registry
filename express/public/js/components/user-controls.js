@@ -33,7 +33,7 @@
 
     // Update markup and wiring after a change in user status (login/logout, profile update)
     controls.refresh = function(that) {
-        templates.replaceWith(that.container,"user-controls", that.model);
+        templates.replaceWith(that.locate("profile"),"user-controls", that.model);
         that.events.markupLoaded.fire();
     };
 
@@ -41,6 +41,7 @@
         apiUrl:    "/api/user",
         gradeNames: ["fluid.viewRelayComponent", "autoInit"],
         selectors: {
+            "profile":   "#profile",
             "badge":     ".user-badge",
             "menu":      ".user-menu",
             "logout":    ".user-menu-logout"
