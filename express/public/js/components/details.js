@@ -5,9 +5,7 @@
     var templates  = fluid.registerNamespace("ctr.components.templates");
 
     details.load = function(that) {
-        // If we're not logged in, display the error page
-        // TODO:  We should not have to do this in two places (back and front end), should we?
-        if (!that.data || !that.data.model || !that.data.model.user) {
+        if (!that.data || !that.data.model) {
             var viewport = that.locate("viewport");
             templates.replaceWith(viewport, "error", {"message": "You must be logged in to create new records."});
             that.events.markupLoaded.fire();

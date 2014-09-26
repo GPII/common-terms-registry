@@ -1,21 +1,24 @@
-<form name="details-form">
-    <div class="row details-header">
-        <div class="column small-offset-1 small-11">
-            {{>details-controls-linkbar}}
-            {{>details-fields-uniqueid}}
+<div class="column small-offset-1 small-11 ptd-viewport">
+    <form name="details-form">
+        <div class="row details-header">
+            <div class="column small-offset-1 small-11">
+                {{>details-controls-linkbar}}
+                {{>details-fields-uniqueid}}
+            </div>
         </div>
-    </div>
-    <div class="row details-body">
-        <div class="column small-offset-1 small-11">
-            {{>details-fields-type}}
-            {{>details-fields-aliasof}}
-            {{>details-fields-uses}}
-            {{>details-fields-termlabel}}
-            {{>details-fields-defaultvalue}}
-            {{>details-fields-notes}}
-            {{>details-fields-status}}
+        <div class="row details-body">
+            <div class="column small-offset-1 small-11">
+                {{>details-fields-type}}
+                {{>details-fields-aliasof}}
+                {{>details-fields-uses}}
+                {{>details-fields-termlabel}}
+                {{>details-fields-defaultvalue}}
+                {{>details-fields-notes}}
+                {{>details-fields-status}}
+            </div>
         </div>
-    </div>
 
-    {{>details-controls-save}}
-</form>
+        {{>details-controls-save}}
+    </form>
+</div>
+
