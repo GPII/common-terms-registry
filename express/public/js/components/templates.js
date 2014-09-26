@@ -45,25 +45,15 @@
         }
     };
 
-    templates.replaceWith = function(element,key,context) {
-        element.replaceWith(templates.render(key,context));
+    templates.passthrough = function(element, key, context, manipulator) {
+        element[manipulator](templates.render(key,context));
     };
 
-    templates.appendTo = function(element,key,context) {
-        element.append(templates.render(key,context));
-    };
-
-    templates.prependTo = function (element,key,context) {
-        element.prepend(templates.render(key,context));
-    };
-
-    templates.before = function (element,key,context) {
-        element.before(templates.render(key,context));
-    };
-
-    templates.after = function (element,key,context) {
-        element.after(templates.render(key,context));
-    };
+    ["after","append","before","body","prepend","replaceWith"].forEach(function(manipulator){
+        templates[manipulator] = function(element,key,context) {
+            templates.passthrough(element,key,context,manipulator);
+        };
+    });
 
     templates.appendToBody = function (data, textStatus, jqXHR) {
         // TODO:  Replace this with a {that} reference

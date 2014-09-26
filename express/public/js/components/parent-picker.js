@@ -78,7 +78,7 @@
             console.log("jQuery.ajax call returned meaningless jqXHR.responseText payload. Using 'errorThrown' instead.");
         }
 
-        templates.prependTo(that.locate("view"),"common-error", message);
+        templates.prepend(that.locate("view"),"common-error", message);
         that.toggleControls(that);
     };
 

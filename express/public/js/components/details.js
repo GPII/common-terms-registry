@@ -99,7 +99,7 @@
         // Display "summary" message if found
         var message = jsonData.message;
         if (message) {
-            templates.prependTo(viewport,"common-error", message);
+            templates.prepend(viewport,"common-error", message);
         }
 
         // Display "field" messages inline
@@ -129,7 +129,7 @@
             // Clear out any previous messages first.
             $(viewport).find(".alert-box").remove();
 
-            templates.prependTo(viewport,"success",{message: "Record saved."});
+            templates.prepend(viewport,"success",{message: "Record saved."});
         }
         $(viewport).find(".alert-box:first").get(0).scrollIntoView();
     };

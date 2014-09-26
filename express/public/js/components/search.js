@@ -57,7 +57,7 @@
         var navEnd      = that.locate("navEnd");
 
         if (pages === 1) {
-            templates.prependTo(container,"search-navigation-page-current-link",{offset: 0, page: 1});
+            templates.prepend(container,"search-navigation-page-current-link",{offset: 0, page: 1});
         }
         else {
 
@@ -75,10 +75,10 @@
                 var pageOffset = a * that.model.searchSettings.limit;
 
                 if (page === currentPage) {
-                    templates.prependTo(container,"search-navigation-page-current-link",{offset: pageOffset, page: page});
+                    templates.prepend(container,"search-navigation-page-current-link",{offset: pageOffset, page: page});
                 }
                 else {
-                    templates.prependTo(container,"search-navigation-page-link",{offset: pageOffset, page: page});
+                    templates.prepend(container,"search-navigation-page-link",{offset: pageOffset, page: page});
                 }
             }
         }
@@ -179,7 +179,7 @@
         catch (e) {
             console.log("jQuery.ajax call returned meaningless jqXHR.responseText payload. Using 'errorThrown' instead.");
         }
-        templates.prependTo(that.locate("viewport"),"common-error", message);
+        templates.prepend(that.locate("viewport"),"common-error", message);
         that.events.markupLoaded.fire();
     };
 
@@ -193,15 +193,15 @@
             that.applier.change("count", data.total_rows);
 
             // prepend the control title bar
-            templates.appendTo(viewport, "search-navigation", that.model);
+            templates.append(viewport, "search-navigation", that.model);
 
             // display each record in the results area
             data.records.forEach(function(record) {
-                templates.appendTo(viewport, "search-record", { record: record, user: that.model.user });
+                templates.append(viewport, "search-record", { record: record, user: that.model.user });
             });
         }
         else {
-            templates.replaceWith(viewport, "norecord");
+            templates.replaceWith(viewport, "search-norecord");
         }
 
         that.events.markupLoaded.fire();
