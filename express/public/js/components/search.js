@@ -83,6 +83,9 @@
             }
         }
 
+        templates.prepend(container,"search-navigation-previous-page-links");
+        templates.append(container,"search-navigation-next-page-links");
+
         // Fire a "nav loaded" event so that we can wire up the appropriate listeners
         that.events.navBarLoaded.fire();
     };

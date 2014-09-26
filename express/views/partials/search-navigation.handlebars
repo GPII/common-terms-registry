@@ -8,18 +8,16 @@
             </div>
         {{/if}}
     </div>
-    <div class="small-3 small-offset-1 column">
+    <div class="small-4 small-offset-1 column">
         {{#if count}}
-            <a tabindex="0" class="ptd-icon- ptd-search-nav-start ptd-search-nav-page-link" offset="0">start</a>
-            <a tabindex="0" class="ptd-icon- ptd-search-nav-previous ptd-search-nav-page-link" offset="0">previous<a/>
-            <span class="ptd-search-page-links">
+            <ul class="ptd-search-page-links">
+                {{>search-navigation-previous-page-links}}
                 {{>search-navigation-page-link}}
-            </span>
-            <a tabindex="0" class="ptd-icon- ptd-search-nav-next ptd-search-nav-page-link" offset="0">next</a>
-            <a tabindex="0" class="ptd-icon- ptd-search-nav-end ptd-search-nav-page-link" offset="0">end</a>
+                {{>search-navigation-next-page-links}}
+            </ul>
         {{/if}}
     </div>
-    <div class="small-offset-2 small-3 column">
+    <div class="small-offset-1 small-3 column">
         <select name="sort" class="ptd-search-sort">
             <option value="uniqueId">Alphabetical, by uniqueId</option>
             <option value="\uniqueId">Reverse Alphabetical, by uniqueID</option>

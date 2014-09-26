@@ -32,14 +32,42 @@ button, .button {
     margin: 0 0 .75rem;
 }
 
-.ptd-search-nav-page-link {
-    margin-right: .5em;
+ul.ptd-search-page-links {
+    list-style-type: none;
+    margin-top: 0.4em;
 }
 
-.ptd-search-nav-page-link:last-of-type {
-    margin-right: 0px;
+ul.ptd-search-page-links li {
+    float: left;
+    width: 2em;
 }
+
+ul.ptd-search-page-links li a {
+    display:block;
+    text-align: center;
+}
+
+ul.ptd-search-page-links li a:hover {
+   border-radius: 50%;
+   border: 2px solid rgba(255,255,255,0.5);
+   box-shadow: 0px 0px 20px rgba(0,0,0,.25);
+   background-color: rgba(255,255,255,0.5);
+}
+
+.ptd-search-nav-page-link {
+    margin-right: .125em;
+    margin-left: .125em;
+    width: 100%;
+}
+
+.ptd-search-nav-next, .ptd-search-nav-end, .ptd-search-nav-previous, .ptd-search-nav-start {
+    font-size: 1.8em;
+    text-align: left;
+}
+
 .ptd-search-nav-page-current-link {
+    border: 2px solid #1b2f96;
+    border-radius: 50%;
     color:inherit;
 }
 
