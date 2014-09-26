@@ -46,7 +46,7 @@
     };
 
     templates.replaceWith = function(element,key,context) {
-        element.html(templates.render(key,context));
+        element.replaceWith(templates.render(key,context));
     };
 
     templates.appendTo = function(element,key,context) {

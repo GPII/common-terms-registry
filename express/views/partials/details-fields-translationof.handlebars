@@ -1,0 +1,8 @@
+<div class="row ptd-link-container">
+    <div class="details-heading">Translation Of</div>
+    <input type="hidden" name="aliasOf" value="{{record.translationOf}}"/>
+    <a href="/details/{{translation.aliasOf}}" target="_blank">{{record.translationOf}}</a>
+    {{#if user}}
+        <div class="ptd-parent-picker-container"></div>
+    {{/if}}
+</div>

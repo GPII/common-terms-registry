@@ -1,0 +1,43 @@
+<div class="ptd-parent-picker-container ptd-inline">
+    <div class="ptd-parent-picker">
+        {{#if record.aliasOf}}
+            <input type="hidden" name="aliasOf" value="{{record.aliasOf}}"/>
+        {{else}}
+            {{#if record.translationOf}}
+                <input type="hidden" name="translationOf" value="{{record.translationOf}}"/>
+            {{/if}}
+        {{/if}}
+
+        <div class="ptd-parent-picker-view row collapse">
+            <div class="column small-1">
+                <div class="prefix ptd-parent-picker-toggle" tabindex="0">
+                    <span class="glyphicon glyphicon-pencil" title="Change the parent record."></span>
+                </div>
+            </div>
+            <div class="column small-11">
+                <div class="ptd-parent-picker-picked">
+                    {{#if record.aliasOf}}
+                        {{>common-alias-link record.aliasOf}}
+                    {{else}}
+                        {{#if record.translationOf}}
+                            {{>common-alias-link record.translationOf}}
+                        {{else}}
+                            No parent record selected...
+                        {{/if}}
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+        <div class="ptd-parent-picker-edit row collapse" style="display:none;">
+            <div class="column medium-1 small-2">
+                <div class="prefix ptd-parent-picker-toggle" tabindex="0">
+                    <span class="ptd-icon-cross" title="Cancel and keep the current value."></span>
+                </div>
+            </div>
+            <div class="column medium-11 small-10">
+                <input type="text" class="ptd-parent-picker-search-query" name="query" placeholder="Type a uniqueId or other search terms to find a parent record." tabindex="0"/>
+                <ul class="ptd-parent-picker-suggestions" name="suggestion" style="display: none;" tabindex="0"></ul>
+            </div>
+        </div>
+    </div>
+</div>

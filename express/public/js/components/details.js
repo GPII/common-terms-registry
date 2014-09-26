@@ -156,6 +156,18 @@
         that.events.markupLoaded.fire();
     };
 
+    details.loadLinkTemplate = function(that) {
+        if (!that.data || !that.data.model) {
+            console.log("loadTypeTemplate called before 'that' is correctly wired up.  Exiting.");
+            return;
+        }
+
+        var container = that.locate("parentLink");
+        var template  = that.data.model.record.type === "translation" ? "details-fields-translationof" : "details-fields-aliasof";
+        templates.replaceWith(container, template, that.data.model);
+        that.events.markupLoaded.fire();
+    };
+
     details.displayRecord = function(that, data, textStatus, jqXHR) {
         var viewport = that.locate("viewport");
         if (data && data.record) {
@@ -166,7 +178,6 @@
             templates.replaceWith(viewport, "norecord", that.data.model);
             that.events.markupLoaded.fire();
         }
-
     };
 
     // TODO: bind in sanity checking when changing from a term (with aliases) to any other type of record
@@ -191,6 +202,15 @@
                     }
                 }
             },
+            picker: {
+                type:      "ctr.components.picker",
+                container: "body",
+                options: {
+                    model: {
+                        record: "{data}.model.record"
+                    }
+                }
+            },
             controls: {
                 type: "ctr.components.userControls",
                 container: ".user-container",
@@ -207,6 +227,11 @@
         },
         model: "{data}.model",
         bindings: [
+            {
+                selector:    "aliasOf",
+                path:        "record.aliasOf",
+                elementType: "text"
+            },
             {
                 selector:    "uniqueId",
                 path:        "record.uniqueId",
@@ -256,6 +281,7 @@
         selectors: {
             "save":          ".save-button",
             "addUse":        "input[name='addUse']",
+            "parentLink":    ".ptd-link-container",
             "removeUse":     ".remove-use",
             "viewport":      ".ptd-viewport",
             "status":        "input[name='status']",
@@ -274,7 +300,8 @@
         events: {
             "refresh":      "preventable",
             "markupLoaded": "preventable",
-            "typeChanged":  "preventable"
+            "typeChanged":  "preventable",
+            "linkChanged":  "preventable"
         },
         invokers: {
             "save": {
@@ -291,6 +318,10 @@
             },
             "loadTypeTemplate": {
                 funcName: "ctr.components.details.loadTypeTemplate",
+                args: ["{that}"]
+            },
+            "loadLinkTemplate": {
+                funcName: "ctr.components.details.loadLinkTemplate",
                 args: ["{that}"]
             },
             "displayError": {
@@ -336,6 +367,10 @@
                 {
                     "funcName": "ctr.components.binder.applyBinding",
                     "args":     "{that}"
+                },
+                {
+                    "funcName": "{picker}.init",
+                    "args":     "{that}"
                 }
             ],
             onCreate: [
@@ -345,6 +380,10 @@
             ],
             "typeChanged": {
                 func: "ctr.components.details.loadTypeTemplate",
+                args: [ "{that}"]
+            },
+            "linkChanged": {
+                func: "ctr.components.details.loadLinkTemplate",
                 args: [ "{that}"]
             },
             "refresh": {
