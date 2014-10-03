@@ -219,7 +219,6 @@
             "query":         ".ptd-search-query",
             "sort":          ".ptd-search-sort",
             "status":        ".ptd-search-status",
-            "go":            ".ptd-search-button",
             "clear":         ".ptd-clear-button",
             "aliasToggle":   ".alias-toggle",
             "statusToggle":  ".ptd-search-status-toggle",

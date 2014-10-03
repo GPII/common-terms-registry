@@ -4,16 +4,23 @@
 }
 
 .body {
-    height: 70%;
     background-color: #ffffff;
-    padding-top: 1.5em;
-    min-height: 100%;
+    padding-top: 11%;
 }
 
 .ptd-header {
     border-bottom: 1px solid #f0f0f0;
     padding-top: 1.5em;
     padding-bottom: .5em;
+    position: fixed;
+    background-color: white;
+    z-index: 999;
+    width: 100%;
+    top: 0;
+}
+
+.ptd-body {
+    margin: 20px auto;
 }
 
 button.radius, .button.radius {

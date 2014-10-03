@@ -182,7 +182,7 @@ button.right .glyphicon:before, .button.right .glyphicon:before {
 }
 
 .ptd-search-form {
-    border: none;
+    border: 2px solid #E3E3E3;
     margin: 0px;
     padding: 2px;
     background-color: white;
