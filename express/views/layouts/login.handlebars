@@ -7,9 +7,14 @@
   </head>
   <body>
     <!-- include the header -->
-    {{> header}}
+    {{> common-header}}
 
-    {{{body}}}
+    <div>
+        {{{body}}}
+    </div>
+
+    {{> common-footer}}
+
     <!-- Add support for ligature fonts to older browsers -->
     <script src="/js/liga.js"></script>
     <script type="text/javascript">

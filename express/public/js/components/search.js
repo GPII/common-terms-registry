@@ -195,13 +195,10 @@
 
             that.applier.change("count", data.total_rows);
 
-            // prepend the control title bar
-            templates.append(viewport, "search-navigation", that.model);
+            // Add the search navigation to the header
+            templates.replaceWith(that.locate("navBar"), "search-navigation", that.model);
 
-            // display each record in the results area
-            data.records.forEach(function(record) {
-                templates.append(viewport, "search-record", { record: record, user: that.model.user });
-            });
+            templates.append(viewport, "search-records", {records: data.records, user: that.model.user});
         }
         else {
             templates.replaceWith(viewport, "search-norecord");
@@ -234,6 +231,8 @@
             "navNext":       ".ptd-search-nav-next",
             "navEnd":        ".ptd-search-nav-end",
             "navPageLink":   ".ptd-search-nav-page-link",
+            "navBar":        ".ptd-nav-bar",
+            "header":        ".ptd-header",
             "viewport":      ".ptd-viewport"
         },
         bindings: [
