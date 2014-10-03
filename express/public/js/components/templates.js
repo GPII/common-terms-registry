@@ -1,4 +1,4 @@
-// A template handling library that brings in all Handlebars templates and partials and adds functions for more easily using them.
+// A client-side template handling library that brings in all Handlebars templates and partials and adds functions for more easily using them.
 //
 // Requires Handlebars.js and Pagedown (for markdown rendering)
 
@@ -24,6 +24,10 @@
     };
 
     Handlebars.registerHelper('md', templates.mdHelper);
+
+    templates.jsonify = function(context) { return JSON.stringify(context); };
+
+    Handlebars.registerHelper('jsonify', templates.jsonify);
 
     templates.render = function(key,context) {
         // If a template exists, load that.  Otherwise, try to load the partial.

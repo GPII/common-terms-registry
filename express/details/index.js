@@ -6,7 +6,7 @@ module.exports = function(config) {
     var data = require ('../lib/data-helper')(config);
 
     router.get("/:uniqueId", function(req,res) {
-        var options = { user: req.session.user};
+        var options = { user: req.session.user, config: { "baseUrl": config["base.url"]}};
         data.exposeRequestData(req,options);
 
         if (req.params.uniqueId === "new") {

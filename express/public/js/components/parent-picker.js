@@ -25,6 +25,7 @@
        clearInterval(picker.polling);
     };
 
+    // TODO:  Work with Cindy, Justin and others to prevent firing this multiple times:  http://issues.gpii.net/browse/CTR-121
     // Monitor the changes to the query and refresh the results
     picker.refreshSuggestions = function(that) {
         var queryElement = that.locate("query");
@@ -34,7 +35,7 @@
             statusString += ["active","draft","unreviewed","candidate"].join("&status=");
 
             var options = {
-                url: "http://localhost:4680/api/suggest?q=" + queryElement.val() + statusString,
+                url:     that.options.baseUrl + "/api/suggest?q=" + queryElement.val() + statusString,
                 success: that.displaySuggestions,
                 error:   that.displayError
             };
@@ -141,7 +142,7 @@
     };
 
     fluid.defaults("ctr.components.picker", {
-        gradeNames: ["fluid.viewRelayComponent", "autoInit"],
+        gradeNames: ["fluid.viewRelayComponent", "baseUrlAware", "autoInit"],
         model: {
             record:    null,
             query:     null

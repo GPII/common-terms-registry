@@ -16,7 +16,16 @@
 
 <script type="text/javascript">
     {{>json-data}}
-    var search    = ctr.components.search("body");
-    search.init();
+
+    var root = ctr.config.root({
+        serverConfig: ctr.config.server,
+        components: {
+            search: {
+                type:      "ctr.components.search",
+                container: "body"
+            }
+        }
+    });
+    root.search.init();
 </script>
 

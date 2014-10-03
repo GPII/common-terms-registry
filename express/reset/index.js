@@ -6,7 +6,7 @@ module.exports = function(config) {
     var data = require ('../lib/data-helper')(config);
 
     router.get("/:code", function(req,res) {
-        var options = {};
+        var options = { config: { "baseUrl": config["base.url"]}};
         if (!req.params.code) {
             options.message = "You must provide a password reset code.";
             res.render('pages/error', options);

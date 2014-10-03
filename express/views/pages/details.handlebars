@@ -1,4 +1,4 @@
-<div class="body">
+<div class="body ptd-down-gradient">
     <div class="row">
         <div class="column small-offset-1 small-11 ptd-viewport">
             <div class="loading">Loading...</div>
@@ -19,5 +19,13 @@
     {{>json-data}}
 
     $(document).foundation();
-    var details    = ctr.components.details("body");
+    var root = ctr.config.root({
+        serverConfig: ctr.config.server,
+        components: {
+            details: {
+                type:      "ctr.components.details",
+                container: "body"
+            }
+        }
+    });
 </script>

@@ -1,18 +1,15 @@
 "use strict";
 
-var express = require('express');
-var http = require('http');
-var path = require('path');
-var exphbs  = require('express-handlebars');
-var logger = require('morgan');
-var couchUser = require('express-user-couchdb');
+var express      = require('express');
+var http         = require('http');
+var path         = require('path');
+var exphbs       = require('express-handlebars');
+var logger       = require('morgan');
+var couchUser    = require('express-user-couchdb');
 var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var session = require('express-session');
-var app = express();
-
-app.engine('handlebars', exphbs({defaultLayout: 'main'}));
-app.set('view engine', 'handlebars');
+var bodyParser   = require('body-parser');
+var session      = require('express-session');
+var app          = express();
 
 var config = {};
 
@@ -27,6 +24,11 @@ else {
 }
 
 var data = require("./lib/data-helper")(config);
+var hbHelper     = require('./lib/hb-helper')(config);
+
+// TODO:  Standardize what is exposed to handlebars from both the server and client side
+app.engine('handlebars', exphbs({defaultLayout: 'main', helpers: hbHelper.getHelpers()}));
+app.set('view engine', 'handlebars');
 
 // Email templates
 config.email.templateDir = path.join(__dirname, 'templates/email');
@@ -69,12 +71,15 @@ app.use("/infusion",express.static(__dirname + '/node_modules/infusion/src'));
 // Mount the handlebars templates as a single dynamically generated source file
 app.use("/hbs",require("./views/client.js")(config));
 
+// The detailed record view and editing interface...
 var details = require("./details")(config);
 app.use("/details", details);
 
+// A front-end for the user email verification API
 var verify = require("./verify")(config);
 app.use('/verify', verify);
 
+// A front end for the second part of the two-step "forgot password" function.  The first part (forgot) has no data and is a plain old page.
 var reset = require("./reset")(config);
 app.use('/reset', reset);
 
@@ -88,7 +93,7 @@ app.use('/reset', reset);
 app.use("/",function(req,res) {
     var fs = require("fs");
 
-    var options = { user: req.session.user};
+    var options = { user: req.session.user, config: { "baseUrl": config["base.url"]}};
     data.exposeRequestData(req,options);
 
     var path = req.path === "/" ? "search" : req.path.substring(1);

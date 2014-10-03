@@ -13,8 +13,9 @@ module.exports = function(config) {
 
         var request = require('request');
         var options = {
-            url:  config.app.url + "/api/user/verify/" + req.params.code,
-            json: true
+            url:    config.app.url + "/api/user/verify/" + req.params.code,
+            json:   true,
+            config: { "baseUrl": config["base.url"] }
         };
         request.get(options, function(e,r,b){
             if (e) {
