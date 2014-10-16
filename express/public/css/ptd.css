@@ -1,11 +1,10 @@
 .row {
-    max-width: 90%;
-    margin-left: 0px;
+    max-width: 100rem;
 }
 
 .body {
     background-color: #ffffff;
-    padding-top: 11%;
+    padding-top: 14%;
 }
 
 .ptd-header {
@@ -15,6 +14,7 @@
     position: fixed;
     background-color: white;
     z-index: 999;
+    max-width:100%;
     width: 100%;
     top: 0;
 }
@@ -25,15 +25,6 @@
 
 button.radius, .button.radius {
     border-radius: 6px;
-}
-
-.ptd-down-gradient {
-    background: -webkit-linear-gradient(#f9f9f9, white);  /* For Safari 5.1 to 6.0  */
-    background: -o-linear-gradient(#f9f9f9, white);       /* For Opera 11.1 to 12.0 */
-    background: -moz-linear-gradient(#f9f9f9, white);     /* For Firefox 3.6 to 15  */
-    background: linear-gradient(#f9f9f9, white);         /* Standard syntax */
-    background-size: 100% 36px;
-    background-repeat: no-repeat;
 }
 
 .ptd-footer {
@@ -50,6 +41,29 @@ button.radius, .button.radius {
 }
 
 .ptd-scroll {
+    overflow-x: hidden;
+    max-width: 100%;
     overflow-y: scroll;
     height:75%;
+}
+
+.ptd-version-block {
+    padding-top: .33em;
+    padding-bottom: .33em;
+    padding-left: .5em;
+    padding-right: .5em;
+    text-align: center;
+    background-color: #f0f0f0;
+    border-radius: 2em;
+    width: inherit;
+    float:right;
+}
+
+.ptd-bottom {
+    height: 2.5em;
+    float: right;
+    padding-top: 1.5em;
+}
+.ptd-version {
+    color: #34a2b9;
 }

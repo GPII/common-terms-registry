@@ -1,32 +1,8 @@
-<div class="alias">
-    <div class="row">
-        <div class="column small-8 glyphicon glyphicon-leaf">
-            {{#if source}}
-                <span class="source">
-                    {{source}}
-                </span>
-            {{/if}}
-            <span class="title">
-                {{#if termLabel}}{{termLabel}}{{else}}{{uniqueId}}{{/if}}
-                <a href="/details/{{uniqueId}}">
-                    <div class="glyphicon glyphicon-eye-open" title="View"></div>
-                </a>
-            </span>
-        </div>
-        <div class="column small-4 version-block">
-            {{#if version}}
-                <span class="version">
-                    v. {{version}}
-                </span>
-            {{/if}}
-            {{status}}
-            <span class="ptd-icon-">{{status}}</span>
-            <span class="ptd-icon- alias-toggle">more</span>
-        </div>
-    </div>
-    <div class="row alias-details">
-        <div class="column small-4">
-            {{>search-valuespace}}
-        </div>
-    </div>
-</div>
+<div class="ptd-search-heading">Aliases</div>
+<ul class="ptd-search-alias-list">
+{{#each aliases}}
+    <li>{{#if termLabel}}{{termLabel}}{{else}}{{uniqueId}}{{/if}}</li>
+{{else}}
+    <li><span class="ptd-no-value">There are no aliases for this record.</span></li>
+{{/each}}
+</ul>

@@ -124,15 +124,6 @@ button.right .glyphicon:before, .button.right .glyphicon:before {
     top: 3px;
 }
 
-.heading {
-    margin-bottom: .25em;
-}
-
-.left.prefix,.right.postfix {
-    padding-top: .35em;
-    height: 2.8rem;
-}
-
 .loading {
     font-size: 2em;
     font-weight: bold;
@@ -147,14 +138,6 @@ button.right .glyphicon:before, .button.right .glyphicon:before {
 
 .ptd-order.f-dropdown {
     max-width: inherit;
-}
-
-.ptd-order.f-dropdown:before {
-
-}
-
-.ptd-order.f-dropdown:after {
-
 }
 
 .ptd-clear-button {
@@ -216,6 +199,12 @@ button.right .glyphicon:before, .button.right .glyphicon:before {
     margin-left: .25em;
 }
 
+.ptd-search-heading {
+    font-weight: bold;
+    margin-top: .5em;
+    margin-bottom: .25em;
+}
+
 .ptd-search-status {
     height: 7.5em;
 }
@@ -227,54 +216,60 @@ button.right .glyphicon:before, .button.right .glyphicon:before {
     width: 90%;
 }
 
-.record {
-    background-color: #ffffff;
-    margin-top: 1.5em;
+.ptd-search-alias-list {
+    list-style: none;
+    margin:0px;
+    padding-left: 0px;
+    line-height: inherit;
+}
+.ptd-search-alias-list li {
+    display: inline;
 }
 
-.record .alias {
-    border: 1px solid #dcdcdc;
+.ptd-search-alias-list li:after {
+    content: ", ";
 }
 
-.record:first-of-type {
+.ptd-search-alias-list li:last-child:after {
+    content: "";
+}
+
+.ptd-search-record:nth-child(2n+1) {
+    background-color: #e6e6e6;
+}
+
+.ptd-search-record:nth-child(2n) {
+    background-color: #f7f7f7;
+}
+
+.ptd-search-record {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding-left: .75em;
+    padding-top: .5em;
+    padding-bottom: .5em;
+}
+
+.ptd-search-record .row {
+    margin-top: .25em;
+    margin-right: 0px;
+}
+
+.ptd-search-record .row:first-child {
     margin-top: 0px;
 }
 
-.record:last-of-type {
+.ptd-search-record:last-of-type {
     margin-bottom: 1.5em;
 }
 
-.subtitle {
-    margin-left: 4em;
-}
-
-.subtitle, .heading {
-    color: #969696;
-}
-
-.term {
-    padding: 1.5em;
-}
-
-.term .row, .alias .row {
-    margin-top: 1.5em;
-}
-
-.term .row:first-of-type, .alias .row:first-of-type {
-    margin-top: 0em;
-}
-
-.term .title {
-    font-size: 1.8em;
+.ptd-search-record .ptd-search-title {
+    font-size: 1.25em;
+    margin-right:.25em;
     font-weight: bold;
 }
 
-.term .title:hover, .alias .title:hover {
-    color: #1ec285;
-    text-decoration: underline;
-}
-
-.term .title .glyphicon-pencil, .alias .title .glyphicon-pencil {
+.ptd-search-record .ptd-search-title .glyphicon-pencil, .alias .ptd-search-title .glyphicon-pencil {
     color: #1ec285;
 }
 
@@ -282,11 +277,3 @@ button.right .glyphicon:before, .button.right .glyphicon:before {
     font-style: italic;
 }
 
-.version-block {
-    width: 99%;
-    text-align: right;
-}
-
-.version {
-    color: #34a2b9;
-}

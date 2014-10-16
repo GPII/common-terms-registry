@@ -1,7 +1,7 @@
 <div class="ptd-header">
     <div class="row">
-        <div class="medium-offset-1 medium-3 column ptd-non-button-heading">
-            <a href="/">Preference Terms Dictionary</a>
+        <div class="medium-4 column ptd-non-button-heading">
+            {{>common-site-title}}
         </div>
         <div class="medium-2 column">
             <div id="add-record-button" class="button small radius" tabindex="0" {{#unless user}}style="display:none"{{/unless}}>
@@ -21,7 +21,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="medium-offset-1 medium-3 column">
+        <div class="medium-4 column">
             <div class="row collapse">
                 <div class="medium-6 column">
                     <a class="button left active prefix" href="#">
@@ -30,16 +30,17 @@
                     </a>
                 </div>
                 <div class="medium-6 column">
-                <!--  TODO: Implement support for conditions and then enable this
-                    <a class="button right postfix inactive" href="#">
-                        <span class="glyphicon glyphicon-cog"></span>
-                        Conditions
-                    </a>
-                -->
+                    <!--  TODO: Implement support for conditions and then enable this
+                        <a class="button right postfix inactive" href="#">
+                            <span class="glyphicon glyphicon-cog"></span>
+                            Conditions
+                        </a>
+                    -->
                 </div>
             </div>
         </div>
-
+    </div>
+    <div class="row">
         <div class="medium-2 column">
             <a href="#" class="ptd-search-status-toggle" tabindex="0">
                 <div class="button secondary dropdown expand small">

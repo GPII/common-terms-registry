@@ -1,47 +1,45 @@
 <div class="row">
-    <div class="column medium-12">
-        <div class="details-heading">Status</div>
-        <div class="row">
-            {{#if user}}
-                <div class="column medium-2">
-                    <input id="status-approved" type="radio" name="status" value="approved"/>
-                    <label for="status-approved" class="status button radius">
-                        <span class="ptd-icon-checked"></span>
-                        approved
-                    </label>
-                </div>
-                <div class="column medium-2">
-                    <input id="status-candidate" type="radio" name="status" value="candidate"/>
-                    <label for="status-candidate" class="status button radius">
-                        <span class="ptd-icon-">candidate</span>
-                        candidate
-                    </label>
-                </div>
-                <div class="column medium-2">
-                    <input id="status-unreviewed" type="radio" name="status" value="unreviewed"/>
-                    <label for="status-unreviewed" class="status button radius">
-                        <span class="ptd-icon-">unreviewed</span>
-                        unreviewed
-                    </label>
-                </div>
-                <div class="column medium-2">
-                    <input id="status-draft" type="radio" name="status" value="draft"/>
-                    <label for="status-draft" class="status button radius">
-                        <span class="ptd-icon-question"></span>
-                        draft
-                    </label>
-                </div>
-                <div class="column medium-2 end">
-                    <input id="status-deleted" type="radio" name="status" value="deleted"/>
-                    <label for="status-deleted" class="status button radius">
-                        <span class="ptd-icon-">deleted</span>
-                        deleted
-                    </label>
-                </div>
-            {{else}}
-                <input type="hidden" name="status" value="{{record.status}}"/>
-                {{record.status}}
-            {{/if}}
-        </div>
+    <div class="details-heading">Status</div>
+    <div class="row">
+        {{#if user}}
+            <div class="column medium-2">
+                <input id="status-approved" type="radio" name="status" value="approved"/>
+                <label for="status-approved" class="status button radius">
+                    <span class="ptd-icon-checked"></span>
+                    approved
+                </label>
+            </div>
+            <div class="column medium-2">
+                <input id="status-candidate" type="radio" name="status" value="candidate"/>
+                <label for="status-candidate" class="status button radius">
+                    <span class="ptd-icon-">candidate</span>
+                    candidate
+                </label>
+            </div>
+            <div class="column medium-2">
+                <input id="status-unreviewed" type="radio" name="status" value="unreviewed"/>
+                <label for="status-unreviewed" class="status button radius">
+                    <span class="ptd-icon-">unreviewed</span>
+                    unreviewed
+                </label>
+            </div>
+            <div class="column medium-2">
+                <input id="status-draft" type="radio" name="status" value="draft"/>
+                <label for="status-draft" class="status button radius">
+                    <span class="ptd-icon-question"></span>
+                    draft
+                </label>
+            </div>
+            <div class="column medium-2 end">
+                <input id="status-deleted" type="radio" name="status" value="deleted"/>
+                <label for="status-deleted" class="status button radius">
+                    <span class="ptd-icon-">deleted</span>
+                    deleted
+                </label>
+            </div>
+        {{else}}
+            <input type="hidden" name="status" value="{{record.status}}"/>
+            {{record.status}}
+        {{/if}}
     </div>
 </div>
