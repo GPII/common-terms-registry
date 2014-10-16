@@ -1,56 +1,35 @@
 <div class="ptd-records ptd-scroll">
     {{#each records}}
-        <div class="record">
-            <div class="term">
+            <div class="ptd-search-record">
                 <div class="row">
-                    <div class="column small-8 title glyphicon glyphicon-tree-deciduous">
-                        <a href="/details/{{uniqueId}}">
-                            {{#if termLabel}}{{termLabel}}{{else}}{{uniqueId}}{{/if}}
-                            {{#if user}}
-                                <div class="glyphicon glyphicon-pencil" title="Edit"></div>
-                            {{else}}
-                                <div class="glyphicon glyphicon-eye-open" title="View"></div>
-                            {{/if}}
-                        </a>
+                    <div class="column small-8">
+                        <span class="ptd-search-title">{{uniqueId}}</span>
+                        <a href="/details/{{uniqueId}}" class="ptd-search-show-edit-link">Show/Edit</a>
                     </div>
                     <div class="column small-4">
-                        {{>version}}
+                        {{>common-version}}
                     </div>
                 </div>
-                <div class="row">
-                    <div class="column small-8 subtitle">
-                        {{uniqueId}}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="column small-12">
-                        <div>
-                            {{#md}}{{definition}}{{/md}}
+                {{#if termLabel}}
+                    <div class="row">
+                        <div class="column small-8 ptd-search-subtitle">
+                            {{termLabel}}
                         </div>
                     </div>
-                </div>
+                {{/if}}
                 <div class="row">
                     <div class="column small-4">
                         {{>search-valuespace}}
                     </div>
-                    <div class="column small-8">
-                        {{>search-uses}}
+                    <div class="column small-7">
+                        {{>search-aliases}}
+                    </div>
+                    <div class="column small-1">
+                        <div class="ptd-bottom">
+                            <a class="ptd-copy-link-icon glyphicon glyphicon-link" href="/details/{{uniqueId}}" title="Copy link location"></a>
+                        </div>
                     </div>
                 </div>
             </div>
-            {{#if aliases}}
-                <div class="aliases">
-                    {{#if user}}
-                        {{#each aliases}}
-                            {{> search-alias-write }}
-                        {{/each}}
-                    {{else}}
-                        {{#each aliases}}
-                            {{> search-alias-read }}
-                        {{/each}}
-                    {{/if}}
-                </div>
-            {{/if}}
-        </div>
     {{/each}}
 </div>
