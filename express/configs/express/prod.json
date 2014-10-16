@@ -1,4 +1,5 @@
 {
+    "base.url":        "https://terms.raisingthefloor.org",
     "port" : 4896,
     "app": {
         "name": "Preference Terms Dictionary",

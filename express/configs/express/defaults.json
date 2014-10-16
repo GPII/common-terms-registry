@@ -1,6 +1,6 @@
 {
     "port" :           4895,
-    "base.url":        "http://localhost:4895",
+    "base.url":        "https://terms.raisingthefloor.org",
     "couch.base.url" : "http://admin:admin@localhost:5984/",
     "couch.url" :      "http://admin:admin@localhost:5984/tr/",
     "users":           "http://admin:admin@localhost:5984/_users",
