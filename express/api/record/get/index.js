@@ -4,14 +4,16 @@ module.exports = function(config) {
     var fluid = require('infusion');
 
     var schemaHelper = require("../../../schema/lib/schema-helper")(config);
-    var namespace = "gpii.ctr.record.get";
+    var namespace    = "gpii.ctr.record.get";
 
-    var record = fluid.registerNamespace(namespace);
-    record.schema="record";
-    record.error = require("../../lib/error")(config);
-    var children = require('../../lib/children')(config, record);
+    var record       = fluid.registerNamespace(namespace);
+    record.schema    = "record";
+    record.error     = require("../../lib/error")(config);
+    var children     = require('../../lib/children')(config, record);
 
-    var express = require('express');
+    var express      = require('express');
+    var filters      = require("secure-filters");
+
 
     var router = express.Router();
 
@@ -53,25 +55,27 @@ module.exports = function(config) {
         }
 
         // Get the record from couch
+        var sanitizedId = filters.js(record.req.params.uniqueId);
         var request = require('request');
-        request.get(config['couch.url'] + "/_design/api/_view/entries?keys=%5B%22" + record.req.params.uniqueId + "%22%5D", function(e,r,b) {
+        request.get(config['couch.url'] + "/_design/api/_view/entries?keys=%5B%22" + sanitizedId + "%22%5D", function(e,r,b) {
             if (e) { return res.status(500).send(JSON.stringify({ok: false, message: "Error retrieving record from couchdb", error: e}));}
 
             var jsonData = JSON.parse(b);
             if (!jsonData.rows || jsonData.rows.length === 0) {
-                return res.status(404).send(JSON.stringify({ok:false, message: "Record not found." }));
+                return res.status(404).send(JSON.stringify({ok:false, message: "A record with the unique ID '" + sanitizedId + "' could not be found." }));
             }
             else {
                 record.results.record = jsonData.rows[0].value;
+                var sanitizedParentId = filters.js(record.results.record.uniqueId);
 
                 if (record.results.record.type.toLowerCase() === "term" && record.params.children) {
-                    // TODO:  This is a temporary hack to pass the predigested parent record data to the common
+                    // TODO:  This is a temporary hack to pass the predigested parent record data to the common hashXM
                     children.termHash = {};
-                    children.termHash[record.results.record.uniqueId] = record.results.record;
+                    children.termHash[sanitizedParentId] = record.results.record;
 
-                    // retrieve the child records via /tr/_design/api/_view/children?keys=
+                    // retrieve the child records via /tr/_design/api/_view/children?key=
                     var childRecordOptions = {
-                        "url" : config['couch.url'] + "/_design/api/_view/children?keys=" + JSON.stringify([record.results.record.uniqueId]),
+                        "url" : config['couch.url'] + "/_design/api/_view/children?key=%22" + sanitizedParentId + "%22",
                         "json": true
                     };
 

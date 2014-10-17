@@ -5,6 +5,8 @@
 // The PUT method also allows creating new records, so we expose the same functions for both.
 module.exports = function(config) {
     var schemaHelper = require("../../../../schema/lib/schema-helper")(config);
+    var filters      = require("secure-filters");
+
     return function(req, res){
         // Make sure the current record has at least a uniqueId
         if (!req.body || !req.body.uniqueId) {
@@ -17,14 +19,15 @@ module.exports = function(config) {
         // TODO:  Confirm that the parent record exists when adding a child record.
 
         var checkRequest = require('request');
-        checkRequest.get(config['couch.url'] + "/_design/api/_view/entries?key=%22" + req.body.uniqueId + "%22", function(checkError,checkResponse,checkBody) {
+        var sanitizedId = filters.js(req.body.uniqueId);
+        checkRequest.get(config['couch.url'] + "/_design/api/_view/entries?key=%22" + sanitizedId + "%22", function(checkError,checkResponse,checkBody) {
             if (checkError && checkError !== null) {
-                return res.status(500).send({"ok":false, "message": "error confirming whether uniqueId is already used:" + JSON.stringify(checkError)});
+                return res.status(500).send({"ok":false, "message": "error confirming whether uniqueId '" + sanitizedId + "' is already used:" + JSON.stringify(checkError)});
             }
 
             var jsonData = JSON.parse(checkBody);
             if (jsonData.rows && jsonData.rows.length > 0) {
-                return res.status(409).send({"ok":false, "message": "Could not post record because another record with the same uniqueId already exists."});
+                return res.status(409).send({"ok":false, "message": "Could not post record because another record with the same uniqueId ('" + sanitizedId + "') already exists."});
             }
 
             var originalRecord = req.body;

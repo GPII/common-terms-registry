@@ -1,15 +1,16 @@
 "use strict";
 
 module.exports = function(config) {
-    var fluid = require('infusion');
-    var namespace = "gpii.ctr.record.delete";
-    var record = fluid.registerNamespace(namespace);
+    var fluid        = require('infusion');
+    var namespace    = "gpii.ctr.record.delete";
+    var record       = fluid.registerNamespace(namespace);
 
     var schemaHelper = require("../../../schema/lib/schema-helper")(config);
 
-    record.error = require("../../lib/error")(config);
+    record.error     = require("../../lib/error")(config);
 
-    var express = require('express');
+    var filters      = require("secure-filters");
+    var express      = require('express');
 
     var router = express.Router();
     router.delete('/:uniqueId', function(req, res){
@@ -25,10 +26,11 @@ module.exports = function(config) {
 
         // Get the current document (we need its _rev value)
         var readRequest = require('request');
-        readRequest.get(config['couch.url'] + "/_design/api/_view/entries?key=%22" + req.params.uniqueId + "%22", function(readError,readResponse,readBody) {
+        var sanitizedId = filters.js(req.params.uniqueId);
+        readRequest.get(config['couch.url'] + "/_design/api/_view/entries?key=%22" + sanitizedId + "%22", function(readError,readResponse,readBody) {
             if (readError) {
                 console.log(readError);
-                return res.status(500).send({"ok": false, "message": "There was an error retrieving the record with uniqueId '" + req.params.uniqueId + "'..."});
+                return res.status(500).send({"ok": false, "message": "There was an error retrieving the record with uniqueId '" + sanitizedId + "'..."});
             }
 
             var jsonData = JSON.parse(readBody);
@@ -36,7 +38,7 @@ module.exports = function(config) {
             // Confirm that the record actually exists
             if (!jsonData || !jsonData.rows || !jsonData.rows[0]) {
                 console.log(jsonData);
-                return res.status(500).send({"ok": false, "message": "No record exists for uniqueId '" + req.params.uniqueId + "'..."});
+                return res.status(500).send({"ok": false, "message": "No record exists for uniqueId '" + sanitizedId + "'..."});
             }
 
             var updatedRecord = JSON.parse(JSON.stringify(jsonData.rows[0].value));
@@ -49,7 +51,7 @@ module.exports = function(config) {
             writeRequest.del(config['couch.url'] + "/" + updatedRecord._id + "?rev=" + updatedRecord._rev, function(writeError, writeResponse, writeBody){
                 if (writeError) {
                     console.log(writeError);
-                    return res.status(500).send({"ok": false, "message": "There was an error deleting the record with uniqueId '" + req.params.uniqueId + "'..."});
+                    return res.status(500).send({"ok": false, "message": "There was an error deleting the record with uniqueId '" + sanitizedId + "'..."});
                 }
 
                 if (writeResponse.statusCode === 200) {

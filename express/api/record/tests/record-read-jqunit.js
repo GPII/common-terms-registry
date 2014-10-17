@@ -118,16 +118,16 @@ read.runTests = function() {
     });
 
 // The "children" parameter should not cause problems when loading something that doesn't have children (i.e. an alias)
-    jqUnit.asyncTest("Retrieve record with the 'children' argument set to true...", function() {
-        request.get("http://localhost:" + read.config.port + "/record/XMPP+Chat+ID?children=true", function(error, response, body) {
+    jqUnit.asyncTest("Retrieve alias with the 'children' argument set to true...", function() {
+        request.get("http://localhost:" + read.config.port + "/record/XMPP%20Chat%20ID?children=true", function(error, response, body) {
             jqUnit.start();
 
             testUtils.isSaneResponse(jqUnit, error, response, body);
             var jsonData = JSON.parse(body);
 
-            jqUnit.assertTrue("There should have been a record returned...", jsonData.record);
+            jqUnit.assertUndefined("There should not have been a record returned...", jsonData.record);
             if (jsonData.record) {
-                jqUnit.assertUndefined("Record '" + jsonData.record.uniqueId + "' should have contained any children", jsonData.record.aliases);
+                jqUnit.assertUndefined("Record '" + jsonData.record.uniqueId + "' should not have contained any children", jsonData.record.aliases);
             }
         });
     });

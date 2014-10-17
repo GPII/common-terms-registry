@@ -2,15 +2,16 @@
 
 module.exports = function(config) {
     var schemaHelper = require("../../schema/lib/schema-helper")(config);
-    var fluid = require('infusion');
+    var fluid        = require('infusion');
 
-    var quick = config.lookup ? true : false;
+    var quick        = config.lookup ? true : false;
 
-    var search = fluid.registerNamespace(quick ? "gpii.ctr.api.suggest" : "gpii.ctr.api.search");
-    search.schema="search";
+    var search       = fluid.registerNamespace(quick ? "gpii.ctr.api.suggest" : "gpii.ctr.api.search");
+    search.schema    = "search";
 
-    var children = require('../lib/children')(config,search);
-    var request = require('request');
+    var children     = require('../lib/children')(config,search);
+    var request      = require('request');
+    var filters      = require("secure-filters");
 
     search.getLuceneSearchResults = function (error, response, body) {
         if (error) { return search.res.status(500).send( JSON.stringify(error)); }
@@ -29,7 +30,8 @@ module.exports = function(config) {
                 }
 
                 if (search.distinctUniqueIds.indexOf(uniqueId) === -1) {
-                    search.distinctUniqueIds.push(uniqueId);
+                    var sanitizedId = filters.js(uniqueId);
+                    search.distinctUniqueIds.push(sanitizedId);
                 }
             }
         }

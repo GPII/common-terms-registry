@@ -16,6 +16,8 @@ module.exports = function(config,parent) {
     var fluid        = require('infusion');
     var sorting      = require("../../lib/sorting")(config);
 
+    var filters      = require("secure-filters");
+
     var children = fluid.registerNamespace("gpii.ctr.api.lib.children");
     children.request = require('request');
 
@@ -129,7 +131,10 @@ module.exports = function(config,parent) {
 
         var queryParams = "";
 
-        var keyString = JSON.stringify(children.distinctIDs);
+        var sanitizedIds = [];
+        children.distinctIDs.forEach(function(id){sanitizedIds.push(filters.js(id));});
+
+        var keyString = JSON.stringify(sanitizedIds);
         if (keyString.length <= 7500) {
             queryParams += "?keys=" + keyString;
         }

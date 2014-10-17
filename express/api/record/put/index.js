@@ -9,7 +9,8 @@ module.exports = function(config) {
     record.error        = require("../../lib/error")(config);
     record.schemaHelper = require("../../../schema/lib/schema-helper")(config);
 
-    var request = require('request');
+    var request         = require('request');
+    var filters         = require("secure-filters");
 
     record.parseAndValidateInput = function() {
         if (!record.req.params || !record.req.params.uniqueId) {
@@ -41,10 +42,11 @@ module.exports = function(config) {
 
         // Get the current document
         var readRequest = require('request');
-        readRequest.get(config['couch.url'] + "/_design/api/_view/entries?key=%22" + req.body.uniqueId + "%22", function(readError,readResponse,readBody) {
+        var sanitizedId = filters.js(req.body.uniqueId);
+        readRequest.get(config['couch.url'] + "/_design/api/_view/entries?key=%22" + sanitizedId + "%22", function(readError,readResponse,readBody) {
             if (readError) {
                 console.log(readError);
-                return res.status(500).send({"ok": false, "message": "There was an error retrieving the record with uniqueId '" + req.body.uniqueId + "'..."});
+                return res.status(500).send({"ok": false, "message": "There was an error retrieving the record with uniqueId '" + sanitizedId + "'..."});
             }
 
             var jsonData = JSON.parse(readBody);
