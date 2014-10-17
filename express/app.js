@@ -57,7 +57,10 @@ app.use('/api',api);
 // Code to detect and suggest fixes for duplicates, only enabled in the development environment
 if ('development' === app.get('env')) {
     var dupes = require('./dupes')(config);
-    app.use('/dupes',dupes);
+    app.use('/dupes', dupes);
+
+    var validate = require("./validate")(config);
+    app.use("/validate", validate);
 }
 
 app.use(express.static(path.join(__dirname, 'public')));
