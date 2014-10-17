@@ -55,6 +55,9 @@
 .ptd-icon-pencil:before {
     content: "\e644";
 }
+.ptd-icon-add:before {
+    content: "\e65f";
+}
 .ptd-icon-help:before {
     content: "\e648";
 }

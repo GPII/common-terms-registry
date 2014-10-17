@@ -24,6 +24,11 @@
         }
     };
 
+    search.updateAddButton = function(that) {
+        var addButtonContainer = that.locate("add");
+        templates.replaceWith(addButtonContainer,"search-add-record-button");
+    };
+
     // Change the search offset and trigger a refresh when a page navigation link is clicked
     search.changePage = function(that,event) {
         var element = $(event.currentTarget);
@@ -153,22 +158,6 @@
         $.ajax(settings);
     };
 
-    search.updateStatusControls = function(that) {
-//        var statusString = "...";
-//        if (!that.model.searchSettings.statuses) {
-//            statusString = "No Status Selected";
-//        }
-//        else if (that.model.searchSettings.statuses.length === 1) {
-//            // TODO:  Title Case the strings used here, or at least the first one.
-//            statusString = that.model.searchSettings.statuses[0]+ " Records";
-//        }
-//        else {
-//            statusString = that.model.searchSettings.statuses.join(", ") + " Records";
-//        }
-//
-//        that.locate("statusText").html(statusString);
-    };
-
     search.toggleStatusControls = function(that) {
         that.locate("statusSelect").toggle();
     };
@@ -218,6 +207,7 @@
         selectors: {
             "query":         ".ptd-search-query",
             "sort":          ".ptd-search-sort",
+            "add":           ".ptd-add-record-button",
             "status":        ".ptd-search-status",
             "clear":         ".ptd-clear-button",
             "aliasToggle":   ".alias-toggle",
@@ -268,16 +258,22 @@
             },
             userControls:    {
                 type: "ctr.components.userControls",
-                container: ".user-container",
+                container: ".ptd-user-container",
                 options: {
                     components: {
                         data: "{ctr.components.search}.data"
                     },
                     listeners: {
                         afterLogout:
-                        {
-                            func: "{ctr.components.search}.events.refresh.fire"
-                        }
+                            [
+                                {
+                                    func: "{ctr.components.search}.events.refresh.fire"
+                                },
+                                {
+                                    func: "{ctr.components.search}.updateAddButton"
+
+                                }
+                            ]
                     }
                 }
             }
@@ -314,12 +310,12 @@
                 funcName: "ctr.components.search.displayResults",
                 args: ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"]
             },
-            "updateStatusControls": {
-                funcName: "ctr.components.search.updateStatusControls",
-                args: ["{that}"]
-            },
             "updatePagination": {
                 funcName: "ctr.components.search.updatePagination",
+                args: ["{that}"]
+            },
+            "updateAddButton": {
+                funcName: "ctr.components.search.updateAddButton",
                 args: ["{that}"]
             },
             "toggleStatusControls": {
@@ -382,11 +378,6 @@
                     args: ["{that}"]
                 },
                 {
-                    funcName: "ctr.components.search.updateStatusControls",
-                    excludeSource: "init",
-                    args: ["{that}"]
-                },
-                {
                     funcName: "ctr.components.search.searchSettingsChanged",
                     excludeSource: "init",
                     args: ["{that}"]
@@ -442,10 +433,6 @@
                     "this": "{that}.dom.aliasToggle",
                     method: "keypress",
                     args:   "{that}.toggleAliasRecord"
-                },
-                {
-                    funcName: "ctr.components.search.updateStatusControls",
-                    args: ["{that}"]
                 },
                 {
                     funcName: "ctr.components.search.updatePagination",

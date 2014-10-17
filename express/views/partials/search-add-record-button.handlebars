@@ -1,0 +1,7 @@
+<div class="ptd-add-record-button {{#unless user}}disabled{{/unless}}" tabindex="0">
+    {{#if user}}
+        <a href="/details/new"><div class="ptd-icon-add" title="Add a new record"></div></a>
+    {{else}}
+        <div class="ptd-icon-add" title="You must log in to contribute to the registry."></div></a>
+    {{/if}}
+</div>

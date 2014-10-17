@@ -1,27 +1,8 @@
 <div class="ptd-header">
+    {{>common-header-top-row}}
+
     <div class="row">
-        <div class="medium-4 column ptd-non-button-heading">
-            {{>common-site-title}}
-        </div>
         <div class="medium-2 column">
-            <div id="add-record-button" class="button small radius" tabindex="0" {{#unless user}}style="display:none"{{/unless}}>
-                <a href="/details/new"><div class="foundicon-general-plus">Add New</div></a>
-            </div>
-        </div>
-        <div class="medium-offset-3 medium-3 column">
-            <div class="row">
-                <div class="medium-4 column ptd-non-button-heading">
-                    <span class="ptd-icon-info"></span>
-                    <a tabindex="0" href="/about">About</a>
-                </div>
-                <div class="medium-8 column user-container">
-                    {{> user-controls }}
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="medium-4 column">
             <div class="row collapse">
                 <div class="medium-6 column">
                     <a class="button left active prefix" href="#">
@@ -39,8 +20,9 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div class="row">
+        <div class="medium-1 column">
+            {{>search-add-record-button}}
+        </div>
         <div class="medium-2 column">
             <a href="#" class="ptd-search-status-toggle" tabindex="0">
                 <div class="button secondary dropdown expand small">
@@ -63,7 +45,7 @@
             {{>language}}
         </div>
 
-        <div class="medium-4 column">
+        <div class="medium-5 column">
             <div class="row collapse ptd-search-form">
                 <div class="medium-1 column ptd-icon ptd-search-button">
                     <div class="foundicon-general-search"></div>
@@ -77,5 +59,4 @@
             </div>
         </div>
     </div>
-    <div class="row ptd-nav-bar"></div>
 </div>

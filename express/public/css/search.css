@@ -1,21 +1,19 @@
-#add-record-button {
+.ptd-add-record-button {
     background-color: #1ec285;
+    border-radius: 1.1em;
+    width: 2.2em;
+    height: 2.2em;
+    border: 2px solid #1ec285;
 }
 
-.alias {
-    background-color: #f2f2f2;
-    padding: 1.5em;
+.ptd-add-record-button.disabled {
+    background-color: #e2e2e2;
+    border-color: #757575;
 }
 
-.alias .source {
-    float:left; margin-right: 1em;
-}
-
-.alias-details {
-    display: none;
-}
-.alias-toggle {
-    color: #34a2b9;
+.ptd-add-record-button .ptd-icon-add {
+    font-size: 1.25em;
+    text-align: center;
 }
 
 .button [class*="foundicon-"]:before {
