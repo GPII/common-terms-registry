@@ -78,7 +78,7 @@
             data:     { type: "ctr.components.data" },
             controls: {
                 type: "ctr.components.userControls",
-                container: ".user-container",
+                container: ".ptd-user-container",
                 options: {
                     components: { data: "{data}" },
                     listeners: {

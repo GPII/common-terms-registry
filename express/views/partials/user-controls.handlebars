@@ -1,4 +1,5 @@
 <div id="profile">
+{{#if user}}
     <a href="#" data-dropdown="user-dropdown" class="button expand dropdown secondary small transparent" tabindex="0">
         <span class="ptd-icon-user"></span>
         {{#if user}}
@@ -11,7 +12,11 @@
     <ul id="user-dropdown" data-dropdown-content class="f-dropdown user-menu">
         <li class="user-menu-logout" {{#unless user}}style="display:none"{{/unless}} tabindex="-1">Log Out</li>
         <li class="user-menu-profile" {{#unless user}}style="display:none"{{/unless}} tabindex="-1"><a href="/profile">Profile</a></li>
-        <li class="user-menu-login"  {{#if user}}style="display:none"{{/if}} tabindex="-1"><a href="/login{{#if path}}?source={{path}}{{/if}}">Log In</a></li>
-        <li class="user-menu-signup" {{#if user}}style="display:none"{{/if}} tabindex="-1"><a href="/signup{{#if path}}?source={{path}}{{/if}}">Sign Up</a></li>
     </ul>
+{{else}}
+    <div class="ptd-not-logged-in-instructions">
+        <p>You must log in to contribute to the registry.</p>
+        <p><a href="/login{{#if path}}?source={{path}}{{/if}}" tabindex="0">Log in</a> or <a href="/signup{{#if path}}?source={{path}}{{/if}}" tabindex="0">Create an account</a>.</p>
+    </div>
+{{/if}}
 </div>

@@ -1,11 +1,13 @@
+.body {
+    padding-top: 3%;
+}
+
 .add input {
     display:inline;
 }
-.details-body {
-    background-color: #f0f0f0;
-}
-.details-header,.details-footer {
-    background-color: white;
+
+.details-instructions {
+    color: #999696;
 }
 
 .details-linkbar {
@@ -23,10 +25,6 @@
 
 .row.details-linkbar {
     margin-bottom: 1em;
-}
-
-.details-footer {
-    border-bottom: 1px solid #dcdcdc;
 }
 
 .row.details-footer {
@@ -72,12 +70,6 @@ input[type='radio']:checked+label {
 .details-instructions {
     color: #999696;
     margin-bottom: .75em;
-}
-
-.row {
-    padding: .5em;
-    margin-top: 1em;
-    margin-bottom: 1em;
 }
 
 .version-header {

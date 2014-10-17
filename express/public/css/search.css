@@ -21,11 +21,6 @@
     margin-right: .5em;
 }
 
-.button .glyphicon:before {
-    margin-left: -1em;
-    margin-right: .5em;
-}
-
 button, .button {
     margin: 0 0 .75rem;
 }
@@ -87,25 +82,8 @@ button.right, .button.right {
     border-radius: 0px 3px 3px 0px;
 }
 
-button.right .glyphicon:before, .button.right .glyphicon:before {
-    margin-left: 0px;
-    border-radius: 0px 3px 3px 0px;
-}
-
 .count {
     margin-top: .75em;
-}
-
-.details-header,.details-footer {
-    background-color: white;
-}
-
-.details-header:last-of-type {
-    border-bottom: 1px solid #dcdcdc;
-}
-
-.details-instructions {
-    color: #999696;
 }
 
 .dropdown.button {
@@ -116,10 +94,6 @@ button.right .glyphicon:before, .button.right .glyphicon:before {
 
 .dropdown.button.transparent {
     background-color: transparent;
-}
-
-.glyphicon {
-    top: 3px;
 }
 
 .loading {
@@ -150,16 +124,6 @@ button.right .glyphicon:before, .button.right .glyphicon:before {
 
 .ptd-non-button-heading {
     padding-top: .75em;
-}
-
-.ptd-non-button-heading a {
-    color: inherit;
-}
-
-.ptd-non-button-heading .glyphicon:before {
-    margin-top: .2em;
-    margin-left: -1em;
-    margin-right: .5em;
 }
 
 .ptd-search-form {
@@ -265,10 +229,6 @@ button.right .glyphicon:before, .button.right .glyphicon:before {
     font-size: 1.25em;
     margin-right:.25em;
     font-weight: bold;
-}
-
-.ptd-search-record .ptd-search-title .glyphicon-pencil, .alias .ptd-search-title .glyphicon-pencil {
-    color: #1ec285;
 }
 
 .translation-count {
