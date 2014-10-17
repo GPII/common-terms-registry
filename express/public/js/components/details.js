@@ -79,12 +79,7 @@
 
     details.displayError = function(that, jqXHR, textStatus, errorThrown) {
         var viewport = that.locate("viewport");
-
-        // Clear out any previous messages first.
-        $(viewport).find(".alert-box").remove();
-
-        // Clear out any ARIA error hints
-        $(viewport).find("[aria-invalid='true']").removeAttr("aria-invalid");
+        $(viewport).html("");
 
         var jsonData = {};
         try {
