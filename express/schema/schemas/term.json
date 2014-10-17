@@ -12,13 +12,25 @@
                     "description": "A completely unique identifier for this record.  Must be in lowerCamelCase with no spaces."
                 },
                 "aliases": {
-                    "anyOf": [ {"$ref": "alias"} ]
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "$ref": "alias"
+                    }
                 },
                 "transformations": {
-                    "anyOf": [ {"$ref": "transform"} ]
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "$ref": "transform"
+                    }
                 },
                 "translations": {
-                    "anyOf": [ {"$ref": "translation"} ]
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "$ref": "translation"
+                    }
                 },
                 "defaultValue": {"$ref": "record#/definitions/defaultValue"},
                 "valueSpace": {"$ref": "record#/definitions/valueSpace"},
