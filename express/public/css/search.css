@@ -10,6 +10,14 @@
     background-color: #e2e2e2;
     border-color: #757575;
 }
+.ptd-search-title-block, .ptd-search-copy-link {
+    display: inline-block;
+}
+
+.ptd-search-copy-link {
+    vertical-align: top;
+    padding-top: .2em;
+}
 
 .ptd-add-record-button .ptd-icon-add {
     font-size: 1.25em;
