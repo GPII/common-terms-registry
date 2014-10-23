@@ -1,9 +1,9 @@
 .ptd-add-record-button {
-    background-color: #1ec285;
+    background-color: #337746;
     border-radius: 1.1em;
     width: 2.2em;
     height: 2.2em;
-    border: 2px solid #1ec285;
+    border: 2px solid #337746;
 }
 
 .ptd-add-record-button.disabled {
@@ -22,6 +22,7 @@
 .ptd-add-record-button .ptd-icon-add {
     font-size: 1.25em;
     text-align: center;
+    color:white;
 }
 
 .button [class*="foundicon-"]:before {
