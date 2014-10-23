@@ -178,7 +178,6 @@ input.ptd-search-query:focus {
 
 .ptd-search-heading {
     font-weight: bold;
-    margin-top: .5em;
     margin-bottom: .25em;
 }
 
@@ -224,7 +223,6 @@ input.ptd-search-query:focus {
     margin-bottom: 0px;
     padding-left: .75em;
     padding-top: .5em;
-    padding-bottom: .5em;
 }
 
 .ptd-search-record .row {
