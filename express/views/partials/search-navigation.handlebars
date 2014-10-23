@@ -3,18 +3,14 @@
         {{#if count}}
             <div class="count">
                 <span class="record-count">
-                    {{count}} records found
+                    showing {{searchSettings.limit}} of {{count}} records found
                 </span>
             </div>
         {{/if}}
     </div>
     <div class="small-5 column">
         {{#if count}}
-            <ul class="ptd-search-page-links">
-                {{>search-navigation-previous-page-links}}
-                {{>search-navigation-page-link}}
-                {{>search-navigation-next-page-links}}
-            </ul>
+            {{>search-navigation-page-controls}}
         {{/if}}
     </div>
     <div class="small-3 column">

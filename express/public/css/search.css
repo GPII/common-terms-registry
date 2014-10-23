@@ -53,6 +53,16 @@ ul.ptd-search-page-links li a:hover {
     width: 100%;
 }
 
+input.ptd-search-nav-current-page {
+    height: 1.7em;
+    margin-top: 0.2em;
+    border-radius: 5px;
+}
+
+.ptd-search-nav-total-pages {
+    margin-top: 0.2em;
+}
+
 .ptd-search-nav-next, .ptd-search-nav-end, .ptd-search-nav-previous, .ptd-search-nav-start {
     font-size: 1.8em;
     text-align: left;

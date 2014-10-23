@@ -32,18 +32,57 @@
     // Change the search offset and trigger a refresh when a page navigation link is clicked
     search.changePage = function(that,event) {
         var element = $(event.currentTarget);
-        var offset = parseInt(element.attr('offset'));
+        var offset = element.attr('offset')? parseInt(element.attr('offset')) : undefined;
 
-        // If we click on a link that has the same offset as the current value, no change functions are fired.
-        that.applier.change("searchSettings.offset", offset);
+        if (!isNaN(offset) && offset >= 0) {
+            // If we click on a link that has the same offset as the current value, no change functions are fired.
+            that.applier.change("searchSettings.offset", offset);
+        }
+    };
+
+    // Update the offset when the "page" input is updated
+    search.updateOffsetFromPage = function(that) {
+        that.applier.change("searchSettings.offset", search.calculateCurrentOffset(that));
+    };
+
+    // Update the page input when the offset is updated elsewhere
+    search.updatePageFromOffset = function(that) {
+        var pageElement = that.locate("page");
+        var currentPage = search.calculateCurrentPage(that);
+        pageElement.val(currentPage);
+    };
+
+    // return a page value based on the current offset
+    search.calculateCurrentPage = function(that) {
+        var currentPage = 1;
+        if (that.model.searchSettings.limit !== -1) {
+            currentPage = Math.floor(that.model.searchSettings.offset/that.model.searchSettings.limit) + 1;
+        }
+        return currentPage;
+    };
+
+    // Return an offset based on the current page value
+    search.calculateCurrentOffset = function(that) {
+        var offset = that.model.searchSettings.offset;
+
+        if (that.model.searchSettings.limit !== -1) {
+            var pageElement = that.locate("page");
+            var currentPage = parseInt(pageElement.val());
+            if (currentPage && !isNaN(currentPage) && currentPage >= 1) {
+                offset = (currentPage -1) * that.model.searchSettings.limit;
+            }
+        }
+
+        return offset;
     };
 
     // Generate navigation links when the page is refreshed, as the number of pages may have changed
     search.updatePagination = function(that) {
         var container = that.locate("pageLinks");
-        container.html("");
 
-        var pages = 1;
+        var pages       = 1;
+        var currentPage = search.calculateCurrentPage(that);
+
         // If the limits are off, we have one page of results, guaranteed
         if (that.model.searchSettings.limit !== -1) {
             if (that.model.count && that.model.count > 0) {
@@ -51,45 +90,28 @@
             }
         }
 
-        var currentPage = 1;
-        if (that.model.limit !== -1) {
-            currentPage = Math.floor(that.model.searchSettings.offset/that.model.searchSettings.limit) + 1;
+        var navOptions  = {
+            offset:         0,
+            page:           currentPage,
+            totalPages:     pages,
+        };
+
+        templates.replaceWith(container,"search-navigation-page-controls", navOptions);
+
+        var navStart = that.locate("navStart");
+        navStart.attr('offset', 0);
+
+        if (currentPage > 1) {
+            var navPrevious = that.locate("navPrevious");
+            navPrevious.attr('offset', (currentPage - 2) * that.model.searchSettings.limit);
         }
+        if (currentPage < pages) {
+            var navNext = that.locate("navNext");
+            navNext.attr('offset', currentPage * that.model.searchSettings.limit);
 
-        var navStart    = that.locate("navStart");
-        var navPrevious = that.locate("navPrevious");
-        var navNext     = that.locate("navNext");
-        var navEnd      = that.locate("navEnd");
-
-        if (pages === 1) {
-            templates.prepend(container,"search-navigation-page-current-link",{offset: 0, page: 1});
+            var navEnd = that.locate("navEnd");
+            navEnd.attr('offset', (pages - 1) * that.model.searchSettings.limit);
         }
-        else {
-
-            if (currentPage > 1 ) {
-                navPrevious.attr('offset', (currentPage - 2) * that.model.searchSettings.limit);
-            }
-
-            if (pages > 1 && currentPage < pages) {
-                navNext.attr('offset', currentPage * that.model.searchSettings.limit);
-                navEnd.attr('offset', (pages-1) * that.model.searchSettings.limit);
-            }
-
-            for (var a = pages - 1; a >= 0; a--) {
-                var page = a+1;
-                var pageOffset = a * that.model.searchSettings.limit;
-
-                if (page === currentPage) {
-                    templates.prepend(container,"search-navigation-page-current-link",{offset: pageOffset, page: page});
-                }
-                else {
-                    templates.prepend(container,"search-navigation-page-link",{offset: pageOffset, page: page});
-                }
-            }
-        }
-
-        templates.prepend(container,"search-navigation-previous-page-links");
-        templates.append(container,"search-navigation-next-page-links");
 
         // Fire a "nav loaded" event so that we can wire up the appropriate listeners
         that.events.navBarLoaded.fire();
@@ -97,14 +119,7 @@
 
     // We have to reset the offset if someone changes the search terms.  Otherwise we could be on a page that's larger than the result set.
     search.clearOffset = function(that)  {
-        that.applier.change("searchSettings.offset",0);
-    };
-
-    // This function is meant to be called on an individual alias entry toggle
-    search.toggleAliasRecord = function (that, event) {
-        var element = $(event.currentTarget);
-        element.html(element.html() === "less" ? "more": "less");
-        element.parent().parent().parent().find(".alias-details").toggle();
+        that.applier.change("searchSettings.offset", 0);
     };
 
     // Update the results displayed whenever we have new search data
@@ -114,18 +129,14 @@
             that.showClearButton(!emptyQuery);
         }
 
-        // TODO:  Hide the option to sort by best match if there is no query data, show it if there is.
+        // TODO:  Hide the option to sort by "best match" if there is no query data, show it if there is.
         // TODO:  Set the sort to "best match" when search query data is entered.
-        // TODO:  Allow users to override the sort option once search query data is entered (look for what has changed)
-
 
         // TODO: Figure out why the hell this is happening...
         if (!that.displayResults) {
             console.log("searchSettingsChanged was called before invokers were in place.  Bailing out...");
             return;
         }
-
-        // TODO: add controls for pagination or infinite scrolling.  For now, searches will return and display all results.
 
         var settings = {
             url:     that.options.baseUrl,
@@ -186,8 +197,9 @@
 
             // Add the search navigation to the header
             templates.replaceWith(that.locate("navBar"), "search-navigation", that.model);
+            var pageSize = that.model.searchSettings.limit === -1 ? that.model.count : that.model.searchSettings.limit ;
 
-            templates.append(viewport, "search-records", {records: data.records, user: that.model.user});
+            templates.append(viewport, "search-records", {records: data.records, user: that.model.user, pageSize: pageSize });
         }
         else {
             templates.replaceWith(viewport, "search-norecord");
@@ -215,6 +227,7 @@
             "statusText":    ".ptd-search-status-current-text",
             "statusSelect":  ".ptd-search-status-selector",
             "navStart":      ".ptd-search-nav-start",
+            "page":          ".ptd-search-nav-current-page",
             "navPrevious":   ".ptd-search-nav-previous",
             "pageLinks":     ".ptd-search-page-links",
             "navNext":       ".ptd-search-nav-next",
@@ -248,7 +261,7 @@
                     model: {
                         searchSettings: {
                             offset:   0,
-                            limit:    100,
+                            limit:    25,
                             sort:     "uniqueId",
                             statuses: ["active","unreviewed","candidate","draft"],
                             query:    ""
@@ -286,10 +299,6 @@
             "navBarLoaded":      "preventable"
         },
         invokers: {
-            "toggleAliasRecord": {
-                funcName: "ctr.components.search.toggleAliasRecord",
-                args: [ "{that}", "{arguments}.0"]
-            },
             "changePage": {
                 funcName: "ctr.components.search.changePage",
                 args: [ "{that}", "{arguments}.0"]
@@ -309,6 +318,10 @@
             "displayResults": {
                 funcName: "ctr.components.search.displayResults",
                 args: ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"]
+            },
+            "updateOffsetFromPage": {
+                funcName: "ctr.components.search.updateOffsetFromPage",
+                args: ["{that}"]
             },
             "updatePagination": {
                 funcName: "ctr.components.search.updatePagination",
@@ -331,6 +344,11 @@
             "searchSettings.offset": [
                 {
                     funcName: "ctr.components.search.searchSettingsChanged",
+                    excludeSource: "init",
+                    args: ["{that}"]
+                },
+                {
+                    funcName: "ctr.components.search.updatePageFromOffset",
                     excludeSource: "init",
                     args: ["{that}"]
                 }
@@ -411,6 +429,11 @@
                     "this": "{that}.dom.navPageLink",
                     method: "keypress",
                     args:   "{that}.changePage"
+                },
+                {
+                    "this": "{that}.dom.page",
+                    "method": "change",
+                    "args": "{that}.updateOffsetFromPage"
                 }
             ],
             markupLoaded: [
@@ -423,16 +446,6 @@
                     "this": "{that}.dom.clear",
                     method: "keypress",
                     args:   "{that}.clearSearchFilter"
-                },
-                {
-                    "this": "{that}.dom.aliasToggle",
-                    method: "click",
-                    args:   "{that}.toggleAliasRecord"
-                },
-                {
-                    "this": "{that}.dom.aliasToggle",
-                    method: "keypress",
-                    args:   "{that}.toggleAliasRecord"
                 },
                 {
                     funcName: "ctr.components.search.updatePagination",
