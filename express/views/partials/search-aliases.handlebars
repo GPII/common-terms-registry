@@ -1,4 +1,4 @@
-<div class="ptd-search-heading">Aliases</div>
+<div class="ptd-search-heading">Aliases{{#if aliases}} ({{aliases.length}}){{/if}}</div>
 <ul class="ptd-search-alias-list">
 {{#each aliases}}
     <li>{{#if termLabel}}{{termLabel}}{{else}}{{uniqueId}}{{/if}}</li>
