@@ -196,7 +196,10 @@ input.ptd-search-query:focus {
     list-style: none;
     margin:0px;
     padding-left: 0px;
-    line-height: inherit;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .ptd-search-alias-list li {
     display: inline;
