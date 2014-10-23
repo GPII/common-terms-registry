@@ -132,6 +132,11 @@ button.right, .button.right {
     font-style: italic;
 }
 
+input.ptd-search-query:focus {
+    background: inherit;
+    box-shadow: none;
+}
+
 .ptd-non-button-heading {
     padding-top: .75em;
 }
