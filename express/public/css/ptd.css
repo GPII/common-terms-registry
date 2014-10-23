@@ -79,7 +79,18 @@ button.radius, .button.radius {
 }
 
 .ptd-header [class^="ptd-icon-"], .ptd-header [class*=" ptd-icon-"] {
+    padding-top: .3em;
+}
+
+.ptd-top-row [class^="ptd-icon-"], .ptd-header [class*=" ptd-icon-"] {
     color: #337746;
+}
+
+.ptd-search-nav-footer a {
+    font-size: 1.25em;
+}
+
+.ptd-search-nav-footer a [class^="ptd-icon-"], .ptd-search-nav-footer a [class*=" ptd-icon-"] {
     padding-top: .3em;
 }
 

@@ -200,6 +200,7 @@
             var pageSize = that.model.searchSettings.limit === -1 ? that.model.count : that.model.searchSettings.limit ;
 
             templates.append(viewport, "search-records", {records: data.records, user: that.model.user, pageSize: pageSize });
+            templates.append(viewport, "search-navigation-footer",{});
         }
         else {
             templates.replaceWith(viewport, "search-norecord");
@@ -437,6 +438,16 @@
                 }
             ],
             markupLoaded: [
+                {
+                    "this": "{that}.dom.navPageLink",
+                    method: "click",
+                    args:   "{that}.changePage"
+                },
+                {
+                    "this": "{that}.dom.navPageLink",
+                    method: "keypress",
+                    args:   "{that}.changePage"
+                },
                 {
                     "this": "{that}.dom.clear",
                     method: "click",
