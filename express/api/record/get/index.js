@@ -55,7 +55,7 @@ module.exports = function(config) {
         }
 
         // Get the record from couch
-        var sanitizedId = filters.js(record.req.params.uniqueId);
+        var sanitizedId = filters.uri(record.req.params.uniqueId);
         var request = require('request');
         request.get(config['couch.url'] + "/_design/api/_view/entries?keys=%5B%22" + sanitizedId + "%22%5D", function(e,r,b) {
             if (e) { return res.status(500).send(JSON.stringify({ok: false, message: "Error retrieving record from couchdb", error: e}));}
@@ -66,7 +66,7 @@ module.exports = function(config) {
             }
             else {
                 record.results.record = jsonData.rows[0].value;
-                var sanitizedParentId = filters.js(record.results.record.uniqueId);
+                var sanitizedParentId = filters.uri(record.results.record.uniqueId);
 
                 if (record.results.record.type.toLowerCase() === "term" && record.params.children) {
                     // TODO:  This is a temporary hack to pass the predigested parent record data to the common hashXM

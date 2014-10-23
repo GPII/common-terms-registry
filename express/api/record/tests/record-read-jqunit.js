@@ -112,7 +112,7 @@ read.runTests = function() {
 
             jqUnit.assertTrue("There should have been a record returned...", jsonData.record);
             if (jsonData.record) {
-                jqUnit.assertNotUndefined("Record '" + jsonData.record.uniqueId + "' should have contained any children", jsonData.record.aliases);
+                jqUnit.assertNotUndefined("Record '" + jsonData.record.uniqueId + "' should have contained children", jsonData.record.aliases);
             }
         });
     });
@@ -125,10 +125,22 @@ read.runTests = function() {
             testUtils.isSaneResponse(jqUnit, error, response, body);
             var jsonData = JSON.parse(body);
 
-            jqUnit.assertUndefined("There should not have been a record returned...", jsonData.record);
+            jqUnit.assertNotUndefined("There should have been a record returned...", jsonData.record);
             if (jsonData.record) {
                 jqUnit.assertUndefined("Record '" + jsonData.record.uniqueId + "' should not have contained any children", jsonData.record.aliases);
             }
+        });
+    });
+
+    // The "children" parameter should not cause problems when loading something that doesn't have children (i.e. an alias)
+    jqUnit.asyncTest("Retrieve a record with a space in its name...", function() {
+        request.get("http://localhost:" + read.config.port + "/record/XMPP%20Chat%20ID", function(error, response, body) {
+            jqUnit.start();
+
+            testUtils.isSaneResponse(jqUnit, error, response, body);
+            var jsonData = JSON.parse(body);
+
+            jqUnit.assertTrue("There should have been a record returned...", jsonData.record);
         });
     });
 
