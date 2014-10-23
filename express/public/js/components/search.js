@@ -197,7 +197,8 @@
 
             // Add the search navigation to the header
             templates.replaceWith(that.locate("navBar"), "search-navigation", that.model);
-            var pageSize = that.model.searchSettings.limit === -1 ? that.model.count : that.model.searchSettings.limit ;
+            var pageSize = that.model.searchSettings.limit === -1 ? that.model.count : that.model.searchSettings.limit;
+            if (that.model.count < pageSize) { pageSize = that.model.count; }
 
             templates.append(viewport, "search-records", {records: data.records, user: that.model.user, pageSize: pageSize });
             templates.append(viewport, "search-navigation-footer",{});
