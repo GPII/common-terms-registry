@@ -1,31 +1,43 @@
 "use strict";
 var fluid = require("infusion");
 var jqUnit = fluid.require("jqUnit");
-var request = require('request');
 
-var loader = require("../../../configs/lib/config-loader");
-var config = loader.loadConfig(require("../../../configs/express/test.json"));
+jqUnit.module("Couch API Unit Tests");
 
-var testUtils = require("../../tests/lib/testUtils")(config);
+//jqUnit.test("Testing reduce function (single reduce pass, tree <- leaf)...",function(){
+//    var reducer = require("../views/lib/combined-reduce-utils.js");
+//    var data    = [{"uniqueId": "foo", "type": "term"},{"uniqueId":"bar", "type":"alias", "aliasOf": "foo"}];
+//    var output  = reducer.reducer(["foo","foo"], data, false);
+//
+//    jqUnit.assertDeepEq("There should be one merged record...", {"foo": { "uniqueId": "foo", "type": "term", "aliases": [ {"uniqueId": "bar", "type": "alias", "aliasOf": "foo"} ] }}, output);
+//});
+//
+//jqUnit.test("Testing reduce function (single reduce pass, leaf <- tree)...",function(){
+//    var reducer = require("../views/lib/combined-reduce-utils.js");
+//    var data    = [{"uniqueId":"bar", "type":"alias", "aliasOf": "foo"},{"uniqueId": "foo", "type": "term"}];
+//    var output  = reducer.reducer(["foo","foo"], data, false);
+//
+//    jqUnit.assertDeepEq("There should be one merged record...", {"foo": { "uniqueId": "foo", "type": "term", "aliases": [ {"uniqueId": "bar", "type": "alias", "aliasOf": "foo"} ] }}, output);
+//});
+//
+//jqUnit.test("Testing reduce function (single reduce pass, multiple interleaved trees and leaves)...",function(){
+//    var reducer = require("../views/lib/combined-reduce-utils.js");
+//    var data    = [{"uniqueId": "baz", "type": "term"},{"uniqueId":"bar", "type":"alias", "aliasOf": "foo"},{"uniqueId": "foo", "type": "term"},{"uniqueId":"qux", "type":"alias", "aliasOf": "baz"}];
+//    var output  = reducer.reducer(["baz","foo","foo","baz"], data, false);
+//
+//    jqUnit.assertDeepEq("Interleaved records should be merged...", {"foo": { "uniqueId": "foo", "type": "term", "aliases": [ {"uniqueId": "bar", "type": "alias", "aliasOf": "foo"} ] }, "baz": { "uniqueId": "baz", "type": "term", "aliases": [ {"uniqueId": "qux", "type": "alias", "aliasOf": "baz"} ] }}, output);
+//});
 
-// TODO:  Setup a new database  (how, given that it's async?)
+jqUnit.test("Testing rereduce function, one record split between sets...",function(){
+    var reducer = require("../views/lib/combined-reduce-utils.js");
+    var data    = [
+        {"foo": { "uniqueId": "foo", "type": "term"}},
+        {"foo": { "aliases": [ {"uniqueId": "bar", "type": "alias", "aliasOf": "foo"} ] }}
+    ];
 
-// TODO:  Push the api code to the new database
+    var output  = reducer.reducer(null, data, true);
 
-jqUnit.module("Couch API Tests");
-
-// TODO:  Test adding a valid record
-
-// TODO:  Test adding invalid records
-
-// TODO:  Test updating a valid record
-
-// TODO:  Test updating a record with partial data
-
-// TODO:  Test updating a record with invalid data
-
-// TODO:  Test deleting a record (should be impossible)
-
-jqUnit.onAllTestsDone.addListener(function() {
-    // TODO:  Remove the database we just created
+    jqUnit.assertDeepEq("There should be one merged record...", {"foo": { "uniqueId": "foo", "type": "term", "aliases": [ {"uniqueId": "bar", "type": "alias", "aliasOf": "foo"} ] }}, output);
 });
+
+

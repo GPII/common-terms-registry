@@ -6,5 +6,6 @@
   "MANIFEST",
   "MIT-LICENSE.txt",
   "README.*",
-  "tests"
+  "tests",
+  "node_modules"
 ]
