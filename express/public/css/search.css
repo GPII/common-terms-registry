@@ -84,6 +84,10 @@ input.ptd-search-nav-current-page {
     color:inherit;
 }
 
+.ptd-search-nav-footer .row .row {
+    margin-bottom: 0.35em;
+}
+
 .button.active {
     color: white;
     background-color: black;
