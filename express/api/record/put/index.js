@@ -113,10 +113,6 @@ module.exports = function(config) {
         });
     };
 
-    // Update REST end point (PUT /api/record/:uniqueId)
-    router.put('/:uniqueId', handlePut);
-
-    // We will also silently handle PUT /api/record, as we prefer the uniqueId passed with the body anyway.
     router.put('/', handlePut);
 
     return router;
