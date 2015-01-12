@@ -1,8 +1,9 @@
 {
-    "base.url":        "https://terms.raisingthefloor.org",
-    "port" : 4896,
+    "base.url":       "https://terms.raisingthefloor.org",
+    "port" :          4896,
     "app": {
-        "name": "Preference Terms Dictionary",
-        "url":  "https://terms.raisingthefloor.org:8443"
+        "name":       "Preference Terms Dictionary",
+        "url":        "https://terms.raisingthefloor.org",
+        "privateUrl": "http://localhost:4896"
     }
 }

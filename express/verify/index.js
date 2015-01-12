@@ -13,7 +13,7 @@ module.exports = function(config) {
 
         var request = require('request');
         var options = {
-            url:    config.app.url + "/api/user/verify/" + req.params.code,
+            url:    config.app.privateUrl + "/api/user/verify/" + req.params.code,
             json:   true,
             config: { "baseUrl": config["base.url"] }
         };

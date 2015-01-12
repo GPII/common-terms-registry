@@ -20,7 +20,8 @@
     "safeCookies": ["searchSettings"],
     "app": {
         "name": "Preference Terms Dictionary (development)",
-        "url":  "http://localhost:4895"
+        "url":  "http://localhost:4895",
+        "privateUrl": "http://localhost:4895"
     },
     "session": {
         "secret": "Printer, printer take a hint-ter."
