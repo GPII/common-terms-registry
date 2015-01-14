@@ -26,12 +26,12 @@ A term is a single canonical way of describing a need or solution. For example, 
 
 |Field|Description|
 | --- | --- |
-|ValueSpace|A description of the values allowed for this term.|
-|TermLabel|A short label for this term as it would appear in a menu or listing.|
-|Definition|A description of the term.|
-|ApplicationUniqueFlag|Whether this term is unique to a particular application.|
-|Uses|A description of other systems that use this term and how they use it.|
-|DefaultValue|A suggested default value.|
+|valueSpace|A description of the values allowed for this term.|
+|termLabel|A short label for this term as it would appear in a menu or listing.|
+|definition|A description of the term.|
+|applicationUniqueFlag|Whether this term is unique to a particular application.|
+|uses|A description of other systems that use this term and how they use it.|
+|defaultValue|A suggested default value.|
 
 [View JSON Schema for terms](../schema/term.json)
 
@@ -42,9 +42,10 @@ An alias is another name for a standard term, with no other differences. When de
 |Field|Description|
 | --- | --- |
 |aliasOf|The unique identifier of the parent record this record is an alias of.|
-|TermLabel|A short label for this term as it would appear in a menu or listing.|
-|Uses|A description of other systems that use this term and how they use it.|
-|DefaultValue|A suggested default value.|
+|termLabel|A short label for this term as it would appear in a menu or listing.|
+|uses|A description of other systems that use this term and how they use it.|
+|ulUri|If this setting is application-specific, it should point to the application's listing in the Unified Listing.  This field is used for that purpose, and requires a valid URI|
+|defaultValue|A suggested default value.|
 
 [View JSON Schema for aliases](../schema/alias.json)
 
@@ -54,12 +55,12 @@ A translation is representation of a term in another language with no other diff
 
 |Field|Description|
 | --- | --- |
-|TranslationOf|The unique identifier of the parent record this record is a translation of.|
-|ValueSpace|A translation of the terms used in the parent record’s value space.|
-|TermLabel|A translation of the short label for the parent record as it would appear in a menu or listing.|
-|Definition|A translation of the definition of the parent record.|
-|Uses|A translation of the uses in the parent record.|
-|DefaultValue|A translation of the default value in the parent record..|
+|translationOf|The unique identifier of the parent record this record is a translation of.|
+|valueSpace|A translation of the terms used in the parent record’s value space.|
+|termLabel|A translation of the short label for the parent record as it would appear in a menu or listing.|
+|definition|A translation of the definition of the parent record.|
+|uses|A translation of the uses in the parent record.|
+|defaultValue|A translation of the default value in the parent record..|
 
 [View JSON Schema for translations](../schema/translation.json)
 
@@ -71,10 +72,10 @@ For these cases, the Preference Terms Dictionary provides a transformation. A tr
 |Field|Description|
 | --- | --- |
 |aliasOf|The unique identifier of the parent record this record is a transformation alias of.|
-|ValueSpace|A bidirectional lossless algorithm for converting to and from the values used by the common term.|
-|TermLabel|A translation of the short label for the parent record as it would appear in a menu or listing.|
-|Uses|A description of other systems that use this term and how they use it.|
-|DefaultValue|A suggested default value.|
+|valueSpace|A bidirectional lossless algorithm for converting to and from the values used by the common term.|
+|termLabel|A translation of the short label for the parent record as it would appear in a menu or listing.|
+|uses|A description of other systems that use this term and how they use it.|
+|defaultValue|A suggested default value.|
 
 [View JSON Schema for transformations](../schema/transformation.json)
 
@@ -88,7 +89,7 @@ In addition to the common fields described above, condition records have only on
 
 |Field|Description|
 | --- | --- |
-|Definition|A clear definition of the condition.|
+|definition|A clear definition of the condition.|
 
 [View JSON Schema for conditions](../schema/condition.json)
 
@@ -410,7 +411,7 @@ The list of conditions.  Equivalent to using /api/records with the query paramet
 Performs a full text search of all data, returns matching terms.  Only standard terms are returned.  All other associated record types are combined with the standard term into a single record.
 
 + Parameters
-    + q (required, string) ... The query string to match.  Can either consist of a word or phrase as plain text, or can use [lucene's query syntax][1] to construct more complex searches.
+    + q (required, string) ... The query string to match.  Can either consist of a word or phrase as plain text, or can use [lucene's query syntax](https://github.com/rnewson/couchdb-lucene) to construct more complex searches.
     + status (optional, string) ... The record statuses to return (defaults to everything but 'deleted' records).  Can be repeated to include multiple statuses.
     + sort (optional,string) ... The sort order to use when displaying records.  Conforms to [lucene's query syntax][1].
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
@@ -498,5 +499,3 @@ Suggest the correct common term to use.  Performs a search as in /api/search, bu
             "retrievedAt": "2014-05-25T11:23:32.441Z"
         }
         ```
-
-[1] https://github.com/rnewson/couchdb-lucene   "Lucene-couchdb documentation"
