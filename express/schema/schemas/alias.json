@@ -9,6 +9,7 @@
             "properties": {
                 "aliasOf":      { "$ref": "record#/definitions/aliasOf" },
                 "termLabel":    { "$ref": "record#/definitions/termLabel" },
+                "ulUri":        { "$ref": "record#/definitions/ulUri" },
                 "uses":         { "$ref": "record#/definitions/uses" },
                 "defaultValue": { "$ref": "record#/definitions/defaultValue" }
             }

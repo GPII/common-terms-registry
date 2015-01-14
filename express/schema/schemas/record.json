@@ -24,8 +24,13 @@
             "description": "Any additional information associated with this record."
         },
         "permanency": {
-            "type": "string",
+            "type":        "string",
             "description": "An indication of how likely a field is to change over time."
+        },
+        "ulUri": {
+            "type":        "string",
+            "format":      "uri",
+            "description": "A URI which can be used to look up this record in the Unified Listing."
         },
         "status": {
             "enum": ["unreviewed", "candidate", "active", "draft", "deleted"],
