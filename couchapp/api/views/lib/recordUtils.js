@@ -14,7 +14,7 @@ exports.getRecordFields = function(doc) {
         recordFields = ["valueSpace", "termLabel", "defaultValue", "definition", "applicationUnique", "uses"];
     }
     else if (doc.type.toLowerCase() === "alias") {
-        recordFields = ["aliasOf", "termLabel", "defaultValue", "uses"];
+        recordFields = ["aliasOf", "termLabel", "defaultValue", "uses", "ulUri"];
     }
     else if (doc.type.toLowerCase() === "translation") {
         recordFields = ["translationOf", "valueSpace", "defaultValue", "termLabel", "definition", "uses"];
