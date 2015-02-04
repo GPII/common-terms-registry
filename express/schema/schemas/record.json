@@ -62,7 +62,10 @@
             "description": "The date at which the record was last updated."
         },
         "uses": {
-            "type": "string",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
             "description": "A description of other systems that use this term and how they use it."
         },
         "valueSpace": {

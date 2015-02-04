@@ -36,7 +36,8 @@ module.exports = function(config) {
 
             // TODO: Set the "author" field to the current user (use req.session.user)
 
-            var errors = schemaHelper.validate(updatedRecord.type, updatedRecord);
+            var type = config.schemas.names.indexOf(updatedRecord.type) !== -1 ? updatedRecord.type : "record";
+            var errors = schemaHelper.validate(type, updatedRecord);
             if (errors) {
                 return res.status(400).send({"ok": false, "message": "The data you have entered is not valid.  Please review.", "errors": errors});
             }

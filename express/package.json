@@ -29,6 +29,7 @@
     "jqUnit": "git://github.com/fluid-project/node-jqUnit.git#e9bf72445bd343a4f3aabe3ba96a1087d3498612",
     "jsonschema": "^0.4.0",
     "memdown": "^0.10.2",
+    "nock": "^0.56.0",
     "pouchdb": "3.0.5",
     "tough-cookie": "^0.12.1"
   }

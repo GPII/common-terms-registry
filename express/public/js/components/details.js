@@ -31,7 +31,7 @@
     // Save the new version including any comments
     details.save = function(that) {
         var settings = {
-            url:         that.options.baseUrl + "/" + that.data.model.record.uniqueId,
+            url:         that.options.baseUrl + "/",
             type:        "PUT",
             contentType: "application/json",
             processData: false,
