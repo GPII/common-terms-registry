@@ -4,7 +4,7 @@ This import script is intended to be used with a copy of the previous shared spr
 
 http://bit.ly/17LIFMB
 
-That file contains records in which the GPII/Cloud4All registry terms are the first set of columns,
+That file contains records in which the GPII/Cloud4All PTD entries are the first set of columns,
 and additional namespaces appear on the same rows.
 
 Before importing, the data needs to be updated to replace the column headings with the contenst of 

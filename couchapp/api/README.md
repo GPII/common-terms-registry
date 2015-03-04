@@ -1,5 +1,5 @@
 This directory contains just the views and record constraints that are required to configure a raw CouchDB instance for
-use with the Common Terms Registry API.
+use with the Preference Terms Dictionary API.
 
 All code follows the "couchapp" conventions and is meant to be deployed with that tool:
 

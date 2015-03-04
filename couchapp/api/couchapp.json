@@ -1,4 +1,4 @@
 {
-    "name": "CTR CouchDB configuration",
-    "description": "Couchdb views, lists, shows, and validation code to support the Common Terms Registry."
+    "name": "PTD CouchDB configuration",
+    "description": "Couchdb views, lists, shows, and validation code to support the Preference Terms Dictionary."
 }

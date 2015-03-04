@@ -1,4 +1,4 @@
-This directory contains a simple design document that will enable lucene integration with the Common Terms Registry.
+This directory contains a simple design document that will enable lucene integration with the Preference Terms Dictionary.
 
 All code follows the "couchapp" conventions and is meant to be deployed with that tool:
 

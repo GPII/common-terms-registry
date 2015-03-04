@@ -1,4 +1,4 @@
-The contents of this directory can be used to import an OWL file from the Semantic Analysis Tool into the terms registry.  This process is meant to be used with an empty couchdb database.
+The contents of this directory can be used to import an OWL file from the Semantic Analysis Tool into the Preference Terms Dictionary.  This process is meant to be used with an empty couchdb database.
 
 First, you will need to transform the .owl file downloaded from the SAT using the included leaf_blower.xsl script and an XSLT tool, as in the following example:
 

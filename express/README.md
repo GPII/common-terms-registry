@@ -1,4 +1,4 @@
-This directory contains the express.js instance used by the Common Terms Registry, which includes all public REST apis, and static web pages.
+This directory contains the express.js instance used by the Preference Terms Dictionary, which includes all public REST apis, and static web pages.
 
 After downloading the code from the repository, you will need to download all npm and front-end dependencies using commands like the following:
       npm install

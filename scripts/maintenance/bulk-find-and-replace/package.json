@@ -1,7 +1,7 @@
 {
   "name": "bulk-find-and-replace",
   "version": "0.1.0",
-  "description": "Utility script to quickly find and replace data stored in the terms registry.",
+  "description": "Utility script to quickly find and replace data stored in a CouchDB instance.",
   "bugs": "http://issues.gpii.net/browse/CTR",
   "main": "find-and-replace.js",
   "dependencies": {

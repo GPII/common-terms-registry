@@ -1,4 +1,4 @@
-// Rules that control what record content can be stored in Couch for the Common Terms Registry
+// Rules that control what record content can be stored in Couch for the Preference Terms Dictionary
 function(newDoc, oldDoc, userCtx) {
     // The user has to be logged in to perform updates
     if (!userCtx || userCtx.name === null) {

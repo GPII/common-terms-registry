@@ -1,6 +1,6 @@
 {
     "port" : 5972,
     "app": {
-        "name": "Common Terms Registry (tests)"
+        "name": "Preference Terms Dictionary (tests)"
     }
 }

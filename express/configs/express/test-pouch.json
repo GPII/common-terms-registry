@@ -5,6 +5,6 @@
     "users":           "http://localhost:2795/_users",
     "pouch.port":      2795,
     "app": {
-        "name": "Common Terms Registry (tests + pouch)"
+        "name": "Preference Terms Dictionary (tests + pouch)"
     }
 }

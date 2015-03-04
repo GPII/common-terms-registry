@@ -5,7 +5,7 @@
   "authors": [
     "tony@raisingthefloor.org"
   ],
-  "description": "Common Terms Registry",
+  "description": "Preference Terms Dictionary Front End",
   "main": "app.js",
   "license": "MIT",
   "private": true,

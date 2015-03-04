@@ -1,12 +1,12 @@
 # Introduction
 
-The terms registry is intended to help people describing needs and solutions translate between the range of terms used to describe both.  
+The Preference Terms Dictionary is intended to help people describing needs and solutions translate between the range of terms used to describe both.
 
-The registry consists of canonical entries and aliases from other namespaces.
+The PTD consists of canonical entries and aliases from other namespaces.
 
 ## Requirements
 
-To set up a development instance of the registry, you will need:
+To set up a development instance of the PTD, you will need:
 
 * [CouchDB](http://couchdb.apache.org/)
 * [couchdb-lucene](https://github.com/rnewson/couchdb-lucene)
@@ -16,12 +16,13 @@ To set up a development instance of the registry, you will need:
 
 ## Getting test data
 
-To really test things, you will probably want some real data.  You can either do this by:
+To really use the system locally, you will probably want some real data.  You can either do this by:
 
 1. Replicating from another instance:  http://wiki.apache.org/couchdb/Replication
 2. Building the data set from the source materials using the contents of the scripts folder (see that folder for instructions).
+3. Loading the test data using the Couch "bulk documents" API.
 
-If you are replicating from another instance, you will need to do this *before* installing any couchapps.
+If you are replicating from another instance, make sure you install your couchapps after, as they remote instance may have a different set of views.
 
 # Installation instructions
 
@@ -29,22 +30,9 @@ If you are replicating from another instance, you will need to do this *before* 
 
 Before you can do anything else, you need to install and configure CouchDB to your liking.  There are no unique requirements imposed by this app, you should be able to use standard packaged versions of CouchDB.
 
-## The legacy "couchapp" interface
+## The front end
 
-To install the legacy interface (in the "couchapp/app" directory), you need to:
-
-1. Run "npm install" from the _lockit_ directory.
-2. Run the scripts in the "lockit/node_modules/lockit" directory to add required views to the _\_users_ database
-3. Start the "lockit" instance of express (node lockit/app.js).
-4. Push the "app" couchapp to your database following the instructions in that directory.
-
-Once you have done this, you should see the legacy interface at:
-
-http://localhost:couch_port/database/_design/app/index.html
-
-## The new "express" interface
-
-To install the new interface (in the "express" directory), you need to:
+To set up the front end (found in the "express" directory), you need to:
 
 1. Run "npm install" in the _express_ subdirectory.
 2. Run the scripts in the "express/node_modules/express-couchuser" directory to add required views to the _\_users_ database

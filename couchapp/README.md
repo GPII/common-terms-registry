@@ -7,7 +7,7 @@ https://github.com/couchapp/couchapp
 There are currently three separate couchapps, all of of which can be safely deployed to the same Couchdb instance
 and database.
 
-1. The "api" directory contains the views, etc. required to support the CTR API.
+1. The "api" directory contains the views, etc. required to support the Preference Terms Dictionary API.
 2. The "lucene" directory contains the views, etc. required for lucene integration.
 3. The "app" directory contains the older application and a few key views.  This will be deprecated shortly.
 
