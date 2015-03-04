@@ -1,5 +1,0 @@
-{ 
-    "namespaces": ["android", "dTV", "easy1", "gnome", "gnomeMagnifier", "iso24751", "iso24751W", "mobileAccessCf", "nokiaS40", "nokiaS60", "nvda", "saToGo", "smartHouse", "socialNetworkingApp", "surface", "win7Narrator", "windowsMagnifier", "windowsPhoneInteractionVariable"],
-    "gpiiFields": ["defaultValue", "definition", "isCertified", "notes", "status", "valueSpace"],
-    "namespaceExtraFields": ["defaultValue", "definition", "userPreference", "valueSpace", "group", "id"]
-}
