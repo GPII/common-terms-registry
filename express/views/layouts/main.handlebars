@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{title}}</title>
+
+    {{>common-includes}}
+  </head>
+  <body>
+    <!-- include the header -->
+    {{> common-header}}
+
+    <div>
+        {{{body}}}
+    </div>
+
+    {{> common-footer}}
+    <!-- Add support for ligature fonts to older browsers -->
+    <script src="/js/liga.js"></script>
+    <script type="text/javascript">
+        $(document).foundation();
+
+        {{>json-data}}
+        var userControls   = ctr.components.userControls(".user-container");
+    </script>
+  </body>
+</html>

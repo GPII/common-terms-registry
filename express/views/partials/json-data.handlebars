@@ -1,0 +1,14 @@
+fluid.registerNamespace("ctr.config");
+ctr.config.server = {{#if config}}{{#jsonify config}}{{/jsonify}}{{else}}{}{{/if}};
+
+fluid.defaults("ctr.components.data", {
+    gradeNames: ["fluid.modelRelayComponent", "autoInit"],
+    model: {
+        {{#if path}}path: "{{path}}",{{/if}}
+        {{#if user}}user: {{#jsonify user}}{{/jsonify}},{{/if}}
+        {{#if query}}query: {{#jsonify query}}{{/jsonify}},{{/if}}
+        {{#if cookies}}cookies: {{{cookies}}},{{/if}}
+        record: {{#if record}}{{#jsonify record}}{{/jsonify}}{{else}}undefined{{/if}}
+    }
+});
+var data = ctr.components.data();

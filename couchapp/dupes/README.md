@@ -1,0 +1,1 @@
+These views are designed to help detect duplicate records in a running couch instance.  Each subdirectory contains views for a single database (users, records, etc.).

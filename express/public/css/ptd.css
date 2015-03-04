@@ -1,0 +1,130 @@
+.row {
+    max-width: 100rem;
+}
+
+.body {
+    background-color: #ffffff;
+    margin-top: 8%;
+    padding-top: 1%;
+}
+
+.ptd-not-logged-in-instructions p {
+    margin-bottom: 0px;
+    text-align: right;
+}
+
+.ptd-header {
+    padding-bottom: .5em;
+    position: fixed;
+    background-color: white;
+    z-index: 999;
+    max-width:100%;
+    width: 100%;
+    top: 0;
+}
+
+.ptd-body {
+    margin: 20px auto;
+}
+
+button.radius, .button.radius {
+    border-radius: 6px;
+}
+
+.ptd-footer {
+    width:  100%;
+}
+
+.ptd-down-gradient {
+    background: -webkit-linear-gradient(#f9f9f9, white);  /* For Safari 5.1 to 6.0  */
+    background: -o-linear-gradient(#f9f9f9, white);       /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(#f9f9f9, white);     /* For Firefox 3.6 to 15  */
+    background: linear-gradient(#f9f9f9, white);         /* Standard syntax */
+    background-size: 100% 36px;
+    background-repeat: no-repeat;
+}
+
+.ptd-footer .row {
+    padding-top:    1em;
+    padding-bottom: 1em;
+}
+
+.ptd-top-row {
+    height: 4em;
+    margin-bottom: .5em;
+}
+
+.ptd-header a {
+    color: #337746;
+}
+
+.ptd-header-active-page {
+    background-color: #337746;
+}
+
+.ptd-header-active-page a {
+    color: white;
+}
+
+.ptd-top-row .column, .ptd-top-row .row {
+    height:100%;
+}
+
+.ptd-header-item-to-pad {
+    padding-top: 1.5em;
+}
+
+.ptd-user-container {
+    padding-top: .5em;
+}
+
+.ptd-header [class^="ptd-icon-"], .ptd-header [class*=" ptd-icon-"] {
+    padding-top: .3em;
+}
+
+.ptd-top-row [class^="ptd-icon-"], .ptd-header [class*=" ptd-icon-"] {
+    color: #337746;
+}
+
+.ptd-search-nav-footer a {
+    font-size: 1.25em;
+}
+
+.ptd-search-nav-footer a [class^="ptd-icon-"], .ptd-search-nav-footer a [class*=" ptd-icon-"] {
+    padding-top: .3em;
+}
+
+
+.ptd-header button, .ptd-header .button {
+    border: 2px solid;
+}
+
+.ptd-scroll {
+    border-top: 1px solid #f0f0f0;
+    overflow-x: hidden;
+    max-width: 100%;
+    overflow-y: scroll;
+    height:75%;
+}
+
+.ptd-version-block {
+    padding-top: .33em;
+    padding-bottom: .33em;
+    padding-left: .5em;
+    padding-right: .5em;
+    text-align: center;
+    background-color: #f0f0f0;
+    border-radius: 2em;
+    width: inherit;
+    float:right;
+}
+
+.ptd-bottom {
+    height: 2.5em;
+    float: right;
+    padding-top: 1.5em;
+}
+
+.ptd-version {
+    color: #34a2b9;
+}

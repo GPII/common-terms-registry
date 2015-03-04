@@ -1,0 +1,6 @@
+{
+    "uniqueId": " invalidRecord",
+    "type":       "alias",
+    "termLabel":  "A test alias with missing data.",
+    "definition": "This record is missing an aliasOf field."
+}

@@ -1,0 +1,20 @@
+<div class="row">
+    <div class="column medium-8">
+        <div class="details-heading">Unique Identifier</div>
+    </div>
+</div>
+<div class="row">
+    <div class="column medium-8">
+        <div class="uniqueId">
+            {{#if record.uniqueId}}
+                <input type="hidden" name="uniqueId" value="{{record.uniqueId}}"/>
+                {{record.uniqueId}}
+            {{else}}
+                <input type="text" name="uniqueId" placeholder="Enter a unique identifier for this record." value="{{record.uniqueId}}"/>
+            {{/if}}
+        </div>
+    </div>
+    <div class="column medium-4">
+        {{> language}}
+    </div>
+</div>

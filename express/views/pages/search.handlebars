@@ -1,0 +1,32 @@
+<div class="body ptd-down-gradient">
+    <div class="row ptd-nav-bar"></div>
+    <div class="row">
+        <div class="ptd-viewport">
+            <div class="loading">Loading...</div>
+        </div>
+    </div>
+</div>
+
+<!-- include our fluid modules -->
+<script src="/js/components/search.js"></script>
+
+<!-- include any dependencies specific to this page -->
+<script src="/bc/pagedown/Markdown.Converter.js"></script>
+<script src="/bc/pagedown/Markdown.Sanitizer.js"></script>
+
+
+<script type="text/javascript">
+    {{>json-data}}
+
+    var root = ctr.config.root({
+        serverConfig: ctr.config.server,
+        components: {
+            search: {
+                type:      "ctr.components.search",
+                container: "body"
+            }
+        }
+    });
+    root.search.init();
+</script>
+

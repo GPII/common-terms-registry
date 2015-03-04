@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{title}}</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {{>common-includes}}
+    <link rel="stylesheet" href="/css/details.css"/>
+    <link rel="stylesheet" href="/css/ptd-parent-picker.css"/>
+  </head>
+  <body>
+    <!-- include the header -->
+    {{> common-header}}
+
+    {{{body}}}
+
+    {{> common-footer}}
+
+    <script type="text/javascript">
+        $(document).foundation();
+    </script>
+
+    <!-- Add support for ligature fonts to older browsers -->
+    <script src="/js/liga.js"></script>
+  </body>
+</html>

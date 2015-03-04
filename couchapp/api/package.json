@@ -1,0 +1,15 @@
+{
+  "name": "ptd-couch-api",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "",
+    "test": "node tests/api-jqunit.js"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "infusion": "git://github.com/fluid-project/infusion.git#81b0fdde0483b1383d38f27f8e24b963ca6c5d33",
+    "jqUnit": "git://github.com/fluid-project/node-jqUnit.git#e9bf72445bd343a4f3aabe3ba96a1087d3498612"
+  }
+}

@@ -1,0 +1,19 @@
+
+        {{#if user}}
+            <div class="row">
+                <div class="details-heading">Notes</div>
+            <div class="ptd-inline">
+            <textarea rows="10" name="notes" placeholder="Add any additional notes you would like to associate with this term.">{{record.notes}}</textarea>
+            </div>
+            </div>
+        {{else}}
+            <input name="notes" type="hidden" value="{{record.notes}}"/>
+            {{#if record.notes}}
+                <div class="row">
+                    <div class="details-heading">Notes</div>
+                    <div class="ptd-inline">
+                        {{#md}}{{record.notes}}{{/md}}
+                    </div>
+                </div>
+            {{/if}}
+        {{/if}}

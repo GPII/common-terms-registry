@@ -1,0 +1,12 @@
+<div class="row ptd-link-container">
+    <div class="details-heading">Alias Of</div>
+    {{#if user}}
+        <div class="ptd-parent-picker-container">
+            <input type="hidden" name="aliasOf" value="{{record.aliasOf}}"/>
+            <a href="/details/{{record.aliasOf}}" target="_blank">{{record.aliasOf}}</a>
+        </div>
+    {{else}}
+        <input type="hidden" name="aliasOf" value="{{record.aliasOf}}"/>
+        <a href="/details/{{record.aliasOf}}" target="_blank">{{record.aliasOf}}</a>
+    {{/if}}
+</div>

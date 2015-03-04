@@ -1,0 +1,47 @@
+{
+    "port" :           4895,
+    "base.url":        "https://terms.raisingthefloor.org",
+    "couch.base.url" : "http://admin:admin@localhost:5984/",
+    "couch.url" :      "http://admin:admin@localhost:5984/tr/",
+    "users":           "http://admin:admin@localhost:5984/_users",
+    "lucene.url" :     "http://localhost:5984/_fti/local/tr/_design/lucene/by_content",
+    "record.defaults": {
+        "type":   "term",
+        "status": "draft"
+    },
+    "email":  {
+        "from": "no-reply@raisingthefloor.org",
+        "service": "SMTP",
+        "SMTP": {
+            "host": "localhost",
+            "port": 25
+        }
+    },
+    "safeCookies": ["searchSettings"],
+    "app": {
+        "name": "Preference Terms Dictionary (development)",
+        "url":  "http://localhost:4895",
+        "privateUrl": "http://localhost:4895"
+    },
+    "session": {
+        "secret": "Printer, printer take a hint-ter."
+    },
+    "verify": true,
+    "allowedStatuses": ["draft","deleted","active","candidate","unreviewed"],
+    "allowedRecordTypes" : ["term","alias","transform","translation","condition"],
+    "safeUserFields": "name email displayName",
+    "adminRoles": [ "admin"],
+    "schemas": {
+        "names": [
+            "record",
+            "alias",
+            "condition",
+            "message",
+            "records",
+            "search",
+            "term",
+            "transform",
+            "translation"
+        ]
+    }
+}

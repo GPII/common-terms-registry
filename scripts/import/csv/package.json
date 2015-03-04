@@ -1,0 +1,25 @@
+{
+  "name": "csv",
+  "description": "Quick and dirty script to import terms data from the previous spreadsheet.",
+  "version": "0.1.0",
+  "author": "tony@raisingthefloor.org",
+  "bugs": "http://issues.gpii.net/browse/CTR",
+  "main": "import.js",
+  "dependencies": {
+    "cradle": "~0.6.6",
+    "csv": "~0.3.6",
+    "optimist": "~0.6.0",
+    "promised-couch": "~0.1.2",
+    "q": "~0.9.7"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "licenses": [
+    {
+      "type": "BSD-3-Clause",
+      "url": "http://www.opensource.org/licenses/BSD-3-Clause"
+    }
+  ]
+}

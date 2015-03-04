@@ -1,0 +1,85 @@
+.body {
+    padding-top: 3%;
+}
+
+.add input {
+    display:inline;
+}
+
+.details-instructions {
+    color: #999696;
+}
+
+.details-linkbar {
+    padding-bottom: 1em;
+    padding-top:    1em;
+}
+
+.details-linkbar .label {
+    padding: 2em;
+}
+
+.label-neighbor {
+    padding-top: 1em;
+}
+
+.row.details-linkbar {
+    margin-bottom: 1em;
+}
+
+.row.details-footer {
+    padding-top: 1.2em;
+}
+
+.uniqueId {
+    font-size: 1.5rem;
+    border-bottom: 1px solid #d7d7d7;
+    padding-top: 0.3em;
+    padding-bottom: 0.5em;
+}
+
+.details-heading {
+    font-weight: bold;
+    margin-bottom: .75em;
+}
+
+.details-header .details-heading {
+    margin-bottom: 0px;
+}
+
+input[type='radio'] {
+    display:none;
+}
+
+input[type='radio']:checked+label {
+    border: 3px solid #009fb7;
+    background-color: white;
+}
+
+.button.status, .button.type{
+    background-color: inherit;
+    color: #424242;
+    padding-top: .75em;
+    padding-bottom: .75em;
+}
+
+.details-footer input {
+    height: 3.3rem;
+}
+
+.details-instructions {
+    color: #999696;
+    margin-bottom: .75em;
+}
+
+.version-header {
+    color: #ff5b01;
+}
+
+.details-linkbar a {
+    color: #009fb7;
+}
+
+.save-button {
+    background-color: #1ec285;
+}

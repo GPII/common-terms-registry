@@ -1,0 +1,4 @@
+{
+    "name":        "PTD Couchdb duplicate user detection",
+    "description": "Views to assist in detecting duplicate users in the Preference Terms Dictionary."
+}

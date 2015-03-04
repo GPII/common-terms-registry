@@ -1,0 +1,11 @@
+{
+    "all fields": {
+        "updated":    "2014-05-22T10:01:33.655Z",
+        "uniqueId":   "validRecord",
+        "aliasOf":    "validParent",
+        "type":       "term",
+        "status":     "active",
+        "termLabel":  "A test term",
+        "definition": "This is a sample term created for test purposes."
+    }
+}

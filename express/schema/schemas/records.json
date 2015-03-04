@@ -1,0 +1,110 @@
+{
+    "type": "object",
+    "id": "records",
+
+    "definitions": {
+        "ok": {
+            "type": "boolean"
+        },
+        "total_rows": {
+            "type": "number"
+        },
+        "offset": {
+            "type": "number"
+        },
+        "limit": {
+            "type": "number"
+        },
+        "updated": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "statuses": {
+            "type": "array",
+            "anyOf": [
+                {
+                    "$ref": "record#/definitions/status"
+                }
+            ]
+        },
+        "recordTypes": {
+            "type": "array",
+            "anyOf": [
+                {
+                    "$ref": "record#/definitions/type"
+                }
+            ]
+        },
+        "filters": {
+            "type": "object",
+            "properties": {
+                "updated": {
+                    "$ref": "search#/definitions/updated"
+                },
+                "statuses": {
+                    "type": "array",
+                    "anyOf": [
+                        {"$ref": "search#/definitions/statuses"}
+                    ]
+                },
+                "recordTypes": {
+                    "type": "array",
+                    "anyOf": [
+                        {"$ref": "search#/definitions/recordTypes"}
+                    ]
+                }
+            }
+        },
+        "records": {
+            "type": "array",
+            "items": {
+                "anyOf": [
+                    {
+                        "$ref": "term"
+                    },
+                    {
+                        "$ref": "alias"
+                    },
+                    {
+                        "$ref": "transform"
+                    },
+                    {
+                        "$ref": "translation"
+                    },
+                    {
+                        "$ref": "condition"
+                    }
+                ]
+            }
+        },
+        "retrievedAt": {
+            "type": "string",
+            "format": "date-time"
+        }
+    },
+
+    "properties": {
+        "ok": {
+            "$ref": "records#/definitions/ok"
+        },
+        "total_rows": {
+            "$ref": "records#/definitions/total_rows"
+        },
+        "offset": {
+            "$ref": "records#/definitions/offset"
+        },
+        "limit": {
+            "$ref": "records#/definitions/limit"
+        },
+        "filters": {
+            "$ref": "records#/definitions/filters"
+        },
+        "records": {
+            "$ref": "records#/definitions/records"
+        },
+        "retrievedAt": {
+            "$ref": "records#/definitions/retrievedAt"
+        }
+    },
+    "required": ["ok","total_rows","offset","limit","filters","records","retrievedAt"]
+}

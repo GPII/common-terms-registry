@@ -1,0 +1,28 @@
+<div class="ptd-viewport">
+    {{#if user}}
+        <div data-alert class="alert-box success">
+            You are logged in as {{user.name}}.
+        </div>
+        {{#if query.source}}
+            <a href="{{query.source}}" tabindex="1">
+                <div class="button back-button">Go Back</div>
+            </a>
+        {{/if}}
+    {{else}}
+        <p>Please enter your username and password to log in to the Preference Terms Dictionary.</p>
+
+        <form class="login-form" method="POST">
+            <label for="username">Username:</label>
+            <input id="username" type="text" tabindex="1" name="username" placeholder="Enter your username...">
+
+            <label for="password">Password:</label>
+            <input id="password" type="password" tabindex="2" name="password">
+
+            <input type="submit" tabindex="3" class="button login-button" value="Log In">
+        </form>
+
+        <p>Can't remember your username or password?  <a href="/forgot">Reset your password.</a></p>
+
+        <p>No account?  <a href="signup">Sign up now.</a></p>
+    {{/if}}
+</div>

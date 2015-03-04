@@ -1,0 +1,24 @@
+<div class="ptd-records ptd-scroll">
+    {{#each records}}
+            <div class="ptd-search-record">
+                <div class="row">
+                    <div class="column small-4">
+                        <div class="ptd-icon-link ptd-search-copy-link" title="Copy link location"></div>
+                        <div class="ptd-search-title-block">
+                            <span class="ptd-search-title">{{uniqueId}}</span>
+                            <a href="/details/{{uniqueId}}" class="ptd-search-show-edit-link">Show{{#if user}}/Edit{{/if}}</a>
+                            {{#if termLabel}}
+                                <p>{{termLabel}}</p>
+                            {{/if}}
+                        </div>
+                    </div>
+                    <div class="column small-4">
+                        {{>search-aliases}}
+                    </div>
+                    <div class="column small-4">
+                        {{>common-version}}
+                    </div>
+                </div>
+            </div>
+    {{/each}}
+</div>

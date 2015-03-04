@@ -1,0 +1,17 @@
+{{#if code}}
+    <p>Use the form below to reset your password.</p>
+
+    <form class="reset-form" method="POST">
+        <input type="hidden" name="code" value="{{code}}"/>
+
+        <label for="password">New Password:</label>
+        <input id="password" type="password" tabindex="3" name="password">
+
+        <label for="confirm">Retype Password:</label>
+        <input id="confirm" type="password" tabindex="4" name="confirm">
+
+        <input type="submit" tabindex="5" class="button login-button" value="Reset Password">
+    </form>
+{{else}}
+    <p>This page isn't meant to be used directly.   If you've forgotten your password, <a href="/forgot">reset your password here</a>.</p>
+{{/if}}

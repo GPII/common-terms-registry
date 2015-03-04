@@ -1,0 +1,48 @@
+{
+    "type": "object",
+    "id":   "term",
+
+    "allOf": [
+        {"$ref": "record"},
+        {
+            "required": ["termLabel","definition"],
+            "properties": {
+                "uniqueId": {
+                    "$ref": "record#/definitions/termUniqueIdPattern",
+                    "description": "A completely unique identifier for this record.  Must be in lowerCamelCase with no spaces."
+                },
+                "aliases": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "$ref": "alias"
+                    }
+                },
+                "transformations": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "$ref": "transform"
+                    }
+                },
+                "translations": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "$ref": "translation"
+                    }
+                },
+                "defaultValue": {"$ref": "record#/definitions/defaultValue"},
+                "valueSpace": {"$ref": "record#/definitions/valueSpace"},
+                "termLabel": {
+                    "$ref": "record#/definitions/termLabel"
+                },
+                "definition": {
+                    "$ref": "record#/definitions/definition"
+                },
+                "uses": {"$ref": "record#/definitions/uses"},
+                "applicationUniqueFlag": {"$ref": "record#/definitions/applicationUniqueFlag"}
+            }
+        }
+    ]
+}
