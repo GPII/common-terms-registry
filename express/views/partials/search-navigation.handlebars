@@ -1,20 +1,12 @@
 <div class="row ptd-nav-bar">
     <div class="small-4 column">
-        {{#if count}}
-            <div class="count">
-                <span class="record-count">
-                    showing {{searchSettings.limit}} of {{count}} records found
-                </span>
-            </div>
-        {{/if}}
+        <div class="count ptd-record-count" style="display:none"></div>
     </div>
     <div class="small-5 column">
-        {{#if count}}
-            {{>search-navigation-page-controls}}
-        {{/if}}
+        <ul class="ptd-search-page-links" style="display:none"></ul>
     </div>
     <div class="small-3 column">
-        <select name="sort" class="ptd-search-sort">
+        <select name="sort" class="ptd-search-sort"  style="display:none">
             <option value="uniqueId">Alphabetical, by uniqueId</option>
             <option value="\uniqueId">Reverse Alphabetical, by uniqueID</option>
             <option value="\updated">Newest (Most Recently Updated)</option>

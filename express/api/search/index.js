@@ -16,6 +16,9 @@ module.exports = function(config) {
     search.getLuceneSearchResults = function (error, response, body) {
         if (error) { return search.res.status(500).send( JSON.stringify(error)); }
 
+        search.results.offset = 0;
+        search.results.limit = -1;
+
         if (body && body.rows) {
             // build a list of unique term IDs, skipping duplicates.
             for (var i = 0; i < body.rows.length; i++) {
@@ -41,17 +44,26 @@ module.exports = function(config) {
             search.results.total_rows = 0;
             search.results.records = {};
 
+
             schemaHelper.setHeaders(search.res, "search");
             return search.res.status(200).send( JSON.stringify(search.results));
         }
 
         // Retrieve the parent records via /tr/_design/api/_view/entries?keys=
-        var parentRecordOptions = {
-            "url" : config['couch.url'] + "/_design/api/_view/entries?keys=" + JSON.stringify(search.distinctUniqueIds),
-            "json": true
-        };
+        var distinctKeyString = JSON.stringify(search.distinctUniqueIds);
 
-        request.get(parentRecordOptions, search.getParentRecords);
+        if (distinctKeyString.length > 7500) {
+            return search.res.status(500).send({ok: false, message: "Your query returned too many search results to display.  Please add additional search terms or filters."});
+        }
+        else {
+            var parentRecordOptions = {
+                "url" : config['couch.url'] + "/_design/api/_view/entries",
+                "qs": { keys: distinctKeyString },
+                "json": true
+            };
+
+            request.get(parentRecordOptions, search.getParentRecords);
+        }
     };
 
     var express = require('express');
@@ -78,71 +90,54 @@ module.exports = function(config) {
         // User input validation
         if (!req.query || !req.query.q) { return res.status(400).send( JSON.stringify({ok: false, message: 'A search string is required.'})); }
 
-        if (quick && (req.query.offset || req.query.limit)) {
-            return res.status(400).send( JSON.stringify({ok: false, message: 'Paging parameters (limit, offset) are not allowed when using the quick search.'}));
-        }
-
         // TODO:  Add support for displaying versions
 
         search.results.q = req.query.q;
-
-        if (quick) {
-            search.results.offset = 0;
-            // config.quickResults can be used to increase the page size for "quick" searches
-            search.results.limit  = config.quickResults ? config.quickResults : 25;
-        }
-        else {
-            search.results.offset = req.query.offset ? parseInt(req.query.offset) : 0;
-            search.results.limit  = req.query.limit ? parseInt(req.query.limit) : 100;
-        }
-
         search.results.retrievedAt = new Date();
 
-        var queryString = "";
-        var fields = ["q","sort"];
-
-        // "qualifier" fields are those that are added to an existing field's value (like the status field)
-        var qualifierFields = { "q": "status"};
-
-        fields.forEach(function (field) {
-            var qualifierFieldName = qualifierFields[field];
-            var qualifiersFound =  Boolean(qualifierFieldName && req.query[qualifierFieldName]);
-
-            var qualifierString = "";
-            if (qualifiersFound) {
-               var qualifierValue = req.query[qualifierFieldName];
-               if (qualifierValue instanceof Array) {
-                   qualifierString += "(status:" + qualifierValue.join(" OR status:") + ") AND ";
-               }
-               else {
-                   qualifierString += qualifierFieldName + ":" + qualifierValue + " AND ";
-               }
+        var field              = "q";
+        var queryString        = "";
+        var qualifierFieldName = "status";
+        var qualifiersFound    =  Boolean(qualifierFieldName && req.query[qualifierFieldName]);
+        var qualifierString = "";
+        if (qualifiersFound) {
+            var qualifierValue = req.query[qualifierFieldName];
+            if (qualifierValue instanceof Array) {
+                qualifierString += "(" + qualifierFieldName + ":" + qualifierValue.join(" OR " + qualifierFieldName + ":") + ") AND ";
             }
+            else {
+                qualifierString += qualifierFieldName + ":" + qualifierValue + " AND ";
+            }
+        }
 
-            if (req.query[field]) {
-                if (req.query[field] instanceof Array) {
-                    req.query[field].forEach(function(entry) {
-                        if (queryString.length > 0) {
-                            queryString += '&';
-                        }
-                        queryString += field + "=" + encodeURIComponent(qualifierString + entry);
-                    });
-                }
-                else {
-                    if (queryString.length > 0) {
-                        queryString += '&';
-                    }
-                    queryString += field + "=" + encodeURIComponent(qualifierString + req.query[field]);
-                }
+        if (req.query[field]) {
+            if (req.query[field] instanceof Array) {
+                req.query[field].forEach(function(entry) {
+                    queryString = qualifierString + encodeURIComponent(entry);
+                });
             }
-            else if (qualifiersFound) {
-                queryString = field + "=" + encodeURIComponent(qualifierString);
+            else {
+                queryString = qualifierString + encodeURIComponent(req.query[field]);
             }
-        });
+        }
+        else if (qualifiersFound) {
+            queryString = qualifierString;
+        }
+
+        var queryData = {
+            "q":     queryString,
+            "limit": 1000000 // Hard-coded limit to disable limiting by Lucene.  Required because of CTR-148
+        };
+
+        if (req.query.sort){
+            queryData.sort = req.query.sort;
+        }
 
         var searchOptions = {
             "url" : config['lucene.url'] + "?" + queryString,
-            "json": true
+            "qs":   queryData,
+            "json": true,
+            "timeout": 10000 // In practice, we probably only need a second, but this is set high to give lucene time to respond.
         };
 
         // Perform the search

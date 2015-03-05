@@ -137,12 +137,12 @@ module.exports = function(config) {
                 });
             }
             else {
-                var lowerCaseRecordType = records.req.query.recordType.toLowerCase();
-                if (config.allowedRecordTypes.indexOf(lowerCaseRecordType) === -1) {
+                var lowerCaseRequestRecordType = records.req.query.recordType.toLowerCase();
+                if (config.allowedRecordTypes.indexOf(lowerCaseRequestRecordType) === -1) {
                     throw records.constructError(400, "Invalid record type specified.");
                 }
                 else {
-                    recordTypesToDisplay.push(lowerCaseRecordType);
+                    recordTypesToDisplay.push(lowerCaseRequestRecordType);
                 }
             }
 
@@ -279,18 +279,19 @@ module.exports = function(config) {
         var recordType = config.recordType ? config.recordType : "entries";
 
         var requestConfig = {
-            url:  urlsByRecordType[recordType],
-            data: records.params,
-            json: true
+            url:     urlsByRecordType[recordType],
+            data:    records.params,
+            json:    true,
+            timeout: 10000 // In practice, we probably only need a second, but the defaults are definitely too low.
         };
 
         if ((recordType === "term" || recordType === "entries") && records.params.children) {
             // For terms, we need to put all the records together
-            request.get(requestConfig,records.getParentRecords);
+            request.get(requestConfig, records.getParentRecords);
         }
         else {
             // For everything else, we can just call the view for the recordType
-            request.get(requestConfig,records.getRecords);
+            request.get(requestConfig, records.getRecords);
         }
     });
 };

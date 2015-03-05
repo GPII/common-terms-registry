@@ -48,10 +48,10 @@ module.exports = function(config,parent) {
         }
 
         var records = Object.keys(children.termHash).map(function(key) { return children.termHash[key]; });
+        // TODO:  We may be able to move this upstream.
         if (parent.params.sort) {
-            sorting.sort(records,parent.params.sort);
+            sorting.sort(records, parent.params.sort);
         }
-
 
         parent.results.ok = true;
 
@@ -135,14 +135,20 @@ module.exports = function(config,parent) {
         children.distinctIDs.forEach(function(id){sanitizedIds.push(filters.js(id));});
 
         var keyString = JSON.stringify(sanitizedIds);
-        if (keyString.length <= 7500) {
-            queryParams += "?keys=" + keyString;
+        var qs = {};
+        if (keyString.length > 7500) {
+            console.log("Too much key data, will retrieve all results and filter internally.");
+        }
+        else {
+            qs.keys = keyString;
         }
 
         // retrieve the child records via /tr/_design/api/_view/children?keys=
         var childRecordOptions = {
-            "url" : config['couch.url'] + "/_design/api/_view/children" + queryParams,
-            "json": true
+            "url" : config['couch.url'] + "/_design/api/_view/children",
+            "qs":   qs,
+            "json": true,
+            "timeout": 10000 // In practice, we probably only need a second, but the defaults are definitely too low.
         };
 
         children.request.get(childRecordOptions, getChildRecords);

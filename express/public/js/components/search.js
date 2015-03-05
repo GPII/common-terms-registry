@@ -1,5 +1,5 @@
 // The main search module that allows users to view the Preference Terms Dictionary
-
+/* global fluid, jQuery */
 (function ($) {
     "use strict";
     var search    = fluid.registerNamespace("ctr.components.search");
@@ -61,6 +61,16 @@
         return currentPage;
     };
 
+    search.toggleSortControls = function(that) {
+        var sortControls = that.locate("sort");
+        if (that.model.count === 0) {
+            sortControls.hide();
+        }
+        else {
+            sortControls.show();
+        }
+    };
+
     // Return an offset based on the current page value
     search.calculateCurrentOffset = function(that) {
         var offset = that.model.searchSettings.offset;
@@ -76,9 +86,8 @@
         return offset;
     };
 
-    // Generate navigation links when the page is refreshed, as the number of pages may have changed
-    search.updatePagination = function(that) {
-        var container = that.locate("pageLinks");
+    // Update the navigation links in the header when the number of records, pageLimit, or offset are changed
+    search.updatePaginationControls = function(that) {
 
         var pages       = 1;
         var currentPage = search.calculateCurrentPage(that);
@@ -86,31 +95,37 @@
         // If the limits are off, we have one page of results, guaranteed
         if (that.model.searchSettings.limit !== -1) {
             if (that.model.count && that.model.count > 0) {
-                pages = Math.ceil(that.model.count/that.model.searchSettings.limit);
+                pages = Math.ceil(that.model.count / that.model.searchSettings.limit);
             }
         }
 
-        var navOptions  = {
-            offset:         0,
-            page:           currentPage,
-            totalPages:     pages,
-        };
-
-        templates.replaceWith(container,"search-navigation-page-controls", navOptions);
-
-        var navStart = that.locate("navStart");
-        navStart.attr('offset', 0);
-
-        if (currentPage > 1) {
-            var navPrevious = that.locate("navPrevious");
-            navPrevious.attr('offset', (currentPage - 2) * that.model.searchSettings.limit);
+        var pageLinks = that.locate("pageLinks");
+        if (pages < 2) {
+            pageLinks.hide();
         }
-        if (currentPage < pages) {
-            var navNext = that.locate("navNext");
-            navNext.attr('offset', currentPage * that.model.searchSettings.limit);
+        else {
+            var navOptions  = {
+                offset:         0,
+                page:           currentPage,
+                totalPages:     pages
+            };
 
-            var navEnd = that.locate("navEnd");
-            navEnd.attr('offset', (pages - 1) * that.model.searchSettings.limit);
+            templates.replaceWith(pageLinks,"search-navigation-page-controls", navOptions);
+
+            var navStart = that.locate("navStart");
+            navStart.attr('offset', 0);
+
+            if (currentPage > 1) {
+                var navPrevious = that.locate("navPrevious");
+                navPrevious.attr('offset', (currentPage - 2) * that.model.searchSettings.limit);
+            }
+            if (currentPage < pages) {
+                var navNext = that.locate("navNext");
+                navNext.attr('offset', currentPage * that.model.searchSettings.limit);
+
+                var navEnd = that.locate("navEnd");
+                navEnd.attr('offset', (pages - 1) * that.model.searchSettings.limit);
+            }
         }
 
         // Fire a "nav loaded" event so that we can wire up the appropriate listeners
@@ -133,14 +148,14 @@
         // TODO:  Set the sort to "best match" when search query data is entered.
 
         // TODO: Figure out why the hell this is happening...
-        if (!that.displayResults) {
+        if (!that.processResults) {
             console.log("searchSettingsChanged was called before invokers were in place.  Bailing out...");
             return;
         }
 
         var settings = {
             url:     that.options.baseUrl,
-            success: that.displayResults,
+            success: that.processResults,
             error:   that.displayError,
             data:    {
                 offset: that.model.searchSettings.offset,
@@ -186,21 +201,25 @@
         that.events.markupLoaded.fire();
     };
 
-    search.displayResults = function(that, data, textStatus, jqXHR) {
+    // Function to update the current "page" of data displayed onscreen.
+    search.displayCurrentPage = function(that) {
         var viewport = that.locate("viewport");
-        if (data && data.records && data.records.length > 0) {
+
+        if (that.model.records && that.model.records.length > 0) {
             viewport.html("");
 
-            // TODO:  Come up with a meaningful list of untranslated records
+            var isSearch = Boolean(that.model.searchSettings.query);
 
-            that.applier.change("count", data.total_rows);
-
-            // Add the search navigation to the header
-            templates.replaceWith(that.locate("navBar"), "search-navigation", that.model);
             var pageSize = that.model.searchSettings.limit === -1 ? that.model.count : that.model.searchSettings.limit;
             if (that.model.count < pageSize) { pageSize = that.model.count; }
+            var limit = limit !== -1 ? limit: that.model.records.length;
 
-            templates.append(viewport, "search-records", {records: data.records, user: that.model.user, pageSize: pageSize });
+            // Searches return all records and we page through them silently internally
+            //
+            // Browsing hits the "terms" interface and uses paging to keep the speed reasonable
+            var pageData = isSearch ? that.model.records.slice(that.model.searchSettings.offset, limit) : that.model.records;
+
+            templates.append(viewport, "search-records", {records: pageData, user: that.model.user, pageSize: pageSize });
             templates.append(viewport, "search-navigation-footer",{});
         }
         else {
@@ -210,9 +229,48 @@
         that.events.markupLoaded.fire();
     };
 
+    search.processResults = function(that, data, textStatus, jqXHR) {
+        // TODO:  Come up with a meaningful list of untranslated records
+        that.applier.change("records", data.records);
+        that.applier.change("count",   data.total_rows);
+    };
+
+    // Update the "showing records X of Y" blurb.
+    search.updatePageCount = function(that) {
+        var recordCount = that.locate("recordCount");
+        if (that.model.count === 0) {
+            recordCount.hide();
+        }
+        else {
+            var limit = that.model.searchSettings.limit;
+            if (that.model.count < limit || limit === -1) {
+                limit = that.model.count;
+            }
+            var options = {
+                limit: limit,
+                count: that.model.count
+            };
+            templates.replaceWith(recordCount, "search-record-count", options);
+        }
+    };
+
+    // Searches are unlimited, browsing is not.  We need something that decides whether to refresh or page internally based on the page size
+    search.refreshOrPageInternally = function(that) {
+        var isSearch = Boolean(that.model.searchSettings.query);
+        if (isSearch) {
+            that.displayCurrentPage();
+        }
+        else {
+            that.searchSettingsChanged();
+        }
+    };
+
     // We have to do this because templates need to be loaded before we initialize our own code.
     search.init = function(that) {
-        templates.loadTemplates(function() { search.searchSettingsChanged(that); });
+        // TODO:  Update this to use the new templates handling and bind our "after" listener to that.
+        templates.loadTemplates(function() {
+            search.searchSettingsChanged(that);
+        });
     };
 
     fluid.defaults("ctr.components.search", {
@@ -237,6 +295,7 @@
             "navPageLink":   ".ptd-search-nav-page-link",
             "navBar":        ".ptd-nav-bar",
             "header":        ".ptd-header",
+            "recordCount":   ".ptd-record-count",
             "viewport":      ".ptd-viewport"
         },
         bindings: [
@@ -267,7 +326,8 @@
                             sort:     "uniqueId",
                             statuses: ["active","unreviewed","candidate","draft"],
                             query:    ""
-                        }
+                        },
+                        data: null
                     }
                 }
             },
@@ -309,24 +369,20 @@
                 funcName: "ctr.components.search.clearSearchFilter",
                 args: [ "{that}"]
             },
-            "init": {
-                funcName: "ctr.components.search.init",
-                args: ["{that}"]
+            "displayCurrentPage": {
+                funcName: "ctr.components.search.displayCurrentPage",
+                args: [ "{that}"]
             },
             "displayError": {
                 funcName: "ctr.components.search.displayError",
                 args: ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"]
             },
-            "displayResults": {
-                funcName: "ctr.components.search.displayResults",
+            "processResults": {
+                funcName: "ctr.components.search.processResults",
                 args: ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"]
             },
             "updateOffsetFromPage": {
                 funcName: "ctr.components.search.updateOffsetFromPage",
-                args: ["{that}"]
-            },
-            "updatePagination": {
-                funcName: "ctr.components.search.updatePagination",
                 args: ["{that}"]
             },
             "updateAddButton": {
@@ -340,17 +396,56 @@
             "showClearButton": {
                 funcName: "ctr.components.search.showClearButton",
                 args: ["{that}", "{arguments}.0"]
+            },
+            "searchSettingsChanged": {
+                funcName: "ctr.components.search.searchSettingsChanged",
+                excludeSource: "init",
+                args: ["{that}"]
             }
         },
         modelListeners: {
-            "searchSettings.offset": [
+            "count": [
                 {
-                    funcName: "ctr.components.search.searchSettingsChanged",
+                    funcName: "ctr.components.search.updatePageCount",
                     excludeSource: "init",
                     args: ["{that}"]
                 },
                 {
+                    funcName: "ctr.components.search.updatePaginationControls",
+                    excludeSource: "init",
+                    args: ["{that}"]
+                },
+                {
+                    funcName: "ctr.components.search.toggleSortControls",
+                    excludeSource: "init",
+                    args: ["{that}"]
+                }
+            ],
+            "records": [
+                {
+                    funcName: "ctr.components.search.displayCurrentPage",
+                    excludeSource: "init",
+                    args: ["{that}"]
+                }
+            ],
+            "searchSettings.offset": [
+                {
                     funcName: "ctr.components.search.updatePageFromOffset",
+                    excludeSource: "init",
+                    args: ["{that}"]
+                },
+                {
+                    funcName: "ctr.components.search.refreshOrPageInternally",
+                    excludeSource: "init",
+                    args: ["{that}"]
+                },
+                {
+                    funcName: "ctr.components.search.updatePageCount",
+                    excludeSource: "init",
+                    args: ["{that}"]
+                },
+                {
+                    funcName: "ctr.components.search.updatePaginationControls",
                     excludeSource: "init",
                     args: ["{that}"]
                 }
@@ -363,6 +458,16 @@
                 },
                 {
                     funcName: "ctr.components.search.searchSettingsChanged",
+                    excludeSource: "init",
+                    args: ["{that}"]
+                },
+                {
+                    funcName: "ctr.components.search.updatePageCount",
+                    excludeSource: "init",
+                    args: ["{that}"]
+                },
+                {
+                    funcName: "ctr.components.search.updatePaginationControls",
                     excludeSource: "init",
                     args: ["{that}"]
                 }
@@ -458,10 +563,6 @@
                     "this": "{that}.dom.clear",
                     method: "keypress",
                     args:   "{that}.clearSearchFilter"
-                },
-                {
-                    funcName: "ctr.components.search.updatePagination",
-                    args: ["{that}"]
                 },
                 {
                     "funcName": "ctr.components.binder.applyBinding",
