@@ -14,7 +14,7 @@ module.exports = function(config) {
 
     record.parseAndValidateInput = function() {
         if (!record.req.params || !record.req.params.uniqueId) {
-            throw record.constructError(400,"You must provide the required query parameters to use this interface.");
+            throw record.constructError(400, "You must provide the required query parameters to use this interface.");
         }
 
         if (record.req.query.children) {
@@ -32,12 +32,13 @@ module.exports = function(config) {
     var handlePut = function(req, res){
         // TODO:  Add support for commenting on a particular version as well as adding a comment while saving a change.
 
-        // Make sure the current record has at least a uniqueId
-        if (!req.body || !req.body.uniqueId) {
-            return res.status(400).send({"ok": false, "errors": { "uniqueId": "You must provide a uniqueId of the record you wish to update."}});
-        }
         if (!req.session || !req.session.user) {
             return res.status(401).send(JSON.stringify({ok:false, message: "You must be logged in to use this function."}));
+        }
+
+        // Make sure the current record has at least a uniqueId
+        if (!req.body || !req.body.uniqueId) {
+            return res.status(400).send({"ok": false, "message": "The data you have entered is not valid.  Please review.", "errors": { "uniqueId": "You must provide a uniqueId of the record you wish to update."}});
         }
 
         // Get the current document
@@ -61,7 +62,7 @@ module.exports = function(config) {
             var newRecord = JSON.parse(JSON.stringify(originalRecord));
 
             // TODO: Only allow data that matches the Schema or move this to the configuration
-            var allowedFields = ["type","permanency","namespace","uniqueId","notes","status", "termLabel","valueSpace","defaultValue", "source","aliasOf","translationOf", "definition", "uses", "applicationUniqueFlag"];
+            var allowedFields = ["type", "permanency", "namespace", "uniqueId", "notes", "status", "termLabel", "valueSpace", "defaultValue", "source", "aliasOf", "translationOf", "definition", "uses", "applicationUniqueFlag"];
 
             // Overlay the supplied data onto this record, deleting any fields that are null, zero-length, undefined, or which only consist of whitespace
             allowedFields.forEach(function(field){
