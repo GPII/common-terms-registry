@@ -52,6 +52,7 @@ li.details-create-alias:before {
 
 .details-heading {
     font-weight: bold;
+    margin-top: .75em;
     margin-bottom: .75em;
 }
 

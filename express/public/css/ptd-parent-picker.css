@@ -35,3 +35,7 @@
     margin-top: .5em;
     margin-left: .6em;
 }
+
+input.ptd-parent-picker-search-query {
+    margin-bottom: 0px;
+}
