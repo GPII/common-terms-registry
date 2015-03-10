@@ -1,3 +1,6 @@
+// Component that presents user controls (logout, profile, etc.)
+// TODO:  Replace this with the controls from the new user management module.
+/* global fluid, jQuery */
 (function ($) {
     "use strict";
     var controls  = fluid.registerNamespace("ctr.components.userControls");

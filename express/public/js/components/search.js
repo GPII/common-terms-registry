@@ -30,7 +30,7 @@
     };
 
     // Change the search offset and trigger a refresh when a page navigation link is clicked
-    search.changePage = function(that,event) {
+    search.changePage = function(that, event) {
         var element = $(event.currentTarget);
         var offset = element.attr('offset')? parseInt(element.attr('offset')) : undefined;
 
@@ -170,7 +170,6 @@
         }
 
         // TODO: Break out this AJAX assembly and launch function into its own function
-        var baseUrl = that.options.baseUrl;
         if (emptyQuery) {
             settings.url += "/terms";
             settings.data.children=true;
@@ -197,7 +196,10 @@
         catch (e) {
             console.log("jQuery.ajax call returned meaningless jqXHR.responseText payload. Using 'errorThrown' instead.");
         }
-        templates.prepend(that.locate("viewport"),"common-error", message);
+        var viewport = that.locate("viewport");
+        templates.prepend(viewport,"common-error", message);
+        $(viewport).find(".alert-box:first").get(0).scrollIntoView(false);
+
         that.events.markupLoaded.fire();
     };
 
@@ -229,7 +231,7 @@
         that.events.markupLoaded.fire();
     };
 
-    search.processResults = function(that, data, textStatus, jqXHR) {
+    search.processResults = function(that, data) {
         // TODO:  Come up with a meaningful list of untranslated records
         that.applier.change("records", data.records);
         that.applier.change("count",   data.total_rows);

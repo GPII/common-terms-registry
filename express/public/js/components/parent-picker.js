@@ -1,4 +1,5 @@
 // A generalized "picker"
+/* global fluid, jQuery */
 (function ($) {
     "use strict";
     var picker    = fluid.registerNamespace("ctr.components.picker");
@@ -21,7 +22,7 @@
     };
 
     // Stop checking for updates to the query
-    picker.stopPolling    = function(that) {
+    picker.stopPolling    = function() {
        clearInterval(picker.polling);
     };
 
@@ -48,7 +49,7 @@
     };
 
     // display the list of suggestions
-    picker.displaySuggestions = function(that, data, textStatus, jqXHR) {
+    picker.displaySuggestions = function(that, data) {
         // Clear out any previous error messages
         $(that.locate("container")).find(".alert-box").remove();
 
@@ -79,7 +80,11 @@
             console.log("jQuery.ajax call returned meaningless jqXHR.responseText payload. Using 'errorThrown' instead.");
         }
 
-        templates.prepend(that.locate("view"),"common-error", message);
+        var view = that.locate("view");
+        templates.prepend(view,"common-error", message);
+        $(view).find(".alert-box:first").get(0).scrollIntoView(false);
+
+        // TODO:  Convert this to use invoker and avoid passing "that"
         that.toggleControls(that);
     };
 
@@ -87,6 +92,8 @@
     picker.pickParent = function (that, event) {
         var element = $(event.currentTarget);
         var value   = element.attr("value");
+
+        // TODO:  Convert this to use invoker and avoid passing "that"
         that.toggleControls(that);
 
         var field = (that.model.record && that.model.record.type === "translation") ? "record.translationOf" : "record.aliasOf";

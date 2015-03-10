@@ -47,18 +47,14 @@
 //
 // Once you have done this, model changes should be passed to form controls and vice versa.
 
+/* global fluid, jQuery */
 (function ($) {
     "use strict";
     var binder = fluid.registerNamespace("ctr.components.binder");
 
     binder.setRadioValue = function(element,change) {
         element.each(function(index, option) {
-            if ($(option).val() === change) {
-                option.checked = true;
-            }
-            else {
-                option.checked = false;
-            }
+            option.checked = ($(option).val() === change);
         });
     };
 

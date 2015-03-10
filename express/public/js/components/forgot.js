@@ -1,5 +1,6 @@
 // Allow users to request that their password be reset...
 
+/* global fluid, jQuery */
 (function ($) {
     "use strict";
     var forgot    = fluid.registerNamespace("ctr.components.forgot");
@@ -35,19 +36,25 @@
             console.log("jQuery.ajax call returned meaningless jqXHR.responseText payload. Using 'errorThrown' instead.");
         }
 
-        templates.prepend(that.locate("form"),"common-error", message);
+        var form = that.locate("form");
+        templates.prepend(form,"common-error", message);
+        $(form).find(".alert-box:first").get(0).scrollIntoView(false);
     };
 
-    forgot.displayReceipt = function(that, responseData, textStatus, jqXHR) {
+    forgot.displayReceipt = function(that, responseData) {
         var jsonData = JSON.parse(responseData);
         if (jsonData && jsonData.ok) {
             that.applier.change("user",jsonData.user);
 
-            templates.replaceWith(that.locate("viewport"),"success", {message:"Check your email for instructions about resetting your password."});
+            var viewport = that.locate("viewport");
+            templates.replaceWith(viewport,"success", {message:"Check your email for instructions about resetting your password."});
+            $(viewport).find(".alert-box:first").get(0).scrollIntoView(false);
             that.controls.refresh(that);
         }
         else {
-            templates.prepend(that.locate("form"),"common-error", jsonData.message);
+            var form = that.locate("form");
+            templates.prepend(form,"common-error", jsonData.message);
+            $(form).find(".alert-box:first").get(0).scrollIntoView(false);
         }
     };
 

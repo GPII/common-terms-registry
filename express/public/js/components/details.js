@@ -1,4 +1,8 @@
 // The record viewing and editing interface
+/* global ctr, fluid, jQuery */
+// TODO:  Move all template names to configurable variables
+// TODO:  Use fully namespaced variable name instead of "details"
+// TODO:  Confirm that "templates" works as a pure component
 (function ($) {
     "use strict";
     var details    = fluid.registerNamespace("ctr.components.details");
@@ -77,7 +81,7 @@
         }
     };
 
-    details.displayError = function(that, jqXHR, textStatus, errorThrown) {
+    details.displayError = function(that, jqXHR) {
         var viewport = that.locate("viewport");
         $(viewport).find(".alert-box").remove();
 
@@ -111,20 +115,20 @@
         $(viewport).find(".alert-box:first").get(0).scrollIntoView(false);
     };
 
-    details.displayConfirmation = function(that, jqXHR, textStatus, errorThrown) {
+    details.displayConfirmation = function(that) {
         var viewport = that.locate("viewport");
 
         // This is the only way we can tell that we've saved a new record at the moment
         if (that.model.path === "/details/new") {
-            templates.replaceWith(viewport,"details-created", that.model.record);
+            templates.replaceWith(viewport, "details-created", that.model.record);
         }
         else {
             // Clear out any previous messages first.
             $(viewport).find(".alert-box").remove();
 
-            templates.prepend(viewport,"success",{message: "Record saved."});
+            templates.prepend(viewport, "success", {message: "Record saved."} );
         }
-        $(viewport).find(".alert-box:first").get(0).scrollIntoView();
+        $(viewport).find(".alert-box.success:first").get(0).scrollIntoView(false);
     };
 
     details.getTemplate = function(type) {
@@ -161,7 +165,7 @@
         that.events.markupLoaded.fire();
     };
 
-    details.displayRecord = function(that, data, textStatus, jqXHR) {
+    details.displayRecord = function(that, data) {
         var viewport = that.locate("viewport");
         if (data && data.record) {
             that.applier.change("record",data.record);

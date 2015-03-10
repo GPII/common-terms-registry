@@ -1,4 +1,5 @@
 // The second part of the password reset process, can only be used with a code generated using the "forgot password" form.
+/* global fluid, jQuery */
 (function ($) {
     "use strict";
     var reset     = fluid.registerNamespace("ctr.components.reset");
@@ -48,16 +49,21 @@
         templates.prepend(that.locate("form"),"common-error", message);
     };
 
-    reset.displayReceipt = function(that, responseData, textStatus, jqXHR) {
+    reset.displayReceipt = function(that, responseData) {
         var jsonData = JSON.parse(responseData);
         if (jsonData && jsonData.ok) {
             that.applier.change("user",jsonData.user);
 
-            templates.replaceWith(that.locate("viewport"),"success", {message:"You have successfully reset your password."});
+            var viewport = that.locate("viewport");
+            templates.replaceWith(viewport, "success", {message:"You have successfully reset your password."});
+            $(viewport).find(".alert-box:first").get(0).scrollIntoView(false);
+
             that.controls.refresh(that);
         }
         else {
-            templates.prependTo(that.locate("form"),"common-error", jsonData.message);
+            var form = that.locate("form");
+            templates.prependTo(form,"common-error", jsonData.message);
+            $(form).find(".alert-box:first").get(0).scrollIntoView(false);
         }
     };
 

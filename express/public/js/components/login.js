@@ -34,10 +34,12 @@
             console.log("jQuery.ajax call returned meaningless jqXHR.responseText payload. Using 'errorThrown' instead.");
         }
 
-        templates.prepend(that.locate("form"),"common-error", message);
+        var form = that.locate("form");
+        templates.prepend(form,"common-error", message);
+        $(form).find(".alert-box:first").get(0).scrollIntoView(false);
     };
 
-    login.displayReceipt = function(that, responseData, textStatus, jqXHR) {
+    login.displayReceipt = function(that, responseData) {
         var jsonData = JSON.parse(responseData);
         if (jsonData && jsonData.ok) {
             that.applier.change("user",jsonData.user);
@@ -46,7 +48,9 @@
             that.controls.refresh(that);
         }
         else {
-            templates.prependTo(that.locate("form"),"common-error", jsonData.message);
+            var form = that.locate("form");
+            templates.prependTo(form,"common-error", jsonData.message);
+            $(form).find(".alert-box:first").get(0).scrollIntoView(false);
         }
     };
 

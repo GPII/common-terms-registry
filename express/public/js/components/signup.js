@@ -1,5 +1,5 @@
 // The main search module that allows users to view the Preference Terms Dictionary
-
+/* global fluid, jQuery */
 (function ($) {
     "use strict";
     var signup    = fluid.registerNamespace("ctr.components.signup");
@@ -45,10 +45,13 @@
             console.log("jQuery.ajax call returned meaningless jqXHR.responseText payload. Using 'errorThrown' instead.");
         }
 
-        templates.prepend(that.locate("form"),"common-error",message);
+        var form = that.locate("form");
+        templates.prepend(form,"common-error",message);
+        $(form).find(".alert-box:first").get(0).scrollIntoView(false);
+
     };
 
-    signup.displayReceipt = function(that, responseData, textStatus, jqXHR) {
+    signup.displayReceipt = function(that, responseData) {
         var jsonData = JSON.parse(responseData);
         if (jsonData && jsonData.ok) {
             that.applier.change("user",jsonData.user);
