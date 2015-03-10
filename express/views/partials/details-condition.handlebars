@@ -1,15 +1,17 @@
-<form name="details-form">
-    <div class="row details-header">
-        {{>details-controls-linkbar}}
-        {{>details-fields-uniqueid}}
-    </div>
-    <div class="row details-body">
-        {{>details-fields-type}}
-        {{>details-fields-uses}}
-        {{>details-fields-definition}}
-        {{>details-fields-notes}}
-        {{>details-fields-status}}
-    </div>
-</form>
+<div class="ptd-viewport">
+    <form name="details-form">
+        <div class="row details-header">
+            {{>details-controls-linkbar}}
+            {{>details-fields-uniqueid}}
+        </div>
+        <div class="row details-body">
+            {{>details-fields-type}}
+            {{>details-fields-uses}}
+            {{>details-fields-definition}}
+            {{>details-fields-notes}}
+            {{>details-fields-status}}
+        </div>
+    </form>
 
-{{>details-controls-save}}
+    {{>details-controls-save}}
+</div>
