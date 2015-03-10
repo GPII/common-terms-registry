@@ -6,6 +6,18 @@
     display:inline;
 }
 
+li.details-create-alias {
+    list-style: none;
+}
+
+
+li.details-create-alias:before {
+    font-family: 'ptd-icons';
+    font-size: .75em;
+    content: "\e65f";
+    margin:0 7px 0 -20px;
+}
+
 .details-instructions {
     color: #999696;
 }
