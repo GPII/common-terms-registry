@@ -86,8 +86,8 @@ input.ptd-search-nav-current-page {
     color:inherit;
 }
 
-.ptd-search-nav-footer .row .row {
-    margin-bottom: 0.35em;
+ .row .ptd-search-nav-footer.row {
+    margin-bottom: 1em;
 }
 
 .button.active {
