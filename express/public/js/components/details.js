@@ -79,7 +79,7 @@
 
     details.displayError = function(that, jqXHR, textStatus, errorThrown) {
         var viewport = that.locate("viewport");
-        $(viewport).html("");
+        $(viewport).find(".alert-box").remove();
 
         var jsonData = {};
         try {
@@ -92,7 +92,7 @@
         // Display "summary" message if found
         var message = jsonData.message;
         if (message) {
-            templates.prepend(viewport,"common-error", message);
+            templates.prepend(viewport,"common-error-row", message);
         }
 
         // Display "field" messages inline
@@ -107,8 +107,8 @@
             });
         }
 
-        // scroll to the first error
-        $(viewport).find(".alert-box:first").get(0).scrollIntoView();
+        // scroll to the first error (`false` makes it scroll closer to the bottom of the screen instead of being hidden under the header)
+        $(viewport).find(".alert-box:first").get(0).scrollIntoView(false);
     };
 
     details.displayConfirmation = function(that, jqXHR, textStatus, errorThrown) {
