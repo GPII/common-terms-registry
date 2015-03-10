@@ -1,8 +1,8 @@
 .ptd-add-record-button {
     background-color: #337746;
-    border-radius: 1.1em;
-    width: 2.2em;
-    height: 2.2em;
+    border-radius: 1.5em;
+    width: 3em;
+    height: 3em;
     border: 2px solid #337746;
 }
 
@@ -20,6 +20,8 @@
 }
 
 .ptd-add-record-button .ptd-icon-add {
+    font-weight: bold;
+    margin-top:.4em;
     font-size: 1.25em;
     text-align: center;
     color:white;
@@ -204,6 +206,14 @@ input.ptd-search-query:focus {
     top: 3em;
     z-index: 999;
     width: 90%;
+}
+
+.ptd-search-type-category-selector {
+    height: 3em;
+}
+.ptd-search-type-category-selector .button {
+    padding: 0.5em;
+    height:  3.5em;
 }
 
 .ptd-search-alias-list {
