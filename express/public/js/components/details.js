@@ -168,7 +168,7 @@
     details.displayRecord = function(that, data) {
         var viewport = that.locate("viewport");
         if (data && data.record) {
-            that.applier.change("record",data.record);
+            that.applier.change("record", data.record);
             details.loadTypeTemplate(that);
         }
         else {
