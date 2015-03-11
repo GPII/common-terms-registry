@@ -184,7 +184,31 @@
     };
 
     search.toggleStatusControls = function(that) {
-        that.locate("statusSelect").toggle();
+        var statusSelect  = that.locate("statusSelect");
+        var statusToggle  = that.locate("statusToggle");
+        var statusOptions = that.locate("statusOptions");
+
+        // Manage focus when opening and closing the menu
+        // TODO:  Write a general function to better test visibility
+        if ($(statusSelect).is(":visible")) {
+            // TODO:  Write a better function to change not only 'display' but also ARIA attributes
+            statusSelect.hide();
+            statusToggle.focus();
+        }
+        else {
+            statusSelect.show();
+            statusOptions.focus();
+        }
+    };
+
+    search.handleStatusKeys = function(that, event) {
+        switch(event.keyCode) {
+            case 27: // escape
+                that.toggleStatusControls();
+                break;
+        }
+
+        // TODO:  Eventually, we may want to take over control of "natural" arrow key handling using event.preventDefault()
     };
 
     search.displayError = function(that, jqXHR, textStatus, errorThrown) {
@@ -285,6 +309,7 @@
             "status":        ".ptd-search-status",
             "clear":         ".ptd-clear-button",
             "aliasToggle":   ".alias-toggle",
+            "statusOptions": ".ptd-search-status",
             "statusToggle":  ".ptd-search-status-toggle",
             "statusText":    ".ptd-search-status-current-text",
             "statusSelect":  ".ptd-search-status-selector",
@@ -378,6 +403,11 @@
             "displayError": {
                 funcName: "ctr.components.search.displayError",
                 args: ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"]
+            },
+            // TODO:  Generalize this and make a generic drop-down element
+            "handleStatusKeys": {
+                funcName: "ctr.components.search.handleStatusKeys",
+                args: ["{that}", "{arguments}.0"]
             },
             "processResults": {
                 funcName: "ctr.components.search.processResults",
@@ -524,8 +554,18 @@
                 },
                 {
                     "this": "{that}.dom.statusToggle",
-                    method: "keypress",
+                    method: "keydown",
                     args:   "{that}.toggleStatusControls"
+                },
+                {
+                    "this": "{that}.dom.statusControls",
+                    method: "blur",
+                    args:   "{that}.toggleStatusControls"
+                },
+                {
+                    "this": "{that}.dom.statusOptions",
+                    method: "keydown",
+                    args:   "{that}.handleStatusKeys"
                 }
             ],
             navBarLoaded: [
@@ -536,7 +576,7 @@
                 },
                 {
                     "this": "{that}.dom.navPageLink",
-                    method: "keypress",
+                    method: "keydown",
                     args:   "{that}.changePage"
                 },
                 {
@@ -553,7 +593,7 @@
                 },
                 {
                     "this": "{that}.dom.navPageLink",
-                    method: "keypress",
+                    method: "keydown",
                     args:   "{that}.changePage"
                 },
                 {
@@ -563,7 +603,7 @@
                 },
                 {
                     "this": "{that}.dom.clear",
-                    method: "keypress",
+                    method: "keydown",
                     args:   "{that}.clearSearchFilter"
                 },
                 {
