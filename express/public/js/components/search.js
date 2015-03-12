@@ -202,14 +202,26 @@
     };
 
     search.handleStatusKeys = function(that, event) {
+        var statusSelect  = that.locate("statusSelect");
+        var statusToggle  = that.locate("statusToggle");
         switch(event.keyCode) {
             case 27: // escape
+                statusSelect.hide();
+                statusToggle.focus();
+                break;
+        }
+    };
+
+    search.handleStatusControlKeys = function(that, event) {
+        var statusSelect  = that.locate("statusSelect");
+        var statusToggle  = that.locate("statusToggle");
+        switch(event.keyCode) {
+            case 13: // enter
                 that.toggleStatusControls();
                 break;
         }
-
-        // TODO:  Eventually, we may want to take over control of "natural" arrow key handling using event.preventDefault()
     };
+
 
     search.displayError = function(that, jqXHR, textStatus, errorThrown) {
         var message = errorThrown;
@@ -409,6 +421,10 @@
                 funcName: "ctr.components.search.handleStatusKeys",
                 args: ["{that}", "{arguments}.0"]
             },
+            "handleStatusControlKeys": {
+                funcName: "ctr.components.search.handleStatusControlKeys",
+                args: ["{that}", "{arguments}.0"]
+            },
             "processResults": {
                 funcName: "ctr.components.search.processResults",
                 args: ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"]
@@ -555,10 +571,10 @@
                 {
                     "this": "{that}.dom.statusToggle",
                     method: "keydown",
-                    args:   "{that}.toggleStatusControls"
+                    args:   "{that}.handleStatusControlKeys"
                 },
                 {
-                    "this": "{that}.dom.statusControls",
+                    "this": "{that}.dom.statusOptions",
                     method: "blur",
                     args:   "{that}.toggleStatusControls"
                 },
