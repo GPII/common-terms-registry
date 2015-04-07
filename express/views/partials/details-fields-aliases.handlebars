@@ -1,24 +1,28 @@
 {{#if user}}
     <div class="row">
-        <div class="details-heading">Aliases</div>
-        <ul>
-            {{#if record.aliases}}
-                {{#each record.aliases}}
-                    <li><a target="_blank" href="/details/{{uniqueId}}">{{uniqueId}}</a></li>
-                {{/each}}
-            {{/if}}
-            <li class="details-create-alias"><a target="_blank" href="/details/new?aliasOf={{record.uniqueId}}&type=alias">Create Alias</a></li>
-        </ul>
+        <div class="column small-12">
+            <div class="details-heading">Aliases</div>
+            <ul>
+                {{#if record.aliases}}
+                    {{#each record.aliases}}
+                        <li><a target="_blank" href="/details/{{uniqueId}}">{{uniqueId}}</a></li>
+                    {{/each}}
+                {{/if}}
+                <li class="details-create-alias"><a target="_blank" href="/details/new?aliasOf={{record.uniqueId}}&type=alias">Create Alias</a></li>
+            </ul>
+        </div>
     </div>
 {{else}}
     {{#if record.aliases}}
         <div class="row">
-            <div class="details-heading">Aliases</div>
-            <ul>
-                {{#each record.aliases}}
-                    <li><a target="_blank" href="/details/{{uniqueId}}">{{uniqueId}}</a></li>
-                {{/each}}
-            </ul>
+            <div class="column small-12">
+                <div class="details-heading">Aliases</div>
+                <ul>
+                    {{#each record.aliases}}
+                        <li><a target="_blank" href="/details/{{uniqueId}}">{{uniqueId}}</a></li>
+                    {{/each}}
+                </ul>
+            </div>
         </div>
     {{/if}}
 {{/if}}

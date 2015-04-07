@@ -1,20 +1,22 @@
-<div class="ptd-viewport">
-    <form name="details-form">
-        <div class="details-header">
-            {{>details-controls-linkbar}}
-            {{>details-fields-uniqueid}}
-        </div>
-        <div class="details-body">
-            {{>details-fields-type}}
-            {{>details-fields-aliasof}}
-            {{>details-fields-uses}}
-            {{>details-fields-termlabel}}
-            {{>details-fields-defaultvalue}}
-            {{>details-fields-notes}}
-            {{>details-fields-status}}
-        </div>
+<div class="ptd-viewport row">
+    <div class="column small-12">
+        <form name="details-form">
+            <div class="details-header">
+                {{>details-controls-linkbar}}
+                {{>details-fields-uniqueid}}
+            </div>
+            <div class="details-body">
+                {{>details-fields-type}}
+                {{>details-fields-aliasof}}
+                {{>details-fields-uses}}
+                {{>details-fields-termlabel}}
+                {{>details-fields-defaultvalue}}
+                {{>details-fields-notes}}
+                {{>details-fields-status}}
+            </div>
 
-        {{>details-controls-save}}
-    </form>
+            {{>details-controls-save}}
+        </form>
+    </div>
 </div>
 
