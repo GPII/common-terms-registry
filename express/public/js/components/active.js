@@ -56,7 +56,7 @@
     fluid.defaults("ctr.components.activePage", {
         gradeNames: ["fluid.viewRelayComponent", "autoInit"],
         selectors: {
-            "headerItem": ".ptd-header-item-to-pad"
+            "headerItem": ".ptd-header-highlightable"
         },
         activeClass: "ptd-header-active-page",
         listeners: {
