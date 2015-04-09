@@ -1,4 +1,10 @@
-// A simple component to highlight the "current page" if it's found in the header.
+// A simple component to highlight the "current page", that:
+//
+// 1. Looks for elements matching `options.selectors.headerItem`
+// 2. Examines any links the header elements contain.
+// 3. Compares the trimmed path of the link's href attribute (with no query data, etc.) to `window.location.path`
+// 4. If the path matches, adds the class defined in `options.activeClass` to the container
+// 5. If no matching paths are found, removes the class from the container.
 /* global ctr, fluid, jQuery */
 (function ($) {
     "use strict";
@@ -6,7 +12,7 @@
 
     ctr.components.activePage.highlightActivePage = function(that) {
         ctr.components.templates.loadTemplates(function() {
-            // Go through the list of header links
+            // Go through the list of header items
             var headerItems = that.locate("headerItem");
             for (var a = 0; a < headerItems.length; a++) {
                 var item = headerItems[a];
@@ -17,18 +23,23 @@
 
     ctr.components.activePage.checkItem = function(that, element) {
         var pagePath = window.location.pathname;
-        var link = $(element).find("a")[0];
-        if (link) {
+        var links = $(element).find("a");
+
+        var isActive = false;
+        for (var a=0; a < links.length; a++) {
+            var link = links[a];
             var linkPath = ctr.components.activePage.getLinkPath(link.href);
 
-            // If we're the current page, flag us as active
             if (pagePath === linkPath) {
-                $(element).addClass(that.options.activeClass);
+                isActive = true;
             }
-            // Otherwise, make sure we're not set as "active".
-            else {
-                $(element).removeClass(that.options.activeClass);
-            }
+        }
+
+        if (isActive) {
+            $(element).addClass(that.options.activeClass);
+        }
+        else {
+            $(element).removeClass(that.options.activeClass);
         }
     };
 
@@ -41,8 +52,6 @@
 
         return fullPath;
     };
-
-    // TODO:  Wire up comment controls
 
     fluid.defaults("ctr.components.activePage", {
         gradeNames: ["fluid.viewRelayComponent", "autoInit"],
