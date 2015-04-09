@@ -10,14 +10,23 @@
     background-color: #e2e2e2;
     border-color: #757575;
 }
-.ptd-search-title-block, .ptd-search-copy-link {
-    display: inline-block;
+
+.ptd-search-title-block {
+    margin-left: 1.8em;
 }
 
-.ptd-search-copy-link {
-    vertical-align: top;
-    padding-top: .2em;
+.ptd-search-title-block:hover {
+    margin-left: 0em;
+}
+
+.ptd-search-title-block:hover p {
+    margin-left: 1.8em;
+}
+
+.ptd-search-title-block:hover:before {
     margin-right: .5em;
+    font-family: 'ptd-icons';
+    content: "\e64c";
 }
 
 .ptd-add-record-button .ptd-icon-add {
