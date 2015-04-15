@@ -8,21 +8,19 @@ By default, we start on the search page, which presents the current data, and pr
 
 ![The search interface, when no query is entered.](images/search-01no-query.png)
 
-Some of these fields will only make sense once we've defined things a bit better.  For now, let's stick to full text searching.
+Some of the controls we see, such as the status control, will only make sense once we understand the data we're working with.  For now, let's stick to full text searching.
 
-If I tab to the search, then type a search term,  such as "contrast", I should see less records, as in the following screen shot:
+If I tab to the search, then type a search term,  such as "contrast", I see a filtered list of records, as in the following screen shot:
 
 ![The search interface, with the query "contrast" entered.](images/search-02query.png)
 
 # What are these listings?
 
-Each of these listings is a web of closely related settings.
+Each of these listings is a web of closely related settings, linked together by a single "common term", or "term" for short.
 
-What we see are a list of "common terms", or "terms" for short.  These are the reference form of a single setting, and are not better or worse than any other variation.
+A "term" is the reference version of a given setting.  It is not more or less preferred than any other variation, we have simply chosen one record to help us organize all the different ways of describing the same setting.
 
-Although an application may have settings that directly match the "term", it's also entirely possible that no application will use a "term" itself to refer to its settings.  They may use different words to describe the same setting, or use a different value space.  Most commonly, they may simple use a different keyword specific to their application to identify the "term" when they are storing or retrieving their settings.
-
-For the first case, in which the only difference is in the wording ("volume" vs. "loudness"), we use an "alias" record (more on that in a bit).  For cases in which the setting is represented using different values, we have the concept of a "transform alias", which includes details about how its values are different from the reference "term".  Both can only exist in relation to a "term", which is the central point that connects all other variations on the same setting.
+Although an application may have settings that directly match the "term", it's also entirely possible that no application will use a "term" itself to refer to its settings.  They may use different words to describe the same setting, which we treat as an "alias" of the "term".  Settings that use a different range of values for the same setting are called "transform aliases" or "transforms" for short.  "Transforms" include details about how their values are different from the reference "term".  Both "aliases" and "alias transforms" can only exist in relation to a "term", which is the central point that connects all other variations on the same setting.
 
 If we know the range of values used for the reference "term" and range of values use for all "transform aliases", we can convert a user's setting from any one variation in the web of related terms to any other.  This is the core value the PTD aims to provide.
 
@@ -53,18 +51,6 @@ The "definition" field describes a "term" (and thus a web of related "aliases") 
 ## The "suggested interface Label" (or "term label") field
 
 The "UID" field can be thought of as the way in which an application describes a setting when storing the value.  The "suggested interface label" is a human-readable version of this that is more appropriate to display on screen.
-
-## The "value space" field
-
-The "value space" field describes (in free text) how the settings for a "term" or "alias" are represented.
-
-Eventually, we will need to represent one or more paths for moving between value spaces, which will require storing some kind of structured representation as well.
-
-For now, focus on the text description, which we lack for many records.
-
-## The "suggested default" field
-
-Although we don't imply that any setting is better or worse than another, we may optionally wish to indicate what most applications use by default.  The "suggested default" field records this, but for informational purposes only.  In other words, this information may be useful to editors and implementers, but should never be used to change someone's settings.
 
 ## The "status" field
 
@@ -105,6 +91,18 @@ An application-specific setting is an "alias" that only has one "uses" entry.  I
 An application-unique setting is a "term" that has only one "uses" entry and no aliases.  In other words, it's only ever conceivable that it would be used by one application.  Some argue that we should not track these, but I am describing how they might be entered here because I feel we should leave it to GPII users and the larger community that supports them to tell us which settings they want to control.
 
 ![A view of the "edit" interface, scrolled down to display the fields described below.](images/edit-term-02second-screen.png)
+
+## The "value space" field
+
+The "value space" field describes (in free text) how the settings for a "term" or "alias" are represented.
+
+Eventually, we will need to represent one or more paths for moving between value spaces, which will require storing some kind of structured representation as well.
+
+For now, focus on the text description, which we lack for many records.
+
+## The "suggested default" field
+
+Although we don't imply that any setting is better or worse than another, we may optionally wish to indicate what most applications use by default.  The "suggested default" field records this, but for informational purposes only.  In other words, this information may be useful to editors and implementers, but should never be used to change someone's settings.
 
 ## The "notes" field
 
