@@ -1,42 +1,30 @@
 // Test JSON Schema validation and user feedback.
 "use strict";
 var fluid = require("infusion");
-var namespace = "gpii.ctr.schemas.tests";
-var schemas   = fluid.registerNamespace(namespace);
+var gpii  = fluid.registerNamespace("gpii");
 
-var loader     = require("../../configs/lib/config-loader");
-schemas.config = loader.loadConfig(require("../../configs/express/test"));
-schemas.helper = require("../lib/schema-helper")(schemas.config);
+require("../lib/schema-helper");
 
-// We use z-schema directly to validate our schemas independently of the helper library
-var ZSchema   = require("z-schema");
-var options   = { noExtraKeywords: true };
+var jqUnit = fluid.require("jqUnit");
 
-schemas.runTests = function() {
-    var jqUnit = fluid.require("jqUnit");
-    var schemaContents = {};
-    schemas.config.schemas.names.forEach(function(schemaName){
-        var schemaContent = require("../schemas/" + schemaName + ".json");
-        schemaContents[schemaName] = schemaContent;
+fluid.registerNamespace("gpii.schemas.tests");
+gpii.schemas.tests.runTests = function(helper) {
+    jqUnit.module("Sanity checking module startup...");
+    jqUnit.test("Confirming that schemas exist...", function() {
+        jqUnit.assertNotUndefined("There should be schema data", helper.options.schemas);
     });
-
-    jqUnit.module("Schema Tests...");
-    jqUnit.test("Validating schemas...", function() {
-        var validator = new ZSchema(options);
-        var valid = validator.validateSchema(Object.keys(schemaContents).map(function(v) { return schemaContents[v]; }));
-        var err   = validator.getLastErrors();
-
-        jqUnit.assertTrue("Schema validation should have completed successfully.", valid);
-        jqUnit.assertUndefined("There should have been no validation errors returned:" + JSON.stringify(err), err);
+    jqUnit.test("Confirming that schemas are cached properly...", function() {
+        jqUnit.assertNotUndefined("The cache should exist", helper.cache);
+        jqUnit.assertTrue("The cache should have data", Object.keys(helper.cache).length > 0);
     });
 
     jqUnit.module("Testing invalid records...");
-    schemas.config.schemas.names.forEach(function(schemaName){
+    fluid.each(helper.options.schemas, function (_, schemaName) {
         var testRecords = require("./data/" + schemaName + "/invalid.json");
 
         Object.keys(testRecords).forEach(function(key){
             jqUnit.test("Testing schema '" + schemaName + "' with invalid record '" + key + "'...", function() {
-                var errors = schemas.helper.validate(schemaName,testRecords[key]);
+                var errors = helper.validate(schemaName, testRecords[key]);
 
                 jqUnit.assertValue("Validation should have failed for record '" + key + "'.", errors);
             });
@@ -44,12 +32,12 @@ schemas.runTests = function() {
     });
 
     jqUnit.module("Testing valid records...");
-    schemas.config.schemas.names.forEach(function(schemaName){
+    fluid.each(helper.options.schemas, function (_, schemaName) {
         var testRecords = require("./data/" + schemaName + "/valid.json");
 
         Object.keys(testRecords).forEach(function(key){
             jqUnit.test("Testing schema '" + schemaName + "' with valid record '" + key + "'...", function() {
-                var errors = schemas.helper.validate(schemaName,testRecords[key]);
+                var errors = helper.validate(schemaName, testRecords[key]);
 
                 jqUnit.assertUndefined("Validation errors returned for record '" + key + "':\n" + JSON.stringify(errors), errors);
             });
@@ -57,4 +45,21 @@ schemas.runTests = function() {
     });
 };
 
-schemas.runTests();
+fluid.defaults("gpii.schemas.tests", {
+    gradeNames: ["fluid.eventedComponent", "autoInit"],
+    components: {
+        helper: {
+            type: "gpii.schema.helper",
+            options: {
+                listeners: {
+                    "onSchemasCached": {
+                        funcName: "gpii.schemas.tests.runTests",
+                        args:     ["{that}"]
+                    }
+                }
+            }
+        }
+    }
+});
+
+gpii.schemas.tests();
