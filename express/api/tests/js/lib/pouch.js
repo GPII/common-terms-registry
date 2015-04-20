@@ -16,7 +16,7 @@ module.exports = function(config) {
         var app        = express();
 
 
-        var sessionator = require('../lib/sessionator')(config);
+        var sessionator = require('sessionator')(config);
         app.use("/_session",sessionator);
 
         // Add PouchDB with simulated CouchDb REST endpoints
@@ -35,7 +35,7 @@ module.exports = function(config) {
     };
 
     function loadViews(callback) {
-        var couchappUtils = require("../lib/pouchapp")(config);
+        var couchappUtils = require("pouchapp")(config);
 
         var path = __dirname + "/../../../../couchapp/api/";
         var viewContent = couchappUtils.loadCouchappViews(path);
