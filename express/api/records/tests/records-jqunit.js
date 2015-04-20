@@ -8,11 +8,11 @@ var request   = require('request');
 var loader     = require("../../../configs/lib/config-loader");
 records.config = loader.loadConfig(require("../../../configs/express/test-pouch.json"));
 
-var testUtils = require("../../tests/lib/testUtils")(records.config);
+var testUtils = require(".././testUtils")(records.config);
 
 
 records.loadPouch = function() {
-    records.pouch = require('../../tests/lib/pouch')(records.config);
+    records.pouch = require('.././pouch')(records.config);
 
     records.pouch.start(function() {
         records.startExpress();
@@ -21,7 +21,7 @@ records.loadPouch = function() {
 
 // Spin up an express instance
 records.startExpress = function() {
-    records.express = require('../../tests/lib/express')(records.config);
+    records.express = require('.././express')(records.config);
 
     records.express.start(function() {
 

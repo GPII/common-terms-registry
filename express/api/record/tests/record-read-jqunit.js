@@ -7,10 +7,10 @@ var read = fluid.registerNamespace(namespace);
 var loader = require("../../../configs/lib/config-loader");
 read.config = loader.loadConfig(require("../../../configs/express/test-pouch.json"));
 
-var testUtils = require("../../tests/lib/testUtils")(read.config);
+var testUtils = require(".././testUtils")(read.config);
 
 read.loadPouch = function() {
-    read.pouch = require('../../tests/lib/pouch')(read.config);
+    read.pouch = require('.././pouch')(read.config);
 
     read.pouch.start(function() {
         read.startExpress();
@@ -19,7 +19,7 @@ read.loadPouch = function() {
 
 // Spin up an express instance
 read.startExpress = function() {
-    read.express = require('../../tests/lib/express')(read.config);
+    read.express = require('.././express')(read.config);
 
     read.express.start(function() {
 

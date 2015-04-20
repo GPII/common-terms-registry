@@ -7,11 +7,11 @@ var verifyTests = fluid.registerNamespace(namespace);
 verifyTests.loader = require("../../configs/lib/config-loader");
 verifyTests.config = verifyTests.loader.loadConfig(require("../../configs/express/test-pouch.json"));
 
-verifyTests.testUtils = require("../../api/tests/lib/testUtils")(verifyTests.config);
+verifyTests.testUtils = require(".././testUtils")(verifyTests.config);
 verifyTests.request = require("request");
 
 verifyTests.loadPouch = function() {
-    verifyTests.pouch = require('../../api/tests/lib/pouch')(verifyTests.config);
+    verifyTests.pouch = require('.././pouch')(verifyTests.config);
 
     verifyTests.pouch.start(function() {
         verifyTests.startExpress();
@@ -21,7 +21,7 @@ verifyTests.loadPouch = function() {
 
 // Spin up an express instance
 verifyTests.startExpress = function() {
-    verifyTests.express = require('../../api/tests/lib/express')(verifyTests.config);
+    verifyTests.express = require('.././express')(verifyTests.config);
 
     verifyTests.express.start(function() {
         var verify = require('../index.js')(verifyTests.config);

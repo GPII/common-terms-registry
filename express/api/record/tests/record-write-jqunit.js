@@ -11,14 +11,14 @@ write.config = write.loader.loadConfig(require("../../../configs/express/test-po
 
 // TODO:  When we add support for attribution, we should test it
 
-write.testUtils = require("../../tests/lib/testUtils")(write.config);
+write.testUtils = require(".././testUtils")(write.config);
 write.request = require("request");
 
 write.validRecord = require("../../tests/data/valid");
 write.invalidRecord = require("../../tests/data/invalid");
 
 write.loadPouch = function() {
-    write.pouch = require('../../tests/lib/pouch')(write.config);
+    write.pouch = require('.././pouch')(write.config);
 
     write.pouch.start(function() {
         write.startExpress();
@@ -47,7 +47,7 @@ write.checkFields = function(original, saved, jqUnit) {
 
 // Spin up an express instance
 write.startExpress = function() {
-    write.express = require('../../tests/lib/express')(write.config);
+    write.express = require('.././express')(write.config);
 
     write.express.start(function() {
         // Mount all variations on the module
