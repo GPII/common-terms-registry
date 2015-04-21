@@ -1,158 +1,170 @@
-// Library to add consistent handling of adding child records to parents
+// Component to retrieve the list of children associated with an existing list of parent IDs
 //
-// When the core functions are run, the library expects for the parent object to contain:
+// This component only adds children to an existing list of "parents".  It does not page them,
+// and will throw an error if you give it more data than it can work with.
 //
-// 1. The current response object (res)
-// 2. The current request object (req)
-// 3. The "results" object that may be returned upstream to the client
-// 4. A "filters" object that contains the list of parsed query parameters
-// 5. A "schema" parameter that points to the schema that should be used with the results
-
+// If the component has child data when it's created, it will go ahead and load the child data.  If data is added later, it will refresh its processed data.
+//
+// When the "children" have been added, it will apply a change to `model.processedRecords` and fire an `onChildrenLoaded` event.
+//
+// TODO:  When we do the same thing for the Unified Listing, consider extracting the common bits and using fluid.transform + rules to handle whatever results we receive.
+//
+// TODO:  We may eventually want to add support for filtering children by status.  If so, flesh out ../filters/index.js
 "use strict";
 
-module.exports = function(config,parent) {
-    var schemaHelper = require("../../../schema/lib/schema-helper")(config);
-    var paging       = require("../../lib/paging")(config);
-    var fluid        = require('infusion');
-    var sorting      = require("../../lib/sorting")(config);
+var fluid = require("infusion");
+var gpii  = fluid.registerNamespace("gpii");
+fluid.registerNamespace("gpii.ptd.api.lib.children");
 
-    var filters      = require("secure-filters");
+var url     = require("url");
 
-    var children = fluid.registerNamespace("gpii.ctr.api.lib.children");
-    children.request = require('request');
+gpii.ptd.api.lib.children.filterToMatchingTerms = function (that, record) {
+    return record.type === "term" && record.uid;
+};
 
-    function getChildRecords(error, response, body) {
-        if (!parent.res || !parent.results || !parent.req || !parent.params || !parent.schema) {
-            return console.error("Can't construct child records, parent object lacks the required variables.");
+// Pull out just the UIDs from a full map
+gpii.ptd.api.lib.children.extractUids = function (record) {
+    return record.uid;
+};
+
+gpii.ptd.api.lib.children.requestChildren = function (that) {
+    if (Array.isArray(that.model.originalRecords) && that.model.originalRecords.length > 0) {
+        // Go through the list of parent records, we will process any that are "term" records
+        var parentIds = that.model.originalRecords.filter(that.filterToMatchingTerms).map(gpii.ptd.api.lib.children.extractUids);
+
+        if (parentIds.length === 0) {
+            fluid.log("None of the records in question is eligible to be a parent, so we will continue without requesting any child data.");
+            that.applier.change("processedRecords", []);
+            that.events.onChildrenLoaded.fire(that);
         }
+        else {
+            // Request the list of children for the relevant records
+            var keyString = JSON.stringify(parentIds);
+            var qs = {};
+            qs.keys = keyString;
 
-        if (error) { return parent.res.status(500).send(JSON.stringify(error)); }
+            if (keyString.length > that.options.maxKeyData) {
+                fluid.fail("Too much key data, cannot retrieve children.");
+            }
 
-        for (var i = 0; i < body.rows.length; i++) {
-            var record = body.rows[i].value;
+            // This variable must be created per run, otherwise the second request will clobber the first.
+            var request = require("request");
+
+            // retrieve the child records via /tr/_design/api/_view/children?keys=
+            var childRecordOptions = {
+                "method":  "GET",
+                "url" :    url.resolve(that.options.couchUrl, that.options.viewPath),
+                "qs":      qs,
+                "json":    true,
+                "timeout": 10000 // In practice, we probably only need a second, but the defaults are definitely too low.
+            };
+
+            request(childRecordOptions, that.addChildRecords);
+        }
+    }
+};
+
+gpii.ptd.api.lib.children.addChildRecords = function (that, error, response, body) {
+    if (error) { fluid.fail(error); }
+
+    var parentsWithChildren = [];
+
+    // We should not be processing the data at all unless there are "child" records
+    if (body.rows && body.rows.length > 0) {
+        var childData = {};
+        var allParentIds = that.model.originalRecords.map(function (record) { return record.uid; });
+
+        fluid.each(body.rows, function (row) {
+            var record = row.value;
             var parentId = record.aliasOf;
             if (record.type === "translation") { parentId = record.translationOf; }
-            var parentRecord = children.termHash[parentId];
 
             // Silently skip orphaned child records, which can show up in the rare cases where we can't exclude them upstream
-            if (parentRecord) {
+            if (allParentIds.indexOf(parentId) !== -1) {
                 var arrayName = "children";
 
                 if (record.type === "alias") { arrayName = "aliases"; }
                 else if (record.type === "transform") { arrayName = "transformations"; }
                 else if (record.type === "translation") { arrayName = "translations"; }
 
-                if (!parentRecord[arrayName]) { parentRecord[arrayName] = []; }
-                parentRecord[arrayName].push(record);
-            }
-        }
-
-        var records = Object.keys(children.termHash).map(function(key) { return children.termHash[key]; });
-        // TODO:  We may be able to move this upstream.
-        if (parent.params.sort) {
-            sorting.sort(records, parent.params.sort);
-        }
-
-        parent.results.ok = true;
-
-        if (parent.schema === "record") {
-            parent.results.record = records[0];
-        }
-        else {
-            parent.results.total_rows = records.length;
-
-            if (parent.req.query.sort) { parent.results.sort = parent.req.query.sort; }
-
-            parent.results.records = paging.pageArray(records, parent.results);
-        }
-
-        // TODO:  This pattern seems to break things if there are underlying errors and crash the server.  Keep an eye out and investigate once we have more data.
-        schemaHelper.setHeaders(parent.res, parent.schema);
-        return parent.res.status(200).send(JSON.stringify(parent.results));
-    }
-
-    // Expose the child lookup for use in /api/record
-    parent.getChildRecords = getChildRecords;
-
-    // Expose the full lookup for use in /api/records and /api/search
-    // TODO:  Figure out why this is not sorting correctly...
-    parent.getParentRecords = function (error, response, body) {
-        if (!parent.res || !parent.results || !parent.req || !parent.params || !parent.schema ) {
-            return console.error("Can't retrieve parent records to construct children, parent object lacks the required variables.");
-        }
-
-        // clear out the existing results
-        children.termHash          = {};
-        children.distinctIDs       = [];
-        children.strippedIDs       = [];
-        if (error) { return parent.res.status(500).send(JSON.stringify(error)); }
-
-        if (!body.rows) {
-            parent.results.ok = true;
-
-            // TODO:  Something else should process the results more consistently
-            if (parent.schema === "record") {
-                parent.results.record = {};
-            }
-            else {
-                parent.results.total_rows = 0;
-                if (parent.req.query.sort) { parent.results.sort = parent.req.query.sort; }
-                parent.results.records = {};
-            }
-
-            schemaHelper.setHeaders(parent.res, parent.schema);
-            return parent.res.status(200).send(JSON.stringify(parent.results));
-        }
-
-        // Add any records returned to the list in process.
-        body.rows.forEach(function(row){
-            var record = row.value;
-            if (record.type === "term") {
-
-                if ((parent.params.updated && new Date(record.updated) < parent.params.updated) ||
-                    (parent.params.statuses && parent.params.statuses.indexOf(record.status.toLowerCase()) === -1) ||
-                    (parent.params.recordTypes && parent.params.recordTypes.indexOf(record.type.toLowerCase()) === -1)) {
-                    // Exclude this record
-                }
-                else {
-                    children.termHash[record.uniqueId] = record;
-                    if (children.distinctIDs.indexOf(record.uniqueId) === -1) {
-                        children.distinctIDs.push(record.uniqueId);
-                    }
-                }
+                if (!childData[parentId]) { childData[parentId] = {}; }
+                if (!childData[parentId][arrayName]) { childData[parentId][arrayName] = []; }
+                childData[parentId][arrayName].push(record);
             }
         });
 
-        // we can only pass a limited number of keys in the query (< 8000 bytes of data, roughly).
-        //
-        // If we have more key data than that, we have just get the whole mess of data and discard anything we don't want.
-        //
-        // We can't slice the data by our paging limits because the records aren't in the right order yet.
+        fluid.each(that.model.originalRecords, function (originalRecord) {
+            var parentRecord = fluid.copy(originalRecord);
+            parentsWithChildren.push(parentRecord);
+            var childDataForParent = childData[parentRecord.uid];
+            if (childDataForParent) {
+                var keys = Object.keys(childDataForParent);
+                for (var b = 0; b < keys.length; b++) {
+                    var key = keys[b];
+                    parentRecord[key] = childDataForParent[key];
+                }
+            }
+        });
+    }
 
-        var queryParams = "";
+    // We apply a change for those who are listening to our model
+    that.applier.change("processedRecords", parentsWithChildren);
 
-        var sanitizedIds = [];
-        children.distinctIDs.forEach(function(id){sanitizedIds.push(filters.js(id));});
-
-        var keyString = JSON.stringify(sanitizedIds);
-        var qs = {};
-        if (keyString.length > 7500) {
-            console.log("Too much key data, will retrieve all results and filter internally.");
-        }
-        else {
-            qs.keys = keyString;
-        }
-
-        // retrieve the child records via /tr/_design/api/_view/children?keys=
-        var childRecordOptions = {
-            "url" : config['couch.url'] + "/_design/api/_view/children",
-            "qs":   qs,
-            "json": true,
-            "timeout": 10000 // In practice, we probably only need a second, but the defaults are definitely too low.
-        };
-
-        children.request.get(childRecordOptions, getChildRecords);
-    };
-
-    return children;
+    // We also fire an event if someone wants to work with that instead.
+    that.events.onChildrenLoaded.fire(that);
 };
+
+
+fluid.defaults("gpii.ptd.api.lib.children", {
+    gradeNames: ["fluid.modelRelayComponent", "autoInit"],
+    couchUrl:   "http://localhost:5986/tr/",
+    viewPath:   "/_design/api/_view/children",
+    maxKeyData: 7500, // request (and most web servers) can only work with 8000 characters or less of query data
+    model: {
+        originalRecords:  [],
+        processedRecords: []
+    },
+    invokers: {
+        addChildRecords: {
+            funcName: "gpii.ptd.api.lib.children.addChildRecords",
+            args:     ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"]
+        },
+        filterToMatchingTerms: {
+            funcName: "gpii.ptd.api.lib.children.filterToMatchingTerms",
+            args:     ["{that}", "{arguments}.0"]
+        }
+    },
+    events: {
+        onChildrenLoaded: null,
+        onDataChanged:    null,
+        // We're not ready to look up any results until we have at least some data and until we've had a chance to finish constructing ourselves.
+        // TODO: "This can be simplified once FLUID-5519 is fixed in Infusion" -- Dr. Basman
+        onReady: {
+            events: {
+                onDataChanged: "onDataChanged",
+                onCreate:      "onCreate"
+            }
+        }
+    },
+    modelListeners: {
+        // I had to fire the event so that I could define "onReady" as a compound event.
+        // TODO: "This can be simplified once FLUID-5519 is fixed in Infusion" -- Dr. Basman
+        originalRecords: [
+            {
+                func: "{that}.events.onDataChanged.fire",
+                args:     ["{that}"]
+            },
+            {
+                funcName:      "gpii.ptd.api.lib.children.requestChildren",
+                args:          ["{that}"],
+                excludeSource: "init"
+            }
+        ]
+    },
+    listeners: {
+        "onReady.requestChildren": {
+            funcName: "gpii.ptd.api.lib.children.requestChildren",
+            args:     ["{that}"]
+        }
+    }
+});
