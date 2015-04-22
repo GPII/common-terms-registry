@@ -126,11 +126,25 @@ jqUnit.test("Filtering with expanded options and the default ('equal to') compar
 });
 
 
-// These throw an error as expected but are somehow not caught by `jqUnit.throws`.  TODO:  Review with Antranig
-//jqUnit.test("Filtering a non-array...", function () {
-//    jqUnit["throws"](function () { gpii.ptd.api.lib.filter.filter({}); }, "Filtering a non-array should result in an error...");
-//});
-//
-//jqUnit.test("Filtering with bad options...", function () {
-//    jqUnit["throws"](function () { gpii.ptd.api.lib.filter.filter([], { includes: { foo: { comparison: "nonsense", value: 1 } }}); }, "Filtering with bad options should result in an error...");
-//});
+jqUnit.test("Filtering a non-array...", function () {
+    var failOnNonArray = function () { gpii.ptd.api.lib.filter.filter({}); };
+    jqUnit.expectFrameworkDiagnostic("Filtering a non-array should result in an error...", failOnNonArray, "Cannot filter anything but an array");
+});
+
+jqUnit.test("Filtering a null value...", function () {
+    var failOnNull = function () { gpii.ptd.api.lib.filter.filter(null); };
+    jqUnit.expectFrameworkDiagnostic("Filtering a non-array should result in an error...", failOnNull, "Cannot filter anything but an array");
+});
+
+jqUnit.test("Filtering an undefined value...", function () {
+    var failOnUndefined = function () { gpii.ptd.api.lib.filter.filter(undefined); };
+    jqUnit.expectFrameworkDiagnostic("Filtering a non-array should result in an error...", failOnUndefined, "Cannot filter anything but an array");
+});
+
+jqUnit.test("Filtering with bad options...", function () {
+    var failOnBadOptions = function () {
+        gpii.ptd.api.lib.filter.filter([{ foo: "bar"}], { includes: { foo: { comparison: "nonsense", value: 1 } } });
+    };
+    jqUnit.expectFrameworkDiagnostic("Filtering with bad options should result in an error...", failOnBadOptions, "Cannot filter records because you have specified an invalid type of comparison");
+});
+
