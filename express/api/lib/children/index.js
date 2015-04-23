@@ -16,21 +16,19 @@ var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 fluid.registerNamespace("gpii.ptd.api.lib.children");
 
-var url     = require("url");
-
 gpii.ptd.api.lib.children.filterToMatchingTerms = function (that, record) {
-    return record.type === "term" && record.uid;
+    return record.type === "term" && record.uniqueId;
 };
 
-// Pull out just the UIDs from a full map
-gpii.ptd.api.lib.children.extractUids = function (record) {
-    return record.uid;
+// Pull out just the uniqueIds from a full map
+gpii.ptd.api.lib.children.extractUniqueIds = function (record) {
+    return record.uniqueId;
 };
 
 gpii.ptd.api.lib.children.requestChildren = function (that) {
     if (Array.isArray(that.model.originalRecords) && that.model.originalRecords.length > 0) {
         // Go through the list of parent records, we will process any that are "term" records
-        var parentIds = that.model.originalRecords.filter(that.filterToMatchingTerms).map(gpii.ptd.api.lib.children.extractUids);
+        var parentIds = that.model.originalRecords.filter(that.filterToMatchingTerms).map(gpii.ptd.api.lib.children.extractUniqueIds);
 
         if (parentIds.length === 0) {
             fluid.log("None of the records in question is eligible to be a parent, so we will continue without requesting any child data.");
@@ -53,7 +51,7 @@ gpii.ptd.api.lib.children.requestChildren = function (that) {
             // retrieve the child records via /tr/_design/api/_view/children?keys=
             var childRecordOptions = {
                 "method":  "GET",
-                "url" :    url.resolve(that.options.couchUrl, that.options.viewPath),
+                "url" :    that.options.couchUrl + that.options.viewPath,
                 "qs":      qs,
                 "json":    true,
                 "timeout": 10000 // In practice, we probably only need a second, but the defaults are definitely too low.
@@ -72,7 +70,7 @@ gpii.ptd.api.lib.children.addChildRecords = function (that, error, response, bod
     // We should not be processing the data at all unless there are "child" records
     if (body.rows && body.rows.length > 0) {
         var childData = {};
-        var allParentIds = that.model.originalRecords.map(function (record) { return record.uid; });
+        var allParentIds = that.model.originalRecords.map(gpii.ptd.api.lib.children.extractUniqueIds);
 
         fluid.each(body.rows, function (row) {
             var record = row.value;
@@ -96,7 +94,7 @@ gpii.ptd.api.lib.children.addChildRecords = function (that, error, response, bod
         fluid.each(that.model.originalRecords, function (originalRecord) {
             var parentRecord = fluid.copy(originalRecord);
             parentsWithChildren.push(parentRecord);
-            var childDataForParent = childData[parentRecord.uid];
+            var childDataForParent = childData[parentRecord.uniqueId];
             if (childDataForParent) {
                 var keys = Object.keys(childDataForParent);
                 for (var b = 0; b < keys.length; b++) {
@@ -117,7 +115,7 @@ gpii.ptd.api.lib.children.addChildRecords = function (that, error, response, bod
 
 fluid.defaults("gpii.ptd.api.lib.children", {
     gradeNames: ["fluid.modelRelayComponent", "autoInit"],
-    couchUrl:   "http://localhost:5986/tr/",
+    couchUrl:   "http://localhost:5984/tr/",
     viewPath:   "/_design/api/_view/children",
     maxKeyData: 7500, // request (and most web servers) can only work with 8000 characters or less of query data
     model: {
