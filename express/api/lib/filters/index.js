@@ -74,7 +74,7 @@ gpii.ptd.api.lib.filter.matchesOptions = function (record, matchingFilterDefinit
     fluid.each(matchingFilterDefinitions, function (filterDefinition, field) {
         // We only compare to defined values.  This means that you can not exclude or include by null or undefined values.
         if (record[field]) {
-            var isSimple   = typeof filterDefinition === "string";
+            var isSimple   = typeof filterDefinition === "string" || Array.isArray(filterDefinition);
             var comparison = isSimple ? "eq" : (filterDefinition.comparison ? filterDefinition.comparison : "eq");
 
             if (validComparisons.indexOf(comparison) === -1) {
@@ -89,15 +89,30 @@ gpii.ptd.api.lib.filter.matchesOptions = function (record, matchingFilterDefinit
                 fieldValue = new Date(fieldValue);
             }
 
-            if ((comparison === "eq" && fieldValue === compareTo) ||
-                (comparison === "le" && fieldValue <=  compareTo) ||
-                (comparison === "lt" && fieldValue <   compareTo) ||
-                (comparison === "ge" && fieldValue >=  compareTo) ||
-                (comparison === "gt" && fieldValue >   compareTo)) {
-                recordMatches = true;
+            if (Array.isArray(compareTo)) {
+                fluid.each(compareTo, function (compareValueWithinArray) {
+                    if (gpii.ptd.api.lib.filter.testSingleMatch(comparison, fieldValue, compareValueWithinArray)) {
+                        recordMatches = true;
+                    }
+                });
+            }
+            else {
+                if (gpii.ptd.api.lib.filter.testSingleMatch(comparison, fieldValue, compareTo)) {
+                    recordMatches = true;
+                }
             }
         }
     });
 
     return recordMatches;
+};
+
+gpii.ptd.api.lib.filter.testSingleMatch = function (comparison, left, right) {
+    return (
+            (comparison === "eq" && left === right) ||
+            (comparison === "le" && left <=  right) ||
+            (comparison === "lt" && left <   right) ||
+            (comparison === "ge" && left >=  right) ||
+            (comparison === "gt" && left >   right)
+    );
 };

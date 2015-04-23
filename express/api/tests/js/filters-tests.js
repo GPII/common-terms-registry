@@ -26,6 +26,14 @@ jqUnit.test("Filtering with a single simple include option...", function () {
     jqUnit.assertDeepEq("The original data should not have been modified...", backupArray, originalArray);
 });
 
+jqUnit.test("Filtering with an array of acceptable values...", function () {
+    var originalArray  = [{ foo: "bar"}, { foo: "baz"}, { foo: "qux"} ];
+    var expectedData   = [{ foo: "bar"}, { foo: "baz"}];
+    var processedArray = gpii.ptd.api.lib.filter.filter(originalArray, { includes: { foo: ["bar", "baz"] } });
+
+    jqUnit.assertDeepEq("The filtered data should only contain matching records...", expectedData, processedArray);
+});
+
 jqUnit.test("Filtering with a single simple exclude option...", function () {
     var originalArray  = [{ foo: "bar"}, {baz: "qux"}];
     var backupArray    = fluid.copy(originalArray);
