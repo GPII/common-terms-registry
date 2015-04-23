@@ -245,12 +245,12 @@ Publish a previously submitted draft version of a document (see "Change History"
         }
         ```
 
-## GET /api/records/{?updated,status,recordType,offset,limit}
+## GET /api/records/{?updated,status,type,offset,limit}
 The full list of records.  Returns all record types by default.
 
 + Parameters
     + updated (optional, string) ... Timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SSZ` Only records updated at or after this time are returned.
-    + recordType (optional, string) ... The type of records to return.  Supported values are ("term","alias","transform","translation", and "condition"). Can be repeated to include multiple record types.
+    + type (optional, string) ... The type of records to return.  Supported values are ("term","alias","transform","translation", and "condition"). Can be repeated to include multiple record types.
     + status (optional, string) ... The record statuses to return (defaults to everything but 'deleted' records).  Can be repeated to include multiple statuses.
     + offset (optional, string) ... The number of records to skip in the list of results.  Used for pagination.
     + limit (optional, string) ... The number of records to return.  Used for pagination.
@@ -272,7 +272,7 @@ The full list of records.  Returns all record types by default.
                 "limit": 100,
                 "updated": "2014-04-01T00:00:00.000Z",
                 "statuses": [ "unreviewed" ],
-                "recordTypes": [ "alias" ]
+                "types": [ "alias" ]
             },
             "records": [
                      {
@@ -291,7 +291,7 @@ The full list of records.  Returns all record types by default.
         ```
 
 ## GET /api/terms/{?updated,status,offset,limit,versions,children}
-The list of standard terms. Equivalent to using /api/records with the query parameter `recordType=term`.  Supports the same query parameters as /api/records except for `recordType`.  Terms include all of their associated records, include aliases, transforms, and translations.
+The list of standard terms. Equivalent to using /api/records with the query parameter `type=term`.  Supports the same query parameters as /api/records except for `type`.  Terms include all of their associated records, include aliases, transforms, and translations.
 
 + Parameters
     + status (optional, string) ... The record statuses to return (defaults to everything but 'deleted' records).  Can be repeated to include multiple statuses.
@@ -340,7 +340,7 @@ The list of standard terms. Equivalent to using /api/records with the query para
         ```
 
 ## GET /api/aliases/{?updated,status,offset,limit,versions}
-The list of aliases. Equivalent to using /api/records with the query parameter `recordType=alias`.  Supports the same query parameters as /api/records except for `recordType`.
+The list of aliases. Equivalent to using /api/records with the query parameter `type=alias`.  Supports the same query parameters as /api/records except for `type`.
 
 + Parameters
     + status (optional, string) ... The record statuses to return (defaults to everything but 'deleted' records).  Can be repeated to include multiple statuses.
@@ -378,7 +378,7 @@ The list of aliases. Equivalent to using /api/records with the query parameter `
         ```
 
 ## GET /api/transforms/{?updated,status,offset,limit,versions}
-The list of transforms. Equivalent to using /api/records with the query parameter `recordType=transform`.  Supports the same query parameters as /api/records except for `recordType`.
+The list of transforms. Equivalent to using /api/records with the query parameter `type=transform`.  Supports the same query parameters as /api/records except for `type`.
 
 + Parameters
     + status (optional, string) ... The record statuses to return (defaults to everything but 'deleted' records).  Can be repeated to include multiple statuses.
@@ -388,7 +388,7 @@ The list of transforms. Equivalent to using /api/records with the query paramete
     + versions (optional, boolean) ... Whether or not to display the full version history for this record (including any unpublished drafts).  Defaults to "false".
 
 ## GET /api/translations/{?updated,status,offset,limit,versions}
-The list of translations. Equivalent to using /api/records with the query parameter `recordType=translation`.  Supports the same query parameters as /api/records except for `recordType`.
+The list of translations. Equivalent to using /api/records with the query parameter `type=translation`.  Supports the same query parameters as /api/records except for `type`.
 
 + Parameters
     + status (optional, string) ... The record statuses to return (defaults to everything but 'deleted' records).  Can be repeated to include multiple statuses.
@@ -398,7 +398,7 @@ The list of translations. Equivalent to using /api/records with the query parame
     + versions (optional, boolean) ... Whether or not to display the full version history for this record (including any unpublished drafts).  Defaults to "false".
 
 ## GET /api/conditions/{?updated,status,offset,limit,versions}
-The list of conditions.  Equivalent to using /api/records with the query parameter `recordType=condition`.  Supports the same query parameters as /api/records except for `recordType`.
+The list of conditions.  Equivalent to using /api/records with the query parameter `type=condition`.  Supports the same query parameters as /api/records except for `type`.
 
 + Parameters
     + status (optional, string) ... The record statuses to return (defaults to everything but 'deleted' records).  Can be repeated to include multiple statuses.
@@ -482,7 +482,7 @@ Suggest the correct common term to use.  Performs a search as in /api/search, bu
                 "limit": 100,
                 "updated": "2014-05-25T11:23:32.441Z",
                 "statuses": [ "unreviewed" ],
-                "recordTypes": [ "alias" ]
+                "types": [ "alias" ]
             },
             "records": [
                      {
