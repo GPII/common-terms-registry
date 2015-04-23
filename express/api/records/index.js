@@ -140,12 +140,17 @@ gpii.ptd.records.getFilterParams = function (that) {
     fluid.each(that.params, function (value, field) {
         var fieldDefinition = filterFields[field];
         if (fieldDefinition) {
-            if (fieldDefinition.comparison) {
-                // If we have a comparison in the field definition, use the long form in our parameters.
-                includes[field] = {
-                    value:      value,
-                    comparison: fieldDefinition.comparison
+            if (fieldDefinition.comparison || fieldDefinition.type) {
+                var fieldIncludes = {
+                    value:      value
                 };
+                if (fieldDefinition.comparison) {
+                    fieldIncludes.comparison = fieldDefinition.comparison;
+                }
+                if (fieldDefinition.type) {
+                    fieldIncludes.type = fieldDefinition.type;
+                }
+                includes[field] = fieldIncludes;
             }
             else {
                 includes[field] = value;
@@ -278,6 +283,7 @@ fluid.defaults("gpii.ptd.records", {
         },
         "updated": {
             type:        "date",
+            comparison:  "ge",  // We want records whose date is equal to or newer than the `updated` field
             filterField: true
         },
         "type": {
