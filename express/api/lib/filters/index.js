@@ -72,7 +72,7 @@ gpii.ptd.api.lib.filter.matchesOptions = function (record, options) {
     var validComparisons = ["eq", "ge", "gt", "le", "lt"];
 
     fluid.each(options, function (value, key) {
-        // We only compare to positive values.  This means that you can not exclude or include by null or undefined values.
+        // We only compare to defined values.  This means that you can not exclude or include by null or undefined values.
         if (record[key]) {
             var isSimple   = typeof value === "string";
             var comparison = isSimple ? "eq" : (value.comparison ? value.comparison : "eq");
