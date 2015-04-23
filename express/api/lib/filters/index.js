@@ -45,48 +45,55 @@ var fluid = fluid || require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 fluid.registerNamespace("gpii.ptd.api.lib.filter");
 
-gpii.ptd.api.lib.filter.filter = function (array, options) {
-    options = options ? options : {};
+gpii.ptd.api.lib.filter.filter = function (array, filterDefinitions) {
+    filterDefinitions = filterDefinitions ? filterDefinitions : {};
 
     if (!Array.isArray(array)) {
         fluid.fail("Cannot filter anything but an array");
     }
 
     var processedArray = fluid.copy(array);
-    if (options.includes) {
+    if (filterDefinitions.includes) {
         fluid.remove_if(processedArray, function (record) {
-            return !gpii.ptd.api.lib.filter.matchesOptions(record, options.includes);
+            return !gpii.ptd.api.lib.filter.matchesOptions(record, filterDefinitions.includes);
         });
     }
-    if (options.excludes) {
+    if (filterDefinitions.excludes) {
         fluid.remove_if(processedArray, function (record) {
-            return gpii.ptd.api.lib.filter.matchesOptions(record, options.excludes);
+            return gpii.ptd.api.lib.filter.matchesOptions(record, filterDefinitions.excludes);
         });
     }
     return processedArray;
 };
 
-gpii.ptd.api.lib.filter.matchesOptions = function (record, options) {
+gpii.ptd.api.lib.filter.matchesOptions = function (record, matchingFilterDefinitions) {
     var recordMatches = false;
 
     var validComparisons = ["eq", "ge", "gt", "le", "lt"];
 
-    fluid.each(options, function (value, key) {
+    fluid.each(matchingFilterDefinitions, function (filterDefinition, field) {
         // We only compare to defined values.  This means that you can not exclude or include by null or undefined values.
-        if (record[key]) {
-            var isSimple   = typeof value === "string";
-            var comparison = isSimple ? "eq" : (value.comparison ? value.comparison : "eq");
+        if (record[field]) {
+            var isSimple   = typeof filterDefinition === "string";
+            var comparison = isSimple ? "eq" : (filterDefinition.comparison ? filterDefinition.comparison : "eq");
 
             if (validComparisons.indexOf(comparison) === -1) {
                 fluid.fail("Cannot filter records because you have specified an invalid type of comparison");
             }
 
-            var compareTo  = isSimple ? value : value.value;
-            if ((comparison === "eq" && record[key] === compareTo) ||
-                (comparison === "le" && record[key] <=  compareTo) ||
-                (comparison === "lt" && record[key] <   compareTo) ||
-                (comparison === "ge" && record[key] >=  compareTo) ||
-                (comparison === "gt" && record[key] >   compareTo)) {
+            var compareTo  = isSimple ? filterDefinition : filterDefinition.value;
+            var fieldValue = record[field];
+
+            // Most types of fields "just work", but dates are stored as strings and not delivered to us as dates that can be used in comparisons.
+            if (!isSimple && filterDefinition.type === "date") {
+                fieldValue = new Date(fieldValue);
+            }
+
+            if ((comparison === "eq" && fieldValue === compareTo) ||
+                (comparison === "le" && fieldValue <=  compareTo) ||
+                (comparison === "lt" && fieldValue <   compareTo) ||
+                (comparison === "ge" && fieldValue >=  compareTo) ||
+                (comparison === "gt" && fieldValue >   compareTo)) {
                 recordMatches = true;
             }
         }
