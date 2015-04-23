@@ -228,6 +228,5 @@ fluid.defaults("gpii.ptd.api.tests.childrenTestCaseHolder", {
                 }
             }
         }
-        // TODO:  Populate with the rest of our child components
     }
 });
