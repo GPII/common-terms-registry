@@ -8,6 +8,6 @@ function(doc) {
         else if (doc.type === "alias" || doc.type === "transform") { key = doc.aliasOf; type = 1; }
         else if (doc.type === "translation") { key = doc.translationOf; type = 1; }
 
-        emit([key,type], require('views/lib/recordUtils').getRecordFields(doc));
+        emit([key, type], doc);
     }
 }
