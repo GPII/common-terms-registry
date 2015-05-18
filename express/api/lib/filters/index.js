@@ -55,23 +55,56 @@ gpii.ptd.api.lib.filter.filter = function (array, filterDefinitions) {
     var processedArray = fluid.copy(array);
     if (filterDefinitions.includes) {
         fluid.remove_if(processedArray, function (record) {
-            return !gpii.ptd.api.lib.filter.matchesOptions(record, filterDefinitions.includes);
+            return !gpii.ptd.api.lib.filter.matchesAllOptions(record, filterDefinitions.includes);
         });
     }
     if (filterDefinitions.excludes) {
         fluid.remove_if(processedArray, function (record) {
-            return gpii.ptd.api.lib.filter.matchesOptions(record, filterDefinitions.excludes);
+            return gpii.ptd.api.lib.filter.matchesAnyOptions(record, filterDefinitions.excludes);
         });
     }
     return processedArray;
 };
 
-gpii.ptd.api.lib.filter.matchesOptions = function (record, matchingFilterDefinitions) {
-    var recordMatches = false;
+
+gpii.ptd.api.lib.filter.matchesAnyOptions = function (record, matchingFilterDefinitions) {
+    // If there are no options to match, return true
+    if (!matchingFilterDefinitions || Object.keys(matchingFilterDefinitions).length === 0) {
+        return true;
+    }
+
+    var optionMatches = gpii.ptd.api.lib.filter.getOptionMatches(record, matchingFilterDefinitions);
+
+    for (var a = 0; a < optionMatches.length; a++) {
+        if (optionMatches[a]) {
+            return true;
+        }
+    }
+
+    return false;
+};
+
+gpii.ptd.api.lib.filter.matchesAllOptions = function (record, matchingFilterDefinitions) {
+    var optionMatches = gpii.ptd.api.lib.filter.getOptionMatches(record, matchingFilterDefinitions);
+
+    for (var a = 0; a < optionMatches.length; a++) {
+        if (!optionMatches[a]) {
+            return false;
+        }
+    }
+
+    return true;
+};
+
+// Test all filter definitions against the current record and return an array containing the results.
+gpii.ptd.api.lib.filter.getOptionMatches = function (record, matchingFilterDefinitions) {
+    var optionMatches = [];
 
     var validComparisons = ["eq", "ge", "gt", "le", "lt"];
 
     fluid.each(matchingFilterDefinitions, function (filterDefinition, field) {
+        var recordMatches = false;
+
         // We only compare to defined values.  This means that you can not exclude or include by null or undefined values.
         if (record[field]) {
             var isSimple   = typeof filterDefinition === "string" || Array.isArray(filterDefinition);
@@ -102,9 +135,11 @@ gpii.ptd.api.lib.filter.matchesOptions = function (record, matchingFilterDefinit
                 }
             }
         }
+
+        optionMatches.push(recordMatches);
     });
 
-    return recordMatches;
+    return optionMatches;
 };
 
 gpii.ptd.api.lib.filter.testSingleMatch = function (comparison, left, right) {
