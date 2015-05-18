@@ -6,14 +6,15 @@ module.exports = function (config) {
     var express = require("express");
     var router = express.Router();
 
-    var search = require("./search")(config);
-    router.use("/search", search);
-
-    var suggestConfig = JSON.parse(JSON.stringify(config));
-    suggestConfig.lookup = true;
-
-    var suggest = require("./search")(suggestConfig);
-    router.use("/suggest", suggest);
+    // TODO:  These are no longer functional until we finish the refactor.
+    //var search = require("./search")(config);
+    //router.use("/search", search);
+    //
+    //var suggestConfig = JSON.parse(JSON.stringify(config));
+    //suggestConfig.lookup = true;
+    //
+    //var suggest = require("./search")(suggestConfig);
+    //router.use("/suggest", suggest);
 
     // Record lookup end points, one for all types, and one each per type
     var records = require("./records")(config);
@@ -44,8 +45,9 @@ module.exports = function (config) {
     var conditions = require("./records")(conditionsConfig);
     router.use("/conditions", conditions);
 
-    var record = require("./record")(config);
-    router.use("/record", record);
+    // TODO:  This breaks with the new "children" module.  Fix after we reconfirm core functionality
+    //var record = require("./record")(config);
+    //router.use("/record", record);
 
     // Display the API docs for everything else
     router.use("/", function (req, res) {
@@ -54,7 +56,7 @@ module.exports = function (config) {
 
             var markdown = "";
             var fs = require("fs");
-            var BUF_LENGTH = 64*1024;
+            var BUF_LENGTH = 64 * 1024;
             var buffer = new Buffer(BUF_LENGTH);
             var mdFile = fs.openSync(__dirname + "/ctr.md", "r");
             var bytesRead = 1;
