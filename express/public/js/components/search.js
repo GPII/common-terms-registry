@@ -100,8 +100,10 @@
         }
 
         var pageLinks = that.locate("pageLinks");
+        var navFooter = that.locate("navFooter");
         if (pages < 2) {
             pageLinks.hide();
+            navFooter.hide();
         }
         else {
             var navOptions  = {
@@ -110,6 +112,7 @@
                 totalPages:     pages
             };
 
+            templates.replaceWith(navFooter, "search-navigation-footer", navOptions);
             templates.replaceWith(pageLinks, "search-navigation-page-controls", navOptions);
 
             var navStart = that.locate("navStart");
@@ -256,7 +259,6 @@
             var pageData = isSearch ? that.model.records.slice(that.model.searchSettings.offset, limit) : that.model.records;
 
             templates.append(viewport, "search-records", {records: pageData, user: that.model.user, pageSize: pageSize });
-            templates.append(viewport, "search-navigation-footer", {});
         }
         else {
             templates.replaceWith(viewport, "search-norecord");
@@ -313,26 +315,27 @@
         gradeNames: ["fluid.viewRelayComponent", "autoInit"],
         baseUrl: "/api",
         selectors: {
-            "query":         ".ptd-search-query",
-            "sort":          ".ptd-search-sort",
             "add":           ".ptd-add-record-button",
-            "status":        ".ptd-search-status",
-            "clear":         ".ptd-clear-button",
             "aliasToggle":   ".alias-toggle",
+            "clear":         ".ptd-clear-button",
+            "header":        ".ptd-header",
+            "navBar":        ".ptd-nav-bar",
+            "navEnd":        ".ptd-search-nav-end",
+            "navNext":       ".ptd-search-nav-next",
+            "navPrevious":   ".ptd-search-nav-previous",
+            "navStart":      ".ptd-search-nav-start",
+            "navFooter":     ".ptd-search-nav-footer",
+            "navPageLink":   ".ptd-search-nav-page-link",
+            "page":          ".ptd-search-nav-current-page",
+            "pageLinks":     ".ptd-search-page-links",
+            "query":         ".ptd-search-query",
+            "recordCount":   ".ptd-record-count",
+            "sort":          ".ptd-search-sort",
+            "status":        ".ptd-search-status",
             "statusOptions": ".ptd-search-status",
             "statusToggle":  ".ptd-search-status-toggle",
             "statusText":    ".ptd-search-status-current-text",
             "statusSelect":  ".ptd-search-status-selector",
-            "navStart":      ".ptd-search-nav-start",
-            "page":          ".ptd-search-nav-current-page",
-            "navPrevious":   ".ptd-search-nav-previous",
-            "pageLinks":     ".ptd-search-page-links",
-            "navNext":       ".ptd-search-nav-next",
-            "navEnd":        ".ptd-search-nav-end",
-            "navPageLink":   ".ptd-search-nav-page-link",
-            "navBar":        ".ptd-nav-bar",
-            "header":        ".ptd-header",
-            "recordCount":   ".ptd-record-count",
             "viewport":      ".ptd-viewport"
         },
         bindings: [
