@@ -30,7 +30,10 @@ gpii.express({
     config: {
         express: {
             port:    "{that}.options.port",
-            baseUrl: "{that}.options.baseUrl"
+            baseUrl: "{that}.options.baseUrl",
+            session: {
+                secret: "Printer, printer take a hint-ter."
+            }
         }
     },
     components: {
@@ -57,6 +60,9 @@ gpii.express({
                     }
                 }
             }
+        },
+        session: {
+            type: "gpii.express.middleware.session"
         },
         records: {
             type: "gpii.ptd.records",
