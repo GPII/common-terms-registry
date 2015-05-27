@@ -6,15 +6,8 @@ module.exports = function (config) {
     var express = require("express");
     var router = express.Router();
 
-    // TODO:  These are no longer functional until we finish the refactor.
-    //var search = require("./search")(config);
-    //router.use("/search", search);
-    //
-    //var suggestConfig = JSON.parse(JSON.stringify(config));
-    //suggestConfig.lookup = true;
-    //
-    //var suggest = require("./search")(suggestConfig);
-    //router.use("/suggest", suggest);
+    var search = require("./search")(config);
+    router.use("/search", search);
 
     // Record lookup end points, one for all types, and one each per type
     var records = require("./records")(config);
@@ -45,9 +38,8 @@ module.exports = function (config) {
     var conditions = require("./records")(conditionsConfig);
     router.use("/conditions", conditions);
 
-    // TODO:  This breaks with the new "children" module.  Fix after we reconfirm core functionality
-    //var record = require("./record")(config);
-    //router.use("/record", record);
+    var record = require("./record")(config);
+    router.use("/record", record);
 
     // Display the API docs for everything else
     router.use("/", function (req, res) {

@@ -7,39 +7,39 @@ var read = fluid.registerNamespace(namespace);
 var loader = require("../../../configs/lib/config-loader");
 read.config = loader.loadConfig(require("../../../configs/express/test-pouch.json"));
 
-var testUtils = require(".././testUtils")(read.config);
+var testUtils = require("../../tests/js/lib/testUtils")(read.config);
 
-read.loadPouch = function() {
-    read.pouch = require('.././pouch')(read.config);
+read.loadPouch = function () {
+    read.pouch = require("../../tests/js/lib/pouch")(read.config);
 
-    read.pouch.start(function() {
+    read.pouch.start(function () {
         read.startExpress();
     });
 };
 
 // Spin up an express instance
-read.startExpress = function() {
-    read.express = require('.././express')(read.config);
+read.startExpress = function () {
+    read.express = require("../../tests/js/lib/express")(read.config);
 
-    read.express.start(function() {
+    read.express.start(function () {
 
         // Mount all variations on the module
-        var record = require('../../record')(read.config);
-        read.express.app.use('/record', record);
+        var record = require("../../record")(read.config);
+        read.express.app.use("/record", record);
 
-        read.runTests();
         // Give express-pouch a few seconds to start up
-//        setTimeout(read.loadData, 500);
+        setTimeout(read.loadData, 500);
+        setTimeout(read.runTests, 2000);
     });
 };
 
-read.runTests = function() {
+read.runTests = function () {
     var jqUnit = fluid.require("jqUnit");
-    var request = require('request');
+    var request = require("request");
     jqUnit.module("Record API (read)");
 
-    jqUnit.asyncTest("Test retrieving record by its uniqueID", function() {
-        request.get("http://localhost:" + read.config.port + "/record/org.gnome.settings-daemon.peripherals.wacom.stylus.pressurecurve", function(error, response, body) {
+    jqUnit.asyncTest("Test retrieving record by its uniqueID", function () {
+        request.get("http://localhost:" + read.config.port + "/record/org.gnome.settings-daemon.peripherals.wacom.stylus.pressurecurve", function (error, response, body) {
             jqUnit.start();
 
             testUtils.isSaneResponse(jqUnit, error, response, body);
@@ -56,8 +56,8 @@ read.runTests = function() {
         });
     });
 
-    jqUnit.asyncTest("Test retrieving a record that does not exist", function() {
-        request.get("http://localhost:" + read.config.port + "/record/totallyBogusFlibbertyGibbit", function(error, response, body) {
+    jqUnit.asyncTest("Test retrieving a record that does not exist", function () {
+        request.get("http://localhost:" + read.config.port + "/record/totallyBogusFlibbertyGibbit", function (error, response, body) {
             jqUnit.start();
 
             testUtils.isSaneResponse(jqUnit, error, response, body);
@@ -70,8 +70,8 @@ read.runTests = function() {
         });
     });
 
-    jqUnit.asyncTest("Test retrieving a record that does not exist", function() {
-        request.get("http://localhost:" + read.config.port + "/record/", function(error, response, body) {
+    jqUnit.asyncTest("Test retrieving a record that does not exist", function () {
+        request.get("http://localhost:" + read.config.port + "/record/", function (error, response, body) {
             jqUnit.start();
 
             testUtils.isSaneResponse(jqUnit, error, response, body);
@@ -87,9 +87,9 @@ read.runTests = function() {
 // TODO:  Add tests for versioning (perhaps in their own module)
 
 // The output should not include children with the "children" option set to false
-    jqUnit.asyncTest("Retrieve record with the 'children' argument set to false...", function() {
+    jqUnit.asyncTest("Retrieve record with the 'children' argument set to false...", function () {
         // TODO:  This test depends on the existence of a single record.  We should adjust to use test data instead.
-        request.get("http://localhost:" + read.config.port + "/record/xMPPChatID?children=false", function(error, response, body) {
+        request.get("http://localhost:" + read.config.port + "/record/xMPPChatID?children=false", function (error, response, body) {
             jqUnit.start();
 
             testUtils.isSaneResponse(jqUnit, error, response, body);
@@ -103,8 +103,8 @@ read.runTests = function() {
     });
 
 // The output from "terms" and "records" should include children when the "children" option is set to true
-    jqUnit.asyncTest("Retrieve record with the 'children' argument set to true...", function() {
-        request.get("http://localhost:" + read.config.port + "/record/xMPPChatID?children=true", function(error, response, body) {
+    jqUnit.asyncTest("Retrieve record with the 'children' argument set to true...", function () {
+        request.get("http://localhost:" + read.config.port + "/record/xMPPChatID?children=true", function (error, response, body) {
             jqUnit.start();
 
             testUtils.isSaneResponse(jqUnit, error, response, body);
@@ -118,8 +118,8 @@ read.runTests = function() {
     });
 
 // The "children" parameter should not cause problems when loading something that doesn't have children (i.e. an alias)
-    jqUnit.asyncTest("Retrieve alias with the 'children' argument set to true...", function() {
-        request.get("http://localhost:" + read.config.port + "/record/XMPP%20Chat%20ID?children=true", function(error, response, body) {
+    jqUnit.asyncTest("Retrieve alias with the 'children' argument set to true...", function () {
+        request.get("http://localhost:" + read.config.port + "/record/XMPP%20Chat%20ID?children=true", function (error, response, body) {
             jqUnit.start();
 
             testUtils.isSaneResponse(jqUnit, error, response, body);
@@ -133,8 +133,8 @@ read.runTests = function() {
     });
 
     // The "children" parameter should not cause problems when loading something that doesn't have children (i.e. an alias)
-    jqUnit.asyncTest("Retrieve a record with a space in its name...", function() {
-        request.get("http://localhost:" + read.config.port + "/record/XMPP%20Chat%20ID", function(error, response, body) {
+    jqUnit.asyncTest("Retrieve a record with a space in its name...", function () {
+        request.get("http://localhost:" + read.config.port + "/record/XMPP%20Chat%20ID", function (error, response, body) {
             jqUnit.start();
 
             testUtils.isSaneResponse(jqUnit, error, response, body);
@@ -144,7 +144,7 @@ read.runTests = function() {
         });
     });
 
-    jqUnit.onAllTestsDone.addListener(function() {
+    jqUnit.onAllTestsDone.addListener(function () {
         // Shut down express (seems to happen implicitly, so commented out)
 //    http.server.close();
     });

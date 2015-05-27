@@ -85,6 +85,7 @@ fluid.defaults("gpii.ptd.api.record.tests.records", {
                         options: {
                             type:     "record",
                             children: false,
+                            baseUrl:  "{testEnvironment}.options.baseUrl",
                             couchUrl: "{testEnvironment}.options.couchDbUrl",
                             path:     "/records"
                         }
@@ -94,6 +95,7 @@ fluid.defaults("gpii.ptd.api.record.tests.records", {
                         options: {
                             type:     "term",
                             children: true,
+                            baseUrl:  "{testEnvironment}.options.baseUrl",
                             couchUrl: "{testEnvironment}.options.couchDbUrl",
                             path:     "/terms"
 
@@ -104,6 +106,7 @@ fluid.defaults("gpii.ptd.api.record.tests.records", {
                         options: {
                             type:     "alias",
                             children: false,
+                            baseUrl:  "{testEnvironment}.options.baseUrl",
                             couchUrl: "{testEnvironment}.options.couchDbUrl",
                             path:     "/aliases"
 

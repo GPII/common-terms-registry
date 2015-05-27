@@ -112,16 +112,15 @@ gpii.ptd.records.request.processCouchResponse = function (that, error, _, body) 
             return doc.value;
         });
 
-        var filterParams    = gpii.ptd.records.request.getFilterParams(that);
+        var filterParams    = gpii.ptd.api.lib.params.getFilterParams(that.params, that.options.queryFields);
         var filteredRecords = gpii.ptd.api.lib.filter.filter(records, filterParams);
 
         // Now that we have retrieved the main payload and filtered it, we can save the total number of rows.
         that.total_rows = filteredRecords.length;
 
         // Sort the filtered results if needed.
-        var sortParams    = gpii.ptd.records.request.getSortingParams(that);
-        if (sortParams && sortParams.length > 0) {
-            gpii.ptd.api.lib.sorting.sort(filteredRecords, sortParams);
+        if (that.params.sort) {
+            gpii.ptd.api.lib.sorting.sort(filteredRecords, that.params.sort);
         }
 
         // Page the results
@@ -143,74 +142,8 @@ gpii.ptd.records.request.processCouchResponse = function (that, error, _, body) 
     }
 };
 
-// Convert from our "query" model to the format used by the `filter` functions.
-gpii.ptd.records.request.getFilterParams = function (that) {
-    var keyword = "filterField";
-    var filterFields = gpii.ptd.api.lib.params.getRelevantFields(that.options.queryFields, keyword);
-    var filterParams = gpii.ptd.records.request.getRelevantParams(that, keyword);
-
-    var includes = {};
-    fluid.each(filterParams, function (value, field) {
-        var fieldDefinition = filterFields[field];
-        if (fieldDefinition) {
-            if (fieldDefinition.comparison || fieldDefinition.type) {
-                var fieldIncludes = {
-                    value:      value
-                };
-                if (fieldDefinition.comparison) {
-                    fieldIncludes.comparison = fieldDefinition.comparison;
-                }
-                if (fieldDefinition.type) {
-                    fieldIncludes.type = fieldDefinition.type;
-                }
-                includes[field] = fieldIncludes;
-            }
-            else {
-                includes[field] = value;
-            }
-        }
-    });
-
-    // Only add "includes" if we actually have data
-    if (Object.keys(includes).length > 0) {
-        filterParams.includes = includes;
-    }
-
-    return filterParams;
-};
-
-// Common function to look up parameters by keyword, where keyword is one of the tag fields in our fieldDefinition.
-gpii.ptd.records.request.getRelevantParams = function (that, keyword) {
-    var relevantParams = {};
-    var relevantFields = gpii.ptd.api.lib.params.getRelevantFields(that.options.queryFields, keyword);
-    fluid.each(that.params, function (value, field) {
-        if (relevantFields[field]) {
-            relevantParams[field] = value;
-        }
-    });
-    return relevantParams;
-};
-
-// Convenience function to get the list of paging parameters.  The `pagingField` option in a field definition entry will
-// cause it to be included in the results.
 gpii.ptd.records.request.getPagingParams = function (that) {
-    return gpii.ptd.records.request.getRelevantParams(that, "pagingField");
-};
-
-// Convenience function to get the list of sorting parameters.  The `sortingField` option in a field definition entry
-// will cause it to be included in the results. Although we currently only have one sort field, this function will look
-// for all configured sort fields and concat them together.
-//
-gpii.ptd.records.request.getSortingParams = function (that) {
-    var sortFields = gpii.ptd.api.lib.params.getRelevantFields(that.options.queryFields, "sortingField");
-    var sortParams = [];
-    fluid.each(sortFields, function (_, field) {
-        var fieldValue = that.params[field];
-        if (fieldValue) {
-            sortParams = sortParams.concat(fieldValue);
-        }
-    });
-    return sortParams;
+    return gpii.ptd.api.lib.params.getRelevantParams(that.params, that.options.queryFields, "pagingField");
 };
 
 gpii.ptd.records.request.sendRecords = function (that, records) {
@@ -240,9 +173,7 @@ fluid.defaults("gpii.ptd.records.request", {
         "helper": {
             type: "gpii.schema.helper",
             options: {
-                // TODO:  This does not exist when we are created, and as such is never set.  Review with Antranig.
-                //baseUrl: "{that}.options.config['base.url']"
-                baseUrl: "http://localhost:4680"
+                baseUrl: "{request}.options.baseUrl"
             }
         },
         "pager": {
@@ -251,7 +182,7 @@ fluid.defaults("gpii.ptd.records.request", {
         "children": {
             type: "gpii.ptd.api.lib.children",
             options: {
-                couchUrl: "{that}.options.couchUrl",
+                couchUrl: "{request}.options.couchUrl",
                 listeners: {
                     "onChildrenLoaded": {
                         funcName: "gpii.ptd.records.request.sendRecords",
@@ -316,10 +247,6 @@ fluid.defaults("gpii.ptd.records.request", {
         }
     },
     invokers: {
-        filterAndSort: {
-            funcName: "gpii.ptd.records.request.filterAndSort",
-            args:     ["{that}", "{arguments}.0"]
-        },
         processCouchResponse: {
             funcName: "gpii.ptd.records.request.processCouchResponse",
             args:     ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"]
@@ -331,14 +258,14 @@ fluid.defaults("gpii.ptd.records", {
     gradeNames:        ["gpii.express.requestAware.router", "autoInit"],
     path:              "/records",
     requestAwareGrade: "gpii.ptd.records.request",
-    // TODO:  Figure out how to pass in our options to the dynamic grade
     dynamicComponents: {
         requestHandler: {
             options: {
-                querySchemaName:   "{records}.options.querySchemaName",
-                couchUrl:          "{records}.options.couchUrl",
-                type:              "{records}.options.type",
-                children:          "{records}.options.children"
+                querySchemaName: "{records}.options.querySchemaName",
+                couchUrl:        "{records}.options.couchUrl",
+                type:            "{records}.options.type",
+                children:        "{records}.options.children",
+                baseUrl:         "{records}.options.baseUrl"
             }
         }
     }
@@ -361,8 +288,9 @@ module.exports = function (config) {
                 }
             }
         },
-        // TODO:  Why can't we pick this up from the config holder?  Review with Antranig.
-        couchUrl: config["couch.url"]
+        // TODO:  Why can't we pick these up from the config holder?  Review with Antranig.
+        couchUrl: config["couch.url"],
+        baseUrl:  config["base.url"]
     });
     return records.getRouter();
 };

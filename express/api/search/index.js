@@ -1,178 +1,342 @@
 "use strict";
 
-// TODO:  The "suggest" module should just be an instance of this grade with particular options set.
+var fluid = require("infusion");
+var gpii  = fluid.registerNamespace("gpii");
+fluid.registerNamespace("gpii.ptd.search");
 
-// TODO:  As with records, we should filter, sort, then page
-// TODO:  We must sort while we still have the raw search results, otherwise we don't have the option to sort by the relevance.
+// Bring in our helper components
+require("gpii-express");
+require("../lib/sorting");
+require("../lib/filters");
+require("../lib/paging");
+require("../lib/children");
+require("../lib/params");
+require("../../schema/lib/request");
+require("../../schema/lib/schema-helper");
 
-module.exports = function (config) {
-    var schemaHelper = require("../../schema/lib/schema-helper")(config);
-    var fluid        = require("infusion");
-    var paging       = require("../lib/paging")(config);
+var request = require("request");
 
-    var quick        = config.lookup ? true : false;
+fluid.registerNamespace("gpii.ptd.search.request");
 
-    // TODO:  We will have to disentangle this and make "suggest" extend "search"
-    var search       = fluid.registerNamespace(quick ? "gpii.ctr.api.suggest" : "gpii.ctr.api.search");
+// We cannot URI encode colons, as Lucene will not decode them. Everything else we must encode to avoid problems with bad characters.
+gpii.ptd.search.encodeSkippingColons = function (value) {
+    if (!value || typeof value !== "string") {
+        return value;
+    }
 
-    // TODO:  We should not be using variables like this, we should be using options
-    search.schema        = "search";
-    search.defaultOffset = 0;
-    search.defaultLimit  = 250;
+    var segments = value.split(":");
+    var encodedSegments = segments.map(encodeURIComponent);
 
-    var children     = require("../lib/children")(config, search);
-    var request      = require("request");
-    var filters      = require("secure-filters");
-
-    // We cannot URI encode colons, as Lucene will not decode them. Everything else we must encode to avoid problems with bad characters.
-    search.encodeSkippingColons = function (value) {
-        if (!value || typeof value !== "string") {
-            return value;
-        }
-
-        var segments = value.split(":");
-        var encodedSegments = segments.map(encodeURIComponent);
-
-        return encodedSegments.join(":");
-    };
-
-    // Process the raw search results returned by Lucene and derive the list of distinct terms.
-    search.processLuceneSearchResults = function (error, response, body) {
-        if (error) { return search.res.status(500).send(JSON.stringify(error)); }
-
-        search.results.offset = search.params.offset;
-        search.results.limit  = search.params.limit;
-
-        if (body && body.rows) {
-            // build a list of unique term IDs, skipping duplicates.
-            for (var i = 0; i < body.rows.length; i++) {
-                var record = body.rows[i].fields;
-                var uniqueId = record.uniqueId;
-
-                if (record.type === "alias" || record.type === "transform") {
-                    uniqueId = record.aliasOf;
-                }
-                else if (record.type === "translation") {
-                    uniqueId = record.translationOf;
-                }
-
-                if (search.distinctUniqueIds.indexOf(uniqueId) === -1) {
-                    var sanitizedId = filters.js(uniqueId);
-                    search.distinctUniqueIds.push(sanitizedId);
-                }
-            }
-        }
-
-        search.results.total_rows = search.distinctUniqueIds.length;
-        if (search.distinctUniqueIds.length === 0) {
-            search.results.ok = true;
-            search.results.records = {};
-
-            schemaHelper.setHeaders(search.res, "search");
-            return search.res.status(200).send(JSON.stringify(search.results));
-        }
-
-        // Retrieve the parent records via /tr/_design/api/_view/entries?keys=
-        var pagedUniqueIds = paging.pageArray(search.distinctUniqueIds, search.params);
-        var distinctKeyString = JSON.stringify(pagedUniqueIds);
-
-        if (distinctKeyString.length > 7500) {
-            return search.res.status(500).send({ok: false, message: "Your query returned too many search results to display.  Please add additional search terms or filters."});
-        }
-        else {
-            var parentRecordOptions = {
-                "url" : config["couch.url"] + "/_design/api/_view/entries",
-                "qs": { keys: distinctKeyString },
-                "json": true
-            };
-
-            request.get(parentRecordOptions, search.getParentRecords);
-        }
-    };
-
-    var express = require("express");
-    return express.Router().get("/", function (req, res) {
-        schemaHelper.setHeaders(res, "message");
-
-        // per-request variables need to be defined here, otherwise (for example) the results of the previous search will be returned if the next search has no records
-        search.distinctUniqueIds = [];
-        search.results           = {};
-        search.params = {};
-        search.req = req;
-        search.res = res;
-
-        var queryLimit = parseInt(req.query.limit, 10);
-        search.params.limit = isNaN(queryLimit) ? search.defaultLimit : queryLimit;
-
-        var queryOffset = parseInt(req.query.offset, 10);
-        search.params.offset = isNaN(queryOffset) ? search.defaultOffset : queryOffset;
-
-        // Server config validation
-        if (!config || !config["couch.url"] || !config["lucene.url"]) {
-            var message = "Your instance is not configured correctly to enable searching.  You must have a couch.url and lucene.url variable configured.";
-            console.log(message);
-            return res.status(500).send(JSON.stringify({ ok: false, message: message }));
-        }
-
-        // Support a "quick" mode in which paging is disabled and only the top results are returns (used for auto-suggest, etc.)
-        var quick = config.lookup ? true : false;
-
-        // User input validation
-        if (!req.query || !req.query.q) { return res.status(400).send(JSON.stringify({ok: false, message: "A search string is required."})); }
-
-        // TODO:  Add support for displaying versions
-
-        search.results.q = req.query.q;
-        search.results.retrievedAt = new Date();
-
-        var field              = "q";
-        var queryString        = "";
-        var qualifierFieldName = "status";
-        var qualifiersFound    =  Boolean(qualifierFieldName && req.query[qualifierFieldName]);
-        var qualifierString = "";
-        if (qualifiersFound) {
-            var qualifierValue = req.query[qualifierFieldName];
-            if (qualifierValue instanceof Array) {
-                qualifierString += "(" + qualifierFieldName + ":" + qualifierValue.join(" OR " + qualifierFieldName + ":") + ") AND ";
-            }
-            else {
-                qualifierString += qualifierFieldName + ":" + qualifierValue + " AND ";
-            }
-        }
-
-        if (req.query[field]) {
-            if (req.query[field] instanceof Array) {
-                req.query[field].forEach(function (entry) {
-                    queryString = qualifierString + search.encodeSkippingColons(entry);
-                });
-            }
-            else {
-                queryString = qualifierString + search.encodeSkippingColons(req.query[field]);
-            }
-        }
-        else if (qualifiersFound) {
-            queryString = qualifierString;
-        }
-
-        var queryData = {
-            "q":     queryString,
-            "limit": 1000000 // Hard-coded limit to disable limiting by Lucene.  Required because of CTR-148
-        };
-
-        if (req.query.sort) {
-            queryData.sort = req.query.sort;
-        }
-
-        var searchOptions = {
-            "url" :    config["lucene.url"],
-            "qs":      queryData,
-            "json":    true,
-            "timeout": 10000 // In practice, we probably only need a second, but this is set high to give lucene time to respond.
-        };
-
-        // Perform the search
-        request.get(searchOptions, search.processLuceneSearchResults);
-    });
+    return encodedSegments.join(":");
 };
 
-// TODO:  write a "shim" that takes the "config" object and returns our router.
+// Validate the parameters extracted previously.
+gpii.ptd.search.request.validateInput = function (that) {
+    // Start by validating using JSON Schema
+    var errors = that.helper.validate(that.options.querySchemaName, that.results.params);
+    if (errors) {
+        throw (errors);
+    }
+};
+
+gpii.ptd.search.request.handleRequest = function (that) {
+    try {
+        // Extract the parameters we will use throughout the process from the request.
+        that.results.params = gpii.ptd.api.lib.params.extractParams(that.request.query, that.options.queryFields);
+
+        // Make sure the user has sent us valid input
+        gpii.ptd.search.request.validateInput(that);
+    }
+    catch (err) {
+        that.sendSchemaAwareResponse(400, "message", { ok: false, message: err });
+        return;
+    }
+
+    var queryData = gpii.ptd.search.request.generateLuceneQueryString(that);
+    
+    var requestConfig = {
+        "url" :    that.options.luceneUrl,
+        "qs":      queryData,
+        "json":    true,
+        "timeout": 10000 // In practice, we probably only need a second, but this is set high to give lucene time to respond.
+    };
+
+    request(requestConfig, that.processLuceneResponse);
+};
+
+// Add select fields to lucene's query string.  Used to reduce the number of circumstances in which we will hit the
+// character limit in retrieving our full list of records.
+gpii.ptd.search.request.generateLuceneQueryString = function (that) {
+    var statusQueryString    = "";
+    if (that.results.params.status) {
+        if (Array.isArray(that.results.params.status)) {
+            var qualifiedStatusValues = that.results.params.status.map(function (value) {
+                return "status:" + value;
+            });
+            statusQueryString = "(" + qualifiedStatusValues.join(" OR ") + ")";
+        }
+        else {
+            statusQueryString = "(status:" + that.results.params.status + ")";
+        }
+    }
+
+    var searchQueryString = Array.isArray(that.results.params.q) ? that.results.params.q.join(" ") : that.results.params.q;
+
+    var queryString = "(" + searchQueryString + ")";
+    if (that.results.params.status) {
+        queryString += " AND " + statusQueryString;
+    }
+
+    var queryData = {
+        //"q":     gpii.ptd.search.encodeSkippingColons(queryString),
+        "q":     queryString,
+        "limit": 1000000 // Hard-coded limit to disable limiting by Lucene.  Required because of CTR-148
+    };
+
+    return queryData;
+};
+
+// Process the raw search results returned by Lucene and derive the list of distinct terms.
+gpii.ptd.search.request.processLuceneResponse = function (that, error, response, body) {
+    if (error) {
+        var errorBody = {
+            "ok": false,
+            "message": error
+        };
+
+        that.sendSchemaAwareResponse("500", "message", errorBody);
+        return;
+    }
+
+    var distinctUniqueIdMap = {};
+    if (body && body.rows) {
+        // build a list of unique term IDs, skipping duplicates.
+        for (var i = 0; i < body.rows.length; i++) {
+            var record = body.rows[i].fields;
+            var uniqueId = record.uniqueId;
+
+            if (record.type === "alias" || record.type === "transform") {
+                uniqueId = record.aliasOf;
+            }
+            else if (record.type === "translation") {
+                uniqueId = record.translationOf;
+            }
+
+            distinctUniqueIdMap[uniqueId] = true;
+        }
+    }
+    var distinctUniqueIds = Object.keys(distinctUniqueIdMap);
+
+    that.results.total_rows = distinctUniqueIds.length;
+    if (distinctUniqueIds.length === 0) {
+        return that.sendSchemaAwareResponse("200", "search", that.results);
+    }
+
+    var distinctKeyString = JSON.stringify(distinctUniqueIds);
+    if (distinctKeyString.length > 7500) {
+        return that.sendSchemaAwareResponse(500, "message", {ok: false, message: "Your query returned too many search results to display.  Please add additional search terms or filters."});
+    }
+    else {
+        var parentRecordOptions = {
+            "url" : that.options.couchUrl + "/_design/api/_view/entries",
+            "qs": { keys: distinctKeyString },
+            "json": true
+        };
+
+        request.get(parentRecordOptions, that.processCouchResponse);
+    }
+};
+
+gpii.ptd.search.request.processCouchResponse = function (that, error, _, body) {
+    if (error) {
+        var errorBody = {
+            "ok": false,
+            "message": error
+        };
+
+        that.sendSchemaAwareResponse("500", "message", errorBody);
+        return;
+    }
+
+    if (body.rows) {
+        // Couch includes a `docs` field in its response, and each field hides its data in a `value` field.  This line flattens that out.
+        var records = body.rows.map(function (doc) {
+            return doc.value;
+        });
+
+        var filterParams    = gpii.ptd.api.lib.params.getFilterParams(that.results.params, that.options.queryFields);
+        var filteredRecords = gpii.ptd.api.lib.filter.filter(records, filterParams);
+
+        // Update the total number of search results
+        that.results.total_rows = filteredRecords.length;
+
+        // Sort the filtered results if needed.
+        if (that.results.params.sort) {
+            gpii.ptd.api.lib.sorting.sort(filteredRecords, that.results.params.sort);
+        }
+
+        // Page the results
+        var pagerParams  = gpii.ptd.search.request.getPagingParams(that);
+        var pagedRecords = that.pager.pageArray(filteredRecords, pagerParams);
+
+        // Let the "children" module look up any child records and wait for it.
+        that.children.applier.change("originalRecords", pagedRecords);
+    }
+    else {
+        // We somehow did not receive records from couch.  Pass on whatever we did receive.
+        that.sendSchemaAwareResponse("500", "message", { ok: false, message: body });
+    }
+};
+
+gpii.ptd.search.request.sendResults = function (that) {
+    that.results.records = that.children.model.processedRecords;
+    that.sendSchemaAwareResponse(200, "message", that.results);
+};
+
+gpii.ptd.search.request.checkRequirements = function (that) {
+    if (!that.options.couchUrl || !that.options.luceneUrl) {
+        var message = "The search API must have both a couchUrl and luceneUrl option configured.";
+        that.sendSchemaAwareResponse(500, JSON.stringify({ok: false, message: message}));
+        fluid.fail(message);
+    }
+
+    gpii.ptd.search.request.handleRequest(that);
+};
+
+// Expander function that can be used to set a variable to today's date (in ISO 9660 format).
+gpii.ptd.search.request.setDate = function () {
+    return (new Date()).toISOString();
+};
+
+gpii.ptd.search.request.getPagingParams = function (that) {
+    return gpii.ptd.api.lib.params.getRelevantParams(that.results.params, that.options.queryFields, "pagingField");
+};
+
+fluid.defaults("gpii.ptd.search.request", {
+    gradeNames: ["gpii.schema.requestAware", "autoInit"],
+    querySchemaName:   "search-query",
+    luceneUrl:         "",
+    couchUrl:          "",
+    children:          false,
+    typesWithChildren: ["term", "record"],
+    components: {
+        // The schema validation "helper".  If you want to use a different group of schemas, you'll need to configure the options for the helper.
+        // We use the defaults supplied by the helper itself.
+        "helper": {
+            type: "gpii.schema.helper",
+            options: {
+                baseUrl: "{request}.options.baseUrl"
+            }
+        },
+        "pager": {
+            type: "gpii.ptd.api.lib.paging"
+        },
+        "children": {
+            type: "gpii.ptd.api.lib.children",
+            options: {
+                couchUrl: "{request}.options.couchUrl",
+                listeners: {
+                    "onChildrenLoaded": {
+                        funcName: "gpii.ptd.search.request.sendResults",
+                        args: [ "{gpii.ptd.search.request}"]
+                    }
+                }
+            }
+        }
+    },
+    members: {
+        results:   {
+            ok:         true,
+            total_rows: 0,
+            params:     "{that}.params",
+            records:    [],
+            retrievedAt: {
+                expander: {
+                    funcName: "gpii.ptd.search.request.setDate"
+                }
+            }
+        }
+    },
+    // The list of query fields we support, with hints about their defaults (if any) and their default value (if any)
+    //
+    // All actual query input validation is handled using a JSON schema.
+    queryFields: {
+        "q": {
+        },
+        "sort": {
+            sortingField: true
+        },
+        "offset": {
+            type:         "number",
+            pagingField:  true,
+            defaultValue: 0
+        },
+        "limit": {
+            type:         "number",
+            pagingField:  true,
+            defaultValue: 25
+        },
+        "status": {
+            filterField:  true,
+            forceLower:   true,
+            defaultValue: ["unreviewed", "draft", "candidate", "active"]
+        },
+        "updated": {
+            type:        "date",
+            comparison:  "ge",  // We want records whose date is equal to or newer than the `updated` field
+            filterField: true
+        }
+    },
+    listeners: {
+        "onCreate.checkRequirements": {
+            funcName: "gpii.ptd.search.request.checkRequirements",
+            args:     ["{that}"]
+        }
+    },
+    invokers: {
+        processLuceneResponse: {
+            funcName: "gpii.ptd.search.request.processLuceneResponse",
+            args:     ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"]
+        },
+        processCouchResponse: {
+            funcName: "gpii.ptd.search.request.processCouchResponse",
+            args:     ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"]
+        }
+    }
+});
+
+fluid.defaults("gpii.ptd.search", {
+    gradeNames:        ["gpii.express.requestAware.router", "autoInit"],
+    path:              "/search",
+    maxKeyData:        7500,
+    requestAwareGrade: "gpii.ptd.search.request",
+    dynamicComponents: {
+        requestHandler: {
+            options: {
+                maxKeyData:      "{search}.options.maxKeyData",
+                querySchemaName: "{search}.options.querySchemaName",
+                couchUrl:        "{search}.options.couchUrl",
+                luceneUrl:       "{search}.options.luceneUrl",
+                baseUrl:         "{search}.options.baseUrl"
+            }
+        }
+    }
+});
+
+module.exports = function (config) {
+    var search = gpii.ptd.search({
+        modules: {
+            expressConfigHolder: {
+                type: ["gpii.express.expressConfigHolder"],
+                options: {
+                    config: config
+                }
+            }
+        },
+        // TODO:  Why can't we pick these up from the config holder?  Review with Antranig.
+        couchUrl:  config["couch.url"],
+        baseUrl:   config["base.url"],
+        luceneUrl: config["lucene.url"]
+    });
+    return search.getRouter();
+}

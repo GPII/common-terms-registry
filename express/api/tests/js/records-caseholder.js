@@ -12,28 +12,7 @@ var jqUnit = require("jqUnit");
 
 fluid.registerNamespace("gpii.ptd.api.record.tests.caseHolder");
 
-//    // Test sorting (terms, with children)
-//    jqUnit.asyncTest("Testing term sorting, with children", function () {
-//            request.get(that.options.config.express.baseUrl + "/terms?sort=termLabel", function (error, response, body) {
-//
-//                jqUnit.start();
-//                gpii.ptd.api.tests.testUtils.isSaneResponse(jqUnit, error, response, body);
-//                jqUnit.stop();
-//
-//                var firstRecord = JSON.parse(body).records[0];
-//
-//                request.get(that.options.config.express.baseUrl + "/terms?sort=%5CtermLabel", function (error, response, body) {
-//                    jqUnit.start();
-//                    gpii.ptd.api.tests.testUtils.isSaneResponse(jqUnit, error, response, body);
-//
-//                    var secondRecord = JSON.parse(body).records[0];
-//                    jqUnit.assertDeepNeq("The first record when sorting A-Z should not be equal to the first record when sorting Z-A...", firstRecord, secondRecord);
-//                });
-//            });
-//        }
-//    );
-//
-
+// TODO: Migrate the rest of these once we have a better pattern for repeating tests per-endpoint.
 //
 //    // There should be records updated since the year 2000
 //    fluid.each(that.options.recordTypeEndPoints, function (endPoint) {
@@ -162,21 +141,6 @@ fluid.registerNamespace("gpii.ptd.api.record.tests.caseHolder");
 //
 //        });
 //    });
-//
-//
-//    // Test that modules other than "records" do not support the recordType option
-//    fluid.each(that.options.recordTypeEndPoints, function (endPoint) {
-//            jqUnit.asyncTest("Query endpoint '" + endPoint + " with no arguments...", function () {
-//                jqUnit.start();
-//                request.get(that.options.config.express.baseUrl + "/" + endPoint + "?recordType=general", function (error, response, body) {
-//
-//                    gpii.ptd.api.tests.testUtils.isSaneResponse(jqUnit, error, response, body);
-//
-//                    jqUnit.assertNotEquals("Asking the '" + endPoint + "' end point to return a specific record type should not have been successful...", response.statusCode, 200);
-//                });
-//            });
-//        }
-//    );
 //
 //
 //    // Test multi-sort functionality
@@ -500,8 +464,8 @@ fluid.defaults("gpii.ptd.api.record.tests.caseHolder", {
                             event: "{recordsSecondPage}.events.onComplete",
                             args: ["{recordsFirstPage}", "{recordsSecondPage}.nativeResponse", "{arguments}.0"]
                         },
-                        // I can never reproduce this, but this test makes it look like duplicate aliases are being added to a term.
-                        // TODO:  Reenable this and figure out the problems it seems to reveal.
+                        // Pouch seems to return more aliases for the first pass than the second, which causes a fail.
+                        // TODO:  Investigate further.
                         //{
                         //    func: "{termsFirstPage}.send"
                         //},
