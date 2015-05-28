@@ -81,7 +81,7 @@ fluid.defaults("gpii.ptd.api.records.tests.records", {
                         }
                     },
                     records: {
-                        type: "gpii.ptd.records",
+                        type: "gpii.ptd.api.records",
                         options: {
                             type:     "record",
                             children: false,
@@ -91,7 +91,7 @@ fluid.defaults("gpii.ptd.api.records.tests.records", {
                         }
                     },
                     terms: {
-                        type: "gpii.ptd.records",
+                        type: "gpii.ptd.api.records",
                         options: {
                             type:     "term",
                             children: true,
@@ -102,7 +102,7 @@ fluid.defaults("gpii.ptd.api.records.tests.records", {
                         }
                     },
                     aliases: {
-                        type: "gpii.ptd.records",
+                        type: "gpii.ptd.api.records",
                         options: {
                             type:     "alias",
                             children: false,

@@ -2,7 +2,7 @@
 
 var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
-fluid.registerNamespace("gpii.ptd.records");
+fluid.registerNamespace("gpii.ptd.api.records");
 
 // Bring in our helper components
 require("gpii-express");
@@ -16,8 +16,8 @@ require("../../schema/lib/schema-helper");
 
 var request  = require("request");
 
-fluid.registerNamespace("gpii.ptd.records.request");
-gpii.ptd.records.request.checkRequirements = function (that) {
+fluid.registerNamespace("gpii.ptd.api.records.request");
+gpii.ptd.api.records.request.checkRequirements = function (that) {
     if (!that.options.couchUrl) {
         fluid.fail("you must set a couchUrl option in order to use this component.");
     }
@@ -34,12 +34,12 @@ gpii.ptd.records.request.checkRequirements = function (that) {
         fluid.fail("You must configure a schema name to be used for input validation.");
     }
 
-    gpii.ptd.records.request.handleRequest(that);
+    gpii.ptd.api.records.request.handleRequest(that);
 };
 
 // Use the standard `params` functions to convert `req.params` into data that can be validated, and that includes any
 // default values not overridden by the query data.
-gpii.ptd.records.request.extractParams = function (that, req) {
+gpii.ptd.api.records.request.extractParams = function (that, req) {
     // Use the standard `params` function to do most of the heavy lifting.
     that.params = gpii.ptd.api.lib.params.extractParams(req.query, that.options.queryFields);
 
@@ -50,7 +50,7 @@ gpii.ptd.records.request.extractParams = function (that, req) {
 };
 
 // Validate the parameters extracted previously.
-gpii.ptd.records.request.validateInput = function (that) {
+gpii.ptd.api.records.request.validateInput = function (that) {
     // Start by validating using JSON Schema
     var errors = that.helper.validate(that.options.querySchemaName, that.params);
     if (errors) {
@@ -67,13 +67,13 @@ gpii.ptd.records.request.validateInput = function (that) {
     }
 };
 
-gpii.ptd.records.request.handleRequest = function (that) {
+gpii.ptd.api.records.request.handleRequest = function (that) {
     try {
         // Extract the parameters we will use throughout the process from the request.
-        gpii.ptd.records.request.extractParams(that, that.request);
+        gpii.ptd.api.records.request.extractParams(that, that.request);
 
         // Make sure the user has sent us valid input
-        gpii.ptd.records.request.validateInput(that);
+        gpii.ptd.api.records.request.validateInput(that);
     }
     catch (err) {
         that.sendSchemaAwareResponse(400, "message", { ok: false, message: err });
@@ -95,7 +95,7 @@ gpii.ptd.records.request.handleRequest = function (that) {
 
 // Convert the couch data to our local format and continue processing, either by looking up children, or by sending the
 // results to the end user.
-gpii.ptd.records.request.processCouchResponse = function (that, error, _, body) {
+gpii.ptd.api.records.request.processCouchResponse = function (that, error, _, body) {
     if (error) {
         var errorBody = {
             "ok": false,
@@ -124,7 +124,7 @@ gpii.ptd.records.request.processCouchResponse = function (that, error, _, body) 
         }
 
         // Page the results
-        var pagerParams  = gpii.ptd.records.request.getPagingParams(that);
+        var pagerParams  = gpii.ptd.api.records.request.getPagingParams(that);
         var pagedRecords = that.pager.pageArray(filteredRecords, pagerParams);
 
         // Only lookup children if we are configured to work with them, and if we have "parent" records to start with.
@@ -133,7 +133,7 @@ gpii.ptd.records.request.processCouchResponse = function (that, error, _, body) 
             that.children.applier.change("originalRecords", pagedRecords);
         }
         else {
-            gpii.ptd.records.request.sendRecords(that, pagedRecords);
+            gpii.ptd.api.records.request.sendRecords(that, pagedRecords);
         }
     }
     else {
@@ -142,11 +142,11 @@ gpii.ptd.records.request.processCouchResponse = function (that, error, _, body) 
     }
 };
 
-gpii.ptd.records.request.getPagingParams = function (that) {
+gpii.ptd.api.records.request.getPagingParams = function (that) {
     return gpii.ptd.api.lib.params.getRelevantParams(that.params, that.options.queryFields, "pagingField");
 };
 
-gpii.ptd.records.request.sendRecords = function (that, records) {
+gpii.ptd.api.records.request.sendRecords = function (that, records) {
     var responseBody = {
         "ok":          true,
         "total_rows" : that.total_rows,
@@ -160,7 +160,7 @@ gpii.ptd.records.request.sendRecords = function (that, records) {
     that.sendSchemaAwareResponse(200, "message", responseBody);
 };
 
-fluid.defaults("gpii.ptd.records.request", {
+fluid.defaults("gpii.ptd.api.records.request", {
     gradeNames: ["gpii.schema.requestAware", "autoInit"],
     querySchemaName:   "records-query",
     couchUrl:          "",
@@ -185,8 +185,8 @@ fluid.defaults("gpii.ptd.records.request", {
                 couchUrl: "{request}.options.couchUrl",
                 listeners: {
                     "onChildrenLoaded": {
-                        funcName: "gpii.ptd.records.request.sendRecords",
-                        args: [ "{gpii.ptd.records.request}", "{children}.model.processedRecords" ]
+                        funcName: "gpii.ptd.api.records.request.sendRecords",
+                        args: [ "{gpii.ptd.api.records.request}", "{children}.model.processedRecords" ]
                     }
                 }
             }
@@ -242,22 +242,22 @@ fluid.defaults("gpii.ptd.records.request", {
     },
     listeners: {
         "onCreate.checkRequirements": {
-            funcName: "gpii.ptd.records.request.checkRequirements",
+            funcName: "gpii.ptd.api.records.request.checkRequirements",
             args:     ["{that}"]
         }
     },
     invokers: {
         processCouchResponse: {
-            funcName: "gpii.ptd.records.request.processCouchResponse",
+            funcName: "gpii.ptd.api.records.request.processCouchResponse",
             args:     ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"]
         }
     }
 });
 
-fluid.defaults("gpii.ptd.records", {
+fluid.defaults("gpii.ptd.api.records", {
     gradeNames:        ["gpii.express.requestAware.router", "autoInit"],
     path:              "/records",
-    requestAwareGrade: "gpii.ptd.records.request",
+    requestAwareGrade: "gpii.ptd.api.records.request",
     dynamicComponents: {
         requestHandler: {
             options: {
@@ -277,7 +277,7 @@ fluid.defaults("gpii.ptd.records", {
 module.exports = function (config) {
     // We need to explicitly override the configuration that is ordinarily distributed by `gpii.express`.
     // TODO:  Make sure we fall back to the default behavior correctly once we are using `gpii.express` upstream.
-    var records = gpii.ptd.records({
+    var records = gpii.ptd.api.records({
         type: (config && config.recordType) ? config.recordType : "record",
         children: (config && config.recordType === "term") ? true : false,
         modules: {
