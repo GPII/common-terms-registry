@@ -16,6 +16,16 @@ gpii.schema.requestAware.sendSchemaAwareResponse = function (that, statusCode, s
 
 fluid.defaults("gpii.schema.requestAware", {
     gradeNames: ["gpii.express.requestAware", "autoInit"],
+    components: {
+        // The schema validation "helper".  If you want to use a different group of schemas, you'll need to configure the options for the helper.
+        // We use the defaults supplied by the helper itself.
+        "helper": {
+            type: "gpii.schema.helper",
+            options: {
+                baseUrl: "{requestAware}.options.baseUrl"
+            }
+        }
+    },
     invokers: {
         sendSchemaAwareResponse: {
             funcName: "gpii.schema.requestAware.sendSchemaAwareResponse",

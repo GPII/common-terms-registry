@@ -52,7 +52,7 @@ fluid.defaults("gpii.ptd.api.search.tests.testEnvironment", {
                 },
                 components: {
                     search: {
-                        type: "gpii.ptd.search",
+                        type: "gpii.ptd.api.search",
                         options: {
                             baseUrl:   "{testEnvironment}.options.baseUrl",
                             couchUrl:  "{testEnvironment}.options.couchUrl",

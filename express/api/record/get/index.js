@@ -8,7 +8,6 @@ require("../../../node_modules/gpii-express/src/js/configholder");
 require("../../lib/children");
 require("../../lib/params");
 require("../../../schema/lib/request");
-require("../../../schema/lib/schema-helper");
 
 var request = require("request");
 
@@ -37,8 +36,6 @@ gpii.ptd.api.record.get.request.handleRequest = function (that) {
         that.sendSchemaAwareResponse(400, "message", { ok: false, message: err });
         return;
     }
-
-    // TODO:  Encode the uniqueId to be used as a "key" parameter with the Couch view
 
     // We prepend a ./ to the second half of the URL to ensure that the database name is not stripped out.
     var couchRequestUrl = that.options.couchUrl + that.options.couchViewPath;
@@ -80,8 +77,7 @@ gpii.ptd.api.record.get.request.processCouchResponse = function (that, error, _,
 
     if (body.rows  && body.rows.length > 0) {
         // Couch includes a `docs` field in its response, and each field hides its data in a `value` field.  This line flattens that out.
-        var record = body.rows[0].value
-
+        var record = body.rows[0].value;
 
         // Only lookup children if we are configured to work with them, and if we have "parent" records to start with.
         if (that.params.children && record.type === "term") {
@@ -97,12 +93,6 @@ gpii.ptd.api.record.get.request.processCouchResponse = function (that, error, _,
         that.sendSchemaAwareResponse("500", "message", { ok: false, message: body });
     }
 };
-
-// TODO: Confirm that a sensible error is returned when the ID is omitted.
-//router.get("/", function (req, res) {
-//    schemaHelper.setHeaders(res, "message");
-//    return res.status(400).send({ok: false, message: "You must provide the required uniqueId in the path to use this interface."});
-//});
 
 gpii.ptd.api.record.get.request.sendRecord = function (that, records) {
     var responseBody = {
@@ -130,15 +120,16 @@ fluid.defaults("gpii.ptd.api.record.get.request", {
     schemaName:      "record",
     querySchemaName: "record-query",
     couchViewPath:   "/_design/api/_view/entries",
+    // The list of query fields we support, with hints about their defaults (if any) and their default value (if any)
+    //
+    // All actual query input validation is handled using a JSON schema.
+    queryFields: {
+        "children": {
+            type:         "boolean",
+            defaultValue: "{that}.options.children"
+        }
+    },
     components: {
-        // The schema validation "helper".  If you want to use a different group of schemas, you'll need to configure the options for the helper.
-        // We use the defaults supplied by the helper itself.
-        "helper": {
-            type: "gpii.schema.helper",
-            options: {
-                baseUrl:         "{request}.options.baseUrl"
-            }
-        },
         "pager": {
             type: "gpii.ptd.api.lib.paging"
         },
@@ -173,38 +164,16 @@ fluid.defaults("gpii.ptd.api.record.get.request", {
 fluid.registerNamespace("gpii.ptd.api.record.get");
 fluid.defaults("gpii.ptd.api.record.get", {
     gradeNames:        ["gpii.express.requestAware.router", "autoInit"],
-    path:              "/blah/:uniqueId",
+    path:              "/:uniqueId",
     requestAwareGrade: "gpii.ptd.api.record.get.request",
+    children:          true,
     dynamicComponents: {
         requestHandler: {
             options: {
-                querySchemaName: "{get}.options.querySchemaName",
                 couchUrl:        "{get}.options.couchUrl",
-                type:            "{get}.options.type",
                 children:        "{get}.options.children",
                 baseUrl:         "{get}.options.baseUrl"
             }
         }
     }
 });
-
-// Temporary shim to allow this module to respond as though it were a standalone express router
-module.exports = function (config) {
-    var get = gpii.ptd.api.record.get({
-        type: (config && config.recordType) ? config.recordType : "record",
-        children: (config && config.recordType === "term") ? true : false,
-        modules: {
-            expressConfigHolder: {
-                type: ["gpii.express.expressConfigHolder"],
-                options: {
-                    config: config
-                }
-            }
-        },
-        // TODO:  Why can't we pick these up from the config holder?  Review with Antranig.
-        couchUrl: config["couch.url"],
-        baseUrl:  config["base.url"]
-    });
-
-    return get.getRouter();
-};

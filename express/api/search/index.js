@@ -2,7 +2,7 @@
 
 var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
-fluid.registerNamespace("gpii.ptd.search");
+fluid.registerNamespace("gpii.ptd.api.search");
 
 // Bring in our helper components
 require("gpii-express");
@@ -16,10 +16,10 @@ require("../../schema/lib/schema-helper");
 
 var request = require("request");
 
-fluid.registerNamespace("gpii.ptd.search.request");
+fluid.registerNamespace("gpii.ptd.api.search.request");
 
 // We cannot URI encode colons, as Lucene will not decode them. Everything else we must encode to avoid problems with bad characters.
-gpii.ptd.search.encodeSkippingColons = function (value) {
+gpii.ptd.api.search.encodeSkippingColons = function (value) {
     if (!value || typeof value !== "string") {
         return value;
     }
@@ -31,7 +31,7 @@ gpii.ptd.search.encodeSkippingColons = function (value) {
 };
 
 // Validate the parameters extracted previously.
-gpii.ptd.search.request.validateInput = function (that) {
+gpii.ptd.api.search.request.validateInput = function (that) {
     // Start by validating using JSON Schema
     var errors = that.helper.validate(that.options.querySchemaName, that.results.params);
     if (errors) {
@@ -39,20 +39,20 @@ gpii.ptd.search.request.validateInput = function (that) {
     }
 };
 
-gpii.ptd.search.request.handleRequest = function (that) {
+gpii.ptd.api.search.request.handleRequest = function (that) {
     try {
         // Extract the parameters we will use throughout the process from the request.
         that.results.params = gpii.ptd.api.lib.params.extractParams(that.request.query, that.options.queryFields);
 
         // Make sure the user has sent us valid input
-        gpii.ptd.search.request.validateInput(that);
+        gpii.ptd.api.search.request.validateInput(that);
     }
     catch (err) {
         that.sendSchemaAwareResponse(400, "message", { ok: false, message: err });
         return;
     }
 
-    var queryData = gpii.ptd.search.request.generateLuceneQueryString(that);
+    var queryData = gpii.ptd.api.search.request.generateLuceneQueryString(that);
     
     var requestConfig = {
         "url" :    that.options.luceneUrl,
@@ -66,7 +66,7 @@ gpii.ptd.search.request.handleRequest = function (that) {
 
 // Add select fields to lucene's query string.  Used to reduce the number of circumstances in which we will hit the
 // character limit in retrieving our full list of records.
-gpii.ptd.search.request.generateLuceneQueryString = function (that) {
+gpii.ptd.api.search.request.generateLuceneQueryString = function (that) {
     var statusQueryString    = "";
     if (that.results.params.status) {
         if (Array.isArray(that.results.params.status)) {
@@ -88,7 +88,7 @@ gpii.ptd.search.request.generateLuceneQueryString = function (that) {
     }
 
     var queryData = {
-        //"q":     gpii.ptd.search.encodeSkippingColons(queryString),
+        //"q":     gpii.ptd.api.search.encodeSkippingColons(queryString),
         "q":     queryString,
         "limit": 1000000 // Hard-coded limit to disable limiting by Lucene.  Required because of CTR-148
     };
@@ -97,7 +97,7 @@ gpii.ptd.search.request.generateLuceneQueryString = function (that) {
 };
 
 // Process the raw search results returned by Lucene and derive the list of distinct terms.
-gpii.ptd.search.request.processLuceneResponse = function (that, error, response, body) {
+gpii.ptd.api.search.request.processLuceneResponse = function (that, error, response, body) {
     if (error) {
         var errorBody = {
             "ok": false,
@@ -147,7 +147,7 @@ gpii.ptd.search.request.processLuceneResponse = function (that, error, response,
     }
 };
 
-gpii.ptd.search.request.processCouchResponse = function (that, error, _, body) {
+gpii.ptd.api.search.request.processCouchResponse = function (that, error, _, body) {
     if (error) {
         var errorBody = {
             "ok": false,
@@ -176,7 +176,7 @@ gpii.ptd.search.request.processCouchResponse = function (that, error, _, body) {
         }
 
         // Page the results
-        var pagerParams  = gpii.ptd.search.request.getPagingParams(that);
+        var pagerParams  = gpii.ptd.api.search.request.getPagingParams(that);
         var pagedRecords = that.pager.pageArray(filteredRecords, pagerParams);
 
         // Let the "children" module look up any child records and wait for it.
@@ -188,31 +188,31 @@ gpii.ptd.search.request.processCouchResponse = function (that, error, _, body) {
     }
 };
 
-gpii.ptd.search.request.sendResults = function (that) {
+gpii.ptd.api.search.request.sendResults = function (that) {
     that.results.records = that.children.model.processedRecords;
     that.sendSchemaAwareResponse(200, "message", that.results);
 };
 
-gpii.ptd.search.request.checkRequirements = function (that) {
+gpii.ptd.api.search.request.checkRequirements = function (that) {
     if (!that.options.couchUrl || !that.options.luceneUrl) {
         var message = "The search API must have both a couchUrl and luceneUrl option configured.";
         that.sendSchemaAwareResponse(500, JSON.stringify({ok: false, message: message}));
         fluid.fail(message);
     }
 
-    gpii.ptd.search.request.handleRequest(that);
+    gpii.ptd.api.search.request.handleRequest(that);
 };
 
 // Expander function that can be used to set a variable to today's date (in ISO 9660 format).
-gpii.ptd.search.request.setDate = function () {
+gpii.ptd.api.search.request.setDate = function () {
     return (new Date()).toISOString();
 };
 
-gpii.ptd.search.request.getPagingParams = function (that) {
+gpii.ptd.api.search.request.getPagingParams = function (that) {
     return gpii.ptd.api.lib.params.getRelevantParams(that.results.params, that.options.queryFields, "pagingField");
 };
 
-fluid.defaults("gpii.ptd.search.request", {
+fluid.defaults("gpii.ptd.api.search.request", {
     gradeNames: ["gpii.schema.requestAware", "autoInit"],
     querySchemaName:   "search-query",
     luceneUrl:         "",
@@ -220,14 +220,6 @@ fluid.defaults("gpii.ptd.search.request", {
     children:          false,
     typesWithChildren: ["term", "record"],
     components: {
-        // The schema validation "helper".  If you want to use a different group of schemas, you'll need to configure the options for the helper.
-        // We use the defaults supplied by the helper itself.
-        "helper": {
-            type: "gpii.schema.helper",
-            options: {
-                baseUrl: "{request}.options.baseUrl"
-            }
-        },
         "pager": {
             type: "gpii.ptd.api.lib.paging"
         },
@@ -237,8 +229,8 @@ fluid.defaults("gpii.ptd.search.request", {
                 couchUrl: "{request}.options.couchUrl",
                 listeners: {
                     "onChildrenLoaded": {
-                        funcName: "gpii.ptd.search.request.sendResults",
-                        args: [ "{gpii.ptd.search.request}"]
+                        funcName: "gpii.ptd.api.search.request.sendResults",
+                        args: [ "{gpii.ptd.api.search.request}"]
                     }
                 }
             }
@@ -252,7 +244,7 @@ fluid.defaults("gpii.ptd.search.request", {
             records:    [],
             retrievedAt: {
                 expander: {
-                    funcName: "gpii.ptd.search.request.setDate"
+                    funcName: "gpii.ptd.api.search.request.setDate"
                 }
             }
         }
@@ -289,27 +281,27 @@ fluid.defaults("gpii.ptd.search.request", {
     },
     listeners: {
         "onCreate.checkRequirements": {
-            funcName: "gpii.ptd.search.request.checkRequirements",
+            funcName: "gpii.ptd.api.search.request.checkRequirements",
             args:     ["{that}"]
         }
     },
     invokers: {
         processLuceneResponse: {
-            funcName: "gpii.ptd.search.request.processLuceneResponse",
+            funcName: "gpii.ptd.api.search.request.processLuceneResponse",
             args:     ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"]
         },
         processCouchResponse: {
-            funcName: "gpii.ptd.search.request.processCouchResponse",
+            funcName: "gpii.ptd.api.search.request.processCouchResponse",
             args:     ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"]
         }
     }
 });
 
-fluid.defaults("gpii.ptd.search", {
+fluid.defaults("gpii.ptd.api.search", {
     gradeNames:        ["gpii.express.requestAware.router", "autoInit"],
     path:              "/search",
     maxKeyData:        7500,
-    requestAwareGrade: "gpii.ptd.search.request",
+    requestAwareGrade: "gpii.ptd.api.search.request",
     dynamicComponents: {
         requestHandler: {
             options: {
@@ -322,21 +314,3 @@ fluid.defaults("gpii.ptd.search", {
         }
     }
 });
-
-module.exports = function (config) {
-    var search = gpii.ptd.search({
-        modules: {
-            expressConfigHolder: {
-                type: ["gpii.express.expressConfigHolder"],
-                options: {
-                    config: config
-                }
-            }
-        },
-        // TODO:  Why can't we pick these up from the config holder?  Review with Antranig.
-        couchUrl:  config["couch.url"],
-        baseUrl:   config["base.url"],
-        luceneUrl: config["lucene.url"]
-    });
-    return search.getRouter();
-}
