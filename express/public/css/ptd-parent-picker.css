@@ -1,0 +1,41 @@
+.ptd-parent-picker-suggestions {
+    position:         relative;
+    background-color: white;
+    padding:          .5em;
+    margin-left:      0em;
+    margin-top:       -1em;
+    border:           1px solid #cccccc;
+    z-index:          999;
+    list-style-type:  none;
+}
+
+.ptd-parent-picker-suggestions li {
+    padding:        .25em;
+    text-overflow: ellipsis;
+    white-space:   nowrap;
+    overflow:      hidden;
+}
+
+.ptd-parent-picker-suggestion-selected {
+    background-color: #ccccff;
+}
+
+.ptd-parent-picker-suggestion-definition {
+    margin-left: .5em;
+    font-style:  italic;
+    color: #999999;
+}
+
+.ptd-parent-picker-no-suggestions {
+    font-style:  italic;
+    color: #999999;
+}
+
+.ptd-parent-picker-picked {
+    margin-top: .5em;
+    margin-left: .6em;
+}
+
+input.ptd-parent-picker-search-query {
+    margin-bottom: 0px;
+}

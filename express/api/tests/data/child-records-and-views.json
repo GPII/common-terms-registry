@@ -1,0 +1,172 @@
+[
+  {
+    "status": "unreviewed",
+    "termLabel": "org.gnome.system.proxy.ftp.host",
+    "uniqueId": "org.gnome.system.proxy.ftp.host",
+    "notes": "The original alias record contained the following additional information:\n\nuserPreference:org.gnome.system.proxy.ftp.host\nvalueSpace:String\nid:668\n",
+    "type": "alias",
+    "aliasOf": "host",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "org.gnome.system.proxy.http.host",
+    "uniqueId": "org.gnome.system.proxy.http.host",
+    "notes": "The original alias record contained the following additional information:\n\nuserPreference:org.gnome.system.proxy.http.host\nvalueSpace:String\nid:127\n",
+    "type": "alias",
+    "aliasOf": "host",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "_id": "_design/api",
+    "_rev": "52-d7c20d0e0b02ec3c73000fe422846ba7",
+    "package": {
+      "version": "0.0.1",
+      "private": true,
+      "dependencies": {},
+      "scripts": {
+        "test": "node tests/api-jqunit.js",
+        "start": ""
+      },
+      "devDependencies": {
+        "jqUnit": "git://github.com/fluid-project/node-jqUnit.git#e9bf72445bd343a4f3aabe3ba96a1087d3498612",
+        "infusion": "git://github.com/fluid-project/infusion.git#81b0fdde0483b1383d38f27f8e24b963ca6c5d33"
+      },
+      "name": "ptd-couch-api"
+    },
+    "validate_doc_update": "// Rules that control what record content can be stored in Couch for the Common Terms Registry\nfunction(newDoc, oldDoc, userCtx) {\n    // The user has to be logged in to perform updates\n    if (!userCtx || userCtx.name === null) {\n        throw({\"unauthorized\" : {\"summary\": \"You must be logged in to add or edit records.\"}});\n    }\n    else {\n        // We only allow couch admins to perform actual deletes\n        if(newDoc._deleted === true && (!userCtx.roles || userCtx.roles.indexOf(\"_admin\") === -1)) {\n            throw({\"unauthorized\": {\"summary\" : \"Only admins are allowed to directly remove records.\"}});\n        }\n    }\n}",
+    "views": {
+      "children": {
+        "map": "function(doc) {\n    if (doc && doc.type && (doc.type.toLowerCase() === 'alias' || doc.type.toLowerCase === 'transform' || doc.type.toLowerCase === 'translation')) {\n        var key = doc.aliasOf;\n        if (doc.type.toLowerCase === 'translation') {\n          key = doc.translationOf;\n        }\n        emit(key, doc);\n    }\n}"
+      }
+    },
+    "couchapp": {
+      "manifest": [
+        "couchapp.json",
+        "package.json",
+        "validate_doc_update.js",
+        "views/",
+        "views/aliases/",
+        "views/aliases/map.js",
+        "views/children/",
+        "views/children/map.js",
+        "views/conditions/",
+        "views/conditions/map.js",
+        "views/entries/",
+        "views/entries/map.js",
+        "views/flat/",
+        "views/flat/map.js",
+        "views/lib/",
+        "views/lib/recordUtils.js",
+        "views/terms/",
+        "views/terms/map.js",
+        "views/transforms/",
+        "views/transforms/map.js"
+      ],
+      "signatures": {},
+      "name": "CTR CouchDB configuration",
+      "objects": {},
+      "description": "Couchdb views, lists, shows, and validation code to support the Common Terms Registry."
+    }
+  },
+  {
+    "_id": "_design/dupes",
+    "_rev": "2-8402047c788906f5bf685e519dc938bc",
+    "couchapp": {
+      "manifest": [
+        "couchapp.json",
+        "views/",
+        "views/uniqueId/",
+        "views/uniqueId/map.js",
+        "views/uniqueId/reduce.js",
+        "views/uniqueIdLowerCase/",
+        "views/uniqueIdLowerCase/map.js",
+        "views/uniqueIdLowerCase/reduce.js"
+      ],
+      "signatures": {},
+      "name": "PTD Couchdb duplicate user detection",
+      "objects": {},
+      "description": "Views to assist in detecting duplicate users in the Preference Terms Dictionary."
+    },
+    "views": {
+      "uniqueIdLowerCase": {
+        "map": "function(doc) { emit(doc.uniqueId.toLowerCase(), 1); }",
+        "reduce": "function(keys, values, rereduce) { \n    var data = {}; \n    if (rereduce) { \n\tvalues.forEach(function(reducedData){ \n\t\tObject.keys(reducedData).forEach(function(key) { \n\t\t\tvar value = reducedData[key]; data[key] ? data[key]+= value : data[key]= value; \n\t\t}); \n\t}); \n    } \n    else { \n\tkeys.forEach(function(key){ \n\t\tdata[key[0]] ? data[key[0]]++ : data[key[0]]=1;\n\t}); \n    }\n \n    return data; \n}"
+      },
+      "uniqueId": {
+        "map": "function(doc) { emit(doc.uniqueId, 1); }",
+        "reduce": "function(keys, values, rereduce) { \n    var data = {}; \n    if (rereduce) { \n\tvalues.forEach(function(reducedData){ \n\t\tObject.keys(reducedData).forEach(function(key) { \n\t\t\tvar value = reducedData[key]; data[key] ? data[key]+= value : data[key]= value; \n\t\t}); \n\t}); \n    } \n    else { \n\tkeys.forEach(function(key){ \n\t\tdata[key[0]] ? data[key[0]]++ : data[key[0]]=1;\n\t}); \n    }\n \n    return data; \n}"
+      }
+    }
+  },
+  {
+    "_id": "_design/lucene",
+    "_rev": "23-8b610bd2646a412f07d79445afb818d9",
+    "fulltext": {
+      "by_content": {
+        "index": "function(doc) { \n    if (!doc._id.match(/^_design/)) {\n        var ret=new Document();\n\n        var defs = \"\";\n\n        // We have to store values we wish to use in field:value queries\n        // We also include them in the value of the defaults field (used when no qualifiers are added)\n        var keysToStore = [\"uniqueId\",\"aliasOf\",\"translationOf\"];\n        for (var i in keysToStore) {\n            var field = keysToStore[i];\n            if (doc[field]) {\n                ret.add(doc[field],{\"field\":field, \"store\":\"yes\"});\n                defs += \" \" + doc[field] + \" \";\n            }\n        }\n\n        // The type and status should not be included in the defs, but should be stored\n        var keysToStoreLowerCase = [\"type\", \"status\"];\n        for (var i in keysToStoreLowerCase) {\n            var field = keysToStoreLowerCase[i];\n            if (doc[field]) {\n                ret.add(doc[field].toLowerCase(),{\"field\":field, \"store\":\"yes\"});\n            }\n        }\n\n        var keysToIndex = [\"notes\",\"definition\",\"termLabel\",\"source\"];\n        for (var i in keysToIndex) {\n            var field = keysToIndex[i];\n            if (doc[field]) {\n                ret.add(doc[field],{\"field\":field, \"store\":\"no\"});\n                defs += \" \" + doc[field].toLowerCase() + \" \";\n            }\n        }\n\n        // All of the data is added to the default field so that unqualified searches match any data found in the record.\n        ret.add(defs,{\"field\":\"default\", \"store\": \"yes\"});\n\n        log.debug(\"indexed document '\" + doc.uniqueId + \"'...\");\n\n        return ret;\n    }\n    else {\n        log.debug(\"skipping indexing of design document '\" + doc._id + \"'...\");\n    }\n\n    return null;\n}",
+        "defaults": {
+          "field": "uniqueId",
+          "store": "yes"
+        },
+        "analyzer": "perfield:{default:\"porter\",uniqueId:\"keyword\",aliasOf:\"keyword\",translationOf:\"keyword\",status:\"keyword\"}"
+      }
+    },
+    "couchapp": {
+      "signatures": {},
+      "objects": {},
+      "manifest": [
+        "fulltext/",
+        "fulltext/by_content/",
+        "fulltext/by_content/analyzer.json",
+        "fulltext/by_content/defaults.json",
+        "fulltext/by_content/index.js"
+      ]
+    }
+  },
+  {
+    "uniqueId": "edu.wisc.trace.oatts.client.user_preferences.zoom_setting",
+    "type": "alias",
+    "status": "draft",
+    "updated": "2015-02-13T16:13:48.324Z",
+    "aliasOf": "zoom",
+    "termLabel": "Zoom",
+    "defaultValue": "100"
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "org.gnome.Evince.Default.zoom",
+    "uniqueId": "org.gnome.Evince.Default.zoom",
+    "notes": "The original alias record contained the following additional information:\n\ndefaultValue:1\nuserPreference:org.gnome.Evince.Default.zoom\nvalueSpace:Double\nid:376\n",
+    "type": "alias",
+    "aliasOf": "zoom",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "Braille Device",
+    "uniqueId": "Braille Device",
+    "notes": "The original alias record contained the following additional information:\n\ndefinition:Allow user to select the device that the user has paired and wish to use as braille device.\nuserPreference:Braille Device\nvalueSpace:Depends on devices been paired with the phone\ngroup:Braille\nid:9\n",
+    "type": "alias",
+    "aliasOf": "brailleDevice",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "showWelcomeDialogAtStartup",
+    "uniqueId": "nvda:showWelcomeDialogAtStartup",
+    "notes": "The original alias record contained the following additional information:\n\ndefaultValue:TRUE\nuserPreference:showWelcomeDialogAtStartup\ngroup:Screenreader.General\nid:73\n",
+    "type": "alias",
+    "aliasOf": "showWelcomeDialogAtStartup",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "org.gnome.Vinagre.show-accels",
+    "uniqueId": "org.gnome.Vinagre.show-accels",
+    "notes": "The original alias record contained the following additional information:\n\ndefaultValue:FALSE\nuserPreference:org.gnome.Vinagre.show-accels\nvalueSpace:Boolean\nid:553\n",
+    "type": "alias",
+    "aliasOf": "showAccels",
+    "updated": "2014-01-17T06:00:00.000Z"
+  }
+]

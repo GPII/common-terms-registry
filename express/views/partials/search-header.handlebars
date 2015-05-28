@@ -1,0 +1,62 @@
+<div class="ptd-header">
+    {{>common-header-top-row}}
+
+    <div class="row">
+        <div class="medium-2 column">
+            <div class="row collapse ptd-search-type-category-selector">
+                <div class="medium-6 column">
+                    <a class="button left active prefix" href="#">
+                        <span class="ptd-icon-term"></span>
+                        Terms
+                    </a>
+                </div>
+                <div class="medium-6 column">
+                    <!--  TODO: Implement support for conditions and then enable this
+                        <a class="button right postfix inactive" href="#">
+                            <span class="ptd-icon-condition"></span>
+                            Conditions
+                        </a>
+                    -->
+                </div>
+            </div>
+        </div>
+        <div class="medium-1 column">
+            {{>search-add-record-button}}
+        </div>
+        <div class="medium-2 column">
+            <a href="#" class="ptd-search-status-toggle" tabindex="0">
+                <div class="button secondary dropdown expand small">
+                    <span class="ptd-icon-radio-unchecked"></span>
+                    <span class="ptd-search-status-current-text">Active Records</span>
+                </div>
+            </a>
+            <div class="ptd-search-status-selector" style="display:none;">
+                <select multiple="true" class="ptd-search-status" tabindex="0" name="status">
+                    <option value="active">Active</option>
+                    <option value="unreviewed">Unreviewed</option>
+                    <option value="candidate">Candidate</option>
+                    <option value="draft">Draft</option>
+                    <option value="deleted">Deleted</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="medium-2 column">
+            {{>language}}
+        </div>
+
+        <div class="medium-5 column">
+            <div class="row collapse ptd-search-form">
+                <div class="medium-1 column ptd-icon ptd-search-button">
+                    <div class="foundicon-general-search"></div>
+                </div>
+                <div class="medium-9 column">
+                    <input type="text" class="ptd-search-query" placeholder="filter results" tabindex="0"/>
+                </div>
+                <div class="medium-1 column">
+                    <span class="foundicon-general-remove ptd-clear-button" title="Click to remove your search filter."></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

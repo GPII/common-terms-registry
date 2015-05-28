@@ -1,0 +1,1 @@
+This directory contains a report on existing invalid records for use in cleaning up the live data.

@@ -1,0 +1,6 @@
+{
+    "port" : 5972,
+    "app": {
+        "name": "Preference Terms Dictionary (tests)"
+    }
+}

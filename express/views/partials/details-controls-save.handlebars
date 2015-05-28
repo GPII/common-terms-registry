@@ -1,0 +1,16 @@
+{{#if user}}
+    <div class="row details-footer">
+        <div class="column medium-9">
+            <!-- TODO:  Reenable when we add controls for comments
+            <input type="text" id="comment" placeholder="Add comment on entry"/>
+            -->
+        </div>
+        <div class="column medium-3">
+            <div class="button radius save-button expand">
+                Save Changes
+            </div>
+        </div>
+    </div>
+{{else}}
+    <span class="save-button" style="display:none"></span>
+{{/if}}

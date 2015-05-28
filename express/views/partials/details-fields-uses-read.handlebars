@@ -1,0 +1,8 @@
+<input type="hidden" name="uses" value="{{record.uses}}"/>
+{{#if record.uses}}
+    <ul>
+        {{#each record.uses}}
+            <li>{{.}}</li>
+        {{/each}}
+    </ul>
+{{/if}}

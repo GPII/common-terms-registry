@@ -1,0 +1,106 @@
+{
+    "type": "object",
+    "id": "record",
+
+    "definitions": {
+        "aliasOf": {
+            "$ref": "record#/definitions/termUniqueIdPattern",
+            "description": "The unique identifier of the parent record this record is an alias of."
+        },
+        "applicationUniqueFlag": {
+            "type": "boolean",
+            "description": "Whether this term is unique to a particular application."
+        },
+        "definition": {
+            "type": "string",
+            "description": "A description of the term."
+        },
+        "namespace": {
+            "type": "string",
+            "description": "The namespace to use in combination with the UniqueID to construct a URI that refers to the record."
+        },
+        "notes": {
+            "type": "string",
+            "description": "Any additional information associated with this record."
+        },
+        "permanency": {
+            "type":        "string",
+            "description": "An indication of how likely a field is to change over time."
+        },
+        "ulUri": {
+            "type":        "string",
+            "format":      "uri",
+            "description": "A URI which can be used to look up this record in the Unified Listing."
+        },
+        "status": {
+            "enum": ["unreviewed", "candidate", "active", "draft", "deleted"],
+            "description": "The review status of this record."
+        },
+        "defaultValue": {
+            "type": "string",
+            "description": "The suggested default value of this preference."
+        },
+        "termLabel": {
+            "type": "string",
+            "description": "A short label for this term as it would appear in a menu or listing."
+        },
+        "translationOf": {
+            "$ref": "#/definitions/termUniqueIdPattern",
+            "description": "The unique identifier of the parent record this record is a translation of."
+        },
+        "type": {
+            "enum": ["term", "alias", "condition", "translation", "transform"],
+            "description": "The type of record, i.e. term, alias, translation, transform, condition."
+        },
+        "uniqueId": {
+            "type": "string",
+            "description": "A completely unique identifier for this record."
+        },
+        "updated": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date at which the record was last updated."
+        },
+        "uses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "A description of other systems that use this term and how they use it."
+        },
+        "valueSpace": {
+            "type": "string",
+            "description": "A description of the values allowed for this term."
+        },
+        "termUniqueIdPattern": {
+            "type": "string",
+            "pattern": "^([0-9]+|[a-z]+)([A-Z][a-z]+|[0-9]+|[A-Z]+)*$"
+        }
+    },
+
+    "properties": {
+        "type": {
+            "$ref": "record#/definitions/type"
+        },
+        "permanency": {
+            "$ref": "record#/definitions/permanency"
+        },
+        "namespace": {
+            "$ref": "record#/definitions/namespace"
+        },
+        "uniqueId": {
+            "$ref": "record#/definitions/uniqueId"
+        },
+        "notes": {
+            "$ref": "record#/definitions/notes"
+        },
+        "status": {
+            "$ref": "record#/definitions/status"
+        },
+        "updated": {
+            "$ref": "record#/definitions/updated"
+        }
+    },
+
+    "required": ["type","uniqueId","status","updated"]
+}

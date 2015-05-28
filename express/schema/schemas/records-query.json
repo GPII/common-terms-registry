@@ -1,0 +1,84 @@
+{
+    "type":        "object",
+    "id":          "records-query",
+    "title":       "Records query schema",
+    "description": "A schema used to validate incoming record browsing query parameters in JSON format.",
+
+    "definitions": {
+        "sort": {
+            "oneOf": [
+                { "type": "string" },
+                { "type": "array"}
+            ]
+        },
+        "offset": {
+            "type": "number"
+        },
+        "limit": {
+            "type": "number"
+        },
+        "children": {
+            "type": "boolean"
+        },
+        "updated": {
+            "type": "object"
+        },
+        "status": {
+            "oneOf": [
+                {
+                    "type": "array",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "record#/definitions/status"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "$ref": "record#/definitions/status"
+                }
+            ]
+        },
+        "recordType": {
+            "oneOf": [
+                {
+                    "type": "array",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "record#/definitions/type"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "$ref": "record#/definitions/type"
+                }
+            ]
+        }
+    },
+    "properties": {
+        "sort": {
+            "$ref": "records-query#/definitions/sort"
+        },
+        "offset": {
+            "$ref": "records-query#/definitions/offset"
+        },
+        "limit": {
+            "$ref": "records-query#/definitions/limit"
+        },
+        "children": {
+            "$ref": "records-query#/definitions/children"
+        },
+        "updated": {
+            "$ref": "records-query#/definitions/updated"
+        },
+        "status": {
+            "$ref": "records-query#/definitions/status"
+        },
+        "recordType": {
+            "$ref": "records-query#/definitions/recordType"
+        }
+    }
+}

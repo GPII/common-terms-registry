@@ -1,0 +1,8 @@
+<div class="ptd-search-heading">Aliases{{#if aliases}} ({{aliases.length}}){{/if}}</div>
+<ul class="ptd-search-alias-list">
+{{#each aliases}}
+    <li>{{#if termLabel}}{{termLabel}}{{else}}{{uniqueId}}{{/if}}</li>
+{{else}}
+    <li><span class="ptd-no-value">There are no aliases for this record.</span></li>
+{{/each}}
+</ul>

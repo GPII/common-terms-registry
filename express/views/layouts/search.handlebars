@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Preference Terms Dictionary : Search</title>
+
+    {{>common-includes}}
+    <link rel="stylesheet" href="/css/search.css"/>
+    <!-- TODO:  Wire up the status filter controls -->
+
+    <!-- TODO:  Wire up the ordering controls -->
+
+    <!-- TODO:  Wire up the language controls and populate with meaningful values -->
+
+    <!-- TODO:  Wire up the record type controls -->
+  </head>
+  <body>
+    <!-- include the header -->
+    {{> search-header}}
+
+    {{{body}}}
+
+    {{> common-footer}}
+
+    <script type="text/javascript">
+        $(document).foundation();
+    </script>
+
+    <!-- Add support for ligature fonts to older browsers -->
+    <script src="/js/liga.js"></script>
+  </body>
+</html>

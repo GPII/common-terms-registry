@@ -1,0 +1,22 @@
+{{#if user}}
+    <div class="row">
+        <div class="column small-12">
+            <div class="details-heading">Suggested Interface Label</div>
+            <div class="ptd-inline">
+                <input type="text" name="termLabel" placeholder="Enter a label for this term as it should appear in a menu or listing." value="{{record.termLabel}}"/>
+            </div>
+        </div>
+    </div>
+{{else}}
+    <input type="hidden" name="termLabel" value="{{record.termLabel}}"/>
+    {{#if record.termLabel}}
+        <div class="row">
+            <div class="column small-12">
+                <div class="details-heading">Suggested Interface Label</div>
+                <div class="ptd-inline">
+                {{record.termLabel}}
+                </div>
+            </div>
+        </div>
+    {{/if}}
+{{/if}}

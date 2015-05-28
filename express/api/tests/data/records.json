@@ -1,0 +1,1069 @@
+[
+  {
+    "_id": "_design/api",
+    "_rev": "53-1412a060660c506bc5ad2aed833839c6",
+    "package": {
+      "version": "0.0.1",
+      "private": true,
+      "dependencies": {},
+      "scripts": {
+        "test": "node tests/api-jqunit.js",
+        "start": ""
+      },
+      "devDependencies": {
+        "jqUnit": "git://github.com/fluid-project/node-jqUnit.git#e9bf72445bd343a4f3aabe3ba96a1087d3498612",
+        "infusion": "git://github.com/fluid-project/infusion.git#81b0fdde0483b1383d38f27f8e24b963ca6c5d33"
+      },
+      "name": "ptd-couch-api"
+    },
+    "validate_doc_update": "// Rules that control what record content can be stored in Couch for the Preference Terms Dictionary\nfunction(newDoc, oldDoc, userCtx) {\n    // The user has to be logged in to perform updates\n    if (!userCtx || userCtx.name === null) {\n        throw({\"unauthorized\" : {\"summary\": \"You must be logged in to add or edit records.\"}});\n    }\n    else {\n        // We only allow couch admins to perform actual deletes\n        if(newDoc._deleted === true && (!userCtx.roles || userCtx.roles.indexOf(\"_admin\") === -1)) {\n            throw({\"unauthorized\": {\"summary\" : \"Only admins are allowed to directly remove records.\"}});\n        }\n    }\n}",
+    "views": {
+      "flat": {
+        "map": "function(doc) {\n    if (doc) {\n        var key = doc.uniqueId;\n        var type = 0;\n\n        // Don't include operators in the combined view for now.\n        if (doc.type === \"condition\") { return; }\n        else if (doc.type === \"alias\" || doc.type === \"transform\") { key = doc.aliasOf; type = 1; }\n        else if (doc.type === \"translation\") { key = doc.translationOf; type = 1; }\n\n        emit([key, type], doc);\n    }\n}"
+      },
+      "terms": {
+        "map": "function(doc) {\n    if (doc) {\n        if (doc && doc.type && doc.type.toLowerCase() == 'term' ) {\n            emit(doc.uniqueId, doc);\n        }\n    }\n}"
+      },
+      "transforms": {
+        "map": "function(doc) {\n    if (doc) {\n        if (doc && doc.type && (doc.type.toLowerCase() === 'transform')) {\n            emit(doc.uniqueId, doc);\n        }\n    }\n}"
+      },
+      "entries": {
+        "map": "function(doc) {\n    if (doc) {\n        emit(doc.uniqueId, doc);\n    }\n}"
+      },
+      "conditions": {
+        "map": "function(doc) {\n    if (doc) {\n        if (doc && doc.type && doc.type.toLowerCase() === \"condition\") {\n            emit(doc.uniqueId, doc);\n        }\n    }\n}"
+      },
+      "children": {
+        "map": "function(doc) {\n    if (doc && doc.type && (doc.type.toLowerCase() === \"alias\" || doc.type.toLowerCase === \"transform\" || doc.type.toLowerCase === \"translation\")) {\n        var key = doc.aliasOf;\n        if (doc.type.toLowerCase === \"translation\") {\n            key = doc.translationOf;\n        }\n        emit(key, doc);\n    }\n}"
+      },
+      "aliases": {
+        "map": "function(doc) {\n    if (doc && doc.type && doc.type.toLowerCase() === \"alias\") {\n        emit(doc.uniqueId, doc);\n    }\n}"
+      }
+    },
+    "couchapp": {
+      "manifest": [
+        "couchapp.json",
+        "package.json",
+        "validate_doc_update.js",
+        "views/",
+        "views/aliases/",
+        "views/aliases/map.js",
+        "views/children/",
+        "views/children/map.js",
+        "views/conditions/",
+        "views/conditions/map.js",
+        "views/entries/",
+        "views/entries/map.js",
+        "views/flat/",
+        "views/flat/map.js",
+        "views/terms/",
+        "views/terms/map.js",
+        "views/transforms/",
+        "views/transforms/map.js"
+      ],
+      "signatures": {},
+      "name": "PTD CouchDB configuration",
+      "objects": {},
+      "description": "Couchdb views, lists, shows, and validation code to support the Preference Terms Dictionary."
+    }
+  },
+  {
+    "_id": "_design/dupes",
+    "_rev": "2-8402047c788906f5bf685e519dc938bc",
+    "couchapp": {
+      "manifest": [
+        "couchapp.json",
+        "views/",
+        "views/uniqueId/",
+        "views/uniqueId/map.js",
+        "views/uniqueId/reduce.js",
+        "views/uniqueIdLowerCase/",
+        "views/uniqueIdLowerCase/map.js",
+        "views/uniqueIdLowerCase/reduce.js"
+      ],
+      "signatures": {},
+      "name": "PTD Couchdb duplicate user detection",
+      "objects": {},
+      "description": "Views to assist in detecting duplicate users in the Preference Terms Dictionary."
+    },
+    "views": {
+      "uniqueIdLowerCase": {
+        "map": "function(doc) { emit(doc.uniqueId.toLowerCase(), 1); }",
+        "reduce": "function(keys, values, rereduce) { \n    var data = {}; \n    if (rereduce) { \n\tvalues.forEach(function(reducedData){ \n\t\tObject.keys(reducedData).forEach(function(key) { \n\t\t\tvar value = reducedData[key]; data[key] ? data[key]+= value : data[key]= value; \n\t\t}); \n\t}); \n    } \n    else { \n\tkeys.forEach(function(key){ \n\t\tdata[key[0]] ? data[key[0]]++ : data[key[0]]=1;\n\t}); \n    }\n \n    return data; \n}"
+      },
+      "uniqueId": {
+        "map": "function(doc) { emit(doc.uniqueId, 1); }",
+        "reduce": "function(keys, values, rereduce) { \n    var data = {}; \n    if (rereduce) { \n\tvalues.forEach(function(reducedData){ \n\t\tObject.keys(reducedData).forEach(function(key) { \n\t\t\tvar value = reducedData[key]; data[key] ? data[key]+= value : data[key]= value; \n\t\t}); \n\t}); \n    } \n    else { \n\tkeys.forEach(function(key){ \n\t\tdata[key[0]] ? data[key[0]]++ : data[key[0]]=1;\n\t}); \n    }\n \n    return data; \n}"
+      }
+    }
+  },
+  {
+    "_id": "_design/lucene",
+    "_rev": "23-8b610bd2646a412f07d79445afb818d9",
+    "fulltext": {
+      "by_content": {
+        "index": "function(doc) { \n    if (!doc._id.match(/^_design/)) {\n        var ret=new Document();\n\n        var defs = \"\";\n\n        // We have to store values we wish to use in field:value queries\n        // We also include them in the value of the defaults field (used when no qualifiers are added)\n        var keysToStore = [\"uniqueId\",\"aliasOf\",\"translationOf\"];\n        for (var i in keysToStore) {\n            var field = keysToStore[i];\n            if (doc[field]) {\n                ret.add(doc[field],{\"field\":field, \"store\":\"yes\"});\n                defs += \" \" + doc[field] + \" \";\n            }\n        }\n\n        // The type and status should not be included in the defs, but should be stored\n        var keysToStoreLowerCase = [\"type\", \"status\"];\n        for (var i in keysToStoreLowerCase) {\n            var field = keysToStoreLowerCase[i];\n            if (doc[field]) {\n                ret.add(doc[field].toLowerCase(),{\"field\":field, \"store\":\"yes\"});\n            }\n        }\n\n        var keysToIndex = [\"notes\",\"definition\",\"termLabel\",\"source\"];\n        for (var i in keysToIndex) {\n            var field = keysToIndex[i];\n            if (doc[field]) {\n                ret.add(doc[field],{\"field\":field, \"store\":\"no\"});\n                defs += \" \" + doc[field].toLowerCase() + \" \";\n            }\n        }\n\n        // All of the data is added to the default field so that unqualified searches match any data found in the record.\n        ret.add(defs,{\"field\":\"default\", \"store\": \"yes\"});\n\n        log.debug(\"indexed document '\" + doc.uniqueId + \"'...\");\n\n        return ret;\n    }\n    else {\n        log.debug(\"skipping indexing of design document '\" + doc._id + \"'...\");\n    }\n\n    return null;\n}",
+        "defaults": {
+          "field": "uniqueId",
+          "store": "yes"
+        },
+        "analyzer": "perfield:{default:\"porter\",uniqueId:\"keyword\",aliasOf:\"keyword\",translationOf:\"keyword\",status:\"keyword\"}"
+      }
+    },
+    "couchapp": {
+      "signatures": {},
+      "objects": {},
+      "manifest": [
+        "fulltext/",
+        "fulltext/by_content/",
+        "fulltext/by_content/analyzer.json",
+        "fulltext/by_content/defaults.json",
+        "fulltext/by_content/index.js"
+      ]
+    }
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "6 dot computer braille table",
+    "uniqueId": "6 dot computer braille table",
+    "notes": "The original alias record contained the following additional information:\n\ndefinition:Allow selection of 6 dot computer braille\nuserPreference:6 dot computer braille table\nvalueSpace:Multiple options based on the grade supported with MA\ngroup:Braille,Everywhere\nid:3\n",
+    "type": "alias",
+    "aliasOf": "6DotComputerBrailleTable",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "uniqueId": "double checking",
+    "type": "alias",
+    "status": "deleted",
+    "updated": "2014-08-29T17:44:05.614Z",
+    "aliasOf": "6DotComputerBrailleTable",
+    "termLabel": "No term label defined..."
+  },
+  {
+    "uniqueId": "6DotComputerBrailleTable",
+    "type": "term",
+    "status": "unreviewed",
+    "updated": "2015-04-15T15:25:14.775Z",
+    "termLabel": "\"Six Dot\" Computer Braille Table.",
+    "definition": "Allow selection of 6 dot computer braille.",
+    "uses": [
+      "Test"
+    ]
+  },
+  {
+    "status": "unreviewed",
+    "definition": "Allow selection of 8 dot computer braille",
+    "uses": "",
+    "termLabel": "No term label defined...",
+    "uniqueId": "8DotComputerBrailleTable",
+    "valueSpace": "",
+    "notes": "",
+    "type": "term",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "8 dot computer braille table",
+    "uniqueId": "8 dot computer braille table",
+    "notes": "The original alias record contained the following additional information:\n\ndefinition:Allow selection of 8 dot computer braille\nuserPreference:8 dot computer braille table\nvalueSpace:Multiple options based on the grade supported with MA\ngroup:Braille,Everywhere\nid:4\n",
+    "type": "alias",
+    "aliasOf": "8DotComputerBrailleTable",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "deleted",
+    "definition": "A test record with an update...",
+    "uses": "",
+    "termLabel": "No term label defined...",
+    "notes": "",
+    "uniqueId": "aTestRecord",
+    "valueSpace": "",
+    "type": "term",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "absolute pointing",
+    "uniqueId": "absolute pointing",
+    "notes": "The original alias record contained the following additional information:\n\ndefinition:preference to use an absolute pointing device instead of a relative pointing device\nuserPreference:absolute pointing\nvalueSpace:true, false\ngroup:7.1.3 control 7.1.3.6 alternative pointing\nid:7.1.3.6.3\n",
+    "type": "alias",
+    "aliasOf": "absolutePointing",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "definition": "preference to use an absolute pointing device instead of a relative pointing device",
+    "termLabel": "absolute pointing",
+    "uniqueId": "absolutePointing",
+    "valueSpace": "true, false",
+    "type": "term",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "absolute pointing",
+    "uniqueId": "AbsolutePointing",
+    "type": "alias",
+    "aliasOf": "absolutePointing",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "definition": "** ??Enable/Disable accelerometer to detect tilt, rotation, etc.\r\nRepresents an accelerometer sensor.\r\nThis sensor returns G-force values with respect to the x, y, and z axes.",
+    "uses": "",
+    "termLabel": "No term label defined...",
+    "notes": "Spell as Accelerometer (with two c's).",
+    "uniqueId": "accelerometer",
+    "valueSpace": "",
+    "reviewedComments": "",
+    "type": "term",
+    "unreviewedComments": "",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "definition": "Undefined...",
+    "uniqueId": "accountType",
+    "type": "term",
+    "defaultValue": "none'",
+    "updated": "2014-01-17T06:00:00.000Z",
+    "termLabel": "No term label defined..."
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "org.gnome.rhythmbox.plugins.magnatune.account-type",
+    "uniqueId": "org.gnome.rhythmbox.plugins.magnatune.account-type",
+    "notes": "The original alias record contained the following additional information:\n\ndefaultValue:none'\nuserPreference:org.gnome.rhythmbox.plugins.magnatune.account-type\nvalueSpace:enum 'none' 'stream' 'download'\nid:653\n",
+    "type": "alias",
+    "aliasOf": "accountType",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "uses": "",
+    "termLabel": "Accelerometer",
+    "uniqueId": "Accelerometer",
+    "notes": "The original alias record contained the following additional information:\r\n\r\ndefinition:app\r\nuserPreference:Accelerometer\r\nvalueSpace:isDataValid, CurrentValue, TimeBetweenUpdates, State\r\ngroup:Haptic In (entry) Shake\r\nid:V2.2.6.4.1\r\n",
+    "reviewedComments": "",
+    "type": "alias",
+    "unreviewedComments": "",
+    "aliasOf": "acelerometer",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "definition": "Undefined...",
+    "uniqueId": "activePlugins",
+    "type": "term",
+    "defaultValue": "['skipto', 'chapters', 'screenshot', 'media_player_keys', 'screensaver', 'movie-properties', 'save-file']",
+    "updated": "2014-01-17T06:00:00.000Z",
+    "termLabel": "No term label defined..."
+  },
+  {
+    "status": "unreviewed",
+    "definition": "Undefined...",
+    "uses": "",
+    "termLabel": "No term label defined...",
+    "notes": "",
+    "uniqueId": "activeRythmboxPlugins",
+    "valueSpace": "",
+    "type": "term",
+    "defaultValue": "['artdisplay', 'audiocd', 'audioscrobbler', 'cd-recorder', 'daap', 'dbus-media-server', 'generic-player', 'ipod', 'iradio', 'mmkeys', 'mpris', 'mtpdevice', 'notification']",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "uses": "",
+    "termLabel": "org.gnome.rhythmbox.plugins.active-plugins",
+    "uniqueId": "org.gnome.rhythmbox.plugins.active-plugins",
+    "notes": "The original alias record contained the following additional information:\r\n\r\ndefaultValue:['artdisplay', 'audiocd', 'audioscrobbler', 'cd-recorder', 'daap', 'dbus-media-server', 'generic-player', 'ipod', 'iradio', 'mmkeys', 'mpris', 'mtpdevice', 'notification']\r\nuserPreference:org.gnome.rhythmbox.plugins.active-plugins\r\nvalueSpace:Array String\r\nid:575\r\n",
+    "type": "alias",
+    "aliasOf": "activeRythmboxPlugins",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "uses": "",
+    "termLabel": "org.gnome.totem.active-plugins",
+    "uniqueId": "org.gnome.totem.active-plugins",
+    "notes": "The original alias record contained the following additional information:\r\n\r\ndefaultValue:['skipto', 'chapters', 'screenshot', 'media_player_keys', 'screensaver', 'movie-properties', 'save-file']\r\nuserPreference:org.gnome.totem.active-plugins\r\nvalueSpace:Array String\r\nid:523\r\n",
+    "type": "alias",
+    "aliasOf": "activeTotemPlugins",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "uniqueId": "adaptationPreferenceEducationLevel",
+    "type": "term",
+    "defaultvalue": "",
+    "termLabel": "adaptationPreferenceEducationLevel",
+    "definition": "",
+    "notes": "",
+    "aliases": [],
+    "valueSpace": "character,string",
+    "status": "unreviewed",
+    "updated": "2015-01-17T08:34:29.502Z"
+  },
+  {
+    "uniqueId": "adaptationPreferenceLanguage",
+    "type": "term",
+    "defaultvalue": "",
+    "termLabel": "adaptationPreferenceLanguage",
+    "definition": "",
+    "notes": "",
+    "aliases": [],
+    "valueSpace": "ISO 639-2/T",
+    "status": "unreviewed",
+    "updated": "2015-01-17T08:33:58.158Z"
+  },
+  {
+    "uniqueId": "adaptationPreferenceOriginalAccessMode",
+    "type": "term",
+    "defaultvalue": "",
+    "termLabel": "adaptationPreferenceOriginalAccessMode",
+    "definition": "",
+    "notes": "",
+    "aliases": [],
+    "valueSpace": "visual, textual, auditory, tactile, olfactory",
+    "status": "unreviewed",
+    "updated": "2015-01-17T08:33:49.159Z"
+  },
+  {
+    "uniqueId": "adaptationPreferenceReadingRate",
+    "type": "term",
+    "defaultvalue": "",
+    "termLabel": "adaptationPreferenceReadingRate",
+    "definition": "",
+    "notes": "",
+    "aliases": [],
+    "valueSpace": "1 ? 300",
+    "status": "unreviewed",
+    "updated": "2015-01-17T08:32:35.243Z"
+  },
+  {
+    "uniqueId": "adaptationPreferenceRepresentationForm",
+    "type": "term",
+    "defaultvalue": "",
+    "termLabel": "adaptationPreferenceRepresentationForm",
+    "definition": "",
+    "notes": "",
+    "aliases": [],
+    "valueSpace": "enhanced, verbatim, real-time, transcript, alternative text, long description, sign language, image-based, symbolic, recorded, synthesized, haptic",
+    "status": "unreviewed",
+    "updated": "2015-01-17T08:34:37.550Z"
+  },
+  {
+    "uniqueId": "adaptationPreferenceUsage",
+    "type": "term",
+    "defaultvalue": "",
+    "termLabel": "adaptationPreferenceUsage",
+    "definition": "",
+    "notes": "",
+    "aliases": [],
+    "valueSpace": "required, preferred, optionallyUse, prohibited",
+    "status": "unreviewed",
+    "updated": "2015-01-17T08:33:23.184Z"
+  },
+  {
+    "uniqueId": "smartHouse.environmentalControl_AdaptationType",
+    "type": "alias",
+    "termLabel": "Type of adaptation",
+    "notes": "",
+    "ulUri": "http://ul.gpii.net/api/product/unified/smartHouse.environmentalControl",
+    "status": "unreviewed",
+    "aliasOf": "adaptationType",
+    "updated": "2015-01-16T15:10:29.191Z"
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "adaptation type",
+    "uniqueId": "adaptation type",
+    "notes": "The original alias record contained the following additional information:\n\ndefinition:nature or genre of the adaptation[ISO 15836:2003]\nuserPreference:adaptation type\nvalueSpace:audio representation, tactile representation, text representation, visual representation, audio description, caption, e-book, sign language\ngroup:7.1.4 content 7.1.4.1 adaptation preference\nid:7.1.4.1.2\n",
+    "type": "alias",
+    "aliasOf": "adaptationType",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "definition": "** nature or genre of the adaptation[ISO 15836:2003]\r\nMake the resource contains an [audio]/[visual]/[text]/[tactile]/[Braille] representation of the original access mode, or a text [caption] of the original audio content, or an [audio description] of the original visual content; or the resource is a [digital talking book]/[electronic book] containing the intellectual content of the original access mode;",
+    "uses": "",
+    "termLabel": "adaptation type",
+    "notes": "",
+    "uniqueId": "adaptationType",
+    "valueSpace": "audio representation, tactile representation, text representation, visual representation, audio description, caption, e-book, sign language",
+    "reviewedComments": "",
+    "type": "term",
+    "unreviewedComments": "",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "adaptation type",
+    "uniqueId": "AdaptationType",
+    "type": "alias",
+    "aliasOf": "adaptationType",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "uniqueId": "addDir",
+    "type": "term",
+    "definition": "Undefined...",
+    "updated": "2014-01-17T06:00:00.000Z",
+    "termLabel": "No term label defined..."
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "org.gnome.rhythmbox.library.add-dir",
+    "uniqueId": "org.gnome.rhythmbox.library.add-dir",
+    "notes": "The original alias record contained the following additional information:\n\nuserPreference:org.gnome.rhythmbox.library.add-dir\nvalueSpace:String\nid:346\n",
+    "type": "alias",
+    "aliasOf": "addDir",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "org.gnome.Empathy.conversation.adium-path",
+    "uniqueId": "org.gnome.Empathy.conversation.adium-path",
+    "notes": "The original alias record contained the following additional information:\n\nuserPreference:org.gnome.Empathy.conversation.adium-path\nvalueSpace:String\nid:163\n",
+    "type": "alias",
+    "aliasOf": "adiumPath",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "uniqueId": "adiumPath",
+    "type": "term",
+    "definition": "Undefined...",
+    "updated": "2014-01-17T06:00:00.000Z",
+    "termLabel": "No term label defined..."
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "AlertDialog",
+    "uniqueId": "nokiaS60:AlertDialog",
+    "notes": "The original alias record contained the following additional information:\n\nuserPreference:AlertDialog\nvalueSpace:various\ngroup:Visual Out (display) Dialogues\nid:V3.1.1.19.2\n",
+    "type": "alias",
+    "aliasOf": "alertDialog",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "AlertDialog",
+    "uniqueId": "nokiaS40:AlertDialog",
+    "notes": "The original alias record contained the following additional information:\n\nuserPreference:AlertDialog\nvalueSpace:various\ngroup:Visual Out (display) Dialogues\nid:V3.2.1.19.2\n",
+    "type": "alias",
+    "aliasOf": "alertDialog",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "definition": "** Alert Dialog in Android is a dialog that can show a title, up to three buttons, a list of selectable items, or a custom layout.\r\nThis setting allows to present the dialog as buttons, a single-choice list, a persistent single-choice list (radio buttons), or a persistent multiple-choice list (checkboxes).",
+    "uses": "",
+    "termLabel": "No term label defined...",
+    "notes": "",
+    "uniqueId": "alertDialog",
+    "valueSpace": "** Buttons, List, RadioButtons/Checkboxes",
+    "reviewedComments": "",
+    "type": "term",
+    "unreviewedComments": "",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "AlertDialog",
+    "uniqueId": "android:AlertDialog",
+    "notes": "The original alias record contained the following additional information:\n\ndefinition:V2.1.1.23\nuserPreference:AlertDialog\nvalueSpace:Buttons, List, RadioButtons/Checkboxes\ngroup:V2.1 Visual Out (display)Dialogues\nid:V2.1.1.19.2\n",
+    "type": "alias",
+    "aliasOf": "alertDialog",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "AlertDialog_showHelp",
+    "uniqueId": "nokiaS40:AlertDialog_showHelp",
+    "notes": "The original alias record contained the following additional information:\n\nuserPreference:AlertDialog_showHelp\nvalueSpace:TRUE\ngroup:Visual Out (display) Dialogues\nid:V3.2.1.19.1\n",
+    "type": "alias",
+    "aliasOf": "alertDialogShowHelp",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "AlertDialog_showHelp",
+    "uniqueId": "nokiaS60:AlertDialog_showHelp",
+    "notes": "The original alias record contained the following additional information:\n\nuserPreference:AlertDialog_showHelp\nvalueSpace:TRUE\ngroup:Visual Out (display) Dialogues\nid:V3.1.1.19.1\n",
+    "type": "alias",
+    "aliasOf": "alertDialogShowHelp",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "AlertDialog_showHelp",
+    "uniqueId": "android:AlertDialog_showHelp",
+    "notes": "The original alias record contained the following additional information:\n\ndefinition:V2.1.1.22\nuserPreference:AlertDialog_showHelp\nvalueSpace:true,false\ngroup:V2.1 Visual Out (display)Dialogues\nid:V2.1.1.19.1\n",
+    "type": "alias",
+    "aliasOf": "alertDialogShowHelp",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "uniqueId": "alertDialogShowHelp",
+    "type": "term",
+    "definition": "Undefined...",
+    "updated": "2014-01-17T06:00:00.000Z",
+    "termLabel": "No term label defined..."
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "org.gnome.nautilus.compact-view.all-columns-have-same-width",
+    "uniqueId": "org.gnome.nautilus.compact-view.all-columns-have-same-width",
+    "notes": "The original alias record contained the following additional information:\n\ndefaultValue:FALSE\nuserPreference:org.gnome.nautilus.compact-view.all-columns-have-same-width\nvalueSpace:Boolean\nid:331\n",
+    "type": "alias",
+    "aliasOf": "allColumnsHaveSameWidth",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "definition": "Undefined...",
+    "uniqueId": "allColumnsHaveSameWidth",
+    "type": "term",
+    "defaultValue": "FALSE",
+    "updated": "2014-01-17T06:00:00.000Z",
+    "termLabel": "No term label defined..."
+  },
+  {
+    "status": "unreviewed",
+    "definition": "spatial arrangement of the keys of an alphanumeric keyboard",
+    "termLabel": "alphanumeric keyboard layout",
+    "uniqueId": "alphanumericKeyboardLayout",
+    "valueSpace": "standard, sequential, frequency",
+    "type": "term",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "alphanumeric keyboard layout custom",
+    "uniqueId": "AlphanumericKeyboardLayoutCustom",
+    "type": "alias",
+    "aliasOf": "alphanumericKeyboardLayoutCustom",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "definition": "data element identifying a document containing a specification of a custom spatial arrangement of keys of an alphanumeric keyboard",
+    "termLabel": "alphanumeric keyboard layout custom",
+    "uniqueId": "alphanumericKeyboardLayoutCustom",
+    "valueSpace": "URI",
+    "type": "term",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "uniqueId": "alternativeKeyboardAlphanumericKeyboardLayout",
+    "type": "term",
+    "defaultvalue": "",
+    "termLabel": "alternativeKeyboardAlphanumericKeyboardLayout",
+    "definition": "",
+    "notes": "",
+    "aliases": [],
+    "valueSpace": "standard, sequential, frequency",
+    "status": "unreviewed",
+    "updated": "2015-01-17T08:34:06.543Z"
+  },
+  {
+    "uniqueId": "alternativeKeyboardAlphanumericKeyboardLayoutCustom",
+    "type": "term",
+    "defaultvalue": "",
+    "termLabel": "alternativeKeyboardAlphanumericKeyboardLayoutCustom",
+    "definition": "",
+    "notes": "",
+    "aliases": [],
+    "valueSpace": "URI",
+    "status": "unreviewed",
+    "updated": "2015-01-17T08:34:04.646Z"
+  },
+  {
+    "uniqueId": "alternativeKeyboardDebounceKeys",
+    "type": "term",
+    "defaultvalue": "",
+    "termLabel": "alternativeKeyboardDebounceKeys",
+    "definition": "",
+    "notes": "",
+    "aliases": [],
+    "valueSpace": "",
+    "status": "unreviewed",
+    "updated": "2015-01-17T08:32:33.436Z"
+  },
+  {
+    "uniqueId": "alternativeKeyboardKeySelectionSoundFeedback",
+    "type": "term",
+    "defaultvalue": "",
+    "termLabel": "alternativeKeyboardKeySelectionSoundFeedback",
+    "definition": "",
+    "notes": "",
+    "aliases": [],
+    "valueSpace": "true, false",
+    "status": "unreviewed",
+    "updated": "2015-01-17T08:32:57.583Z"
+  },
+  {
+    "uniqueId": "alternativeKeyboardRepeatKeys",
+    "type": "term",
+    "defaultvalue": "",
+    "termLabel": "alternativeKeyboardRepeatKeys",
+    "definition": "",
+    "notes": "",
+    "aliases": [],
+    "valueSpace": "",
+    "status": "unreviewed",
+    "updated": "2015-01-17T08:34:14.138Z"
+  },
+  {
+    "uniqueId": "alternativeKeyboardSlowKeys",
+    "type": "term",
+    "defaultvalue": "",
+    "termLabel": "alternativeKeyboardSlowKeys",
+    "definition": "",
+    "notes": "",
+    "aliases": [],
+    "valueSpace": "",
+    "status": "unreviewed",
+    "updated": "2015-01-17T08:33:33.311Z"
+  },
+  {
+    "uniqueId": "alternativeKeyboardStickyKeys",
+    "type": "term",
+    "defaultvalue": "",
+    "termLabel": "alternativeKeyboardStickyKeys",
+    "definition": "",
+    "notes": "",
+    "aliases": [],
+    "valueSpace": "",
+    "status": "unreviewed",
+    "updated": "2015-01-17T08:32:41.721Z"
+  },
+  {
+    "uniqueId": "alternativeKeyboardUsage",
+    "type": "term",
+    "defaultvalue": "",
+    "termLabel": "alternativeKeyboardUsage",
+    "definition": "",
+    "notes": "",
+    "aliases": [],
+    "valueSpace": "required, preferred, optionallyUse, prohibited",
+    "status": "unreviewed",
+    "updated": "2015-01-17T08:32:53.883Z"
+  },
+  {
+    "uniqueId": "alternativePointingAbsolutePointing",
+    "type": "term",
+    "defaultvalue": "",
+    "termLabel": "alternativePointingAbsolutePointing",
+    "definition": "",
+    "notes": "",
+    "aliases": [],
+    "valueSpace": "true, false",
+    "status": "unreviewed",
+    "updated": "2015-01-17T08:34:03.700Z"
+  },
+  {
+    "uniqueId": "alternativePointingDeviceHandedness",
+    "type": "term",
+    "defaultvalue": "",
+    "termLabel": "alternativePointingDeviceHandedness",
+    "definition": "",
+    "notes": "",
+    "aliases": [],
+    "valueSpace": "left, right",
+    "status": "unreviewed",
+    "updated": "2015-01-17T08:34:16.952Z"
+  },
+  {
+    "uniqueId": "alternativePointingDoubleClickSpeed",
+    "type": "term",
+    "defaultvalue": "",
+    "termLabel": "alternativePointingDoubleClickSpeed",
+    "definition": "",
+    "notes": "",
+    "aliases": [],
+    "valueSpace": "0.0 ? *",
+    "status": "unreviewed",
+    "updated": "2015-01-17T08:32:23.962Z"
+  },
+  {
+    "uniqueId": "alternativePointingSwitchSelect",
+    "type": "term",
+    "defaultvalue": "",
+    "termLabel": "alternativePointingSwitchSelect",
+    "definition": "",
+    "notes": "",
+    "aliases": [],
+    "valueSpace": "true, false",
+    "status": "unreviewed",
+    "updated": "2015-01-17T08:32:28.718Z"
+  },
+  {
+    "uniqueId": "alternativePointingUsage",
+    "type": "term",
+    "defaultvalue": "",
+    "termLabel": "alternativePointingUsage",
+    "definition": "",
+    "notes": "",
+    "aliases": [],
+    "valueSpace": "required, preferred, optionallyUse, prohibited",
+    "status": "unreviewed",
+    "updated": "2015-01-17T08:34:25.886Z"
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "org.gnome.Vino.alternative-port",
+    "uniqueId": "org.gnome.Vino.alternative-port",
+    "notes": "The original alias record contained the following additional information:\n\ndefaultValue:uint16 5900\nuserPreference:org.gnome.Vino.alternative-port\nvalueSpace:type q\nid:608\n",
+    "type": "alias",
+    "aliasOf": "alternativePort",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "definition": "Undefined...",
+    "uniqueId": "alternativePort",
+    "type": "term",
+    "defaultValue": "uint16 5900",
+    "updated": "2014-01-17T06:00:00.000Z",
+    "termLabel": "No term label defined..."
+  },
+  {
+    "status": "unreviewed",
+    "definition": "Undefined...",
+    "uniqueId": "alwaysEnableListening",
+    "type": "term",
+    "defaultValue": "FALSE",
+    "updated": "2014-01-17T06:00:00.000Z",
+    "termLabel": "No term label defined..."
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "org.gnome.Vinagre.always-enable-listening",
+    "uniqueId": "org.gnome.Vinagre.always-enable-listening",
+    "notes": "The original alias record contained the following additional information:\n\ndefaultValue:FALSE\nuserPreference:org.gnome.Vinagre.always-enable-listening\nvalueSpace:Boolean\nid:549\n",
+    "type": "alias",
+    "aliasOf": "alwaysEnableListening",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "Always landscape",
+    "uniqueId": "Always landscape",
+    "notes": "The original alias record contained the following additional information:\n\ndefinition:Keyboard orientation in landscape or portrait\nuserPreference:Always landscape\nvalueSpace:Checked / unchecked\ngroup:Touch,Edition fields\nid:5\n",
+    "type": "alias",
+    "aliasOf": "alwaysLandscape",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "uniqueId": "alwaysLandscape",
+    "type": "term",
+    "definition": "Keyboard orientation in landscape or portrait",
+    "updated": "2014-01-17T06:00:00.000Z",
+    "termLabel": "No term label defined..."
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "org.gnome.Vinagre.always-show-tabs",
+    "uniqueId": "org.gnome.Vinagre.always-show-tabs",
+    "notes": "The original alias record contained the following additional information:\n\ndefaultValue:FALSE\nuserPreference:org.gnome.Vinagre.always-show-tabs\nvalueSpace:Boolean\nid:550\n",
+    "type": "alias",
+    "aliasOf": "alwaysShowTabs",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "definition": "Undefined...",
+    "uniqueId": "alwaysShowTabs",
+    "type": "term",
+    "defaultValue": "FALSE",
+    "updated": "2014-01-17T06:00:00.000Z",
+    "termLabel": "No term label defined..."
+  },
+  {
+    "status": "unreviewed",
+    "uniqueId": "analysis",
+    "type": "term",
+    "definition": "N.6",
+    "updated": "2014-01-17T06:00:00.000Z",
+    "termLabel": "No term label defined..."
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "Analysis",
+    "uniqueId": "Analysis",
+    "notes": "The original alias record contained the following additional information:\n\ndefinition:N.6\nuserPreference:Analysis\ngroup:Visual Out (display) Images and Photos\nid:N.1.9.1\n",
+    "type": "alias",
+    "aliasOf": "analysis",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "org.gnome.iagno.animate",
+    "uniqueId": "org.gnome.iagno.animate",
+    "notes": "The original alias record contained the following additional information:\n\ndefaultValue:2\nuserPreference:org.gnome.iagno.animate\nvalueSpace:range i 0 2\nid:38\n",
+    "type": "alias",
+    "aliasOf": "animate",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "definition": "** (This is a GNOME Iagno preference setting. Iagno is a computer version of the game Reversi, more popularly called Othello.)  This option controls the amount of animation present when each tile is flipped, using radio buttons. Selecting the option none will cause the tiles to change color instantaneously. Selecting the option partial will cause the animation to flip the tiles slowly. Selecting the complete option will cause the tiles to flip slowly and smoothly.  ",
+    "uses": "",
+    "termLabel": "No term label defined...",
+    "notes": "",
+    "valueSpace": "",
+    "uniqueId": "animate",
+    "reviewedComments": "",
+    "type": "term",
+    "unreviewedComments": "",
+    "defaultValue": "2",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "definition": "** (This is a GNOME Iagno preference setting. Iagno is a computer version of the game Reversi, more popularly called Othello.)  This option causes captured tiles along a row, column, or diagonal to flip one after another, like dominoes, instead of all flipping simultaneously. It has no effect on game play, but looks cool. ",
+    "uses": "",
+    "termLabel": "No term label defined...",
+    "notes": "",
+    "valueSpace": "",
+    "uniqueId": "animateStagger",
+    "reviewedComments": "",
+    "type": "term",
+    "unreviewedComments": "",
+    "defaultValue": "FALSE",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "org.gnome.iagno.animate-stagger",
+    "uniqueId": "org.gnome.iagno.animate-stagger",
+    "notes": "The original alias record contained the following additional information:\n\ndefaultValue:FALSE\nuserPreference:org.gnome.iagno.animate-stagger\nvalueSpace:Boolean\nid:39\n",
+    "type": "alias",
+    "aliasOf": "animateStagger",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "AnimatedBackground",
+    "uniqueId": "nokiaS60:AnimatedBackground",
+    "notes": "The original alias record contained the following additional information:\n\nuserPreference:AnimatedBackground\nvalueSpace:TRUE\ngroup:Visual Out (display) Styles and Themes\nid:V3.1.1.21.2\n",
+    "type": "alias",
+    "aliasOf": "animatedBackground",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "AnimatedBackground",
+    "uniqueId": "android:AnimatedBackground",
+    "notes": "The original alias record contained the following additional information:\n\ndefinition:V2.1.1.4\nuserPreference:AnimatedBackground\nvalueSpace:true, false\ngroup:V2.1 Visual Out (display)Styles and Themes\nid:V2.1.1.21.2\n",
+    "type": "alias",
+    "aliasOf": "animatedBackground",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "definition": "Allow to set background animated or stabilized",
+    "uses": "",
+    "termLabel": "No term label defined...",
+    "notes": "",
+    "uniqueId": "animatedBackground",
+    "valueSpace": "",
+    "reviewedComments": "",
+    "type": "term",
+    "unreviewedComments": "",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "AnimatedBackground",
+    "uniqueId": "nokiaS40:AnimatedBackground",
+    "notes": "The original alias record contained the following additional information:\n\nuserPreference:AnimatedBackground\nvalueSpace:TRUE\ngroup:Visual Out (display) Styles and Themes\nid:V3.2.1.21.2\n",
+    "type": "alias",
+    "aliasOf": "animatedBackground",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "uniqueId": "org.nvda-project_speech\\.espeak\\.sayCapForCapitals",
+    "type": "alias",
+    "termLabel": "Say 'cap' before capitals",
+    "notes": "",
+    "ulUri": "http://ul.gpii.net/api/product/unified/org.nvda-project",
+    "status": "unreviewed",
+    "aliasOf": "announceCapitals",
+    "updated": "2015-01-16T15:08:55.760Z"
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "sayCapForCapitals",
+    "uniqueId": "nvda:AnnounceCapitals",
+    "type": "alias",
+    "aliasOf": "announceCapitals",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "Say the word &quot;cap&quot; when reading a capital letter",
+    "uniqueId": "satogo:AnnounceCapitals",
+    "type": "alias",
+    "aliasOf": "announceCapitals",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "uniqueId": "es.codefactory.android.app.ma_access_commonprefs_capitalization",
+    "type": "alias",
+    "termLabel": "Capitalization verbosity",
+    "notes": "",
+    "ulUri": "http://ul.gpii.net/api/product/unified/es.codefactory.android.app.ma",
+    "status": "unreviewed",
+    "aliasOf": "announceCapitals",
+    "updated": "2015-01-16T15:10:48.786Z"
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "Say the word \"cap\" when reading a capital letter",
+    "uniqueId": "Say the word \"cap\" when reading a capital letter",
+    "notes": "The original alias record contained the following additional information:\n\nuserPreference:Say the word \"cap\" when reading a capital letter\nvalueSpace:true/false\ngroup:Text to Speech Preferences\nid:15\n",
+    "type": "alias",
+    "aliasOf": "announceCapitals",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "uniqueId": "com.yourdolphin.supernova-as_announceCapitals",
+    "type": "alias",
+    "termLabel": "audible announcement of capital letters",
+    "notes": "",
+    "ulUri": "http://ul.gpii.net/api/product/unified/com.yourdolphin.supernova-as",
+    "status": "unreviewed",
+    "aliasOf": "announceCapitals",
+    "updated": "2015-01-16T15:10:58.853Z"
+  },
+  {
+    "uniqueId": "SolutionsOntology3_org.nvda-project_speech\\.espeak\\.sayCapForCapitals",
+    "type": "alias",
+    "termLabel": "Say 'cap' before capitals",
+    "notes": "",
+    "ulUri": "http://ul.gpii.net/api/product/unified/org.nvda-project",
+    "status": "unreviewed",
+    "aliasOf": "announceCapitals",
+    "updated": "2015-01-16T13:05:42.188Z"
+  },
+  {
+    "uniqueId": "SolutionsOntology1_speech\\.espeak\\.sayCapForCapitals",
+    "type": "alias",
+    "termLabel": "Say 'cap' before capitals",
+    "notes": "",
+    "ulUri": "http://ul.gpii.net/api/product/unified/org.nvda-project",
+    "status": "unreviewed",
+    "aliasOf": "announceCapitals",
+    "updated": "2015-01-16T12:17:33.786Z"
+  },
+  {
+    "uniqueId": "SolutionsOntology4_org.nvda-project_speech\\.espeak\\.sayCapForCapitals",
+    "type": "alias",
+    "termLabel": "Say 'cap' before capitals",
+    "notes": "",
+    "ulUri": "http://ul.gpii.net/api/product/unified/org.nvda-project",
+    "status": "unreviewed",
+    "aliasOf": "announceCapitals",
+    "updated": "2015-01-16T13:25:51.796Z"
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "sayCapForCapitals",
+    "uniqueId": "sayCapForCapitals",
+    "notes": "The original alias record contained the following additional information:\n\ndefaultValue:FALSE\nuserPreference:sayCapForCapitals\ngroup:Screenreader.Speech.Espeak\nid:72\n",
+    "type": "alias",
+    "aliasOf": "announceCapitals",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "uniqueId": "announceCapitals",
+    "type": "term",
+    "status": "unreviewed",
+    "notes": "Recovered value for field 'defaultValue' from spreadsheet.\nFound conflicting data for field 'definition' in spreadsheet: announce uppercase letters as \"cap x\"\nFound conflicting data for field 'valueSpace' in spreadsheet: true, false\n",
+    "updated": "2015-04-15T13:45:54.124Z",
+    "valueSpace": "true,false",
+    "termLabel": "AnnounceCapitals",
+    "defaultValue": "FALSE",
+    "definition": "Announce uppercase letters as \"cap x\"."
+  },
+  {
+    "uniqueId": "eu.gpii.olb_links",
+    "type": "alias",
+    "termLabel": "Emphasize Links",
+    "notes": "",
+    "ulUri": "http://ul.gpii.net/api/product/unified/eu.gpii.olb",
+    "status": "unreviewed",
+    "aliasOf": "announceLinks",
+    "updated": "2015-01-16T15:11:33.157Z"
+  },
+  {
+    "uniqueId": "announceLinks",
+    "type": "term",
+    "defaultvalue": "",
+    "termLabel": "announceLinks",
+    "definition": "",
+    "notes": "",
+    "aliases": [],
+    "valueSpace": "enabled, different voice, sound effect",
+    "status": "unreviewed",
+    "updated": "2015-01-17T08:33:30.543Z"
+  },
+  {
+    "status": "unreviewed",
+    "definition": "** Announce Scroll Notifications will let users know when the screen scrolls.",
+    "uses": "",
+    "termLabel": "No term label defined...",
+    "notes": "",
+    "uniqueId": "announceScrollNotifications",
+    "valueSpace": "",
+    "reviewedComments": "",
+    "type": "term",
+    "unreviewedComments": "",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "AnnounceScrollNotifications",
+    "uniqueId": "AnnounceScrollNotifications",
+    "notes": "The original alias record contained the following additional information:\n\ndefinition:Announce Scroll Notifications Registry type: REG_DWORD\nuserPreference:AnnounceScrollNotifications\nvalueSpace:0 or 1\ngroup:Display. ScreenReader.General\nid:1\n",
+    "type": "alias",
+    "aliasOf": "announceScrollNotifications",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "termLabel": "org.gnome.settings-daemon.plugins.xsettings.antialiasing",
+    "uniqueId": "org.gnome.settings-daemon.plugins.xsettings.antialiasing",
+    "notes": "The original alias record contained the following additional information:\n\ndefaultValue:grayscale'\nuserPreference:org.gnome.settings-daemon.plugins.xsettings.antialiasing\nvalueSpace:enum 'none' 'grayscale' 'rgba'\nid:578\n",
+    "type": "alias",
+    "aliasOf": "antialiasing",
+    "updated": "2014-01-17T06:00:00.000Z"
+  },
+  {
+    "status": "unreviewed",
+    "definition": "Undefined...",
+    "uniqueId": "antialiasing",
+    "type": "term",
+    "defaultValue": "grayscale'",
+    "updated": "2014-01-17T06:00:00.000Z",
+    "termLabel": "No term label defined..."
+  },
+  {
+    "status": "unreviewed",
+    "definition": "** Returns the memory usage of the current application in bytes.  You can use this property and the ApplicationMemoryUsageLimit property to determine the maximum additional amount of memory that your application process can allocate. ",
+    "uses": "",
+    "termLabel": "No term label defined...",
+    "notes": "",
+    "uniqueId": "applicationCurrentMemoryUsage",
+    "valueSpace": "",
+    "reviewedComments": "",
+    "type": "term",
+    "unreviewedComments": "",
+    "updated": "2014-01-17T06:00:00.000Z"
+  }
+]

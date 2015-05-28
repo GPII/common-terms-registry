@@ -1,0 +1,44 @@
+{
+  "name": "ptd-front-end",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app.js",
+    "test": "node tests/all-tests.js"
+  },
+  "dependencies": {
+    "body-parser":          "~1.0.0",
+    "cookie-parser":        "~1.0.0",
+    "errorhandler":         "~1.0.0",
+    "express":              "4.8.0",
+    "express-handlebars":   "^1.0.1",
+    "express-session":      "~1.0.0",
+    "express-user-couchdb": "0.3.4",
+    "infusion":             "git://github.com/fluid-project/infusion.git#605b0bcfaedf6193c31456236d3aa4e42cf36a96",
+    "marked":               "^0.3.2",
+    "method-override":      "~1.0.0",
+    "morgan":               "~1.0.0",
+    "request":              "2.51.0",
+    "secure-filters":       "^1.0.5",
+    "static-favicon":       "~1.0.0",
+    "underscore-node":      "^0.1.2",
+    "z-schema":             "^3.0.0"
+  },
+  "devDependencies": {
+    "express-pouchdb":      "^0.4.0",
+    "gpii-express":         "git://github.com/the-t-in-rtf/gpii-express.git#c1f1c2a2b61be9eff0e02c8a1b79bb568b745566",
+    "gpii-pouch":           "git://github.com/the-t-in-rtf/gpii-pouchdb.git#667c6e109dd67fc031c1171a1389dd7ad03f9728",
+    "grunt":                "~0.4.4",
+    "grunt-shell":          "0.6.4",
+    "grunt-contrib-jshint": "~0.9.0",
+    "grunt-jsonlint":       "1.0.4",
+    "grunt-gpii":           "git://github.com/GPII/grunt-gpii.git#58ae055833f437a9e91baedb9f39a22c5fdd727f",
+    "jqUnit":               "git://github.com/fluid-project/node-jqUnit.git#e9bf72445bd343a4f3aabe3ba96a1087d3498612",
+    "jsonschema":           "^0.4.0",
+    "kettle":               "git://github.com/fluid-project/kettle.git#e79bb81196df68c97eaa9f96c485a4321b69af75",
+    "memdown":              "^0.10.2",
+    "nock":                 "^0.56.0",
+    "pouchdb":              "3.0.5",
+    "tough-cookie":         "^0.12.1"
+  }
+}

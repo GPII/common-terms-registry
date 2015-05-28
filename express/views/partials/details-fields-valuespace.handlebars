@@ -1,0 +1,19 @@
+{{#if user}}
+    <div class="row">
+        <div class="column small-12">
+            <div class="details-heading">Value Space</div>
+            <div class="details-instructions">Separate values by commas, or notation describing the range of acceptable values.</div>
+            <input type="text" name="valueSpace" placeholder="Enter a valueSpace for this term." value="{{record.valueSpace}}"/>
+        </div>
+    </div>
+{{else}}
+    <input type="hidden" name="valueSpace" value="{{record.valueSpace}}"/>
+    {{#if record.valueSpace}}
+        <div class="row">
+            <div class="column small-12">
+                <div class="details-heading">Value Space</div>
+                {{record.valueSpace}}
+            </div>
+        </div>
+    {{/if}}
+{{/if}}

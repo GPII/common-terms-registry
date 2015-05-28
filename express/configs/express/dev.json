@@ -1,0 +1,9 @@
+{
+    "port": 4680,
+    "base.url": "http://localhost:4680",
+    "app": {
+        "name": "Preference Terms Dictionary",
+        "url":  "http://localhost:4680",
+        "privateUrl": "http://localhost:4680"
+    }
+}

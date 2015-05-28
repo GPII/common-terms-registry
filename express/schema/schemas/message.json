@@ -1,0 +1,25 @@
+{
+    "type": "object",
+    "id": "message",
+
+    "properties": {
+        "ok": {
+            "type": "boolean",
+            "description": "Whether the request was completed successfully.  Set to 'false' if any problems occur, and 'true' otherwise."
+        },
+        "message": {
+            "type": "string",
+            "description": "An optional message describing the results of a REST call."
+        },
+        "errors": {
+            "type": "object",
+            "description": "An optional object containing more details about any errors encountered."
+        },
+        "record": {"$ref": "record"},
+        "records": {
+            "anyOf": [ {"$ref": "record"} ]
+        }
+
+    },
+    "required": ["ok","message"]
+}

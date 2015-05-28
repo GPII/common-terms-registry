@@ -1,0 +1,1 @@
+This directory contains reports that are used for internal housekeeping of the Preference Terms Dictionary.

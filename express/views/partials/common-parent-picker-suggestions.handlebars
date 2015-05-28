@@ -1,0 +1,7 @@
+<ul class="ptd-parent-picker-suggestions" name="suggestion" style="display: none;" tabindex="0">
+    {{#each records}}
+        <li class="ptd-parent-picker-suggestion" value="{{uniqueId}}">{{uniqueId}}:<span class="ptd-parent-picker-suggestion-definition">{{definition}}</span></li>
+    {{else}}
+        <li class="ptd-parent-picker-no-suggestions">No suggestions available for your search terms.  Please try again.</li>
+    {{/each}}
+</ul>

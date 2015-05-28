@@ -1,0 +1,19 @@
+<div class="ptd-viewport row">
+    <div class="column small-12">
+        <form name="details-form">
+            <div class="details-header">
+                {{>details-controls-linkbar}}
+                {{>details-fields-uniqueid}}
+            </div>
+            <div class="details-body">
+                {{>details-fields-type}}
+                {{>details-fields-uses}}
+                {{>details-fields-definition}}
+                {{>details-fields-notes}}
+                {{>details-fields-status}}
+            </div>
+        </form>
+
+        {{>details-controls-save}}
+    </div>
+</div>

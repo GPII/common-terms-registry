@@ -1,0 +1,18 @@
+    {{#if user}}
+        <div class="row">
+            <div class="column small-12">
+                <div class="details-heading">Suggested Default Value</div>
+                <input type="text" name="defaultValue" placeholder="Enter a default value for this term." value="{{record.defaultValue}}"/>
+            </div>
+        </div>
+    {{else}}
+        <input type="hidden" name="defaultValue" value="{{record.defaultValue}}"/>
+        {{#if record.defaultValue}}
+            <div class="row">
+                <div class="column small-12">
+                    <div class="details-heading">Suggested Default Value</div>
+                    {{record.defaultValue}}
+                </div>
+            </div>
+        {{/if}}
+    {{/if}}
