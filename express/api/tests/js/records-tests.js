@@ -18,9 +18,9 @@ require("../../../node_modules/kettle/lib/test/KettleTestUtils");
 
 var path = require("path");
 
-fluid.registerNamespace("gpii.ptd.api.record.tests.records");
+fluid.registerNamespace("gpii.ptd.api.records.tests.records");
 var sampleDataFile = path.resolve(__dirname, "../data/records.json");
-fluid.defaults("gpii.ptd.api.record.tests.records", {
+fluid.defaults("gpii.ptd.api.records.tests.records", {
     gradeNames:   ["fluid.test.testEnvironment", "autoInit"],
     baseUrl:      "http://localhost:7532/",
     port:         "7532",
@@ -116,9 +116,9 @@ fluid.defaults("gpii.ptd.api.record.tests.records", {
             }
         },
         testCaseHolder: {
-            type: "gpii.ptd.api.record.tests.caseHolder"
+            type: "gpii.ptd.api.records.tests.caseHolder"
         }
     }
 });
 
-gpii.ptd.api.record.tests.records();
+gpii.ptd.api.records.tests.records();

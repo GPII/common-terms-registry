@@ -10,7 +10,7 @@ var jqUnit = require("jqUnit");
 
 // TODO: We cannot test operators, transforms, or translations until we actually agree on what they should look like.
 
-fluid.registerNamespace("gpii.ptd.api.record.tests.caseHolder");
+fluid.registerNamespace("gpii.ptd.api.records.tests.caseHolder");
 
 // TODO: Migrate the rest of these once we have a better pattern for repeating tests per-endpoint.
 //
@@ -280,7 +280,7 @@ fluid.registerNamespace("gpii.ptd.api.record.tests.caseHolder");
 //
 // TODO: Remove this once the tests have been successfully updated
 
-gpii.ptd.api.record.tests.caseHolder.verifyDefaultResponse = function (response, body) {
+gpii.ptd.api.records.tests.caseHolder.verifyDefaultResponse = function (response, body) {
     gpii.ptd.api.tests.testUtils.isSaneResponse(jqUnit, null, response, body);
 
     jqUnit.assertEquals("The request should have been successful...", response.statusCode, 200);
@@ -292,7 +292,7 @@ gpii.ptd.api.record.tests.caseHolder.verifyDefaultResponse = function (response,
     gpii.ptd.api.tests.testUtils.isSaneRecord(jqUnit, jsonData.records && jsonData.records[0] ? jsonData.records[0] : null);
 };
 
-gpii.ptd.api.record.tests.caseHolder.verifyFirstPagingResponse = function (requestComponent, response, body) {
+gpii.ptd.api.records.tests.caseHolder.verifyFirstPagingResponse = function (requestComponent, response, body) {
     gpii.ptd.api.tests.testUtils.isSaneResponse(jqUnit, null, response, body);
 
     var jsonData = JSON.parse(body);
@@ -304,7 +304,7 @@ gpii.ptd.api.record.tests.caseHolder.verifyFirstPagingResponse = function (reque
 };
 
 // We will be comparing our results with the previous run.  Those results are stored in the previous request component.
-gpii.ptd.api.record.tests.caseHolder.verifySecondPagingResponse = function (previousRequestComponent, response, body) {
+gpii.ptd.api.records.tests.caseHolder.verifySecondPagingResponse = function (previousRequestComponent, response, body) {
     gpii.ptd.api.tests.testUtils.isSaneResponse(jqUnit, null, response, body);
 
     var jsonData = JSON.parse(body);
@@ -317,7 +317,7 @@ gpii.ptd.api.record.tests.caseHolder.verifySecondPagingResponse = function (prev
     jqUnit.assertDeepEq("The last record in set 0-1 should be the same as the first record in set 1-2...", previousRequestComponent.firstRecord, secondRecord);
 };
 
-gpii.ptd.api.record.tests.caseHolder.verifyFirstSortResponse = function (requestComponent, response, body) {
+gpii.ptd.api.records.tests.caseHolder.verifyFirstSortResponse = function (requestComponent, response, body) {
     gpii.ptd.api.tests.testUtils.isSaneResponse(jqUnit, null, response, body);
 
     var jsonData = JSON.parse(body);
@@ -325,7 +325,7 @@ gpii.ptd.api.record.tests.caseHolder.verifyFirstSortResponse = function (request
 };
 
 // We will be comparing our results with the previous run.  Those results are stored in the previous request component.
-gpii.ptd.api.record.tests.caseHolder.verifySecondSortResponse = function (previousRequestComponent, response, body) {
+gpii.ptd.api.records.tests.caseHolder.verifySecondSortResponse = function (previousRequestComponent, response, body) {
     gpii.ptd.api.tests.testUtils.isSaneResponse(jqUnit, null, response, body);
 
     var jsonData = JSON.parse(body);
@@ -334,7 +334,7 @@ gpii.ptd.api.record.tests.caseHolder.verifySecondSortResponse = function (previo
     jqUnit.assertDeepNeq("The first record sorted A-Z should not be the same as the first record sorted Z-A...", previousRequestComponent.firstRecord, secondRecord);
 };
 
-gpii.ptd.api.record.tests.caseHolder.verifyFirstStatusLimitedResponse = function (requestComponent, response, body) {
+gpii.ptd.api.records.tests.caseHolder.verifyFirstStatusLimitedResponse = function (requestComponent, response, body) {
     gpii.ptd.api.tests.testUtils.isSaneResponse(jqUnit, null, response, body);
 
     var jsonData = JSON.parse(body);
@@ -343,7 +343,7 @@ gpii.ptd.api.record.tests.caseHolder.verifyFirstStatusLimitedResponse = function
 };
 
 // We will be comparing our results with the previous run.  Those results are stored in the previous request component.
-gpii.ptd.api.record.tests.caseHolder.verifySecondStatusLimitedResponse = function (previousRequestComponent, response, body) {
+gpii.ptd.api.records.tests.caseHolder.verifySecondStatusLimitedResponse = function (previousRequestComponent, response, body) {
     gpii.ptd.api.tests.testUtils.isSaneResponse(jqUnit, null, response, body);
 
     var jsonData = JSON.parse(body);
@@ -358,7 +358,7 @@ gpii.ptd.api.record.tests.caseHolder.verifySecondStatusLimitedResponse = functio
 
 
 // Wire in an instance of kettle.requests.request.http for each test and wire the check to its onError or onSuccess event
-fluid.defaults("gpii.ptd.api.record.tests.caseHolder", {
+fluid.defaults("gpii.ptd.api.records.tests.caseHolder", {
     gradeNames: ["autoInit", "fluid.test.testCaseHolder"],
     mergePolicy: {
         rawModules:    "noexpand",
@@ -422,7 +422,7 @@ fluid.defaults("gpii.ptd.api.record.tests.caseHolder", {
                             func: "{recordsDefaults}.send"
                         },
                         {
-                            listener: "gpii.ptd.api.record.tests.caseHolder.verifyDefaultResponse",
+                            listener: "gpii.ptd.api.records.tests.caseHolder.verifyDefaultResponse",
                             event: "{recordsDefaults}.events.onComplete",
                             args: ["{recordsDefaults}.nativeResponse", "{arguments}.0"]
                         },
@@ -430,7 +430,7 @@ fluid.defaults("gpii.ptd.api.record.tests.caseHolder", {
                             func: "{termsDefaults}.send"
                         },
                         {
-                            listener: "gpii.ptd.api.record.tests.caseHolder.verifyDefaultResponse",
+                            listener: "gpii.ptd.api.records.tests.caseHolder.verifyDefaultResponse",
                             event: "{termsDefaults}.events.onComplete",
                             args: ["{termsDefaults}.nativeResponse", "{arguments}.0"]
                         },
@@ -438,7 +438,7 @@ fluid.defaults("gpii.ptd.api.record.tests.caseHolder", {
                             func: "{aliasesDefaults}.send"
                         },
                         {
-                            listener: "gpii.ptd.api.record.tests.caseHolder.verifyDefaultResponse",
+                            listener: "gpii.ptd.api.records.tests.caseHolder.verifyDefaultResponse",
                             event: "{aliasesDefaults}.events.onComplete",
                             args: ["{aliasesDefaults}.nativeResponse", "{arguments}.0"]
                         }
@@ -452,7 +452,7 @@ fluid.defaults("gpii.ptd.api.record.tests.caseHolder", {
                             func: "{recordsFirstPage}.send"
                         },
                         {
-                            listener: "gpii.ptd.api.record.tests.caseHolder.verifyFirstPagingResponse",
+                            listener: "gpii.ptd.api.records.tests.caseHolder.verifyFirstPagingResponse",
                             event: "{recordsFirstPage}.events.onComplete",
                             args: ["{recordsFirstPage}", "{recordsFirstPage}.nativeResponse", "{arguments}.0"]
                         },
@@ -460,7 +460,7 @@ fluid.defaults("gpii.ptd.api.record.tests.caseHolder", {
                             func: "{recordsSecondPage}.send"
                         },
                         {
-                            listener: "gpii.ptd.api.record.tests.caseHolder.verifySecondPagingResponse",
+                            listener: "gpii.ptd.api.records.tests.caseHolder.verifySecondPagingResponse",
                             event: "{recordsSecondPage}.events.onComplete",
                             args: ["{recordsFirstPage}", "{recordsSecondPage}.nativeResponse", "{arguments}.0"]
                         },
@@ -470,7 +470,7 @@ fluid.defaults("gpii.ptd.api.record.tests.caseHolder", {
                         //    func: "{termsFirstPage}.send"
                         //},
                         //{
-                        //    listener: "gpii.ptd.api.record.tests.caseHolder.verifyFirstPagingResponse",
+                        //    listener: "gpii.ptd.api.records.tests.caseHolder.verifyFirstPagingResponse",
                         //    event: "{termsFirstPage}.events.onComplete",
                         //    args: ["{termsFirstPage}", "{termsFirstPage}.nativeResponse", "{arguments}.0"]
                         //},
@@ -478,7 +478,7 @@ fluid.defaults("gpii.ptd.api.record.tests.caseHolder", {
                         //    func: "{termsSecondPage}.send"
                         //},
                         //{
-                        //    listener: "gpii.ptd.api.record.tests.caseHolder.verifySecondPagingResponse",
+                        //    listener: "gpii.ptd.api.records.tests.caseHolder.verifySecondPagingResponse",
                         //    event: "{termsSecondPage}.events.onComplete",
                         //    args: ["{termsFirstPage}", "{termsSecondPage}.nativeResponse", "{arguments}.0"]
                         //},
@@ -486,7 +486,7 @@ fluid.defaults("gpii.ptd.api.record.tests.caseHolder", {
                             func: "{aliasesFirstPage}.send"
                         },
                         {
-                            listener: "gpii.ptd.api.record.tests.caseHolder.verifyFirstPagingResponse",
+                            listener: "gpii.ptd.api.records.tests.caseHolder.verifyFirstPagingResponse",
                             event: "{aliasesFirstPage}.events.onComplete",
                             args: ["{aliasesFirstPage}", "{aliasesFirstPage}.nativeResponse", "{arguments}.0"]
                         },
@@ -494,7 +494,7 @@ fluid.defaults("gpii.ptd.api.record.tests.caseHolder", {
                             func: "{aliasesSecondPage}.send"
                         },
                         {
-                            listener: "gpii.ptd.api.record.tests.caseHolder.verifySecondPagingResponse",
+                            listener: "gpii.ptd.api.records.tests.caseHolder.verifySecondPagingResponse",
                             event: "{aliasesSecondPage}.events.onComplete",
                             args: ["{aliasesFirstPage}", "{aliasesSecondPage}.nativeResponse", "{arguments}.0"]
                         }
@@ -508,7 +508,7 @@ fluid.defaults("gpii.ptd.api.record.tests.caseHolder", {
                 //            func: "{recordsFirstSort}.send"
                 //        },
                 //        {
-                //            listener: "gpii.ptd.api.record.tests.caseHolder.verifyFirstSortResponse",
+                //            listener: "gpii.ptd.api.records.tests.caseHolder.verifyFirstSortResponse",
                 //            event: "{recordsFirstSort}.events.onComplete",
                 //            args: ["{recordsFirstSort}", "{recordsFirstSort}.nativeResponse", "{arguments}.0"]
                 //        },
@@ -516,7 +516,7 @@ fluid.defaults("gpii.ptd.api.record.tests.caseHolder", {
                 //            func: "{recordsSecondSort}.send"
                 //        },
                 //        {
-                //            listener: "gpii.ptd.api.record.tests.caseHolder.verifySecondSortResponse",
+                //            listener: "gpii.ptd.api.records.tests.caseHolder.verifySecondSortResponse",
                 //            event: "{recordsSecondSort}.events.onComplete",
                 //            args: ["{recordsFirstSort}", "{recordsSecondSort}.nativeResponse", "{arguments}.0"]
                 //        },
@@ -524,7 +524,7 @@ fluid.defaults("gpii.ptd.api.record.tests.caseHolder", {
                 //            func: "{termsFirstSort}.send"
                 //        },
                 //        {
-                //            listener: "gpii.ptd.api.record.tests.caseHolder.verifyFirstSortResponse",
+                //            listener: "gpii.ptd.api.records.tests.caseHolder.verifyFirstSortResponse",
                 //            event: "{termsFirstSort}.events.onComplete",
                 //            args: ["{termsFirstSort}", "{termsFirstSort}.nativeResponse", "{arguments}.0"]
                 //        },
@@ -532,7 +532,7 @@ fluid.defaults("gpii.ptd.api.record.tests.caseHolder", {
                 //            func: "{termsSecondSort}.send"
                 //        },
                 //        {
-                //            listener: "gpii.ptd.api.record.tests.caseHolder.verifySecondSortResponse",
+                //            listener: "gpii.ptd.api.records.tests.caseHolder.verifySecondSortResponse",
                 //            event: "{termsSecondSort}.events.onComplete",
                 //            args: ["{termsFirstSort}", "{termsSecondSort}.nativeResponse", "{arguments}.0"]
                 //        },
@@ -540,7 +540,7 @@ fluid.defaults("gpii.ptd.api.record.tests.caseHolder", {
                 //            func: "{aliasesFirstSort}.send"
                 //        },
                 //        {
-                //            listener: "gpii.ptd.api.record.tests.caseHolder.verifyFirstSortResponse",
+                //            listener: "gpii.ptd.api.records.tests.caseHolder.verifyFirstSortResponse",
                 //            event: "{aliasesFirstSort}.events.onComplete",
                 //            args: ["{aliasesFirstSort}", "{aliasesFirstSort}.nativeResponse", "{arguments}.0"]
                 //        },
@@ -548,7 +548,7 @@ fluid.defaults("gpii.ptd.api.record.tests.caseHolder", {
                 //            func: "{aliasesSecondSort}.send"
                 //        },
                 //        {
-                //            listener: "gpii.ptd.api.record.tests.caseHolder.verifySecondSortResponse",
+                //            listener: "gpii.ptd.api.records.tests.caseHolder.verifySecondSortResponse",
                 //            event: "{aliasesSecondSort}.events.onComplete",
                 //            args: ["{aliasesFirstSort}", "{aliasesSecondSort}.nativeResponse", "{arguments}.0"]
                 //        }
@@ -562,7 +562,7 @@ fluid.defaults("gpii.ptd.api.record.tests.caseHolder", {
                             func: "{recordsFirstStatusLimited}.send"
                         },
                         {
-                            listener: "gpii.ptd.api.record.tests.caseHolder.verifyFirstStatusLimitedResponse",
+                            listener: "gpii.ptd.api.records.tests.caseHolder.verifyFirstStatusLimitedResponse",
                             event: "{recordsFirstStatusLimited}.events.onComplete",
                             args: ["{recordsFirstStatusLimited}", "{recordsFirstStatusLimited}.nativeResponse", "{arguments}.0"]
                         },
@@ -570,7 +570,7 @@ fluid.defaults("gpii.ptd.api.record.tests.caseHolder", {
                             func: "{recordsSecondStatusLimited}.send"
                         },
                         {
-                            listener: "gpii.ptd.api.record.tests.caseHolder.verifySecondStatusLimitedResponse",
+                            listener: "gpii.ptd.api.records.tests.caseHolder.verifySecondStatusLimitedResponse",
                             event: "{recordsSecondStatusLimited}.events.onComplete",
                             args: ["{recordsFirstStatusLimited}", "{recordsSecondStatusLimited}.nativeResponse", "{arguments}.0"]
                         },
@@ -578,7 +578,7 @@ fluid.defaults("gpii.ptd.api.record.tests.caseHolder", {
                             func: "{termsFirstStatusLimited}.send"
                         },
                         {
-                            listener: "gpii.ptd.api.record.tests.caseHolder.verifyFirstStatusLimitedResponse",
+                            listener: "gpii.ptd.api.records.tests.caseHolder.verifyFirstStatusLimitedResponse",
                             event: "{termsFirstStatusLimited}.events.onComplete",
                             args: ["{termsFirstStatusLimited}", "{termsFirstStatusLimited}.nativeResponse", "{arguments}.0"]
                         },
@@ -586,7 +586,7 @@ fluid.defaults("gpii.ptd.api.record.tests.caseHolder", {
                             func: "{termsSecondStatusLimited}.send"
                         },
                         {
-                            listener: "gpii.ptd.api.record.tests.caseHolder.verifySecondStatusLimitedResponse",
+                            listener: "gpii.ptd.api.records.tests.caseHolder.verifySecondStatusLimitedResponse",
                             event: "{termsSecondStatusLimited}.events.onComplete",
                             args: ["{termsFirstStatusLimited}", "{termsSecondStatusLimited}.nativeResponse", "{arguments}.0"]
                         },
@@ -594,7 +594,7 @@ fluid.defaults("gpii.ptd.api.record.tests.caseHolder", {
                             func: "{aliasesFirstStatusLimited}.send"
                         },
                         {
-                            listener: "gpii.ptd.api.record.tests.caseHolder.verifyFirstStatusLimitedResponse",
+                            listener: "gpii.ptd.api.records.tests.caseHolder.verifyFirstStatusLimitedResponse",
                             event: "{aliasesFirstStatusLimited}.events.onComplete",
                             args: ["{aliasesFirstStatusLimited}", "{aliasesFirstStatusLimited}.nativeResponse", "{arguments}.0"]
                         },
@@ -602,7 +602,7 @@ fluid.defaults("gpii.ptd.api.record.tests.caseHolder", {
                             func: "{aliasesSecondStatusLimited}.send"
                         },
                         {
-                            listener: "gpii.ptd.api.record.tests.caseHolder.verifySecondStatusLimitedResponse",
+                            listener: "gpii.ptd.api.records.tests.caseHolder.verifySecondStatusLimitedResponse",
                             event: "{aliasesSecondStatusLimited}.events.onComplete",
                             args: ["{aliasesFirstStatusLimited}", "{aliasesSecondStatusLimited}.nativeResponse", "{arguments}.0"]
                         }
