@@ -90,7 +90,7 @@ gpii.ptd.api.record.get.request.processCouchResponse = function (that, error, _,
     }
     else {
         // We somehow did not receive records from couch.  Pass on whatever we did receive.
-        that.sendSchemaAwareResponse("500", "message", { ok: false, message: body });
+        that.sendSchemaAwareResponse("404", "message", { ok: false, message: "No record was found for the given uniqueId." });
     }
 };
 
@@ -130,9 +130,6 @@ fluid.defaults("gpii.ptd.api.record.get.request", {
         }
     },
     components: {
-        "pager": {
-            type: "gpii.ptd.api.lib.paging"
-        },
         "children": {
             type: "gpii.ptd.api.lib.children",
             options: {
@@ -167,9 +164,11 @@ fluid.defaults("gpii.ptd.api.record.get", {
     path:              "/:uniqueId",
     requestAwareGrade: "gpii.ptd.api.record.get.request",
     children:          true,
+    timeout:           5000,
     dynamicComponents: {
         requestHandler: {
             options: {
+                timeout:         "{get}.options.timeout",
                 couchUrl:        "{get}.options.couchUrl",
                 children:        "{get}.options.children",
                 baseUrl:         "{get}.options.baseUrl"

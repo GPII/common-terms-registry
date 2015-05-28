@@ -84,6 +84,7 @@ fluid.defaults("gpii.ptd.api.record.get.tests.testEnvironment", {
                     record: {
                         type: "gpii.ptd.api.record.get",
                         options: {
+                            timeout: 10000,  // The timeout needs to be increased when debugging
                             baseUrl:  "{testEnvironment}.options.baseUrl",
                             couchUrl: "{testEnvironment}.options.couchDbUrl"
                         }

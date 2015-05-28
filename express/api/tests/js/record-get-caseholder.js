@@ -133,76 +133,76 @@ fluid.defaults("gpii.ptd.api.record.get.tests.caseHolder", {
                         }
                     ]
                 },
-                //{
-                //    name: "Testing using a uniqueId that doesn't exist...",
-                //    type: "test",
-                //    sequence: [
-                //        {
-                //            func: "{missingRecordRequest}.send"
-                //        },
-                //        {
-                //            listener: "gpii.ptd.api.record.get.tests.caseHolder.verifyNotFound",
-                //            event: "{missingRecordRequest}.events.onComplete",
-                //            args: ["{missingRecordRequest}.nativeResponse", "{arguments}.0"]
-                //        }
-                //    ]
-                //},
-                //{
-                //    name: "Testing retrieving a record with a space in its uniqueId...",
-                //    type: "test",
-                //    sequence: [
-                //        {
-                //            func: "{spaceRequest}.send"
-                //        },
-                //        {
-                //            listener: "gpii.ptd.api.record.get.tests.caseHolder.verifyRecord",
-                //            event: "{spaceRequest}.events.onComplete",
-                //            args: ["{spaceRequest}.nativeResponse", "{arguments}.0"]
-                //        }
-                //    ]
-                //},
-                //{
-                //    name: "Testing retrieving an alias with the `children` option set to true...",
-                //    type: "test",
-                //    sequence: [
-                //        {
-                //            func: "{aliasWithChildrenRequest}.send"
-                //        },
-                //        {
-                //            listener: "gpii.ptd.api.record.get.tests.caseHolder.verifyHasNoChildren",
-                //            event: "{aliasWithChildrenRequest}.events.onComplete",
-                //            args: ["{aliasWithChildrenRequest}.nativeResponse", "{arguments}.0"]
-                //        }
-                //    ]
-                //},
-                //{
-                //    name: "Testing retrieving a term with the `children` option set to true...",
-                //    type: "test",
-                //    sequence: [
-                //        {
-                //            func: "{termWithChildrenRequest}.send"
-                //        },
-                //        {
-                //            listener: "gpii.ptd.api.record.get.tests.caseHolder.verifyHasChildren",
-                //            event: "{termWithChildrenRequest}.events.onComplete",
-                //            args: ["{termWithChildrenRequest}.nativeResponse", "{arguments}.0"]
-                //        }
-                //    ]
-                //},
-                //{
-                //    name: "Testing retrieving a term with the `children` option set to false...",
-                //    type: "test",
-                //    sequence: [
-                //        {
-                //            func: "{termWithoutChildrenRequest}.send"
-                //        },
-                //        {
-                //            listener: "gpii.ptd.api.record.get.tests.caseHolder.verifyHasNoChildren",
-                //            event: "{termWithoutChildrenRequest}.events.onComplete",
-                //            args: ["{termWithoutChildrenRequest}.nativeResponse", "{arguments}.0"]
-                //        }
-                //    ]
-                //}
+                {
+                    name: "Testing using a uniqueId that doesn't exist...",
+                    type: "test",
+                    sequence: [
+                        {
+                            func: "{missingRecordRequest}.send"
+                        },
+                        {
+                            listener: "gpii.ptd.api.record.get.tests.caseHolder.verifyNotFound",
+                            event: "{missingRecordRequest}.events.onComplete",
+                            args: ["{missingRecordRequest}.nativeResponse", "{arguments}.0"]
+                        }
+                    ]
+                },
+                {
+                    name: "Testing retrieving a record with a space in its uniqueId...",
+                    type: "test",
+                    sequence: [
+                        {
+                            func: "{spaceRequest}.send"
+                        },
+                        {
+                            listener: "gpii.ptd.api.record.get.tests.caseHolder.verifyRecord",
+                            event: "{spaceRequest}.events.onComplete",
+                            args: ["{spaceRequest}.nativeResponse", "{arguments}.0"]
+                        }
+                    ]
+                },
+                {
+                    name: "Testing retrieving an alias with the `children` option set to true...",
+                    type: "test",
+                    sequence: [
+                        {
+                            func: "{aliasWithChildrenRequest}.send"
+                        },
+                        {
+                            listener: "gpii.ptd.api.record.get.tests.caseHolder.verifyHasNoChildren",
+                            event: "{aliasWithChildrenRequest}.events.onComplete",
+                            args: ["{aliasWithChildrenRequest}.nativeResponse", "{arguments}.0"]
+                        }
+                    ]
+                },
+                {
+                    name: "Testing retrieving a term with the `children` option set to true...",
+                    type: "test",
+                    sequence: [
+                        {
+                            func: "{termWithChildrenRequest}.send"
+                        },
+                        {
+                            listener: "gpii.ptd.api.record.get.tests.caseHolder.verifyHasChildren",
+                            event: "{termWithChildrenRequest}.events.onComplete",
+                            args: ["{termWithChildrenRequest}.nativeResponse", "{arguments}.0"]
+                        }
+                    ]
+                },
+                {
+                    name: "Testing retrieving a term with the `children` option set to false...",
+                    type: "test",
+                    sequence: [
+                        {
+                            func: "{termWithoutChildrenRequest}.send"
+                        },
+                        {
+                            listener: "gpii.ptd.api.record.get.tests.caseHolder.verifyHasNoChildren",
+                            event: "{termWithoutChildrenRequest}.events.onComplete",
+                            args: ["{termWithoutChildrenRequest}.nativeResponse", "{arguments}.0"]
+                        }
+                    ]
+                }
             ]
         }
     ],
@@ -279,7 +279,7 @@ fluid.defaults("gpii.ptd.api.record.get.tests.caseHolder", {
                 path: {
                     expander: {
                         funcName: "gpii.ptd.api.tests.assembleUrl",
-                        args:     ["{testEnvironment}.options.baseUrl", "/org.gnome.settings-daemon.peripherals.wacom.stylus.pressurecurve"]
+                        args:     ["{testEnvironment}.options.baseUrl", "/6DotComputerBrailleTable"]
                     }
                 },
                 port: "{testEnvironment}.options.port",
@@ -305,7 +305,7 @@ fluid.defaults("gpii.ptd.api.record.get.tests.caseHolder", {
                 path: {
                     expander: {
                         funcName: "gpii.ptd.api.tests.assembleUrl",
-                        args:     ["{testEnvironment}.options.baseUrl", "/xMPPChatID?children=true"]
+                        args:     ["{testEnvironment}.options.baseUrl", "/6DotComputerBrailleTable?children=true"]
                     }
                 },
                 port: "{testEnvironment}.options.port",
@@ -318,7 +318,7 @@ fluid.defaults("gpii.ptd.api.record.get.tests.caseHolder", {
                 path: {
                     expander: {
                         funcName: "gpii.ptd.api.tests.assembleUrl",
-                        args:     ["{testEnvironment}.options.baseUrl", "/xMPPChatID?children=false"]
+                        args:     ["{testEnvironment}.options.baseUrl", "/6DotComputerBrailleTable?children=false"]
                     }
                 },
                 port: "{testEnvironment}.options.port",
@@ -344,7 +344,7 @@ fluid.defaults("gpii.ptd.api.record.get.tests.caseHolder", {
                 path: {
                     expander: {
                         funcName: "gpii.ptd.api.tests.assembleUrl",
-                        args:     ["{testEnvironment}.options.baseUrl", "/XMPP%20Chat%20ID"]
+                        args:     ["{testEnvironment}.options.baseUrl", "/absolute%20pointing"]
                     }
                 },
                 port: "{testEnvironment}.options.port",
